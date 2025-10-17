@@ -217,12 +217,25 @@ You have access to WebSearch and WebFetch tools. Use them to research comparable
    - Similar scale (within 2-3x asset size)
    - Publicly rated (DBRS, Moody's, or S&P ratings)
 
-2. **Research peer financial metrics** using web search:
+2. **Research peer financial metrics using PARALLEL web searches:**
+
+   **IMPORTANT: Use parallel tool calls to research multiple peers simultaneously. Do NOT research peers sequentially.**
+
+   In a single message, invoke WebSearch/WebFetch for all peers at once:
    ```
-   Search: "[REIT Name] Q2 2025 financial results"
-   Search: "[REIT Name] investor presentation Q2 2025"
-   Search: "[REIT Name] debt to assets ratio 2025"
+   WebSearch: "[Peer 1 Name] Q2 2025 financial results"
+   WebSearch: "[Peer 2 Name] Q2 2025 financial results"
+   WebSearch: "[Peer 3 Name] Q2 2025 financial results"
    ```
+
+   Then fetch investor presentations in parallel:
+   ```
+   WebFetch: [Peer 1 investor presentation URL]
+   WebFetch: [Peer 2 investor presentation URL]
+   WebFetch: [Peer 3 investor presentation URL]
+   ```
+
+   **Efficiency guideline:** Research 3-4 peers in parallel to minimize total research time. Sequential research is inefficient and unnecessary.
 
 3. **Document sources for ALL external data:**
 
