@@ -47,6 +47,12 @@ python scripts/calculate_credit_metrics.py Issuer_Reports/Artis_REIT/temp/phase2
 python scripts/generate_final_report.py \
   Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json \
   Issuer_Reports/Artis_REIT/temp/phase4_credit_analysis.md
+
+# Phase 5: Use enhanced template (recommended)
+python scripts/generate_final_report.py \
+  --template credit_opinion_template_enhanced.md \
+  Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json \
+  Issuer_Reports/Artis_REIT/temp/phase4_credit_analysis.md
 ```
 
 ### Testing
@@ -197,7 +203,8 @@ with open("Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json") as f:
 - `scripts/validate_extraction_schema.py` - Schema validator (use before Phase 3)
 
 **Templates:**
-- `templates/credit_opinion_template.md` - Report template (Phase 5)
+- `templates/credit_opinion_template.md` - Standard report template (Phase 5)
+- `templates/credit_opinion_template_enhanced.md` - Enhanced template with comprehensive sections (recommended)
 
 **Agent Definitions:**
 - `.claude/agents/issuer_due_diligence_expert_slim.md` - Slim agent (recommended)
