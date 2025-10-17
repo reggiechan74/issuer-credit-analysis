@@ -45,12 +45,12 @@
   },
 
   "portfolio": {
-    "_comment": "Optional portfolio metrics",
-    "total_properties": "Optional: number (default 0)",
-    "total_gla_sf": "Optional: number (use 0 if unknown, NOT null)",
-    "occupancy_rate": "Optional: number (decimal, e.g., 0.878 for 87.8%)",
-    "occupancy_with_commitments": "Optional: number (decimal)",
-    "same_property_noi_growth_6m": "Optional: number (decimal, e.g., 0.023 for 2.3%)"
+    "_comment": "IMPORTANT: Search MD&A for 'PROPERTY PORTFOLIO' section or quarterly tables",
+    "total_properties": "REQUIRED: number - Total properties (search for 'XX properties', 'Number of properties', 'property count')",
+    "total_gla_sf": "REQUIRED: number - GLA in square feet (search for 'XX million square feet', 'GLA', 'gross leasable area')",
+    "occupancy_rate": "REQUIRED: number (decimal, e.g., 0.878 for 87.8%) - Search MD&A occupancy tables",
+    "occupancy_with_commitments": "Optional: number (decimal) - Occupancy including committed leases",
+    "same_property_noi_growth_6m": "Optional: number (decimal, e.g., 0.023 for 2.3%) - Same property NOI growth rate"
   },
 
   "validation": {

@@ -84,12 +84,12 @@ Template: `.claude/knowledge/phase2_extraction_template.json`
   }},
 
   "portfolio": {{
-    "_comment": "Optional portfolio metrics",
-    "total_properties": "Optional: number (use 0 if unknown)",
-    "total_gla_sf": "Optional: number (use 0 if unknown, NOT null)",
-    "occupancy_rate": "Optional: number (decimal, e.g., 0.878 for 87.8%)",
-    "occupancy_with_commitments": "Optional: number (decimal)",
-    "same_property_noi_growth_6m": "Optional: number (decimal, e.g., 0.023 for 2.3%)"
+    "_comment": "IMPORTANT: Search MD&A 'PROPERTY PORTFOLIO' section or quarterly tables",
+    "total_properties": "REQUIRED: number - Search for 'XX properties', 'Number of properties', 'property count' in MD&A",
+    "total_gla_sf": "REQUIRED: number - GLA in square feet (search for 'XX million square feet', 'GLA (000s', 'gross leasable area')",
+    "occupancy_rate": "REQUIRED: number (decimal) - Search MD&A for occupancy tables or 'Occupancy:' sections",
+    "occupancy_with_commitments": "Optional: number (decimal) - Occupancy including committed leases if disclosed",
+    "same_property_noi_growth_6m": "Optional: number (decimal) - Same property NOI growth if disclosed"
   }}
 }}
 ```
@@ -97,11 +97,13 @@ Template: `.claude/knowledge/phase2_extraction_template.json`
 **CRITICAL Extraction Rules:**
 1. **Numbers:** NO commas or $ signs (e.g., 2611435 not $2,611,435)
 2. **Units:** All amounts in thousands unless specified
-3. **Missing data:** Use 0 (NOT null) for numeric fields if unknown
-4. **Decimals:** Occupancy/growth rates as decimals (0.878 for 87.8%, NOT 87.8)
-5. **Periods:** Use most recent period (e.g., Q2) for top-level fields
-6. **Flat structure:** balance_sheet fields must be flat (NO nested objects)
-7. **Field names:** EXACTLY as shown (mortgages_noncurrent NOT mortgages_loans_noncurrent)
+3. **Portfolio data:** GLA in full square feet (e.g., 9673000 for 9.673 million sq ft)
+4. **Missing data:** Only use 0 if truly not disclosed after thorough search (check MD&A, quarterly tables, footnotes)
+5. **Decimals:** Occupancy/growth rates as decimals (0.878 for 87.8%, NOT 87.8)
+6. **Periods:** Use most recent period (e.g., Q2) for top-level fields
+7. **Flat structure:** balance_sheet fields must be flat (NO nested objects)
+8. **Field names:** EXACTLY as shown (mortgages_noncurrent NOT mortgages_loans_noncurrent)
+9. **Search thoroughly:** Property count and GLA are usually in MD&A 'PROPERTY PORTFOLIO' section - search the entire document
 
 **Validation Checks:**
 - Balance sheet must balance: Assets = Liabilities + Equity (within 1% tolerance)

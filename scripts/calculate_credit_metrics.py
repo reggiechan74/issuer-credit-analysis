@@ -273,7 +273,7 @@ def calculate_all_metrics(financial_data):
     return {
         'issuer_name': financial_data['issuer_name'],
         'reporting_date': financial_data['reporting_date'],
-        'report_period': financial_data.get('report_period', 'Unknown'),
+        'reporting_period': financial_data.get('reporting_period', 'Unknown'),
         'currency': financial_data.get('currency', 'Unknown'),
         'leverage_metrics': leverage_metrics,
         'reit_metrics': reit_metrics,
@@ -355,7 +355,7 @@ def main():
         print("\n📊 SUMMARY")
         print("=" * 60)
         print(f"Issuer: {result['issuer_name']}")
-        print(f"Period: {result['report_period']}")
+        print(f"Period: {result['reporting_period']}")
         print(f"\nLeverage:")
         print(f"  • Total Debt: {result['leverage_metrics']['total_debt']:,.0f}")
         print(f"  • Debt/Assets: {result['leverage_metrics']['debt_to_assets_percent']:.1f}%")

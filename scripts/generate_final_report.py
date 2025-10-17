@@ -280,7 +280,7 @@ def generate_final_report(metrics, analysis_sections, template):
     # Extract metrics
     issuer_name = metrics.get('issuer_name', 'Unknown Issuer')
     reporting_date = metrics.get('reporting_date', 'Unknown')
-    report_period = metrics.get('report_period', 'Unknown')
+    report_period = metrics.get('reporting_period', 'Unknown')  # Use consistent field name from Phase 2/3
     currency = metrics.get('currency', 'CAD')
 
     leverage_metrics = metrics.get('leverage_metrics', {})
@@ -307,9 +307,9 @@ def generate_final_report(metrics, analysis_sections, template):
     annualized_interest = coverage_ratios.get('annualized_interest_expense', 0)
     quarterly_interest = coverage_ratios.get('quarterly_interest_expense', 0)
 
-    occupancy = portfolio_metrics.get('occupancy_rate', 0)
-    occupancy_with_commitments = portfolio_metrics.get('occupancy_including_commitments', 0)
-    noi_growth = portfolio_metrics.get('same_property_noi_growth', 0)
+    occupancy = portfolio_metrics.get('occupancy_rate', 0) * 100  # Convert decimal to percentage
+    occupancy_with_commitments = portfolio_metrics.get('occupancy_including_commitments', 0) * 100  # Convert decimal to percentage
+    noi_growth = portfolio_metrics.get('same_property_noi_growth', 0) * 100  # Convert decimal to percentage
     property_count = portfolio_metrics.get('total_properties', 0)
     gla = portfolio_metrics.get('gla_sf', 0) / 1_000_000  # Convert to millions
 
@@ -527,7 +527,7 @@ def main():
         print("FINAL REPORT SUMMARY")
         print("=" * 70)
         print(f"Issuer: {metrics.get('issuer_name')}")
-        print(f"Period: {metrics.get('report_period')}")
+        print(f"Period: {metrics.get('reporting_period')}")
         print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 70)
 
