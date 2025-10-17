@@ -341,8 +341,33 @@ def generate_final_report(metrics, analysis_sections, template):
     rating_outlook = get_section(analysis_sections, 'Rating Outlook', 'RATING OUTLOOK')
     upgrade_factors = get_section(analysis_sections, 'Upgrade Factors', 'Factors That Could Lead to an Upgrade', 'RATING SENSITIVITY ANALYSIS')
     downgrade_factors = get_section(analysis_sections, 'Downgrade Factors', 'Factors That Could Lead to a Downgrade', 'RATING SENSITIVITY ANALYSIS')
-    scorecard_table = get_section(analysis_sections, 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard', 'FIVE-FACTOR CREDIT SCORECARD', 'Rating Methodology and Scorecard', 'Scorecard Assessment')
+    scorecard_table = get_section(analysis_sections, 'Factor-by-Factor Scoring', 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard', 'FIVE-FACTOR CREDIT SCORECARD', 'Rating Methodology and Scorecard', 'Scorecard Assessment')
     key_observations = get_section(analysis_sections, 'Key Observations', 'KEY OBSERVATIONS AND CONCLUSIONS')
+
+    # Extract key drivers from Executive Summary (look for bullets after "Key Credit Drivers:")
+    drivers = []
+    if exec_summary and 'Key Credit Drivers:' in exec_summary:
+        # Extract section after "Key Credit Drivers:"
+        drivers_section = exec_summary.split('Key Credit Drivers:')[1].split('\n\n')[0]
+        # Extract bullet points
+        for line in drivers_section.split('\n'):
+            line = line.strip()
+            if line.startswith('-') or line.startswith('•'):
+                drivers.append(line.lstrip('-•').strip())
+
+        # Remove "Key Credit Drivers:" section from executive summary to avoid duplication
+        # Template will re-add it with numbered list
+        exec_summary = exec_summary.split('**Key Credit Drivers:**')[0].strip()
+
+    # Remove "Scorecard-Indicated Rating:" from exec summary if present (template adds it)
+    if exec_summary and 'Scorecard-Indicated Rating:' in exec_summary:
+        # Remove just the first line with the rating
+        exec_summary = re.sub(r'\*\*Scorecard-Indicated Rating:\s*[^\n]+\*\*\n\n', '', exec_summary)
+
+    # Extract outlook (remove duplicate header if present)
+    if rating_outlook and rating_outlook.startswith('**Outlook:'):
+        # Remove the duplicate "Outlook: STABLE" header that's already in the narrative
+        rating_outlook = re.sub(r'^\*\*Outlook:\s+\w+\*\*\n\n', '', rating_outlook)
 
     # Enhanced template sections (from Report A)
     company_background = get_section(analysis_sections, 'Company Background', 'Profile', 'PROFILE')
@@ -466,10 +491,10 @@ def generate_final_report(metrics, analysis_sections, template):
         'RATING_DISCLAIMER': 'This is a credit analysis report, not an official credit rating assignment.',
         'SCORECARD_RATING': 'Ba2 / Ba3 (analysis-derived)',
         'EXECUTIVE_SUMMARY_NARRATIVE': exec_summary,
-        'DRIVER_1': 'See Executive Summary',
-        'DRIVER_2': '',
-        'DRIVER_3': '',
-        'DRIVER_4': '',
+        'DRIVER_1': drivers[0] if len(drivers) > 0 else 'See Executive Summary',
+        'DRIVER_2': drivers[1] if len(drivers) > 1 else '',
+        'DRIVER_3': drivers[2] if len(drivers) > 2 else '',
+        'DRIVER_4': drivers[3] if len(drivers) > 3 else '',
         'OUTLOOK': 'Stable',
         'OUTLOOK_RATIONALE': rating_outlook,
         'OUTLOOK_SCENARIOS': '',
