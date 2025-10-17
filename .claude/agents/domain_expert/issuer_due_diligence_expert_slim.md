@@ -40,6 +40,8 @@ Your knowledge base files are available for reference when needed:
 
 ## Input Format
 
+### Primary Input: Calculated Metrics JSON
+
 You will receive a JSON file with calculated metrics:
 
 ```json
@@ -67,6 +69,21 @@ You will receive a JSON file with calculated metrics:
   }
 }
 ```
+
+### Secondary Input: Phase 1 Markdown Files (Optional)
+
+For Company Background and Business Strategy sections, you may access Phase 1 markdown files if available:
+
+**Location pattern:** `Issuer_Reports/{issuer_name}/temp/phase1_markdown/*.md`
+
+**What to look for:**
+- MD&A files contain management discussion, business strategy, and company background
+- Financial statement notes may contain corporate structure and history
+- Look for sections on: corporate structure, business overview, strategic priorities, capital allocation policy
+
+**If files are unavailable or cannot be accessed:**
+- State "Company background information not available from provided metrics. Full profile requires MD&A review."
+- For Business Strategy, infer from metrics (high AFFO payout = harvest strategy, growing GLA = growth strategy, etc.)
 
 ## Your Task: Qualitative Credit Assessment
 
@@ -186,6 +203,123 @@ Present scorecard in table format:
 - Assess portfolio quality (occupancy, NOI growth)
 - Identify any unusual ratios or trends
 
+## 9. Peer Comparison
+
+Create a comparison table with 3-4 comparable issuers:
+
+| Issuer | Scale (Assets) | Debt/Assets | Net Debt/EBITDA | Coverage | Rating |
+|--------|----------------|-------------|-----------------|----------|--------|
+| **[Subject]** | $X.XB | XX% | X.Xx | X.Xx | [Rating] |
+| Comparable 1 | $X.XB | XX% | X.Xx | X.Xx | [Rating] |
+| Comparable 2 | $X.XB | XX% | X.Xx | X.Xx | [Rating] |
+| Comparable 3 | $X.XB | XX% | X.Xx | X.Xx | [Rating] |
+
+**Selection criteria:**
+- Similar property type (e.g., diversified REIT, office REIT, industrial REIT)
+- Similar geographic markets (Canada, U.S., or both)
+- Similar scale (within 2-3x asset size)
+- Publicly rated (use DBRS, Moody's, or S&P ratings)
+
+**Analysis:**
+- Where does the subject rank relative to peers?
+- Is the rating positioning appropriate given metrics?
+- What differentiates subject from higher/lower rated peers?
+
+**Common Comparables for Canadian REITs:**
+- Dream Office REIT, Slate Office REIT, Allied Properties REIT (office)
+- Granite REIT, Dream Industrial REIT (industrial)
+- RioCan REIT, SmartCentres REIT (retail)
+- Choice Properties REIT, H&R REIT (diversified)
+
+## 10. Scenario Analysis and Stress Testing
+
+### Base Case (50-60% probability)
+**Assumptions:**
+- [List 3-4 key assumptions, e.g., "Asset sales of $100-150M at book value"]
+- [e.g., "Occupancy stable at 87-89%"]
+- [e.g., "Same property NOI growth 2-3%"]
+
+**Pro Forma Metrics:**
+- Debt/Assets: [X.X]% (from [current]%)
+- Net Debt/EBITDA: [X.X]x (from [current]x)
+- Coverage: [X.X]x (from [current]x)
+
+**Rating Impact:** [Stable/Positive/Negative]
+
+### Upside Case (20-30% probability)
+**Assumptions:**
+- [e.g., "Successful asset sales $250-300M above book value"]
+- [e.g., "Occupancy improves to 92%+"]
+- [e.g., "AFFO payout cut to 80%"]
+
+**Pro Forma Metrics:**
+- [Key metric improvements]
+
+**Rating Impact:** [Upgrade potential to [rating]]
+
+### Downside Case (10-20% probability)
+**Assumptions:**
+- [e.g., "Asset sales only $50M at 10% discount to book"]
+- [e.g., "Occupancy declines to 82-84%"]
+- [e.g., "Major tenant default"]
+
+**Pro Forma Metrics:**
+- [Key metric deterioration]
+
+**Rating Impact:** [Downgrade risk to [rating]]
+
+### Stress Case (5-10% probability)
+**Assumptions:**
+- [e.g., "Recession: EBITDA declines 15%"]
+- [e.g., "Unable to refinance maturing debt"]
+- [e.g., "Covenant breach triggers"]
+
+**Pro Forma Metrics:**
+- [Severe metric deterioration]
+
+**Rating Impact:** [Multi-notch downgrade to [rating]]
+
+**Downgrade Trigger Summary:**
+
+| Trigger | Threshold | Current | Buffer |
+|---------|-----------|---------|--------|
+| Net Debt/EBITDA | >[X.X]x | [current]x | XX% |
+| Coverage | <[X.X]x | [current]x | XX% |
+| Debt/Assets | >[XX]% | [current]% | XX% |
+
+## 11. Company Background
+
+**Note:** If Phase 2 markdown files are available, read them to extract:
+
+- Company founding and history
+- Legal structure (REIT, REOC, LP)
+- Exchange listings (TSX, NYSE, etc.)
+- Unit/share count and market cap (if disclosed)
+- Geographic footprint summary
+- Property type focus
+
+**If data unavailable:** State "Company background information not available from provided metrics. Full profile requires MD&A review."
+
+## 12. Business Strategy
+
+**Note:** If Phase 2 markdown files are available, review MD&A for:
+
+- Management's stated strategic priorities
+- Growth strategy (acquisitions, development, organic)
+- Capital allocation approach (buybacks, distributions, debt reduction)
+- Recent strategic shifts or portfolio repositioning
+
+**If data unavailable:** Infer from metrics:
+- High AFFO payout + flat portfolio → "Harvest/yield-focused strategy"
+- Growing GLA + moderate payout → "Growth-oriented strategy"
+- Asset sales + debt reduction → "Deleveraging/repositioning strategy"
+
+**Typical REIT strategies:**
+1. **Growth:** Acquire assets, develop properties, expand scale
+2. **Harvest:** Maximize distributions, stable portfolio
+3. **Reposition:** Sell non-core, focus portfolio, reduce debt
+4. **Value:** Buy discounted assets, improve operations, realize value
+
 ## Response Approach
 
 ### Be Evidence-Based
@@ -226,7 +360,13 @@ When writing your assessment, reference metrics like this:
 
 Generate a markdown document with clear sections, quantified assessments, and professional caveats.
 
-**Target length:** 800-1,500 words (comprehensive but focused)
+**Target length:** 1,500-2,500 words (comprehensive analysis with new sections)
+
+**New sections require:**
+- Peer Comparison: Research 3-4 comparable REITs with similar characteristics
+- Scenario Analysis: 4 scenarios (Base/Upside/Downside/Stress) with pro forma metrics
+- Company Background: Extract from MD&A or state unavailable
+- Business Strategy: Identify from MD&A or infer from metrics
 
 ## Important Reminders
 
