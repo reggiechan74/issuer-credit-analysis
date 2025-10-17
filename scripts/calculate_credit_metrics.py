@@ -239,6 +239,36 @@ def calculate_all_metrics(financial_data):
     reit_metrics = calculate_reit_metrics(financial_data)
     coverage_ratios = calculate_coverage_ratios(financial_data)
 
+    # Extract portfolio metrics if available
+    portfolio_metrics = {}
+    if 'portfolio' in financial_data:
+        portfolio = financial_data['portfolio']
+
+        # Handle null values by converting to 0
+        gla = portfolio.get('total_gla_sf')
+        if gla is None:
+            gla = 0
+
+        # Support both naming conventions for occupancy_with_commitments
+        occ_with_commitments = (
+            portfolio.get('occupancy_with_commitments') or
+            portfolio.get('occupancy_including_commitments', 0)
+        )
+
+        # Support both naming conventions for same property NOI growth
+        noi_growth = (
+            portfolio.get('same_property_noi_growth_6m') or
+            portfolio.get('same_property_noi_growth', 0)
+        )
+
+        portfolio_metrics = {
+            'total_properties': portfolio.get('total_properties', 0),
+            'gla_sf': gla,
+            'occupancy_rate': portfolio.get('occupancy_rate', 0),
+            'occupancy_including_commitments': occ_with_commitments,
+            'same_property_noi_growth': noi_growth
+        }
+
     # Assemble complete output with issuer identification
     return {
         'issuer_name': financial_data['issuer_name'],
@@ -247,7 +277,8 @@ def calculate_all_metrics(financial_data):
         'currency': financial_data.get('currency', 'Unknown'),
         'leverage_metrics': leverage_metrics,
         'reit_metrics': reit_metrics,
-        'coverage_ratios': coverage_ratios
+        'coverage_ratios': coverage_ratios,
+        'portfolio_metrics': portfolio_metrics
     }
 
 

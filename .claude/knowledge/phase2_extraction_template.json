@@ -1,0 +1,61 @@
+{
+  "issuer_name": "REQUIRED: Full legal name of the issuer",
+  "reporting_date": "REQUIRED: YYYY-MM-DD format",
+  "reporting_period": "Human-readable period (e.g., 'Q2 2025')",
+  "currency": "REQUIRED: Currency code (CAD, USD, etc.)",
+
+  "balance_sheet": {
+    "_comment": "FLAT structure - all fields at top level, NO nested objects",
+    "total_assets": "REQUIRED: number",
+    "mortgages_noncurrent": "REQUIRED: number - Non-current mortgages/loans",
+    "mortgages_current": "REQUIRED: number - Current portion mortgages/loans",
+    "credit_facilities": "REQUIRED: number - Credit facility borrowings",
+    "senior_unsecured_debentures": "Optional: number (default 0)",
+    "cash": "REQUIRED: number - Cash and cash equivalents",
+    "investment_properties": "Optional: number",
+    "total_liabilities": "Optional: number",
+    "total_unitholders_equity": "Optional: number",
+    "common_units_outstanding": "Optional: number"
+  },
+
+  "income_statement": {
+    "_comment": "MUST include top-level noi, interest_expense, revenue",
+    "noi": "REQUIRED: number - Net Operating Income (most recent period)",
+    "interest_expense": "REQUIRED: number - Interest expense (positive number)",
+    "revenue": "REQUIRED: number - Total revenue (most recent period)",
+    "q2_2025": {
+      "_comment": "Optional: Detailed quarterly breakdown",
+      "revenue": "number",
+      "net_operating_income": "number"
+    }
+  },
+
+  "ffo_affo": {
+    "_comment": "MUST include top-level values for most recent period",
+    "ffo": "REQUIRED: number - FFO (most recent period)",
+    "affo": "REQUIRED: number - AFFO (most recent period)",
+    "ffo_per_unit": "REQUIRED: number - FFO per unit",
+    "affo_per_unit": "REQUIRED: number - AFFO per unit",
+    "distributions_per_unit": "REQUIRED: number - Distributions per unit",
+    "q2_2025": {
+      "_comment": "Optional: Detailed quarterly breakdown",
+      "ffo": "number",
+      "affo": "number"
+    }
+  },
+
+  "portfolio": {
+    "_comment": "Optional portfolio metrics",
+    "total_properties": "Optional: number (default 0)",
+    "total_gla_sf": "Optional: number (use 0 if unknown, NOT null)",
+    "occupancy_rate": "Optional: number (decimal, e.g., 0.878 for 87.8%)",
+    "occupancy_with_commitments": "Optional: number (decimal)",
+    "same_property_noi_growth_6m": "Optional: number (decimal, e.g., 0.023 for 2.3%)"
+  },
+
+  "validation": {
+    "_comment": "Optional validation checks",
+    "balance_sheet_balanced": "boolean",
+    "noi_margin_reasonable": "boolean"
+  }
+}

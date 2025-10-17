@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase 2 Extraction Schema",
+  "description": "Standardized JSON schema for Phase 2 financial data extraction. This schema MUST be followed by all extraction processes to ensure Phase 3 calculations work correctly.",
+  "type": "object",
+  "required": [
+    "issuer_name",
+    "reporting_date",
+    "currency",
+    "balance_sheet",
+    "income_statement",
+    "ffo_affo"
+  ],
+  "properties": {
+    "issuer_name": {
+      "type": "string",
+      "description": "Full legal name of the issuer"
+    },
+    "reporting_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Reporting date in YYYY-MM-DD format"
+    },
+    "reporting_period": {
+      "type": "string",
+      "description": "Human-readable reporting period (e.g., 'Q2 2025')"
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency code (e.g., 'CAD', 'USD')"
+    },
+    "data_quality": {
+      "type": "object",
+      "description": "Optional metadata about data quality",
+      "properties": {
+        "completeness": {
+          "type": "string",
+          "enum": ["strong", "moderate", "limited"]
+        },
+        "source": {
+          "type": "string"
+        },
+        "validation_notes": {
+          "type": "string"
+        }
+      }
+    },
+    "balance_sheet": {
+      "type": "object",
+      "description": "Balance sheet data (FLAT structure - no nested objects)",
+      "required": [
+        "total_assets",
+        "mortgages_noncurrent",
+        "mortgages_current",
+        "credit_facilities",
+        "cash"
+      ],
+      "properties": {
+        "reporting_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "total_assets": {
+          "type": "number",
+          "description": "Total assets (thousands)"
+        },
+        "investment_properties": {
+          "type": "number"
+        },
+        "investment_properties_held_for_sale": {
+          "type": "number"
+        },
+        "equity_accounted_investments": {
+          "type": "number"
+        },
+        "cash": {
+          "type": "number",
+          "description": "REQUIRED: Cash and cash equivalents"
+        },
+        "total_liabilities": {
+          "type": "number"
+        },
+        "mortgages_noncurrent": {
+          "type": "number",
+          "description": "REQUIRED: Non-current mortgages and loans payable"
+        },
+        "mortgages_current": {
+          "type": "number",
+          "description": "REQUIRED: Current portion of mortgages and loans"
+        },
+        "credit_facilities": {
+          "type": "number",
+          "description": "REQUIRED: Credit facility borrowings"
+        },
+        "senior_unsecured_debentures": {
+          "type": "number",
+          "description": "Senior unsecured debentures (optional, defaults to 0)"
+        },
+        "total_unitholders_equity": {
+          "type": "number"
+        },
+        "common_units_outstanding": {
+          "type": "number",
+          "description": "Number of common units/shares outstanding"
+        }
+      }
+    },
+    "income_statement": {
+      "type": "object",
+      "description": "Income statement data - MUST include top-level noi and interest_expense",
+      "required": [
+        "noi",
+        "interest_expense",
+        "revenue"
+      ],
+      "properties": {
+        "noi": {
+          "type": "number",
+          "description": "REQUIRED: Net Operating Income for the most recent period (e.g., Q2)"
+        },
+        "interest_expense": {
+          "type": "number",
+          "description": "REQUIRED: Interest expense for the most recent period (absolute value, positive number)"
+        },
+        "revenue": {
+          "type": "number",
+          "description": "REQUIRED: Total revenue for the most recent period"
+        },
+        "q2_2025": {
+          "type": "object",
+          "description": "Optional: Detailed Q2 2025 income statement"
+        },
+        "ytd_2025": {
+          "type": "object",
+          "description": "Optional: YTD 2025 income statement"
+        },
+        "q2_2024": {
+          "type": "object",
+          "description": "Optional: Q2 2024 comparative income statement"
+        },
+        "ytd_2024": {
+          "type": "object",
+          "description": "Optional: YTD 2024 comparative income statement"
+        }
+      }
+    },
+    "ffo_affo": {
+      "type": "object",
+      "description": "FFO/AFFO metrics - MUST include top-level values for most recent period",
+      "required": [
+        "ffo",
+        "affo",
+        "ffo_per_unit",
+        "affo_per_unit",
+        "distributions_per_unit"
+      ],
+      "properties": {
+        "ffo": {
+          "type": "number",
+          "description": "REQUIRED: Funds From Operations (most recent period, e.g., Q2)"
+        },
+        "affo": {
+          "type": "number",
+          "description": "REQUIRED: Adjusted Funds From Operations (most recent period)"
+        },
+        "ffo_per_unit": {
+          "type": "number",
+          "description": "REQUIRED: FFO per unit (most recent period)"
+        },
+        "affo_per_unit": {
+          "type": "number",
+          "description": "REQUIRED: AFFO per unit (most recent period)"
+        },
+        "distributions_per_unit": {
+          "type": "number",
+          "description": "REQUIRED: Distributions per unit (most recent period)"
+        },
+        "q2_2025": {
+          "type": "object",
+          "description": "Optional: Detailed Q2 2025 FFO/AFFO metrics"
+        },
+        "ytd_2025": {
+          "type": "object",
+          "description": "Optional: YTD 2025 FFO/AFFO metrics"
+        }
+      }
+    },
+    "portfolio": {
+      "type": "object",
+      "description": "Optional portfolio metrics",
+      "properties": {
+        "total_properties": {
+          "type": "number"
+        },
+        "total_gla_sf": {
+          "type": ["number", "null"],
+          "description": "Total gross leasable area in square feet"
+        },
+        "occupancy_rate": {
+          "type": "number",
+          "description": "Physical occupancy rate (decimal, e.g., 0.878 for 87.8%)"
+        },
+        "occupancy_with_commitments": {
+          "type": "number",
+          "description": "Occupancy including signed commitments (decimal)"
+        },
+        "same_property_noi_growth_6m": {
+          "type": "number",
+          "description": "6-month same property NOI growth (decimal, e.g., 0.023 for 2.3%)"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "description": "Optional validation checks",
+      "properties": {
+        "balance_sheet_balanced": {
+          "type": "boolean"
+        },
+        "noi_margin_reasonable": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

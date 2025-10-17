@@ -323,24 +323,26 @@ def generate_final_report(metrics, analysis_sections, template):
 
     # Extract Phase 4 sections (with flexible lookup for variations)
     def get_section(sections, *possible_names):
-        """Try multiple section name variations"""
+        """Try multiple section name variations with case-insensitive matching"""
         for name in possible_names:
-            if name in sections:
-                return sections[name]
-            # Try partial match (e.g., "Rating Outlook: NEGATIVE" matches "Rating Outlook")
+            # Try exact match (case-insensitive)
             for key in sections:
-                if key.startswith(name):
+                if key.upper() == name.upper():
+                    return sections[key]
+            # Try partial match (case-insensitive)
+            for key in sections:
+                if key.upper().startswith(name.upper()):
                     return sections[key]
         return 'Not available'
 
-    exec_summary = get_section(analysis_sections, 'Executive Summary')
-    credit_strengths = get_section(analysis_sections, 'Credit Strengths')
-    credit_challenges = get_section(analysis_sections, 'Credit Challenges')
-    rating_outlook = get_section(analysis_sections, 'Rating Outlook')
-    upgrade_factors = get_section(analysis_sections, 'Upgrade Factors')
-    downgrade_factors = get_section(analysis_sections, 'Downgrade Factors')
-    scorecard_table = get_section(analysis_sections, 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard')
-    key_observations = get_section(analysis_sections, 'Key Observations')
+    exec_summary = get_section(analysis_sections, 'Executive Summary', 'EXECUTIVE SUMMARY')
+    credit_strengths = get_section(analysis_sections, 'Credit Strengths', 'CREDIT STRENGTHS')
+    credit_challenges = get_section(analysis_sections, 'Credit Challenges', 'CREDIT CHALLENGES')
+    rating_outlook = get_section(analysis_sections, 'Rating Outlook', 'RATING OUTLOOK')
+    upgrade_factors = get_section(analysis_sections, 'Upgrade Factors', 'RATING SENSITIVITY ANALYSIS')
+    downgrade_factors = get_section(analysis_sections, 'Downgrade Factors', 'RATING SENSITIVITY ANALYSIS')
+    scorecard_table = get_section(analysis_sections, 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard', 'FIVE-FACTOR CREDIT SCORECARD')
+    key_observations = get_section(analysis_sections, 'Key Observations', 'KEY OBSERVATIONS AND CONCLUSIONS')
 
     # Build replacements dictionary
     replacements = {

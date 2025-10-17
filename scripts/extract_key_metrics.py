@@ -32,65 +32,87 @@ def create_extraction_prompt(markdown_text, output_path):
 
 **Output File:** `{output_path}`
 
+**CRITICAL: Follow this EXACT schema for Phase 3 compatibility**
+
+Schema reference: `.claude/knowledge/phase2_extraction_schema.json`
+Template: `.claude/knowledge/phase2_extraction_template.json`
+
 **Required JSON Structure:**
 
 ```json
 {{
-  "issuer_name": "string",
-  "reporting_date": "YYYY-MM-DD",
-  "report_period": "string (e.g., 'Q2 2025')",
-  "currency": "CAD or USD",
+  "issuer_name": "REQUIRED: Full legal name of issuer",
+  "reporting_date": "REQUIRED: YYYY-MM-DD format",
+  "reporting_period": "Human-readable period (e.g., 'Q2 2025')",
+  "currency": "REQUIRED: CAD or USD",
 
   "balance_sheet": {{
-    "total_assets": number (in thousands),
-    "investment_properties": number,
-    "cash": number,
-    "total_liabilities": number,
-    "mortgages_noncurrent": number,
-    "mortgages_current": number,
-    "credit_facilities": number,
-    "senior_unsecured_debentures": number,
-    "equity": number
+    "_comment": "FLAT structure - NO nested objects",
+    "total_assets": "REQUIRED: number",
+    "mortgages_noncurrent": "REQUIRED: number (non-current mortgages/loans)",
+    "mortgages_current": "REQUIRED: number (current portion)",
+    "credit_facilities": "REQUIRED: number (credit facility borrowings)",
+    "cash": "REQUIRED: number (cash and equivalents)",
+    "senior_unsecured_debentures": "Optional: number (default 0)",
+    "investment_properties": "Optional: number",
+    "total_liabilities": "Optional: number",
+    "total_unitholders_equity": "Optional: number"
   }},
 
   "income_statement": {{
-    "revenue": number (quarterly),
-    "property_operating_expenses": number,
-    "noi": number (net operating income),
-    "interest_expense": number (quarterly),
-    "net_income": number,
-    "ebitda": number
+    "_comment": "MUST include top-level noi, interest_expense, revenue",
+    "noi": "REQUIRED: number (Net Operating Income - most recent period)",
+    "interest_expense": "REQUIRED: number (positive value - most recent period)",
+    "revenue": "REQUIRED: number (most recent period)",
+    "q2_2025": {{
+      "_comment": "Optional detailed breakdown",
+      "revenue": "number",
+      "net_operating_income": "number"
+    }}
   }},
 
   "ffo_affo": {{
-    "ffo": number (quarterly),
-    "affo": number (quarterly),
-    "ffo_per_unit": number (quarterly),
-    "affo_per_unit": number (quarterly),
-    "distributions_per_unit": number (quarterly)
+    "_comment": "MUST include top-level values for most recent period",
+    "ffo": "REQUIRED: number (FFO - most recent period)",
+    "affo": "REQUIRED: number (AFFO - most recent period)",
+    "ffo_per_unit": "REQUIRED: number (FFO per unit)",
+    "affo_per_unit": "REQUIRED: number (AFFO per unit)",
+    "distributions_per_unit": "REQUIRED: number",
+    "q2_2025": {{
+      "_comment": "Optional detailed breakdown"
+    }}
   }},
 
   "portfolio": {{
-    "occupancy_rate": number (0-100),
-    "gla_sf": number (total square feet),
-    "same_property_noi_growth": number (percentage),
-    "property_count": number
+    "_comment": "Optional portfolio metrics",
+    "total_properties": "Optional: number (use 0 if unknown)",
+    "total_gla_sf": "Optional: number (use 0 if unknown, NOT null)",
+    "occupancy_rate": "Optional: number (decimal, e.g., 0.878 for 87.8%)",
+    "occupancy_with_commitments": "Optional: number (decimal)",
+    "same_property_noi_growth_6m": "Optional: number (decimal, e.g., 0.023 for 2.3%)"
   }}
 }}
 ```
 
-**Extraction Rules:**
-1. Extract numbers WITHOUT commas or $ signs (e.g., 2611435 not $2,611,435)
-2. All amounts in thousands (unless specified otherwise)
-3. Use null for missing fields
-4. Percentages as numbers only (92.5 not "92.5%")
-5. For quarterly data - do NOT annualize, keep quarterly values
+**CRITICAL Extraction Rules:**
+1. **Numbers:** NO commas or $ signs (e.g., 2611435 not $2,611,435)
+2. **Units:** All amounts in thousands unless specified
+3. **Missing data:** Use 0 (NOT null) for numeric fields if unknown
+4. **Decimals:** Occupancy/growth rates as decimals (0.878 for 87.8%, NOT 87.8)
+5. **Periods:** Use most recent period (e.g., Q2) for top-level fields
+6. **Flat structure:** balance_sheet fields must be flat (NO nested objects)
+7. **Field names:** EXACTLY as shown (mortgages_noncurrent NOT mortgages_loans_noncurrent)
 
 **Validation Checks:**
 - Balance sheet must balance: Assets = Liabilities + Equity (within 1% tolerance)
-- Revenue must be > 0
-- Occupancy must be 0-100%
-- NOI margin should be 40-70% for REITs (warning if outside range)
+- Interest expense must be POSITIVE number
+- Occupancy rates must be 0.0-1.0 (decimal format)
+- NOI margin should be 40-70% for REITs
+
+**After extraction, validate with:**
+```bash
+python scripts/validate_extraction_schema.py {output_path}
+```
 
 **Financial Statements:**
 
