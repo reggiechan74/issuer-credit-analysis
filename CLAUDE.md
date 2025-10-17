@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.0
+**Version:** 1.0.1
 **Last Updated:** 2025-10-17
-**Pipeline Version:** 1.0.0
+**Pipeline Version:** 1.0.1
 
 ## Project Overview
 
@@ -187,7 +187,9 @@ with open("Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json") as f:
 # Save output to: Issuer_Reports/Artis_REIT/temp/phase4_credit_analysis.md
 ```
 
-**Agent Profile:** `.claude/agents/issuer_due_diligence_expert_slim.md` (7.7KB)
+**Agent Profile:** `.claude/agents/domain_expert/issuer_due_diligence_expert_slim.md` (7.7KB)
+
+**Key Enhancement (v1.0.1):** The slim agent now uses parallel web searches for peer comparison research in Section 9, researching 3-4 comparable REITs simultaneously instead of sequentially for improved performance.
 
 **DO NOT** run Python scripts for Phase 4 - use the Task tool to invoke the agent directly.
 
@@ -207,8 +209,8 @@ with open("Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json") as f:
 - `templates/credit_opinion_template_enhanced.md` - Enhanced template with comprehensive sections (recommended)
 
 **Agent Definitions:**
-- `.claude/agents/issuer_due_diligence_expert_slim.md` - Slim agent (recommended)
-- `.claude/agents/issuer_due_diligence_expert.md` - Full agent (60KB, for complex cases)
+- `.claude/agents/domain_expert/issuer_due_diligence_expert_slim.md` - Slim agent (recommended, v1.0.1 with parallel peer research)
+- `.claude/agents/domain_expert/issuer_due_diligence_expert.md` - Full agent (60KB, for complex cases)
 
 **Slash Commands:**
 - `.claude/commands/analyzeREissuer.md` - Main analysis command

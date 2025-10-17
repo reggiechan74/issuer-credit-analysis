@@ -10,8 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Integration with financial data APIs (Bloomberg, FactSet)
 - Visualization dashboards for credit metrics
-- Peer comparison analytics
 - Additional asset class support (corporate bonds, structured finance)
+
+---
+
+## [1.0.1] - 2025-10-17
+
+### Changed
+- **Phase 4 Agent Enhancement:** Updated `issuer_due_diligence_expert_slim` agent to use parallel web searches for peer comparison research
+  - Section 9 (Peer Comparison) now researches 3-4 comparable REITs simultaneously instead of sequentially
+  - Added explicit parallel processing instructions with concrete examples
+  - Includes efficiency guideline emphasizing parallel tool calls
+  - Significantly improves Phase 4 execution time when generating peer comparisons
+
+### Added
+- Comprehensive peer comparison example report for Artis REIT with actual Q2 2025 data
+  - Dream Office REIT, Allied Properties REIT, H&R REIT, Choice Properties REIT
+  - All sources properly cited with URLs and dates
+  - Demonstrates parallel web research capabilities
+
+### Performance
+- **Peer Research Speed:** Reduced from sequential (N × search_time) to parallel (1 × search_time) for N peers
+- **Agent Efficiency:** Better utilization of Claude Code's concurrent tool execution capabilities
 
 ---
 
@@ -109,10 +129,10 @@ This project uses [Semantic Versioning](https://semver.org/):
 
 | Component | Version | Notes |
 |-----------|---------|-------|
-| Pipeline | 1.0.0 | Initial release with schema standardization |
+| Pipeline | 1.0.1 | Parallel peer research in Phase 4 agent |
 | Schema | 1.0.0 | Initial standardized schema |
-| CLAUDE.md | 1.0.0 | Initial guidance document |
-| CHANGELOG.md | 1.0.0 | Initial changelog |
+| CLAUDE.md | 1.0.1 | Updated with peer research enhancements |
+| CHANGELOG.md | 1.0.1 | Added v1.0.1 release notes |
 
 ---
 

@@ -3,6 +3,7 @@
 **Multi-phase credit analysis system for real estate investment trusts (REITs) using Claude Code agents.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](CHANGELOG.md)
 
 ## Overview
 
@@ -196,12 +197,14 @@ pytest tests/ --cov=scripts --cov-report=html
 **Size:** 7.7KB (85% reduction vs full agent)
 **Focus:** Qualitative credit assessment from pre-calculated metrics
 **Token Usage:** ~12,000 tokens per analysis
+**Version:** 1.0.1 (with parallel peer research)
 
 **Strengths:**
 - Fast execution (30-60 seconds)
+- Parallel web research for peer comparisons (new in v1.0.1)
 - Consistent output format
-- Comprehensive 5-factor scorecard
-- Evidence-based assessments
+- Comprehensive 5-factor scorecard including 12 detailed sections
+- Evidence-based assessments with proper citations
 
 ### issuer_due_diligence_expert (Full Version)
 
@@ -231,6 +234,8 @@ pytest tests/ --cov=scripts --cov-report=html
 
 ### Credit Analysis Sections
 
+The slim agent (v1.0.1) generates comprehensive reports with 12 sections:
+
 1. **Executive Summary** - Rating and credit story
 2. **Credit Strengths** - Quantified positive factors
 3. **Credit Challenges** - Risk factors with mitigants
@@ -239,6 +244,10 @@ pytest tests/ --cov=scripts --cov-report=html
 6. **Downgrade Factors** - Quantified triggers
 7. **5-Factor Scorecard** - Detailed rating methodology
 8. **Key Observations** - Portfolio quality, unusual metrics
+9. **Peer Comparison** - Parallel web research of 3-4 comparable REITs with citations (new in v1.0.1)
+10. **Scenario Analysis** - Base/Upside/Downside/Stress cases with pro forma metrics
+11. **Company Background** - Corporate structure, history, portfolio composition
+12. **Business Strategy** - Strategic priorities and capital allocation
 
 ### Safety Features
 
@@ -283,7 +292,7 @@ Contributions welcome! Areas of interest:
 - Enhanced portfolio quality metrics
 - Integration with financial data APIs
 - Visualization dashboards
-- Peer comparison analytics
+- Enhanced peer comparison analytics (parallel research implemented in v1.0.1)
 
 ## License
 
