@@ -1,0 +1,27 @@
+{
+  "issuer_name": "Sample Real Estate Investment Trust",
+  "reporting_date": "2025-06-30",
+  "report_period": "Q2 2025",
+  "currency": "CAD",
+  "leverage_metrics": {
+    "total_debt": 700000,
+    "net_debt": 675000,
+    "gross_assets": 1500000,
+    "debt_to_assets_percent": 46.67,
+    "net_debt_ratio": 45.0
+  },
+  "reit_metrics": {
+    "ffo": 15000,
+    "affo": 12000,
+    "ffo_per_unit": 0.25,
+    "affo_per_unit": 0.2,
+    "distributions_per_unit": 0.18,
+    "ffo_payout_ratio": 72.0,
+    "affo_payout_ratio": 90.0
+  },
+  "coverage_ratios": {
+    "noi_interest_coverage": 2.5,
+    "annualized_interest_expense": 48000,
+    "quarterly_interest_expense": 12000
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "issuer_name": "Sample Real Estate Investment Trust",
+  "reporting_date": "2025-06-30",
+  "report_period": "Q2 2025",
+  "currency": "CAD",
+  "balance_sheet": {
+    "total_assets": 1500000,
+    "investment_properties": 1200000,
+    "cash": 25000,
+    "total_liabilities": 800000,
+    "mortgages_noncurrent": 250000,
+    "mortgages_current": 150000,
+    "credit_facilities": 300000,
+    "equity": 700000
+  },
+  "income_statement": {
+    "revenue": 45000,
+    "property_operating_expenses": 15000,
+    "noi": 30000,
+    "interest_expense": 12000,
+    "net_income": 8000
+  },
+  "ffo_affo": {
+    "ffo": 15000,
+    "affo": 12000,
+    "ffo_per_unit": 0.25,
+    "affo_per_unit": 0.20,
+    "distributions_per_unit": 0.18
+  },
+  "portfolio": {
+    "occupancy_rate": 92.5,
+    "gla_sf": 5000000,
+    "same_property_noi_growth": 3.2,
+    "property_count": 50
+  }
+}

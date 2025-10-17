@@ -1,0 +1,11 @@
+# PDF Processing
+markitdown>=0.0.1a0
+
+# Date/Time
+pytz>=2024.1
+
+# Testing
+pytest>=8.0.0
+
+# Optional: If using Anthropic API directly (not required for Claude Code usage)
+# anthropic>=0.39.0
