@@ -373,4 +373,5 @@ If you encounter schema issues:
 ---
 
 **Last Updated:** 2025-10-17
-**Schema Version:** 1.0
+**Schema Version:** 1.0.0
+**Pipeline Version:** 1.0.0

@@ -15,69 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.0.0] - 2025-10-17
+## [1.0.0] - 2025-10-17
 
-### Added - Schema Standardization
-
-#### New Files
-- **`scripts/validate_extraction_schema.py`** - Schema validation tool to catch Phase 2→Phase 3 compatibility issues
-- **`.claude/knowledge/phase2_extraction_schema.json`** - Formal JSON Schema specification for Phase 2 extraction output
-- **`.claude/knowledge/phase2_extraction_template.json`** - Practical template with inline comments
-- **`.claude/knowledge/SCHEMA_README.md`** - Comprehensive schema documentation with examples and troubleshooting
-- **`PIPELINE_QUICK_REFERENCE.md`** - Quick reference guide for common operations
-- **`.claude/commands/analyzeREissuer.md`** - Slash command for complete pipeline execution
-- **`.claude/commands/README.md`** - Slash commands documentation
-- **`CLAUDE.md`** - Guidance file for Claude Code instances
-- **`CHANGELOG.md`** - This file
-
-#### Features
-- **Schema validation** - Automated validation catches errors before Phase 3 calculations
-- **Backward compatibility** - Phase 3 now supports both old and new field naming conventions
-- **Null handling** - Graceful conversion of null values to 0 for numeric fields
-- **Clear error messages** - Field path reporting with fix suggestions
-- **Slash command integration** - `/analyzeREissuer` command for streamlined workflow
-
-### Changed
-
-#### Phase 2 (extract_key_metrics.py)
-- Updated extraction prompt with explicit schema instructions
-- Added references to schema files in prompt
-- Emphasized critical rules (flat structure, no nulls, decimal rates)
-- Added validation step to recommended workflow
-
-#### Phase 3 (calculate_credit_metrics.py)
-- Added null value handling (converts to 0)
-- Added support for both `occupancy_with_commitments` and `occupancy_including_commitments`
-- Added support for both `same_property_noi_growth_6m` and `same_property_noi_growth`
-- Improved error messages with dot-notation field paths
-- Enhanced portfolio metrics extraction with defensive coding
-
-#### Documentation
-- Reorganized agents and knowledge into `.claude/` folder structure
-- Created comprehensive schema documentation
-- Added quick reference guide
-- Improved README with schema compliance notes
-
-### Fixed
-- **Critical:** Schema inconsistencies between Phase 2 extraction and Phase 3 calculations
-- **TypeError:** Division by None when `portfolio.total_gla_sf` was null
-- **KeyError:** Missing top-level `income_statement.noi` and `ffo_affo.*` fields
-- **KeyError:** Nested `balance_sheet` structure causing field access errors
-- Occupancy rate interpretation (decimal vs percentage format)
-
-### Breaking Changes
-None - Backward compatibility maintained for existing extractions
-
-### Migration Notes
-- Existing Phase 2 JSON files continue to work due to backward compatibility
-- New extractions automatically use standardized schema
-- Run `python scripts/validate_extraction_schema.py <file>` to check compatibility
-
----
-
-## [1.0.0] - 2025-10-16
-
-### Added - Initial Release
+### Added - Initial Release with Schema Standardization
 
 #### Core Pipeline
 - **Phase 1:** PDF to Markdown conversion using markitdown
@@ -86,15 +26,28 @@ None - Backward compatibility maintained for existing extractions
 - **Phase 4:** Qualitative credit analysis using slim agent
 - **Phase 5:** Final report generation with templating
 
+#### Schema Standardization
+- **`scripts/validate_extraction_schema.py`** - Schema validation tool
+- **`.claude/knowledge/phase2_extraction_schema.json`** - JSON Schema specification
+- **`.claude/knowledge/phase2_extraction_template.json`** - Schema template with comments
+- **`.claude/knowledge/SCHEMA_README.md`** - Complete schema documentation
+- **`PIPELINE_QUICK_REFERENCE.md`** - Quick reference guide
+
 #### Agent Profiles
-- `issuer_due_diligence_expert_slim.md` - 7.7KB optimized agent (recommended)
-- `issuer_due_diligence_expert.md` - 60KB full agent for complex scenarios
+- `.claude/agents/issuer_due_diligence_expert_slim.md` - 7.7KB optimized agent (recommended)
+- `.claude/agents/issuer_due_diligence_expert.md` - 60KB full agent for complex scenarios
 
 #### Scripts
-- `preprocess_pdfs_markitdown.py` - PDF preprocessing
-- `extract_key_metrics.py` - Financial data extraction prompt generator
-- `calculate_credit_metrics.py` - Safe calculation library (no hardcoded data)
-- `generate_final_report.py` - Report template engine
+- `scripts/preprocess_pdfs_markitdown.py` - PDF preprocessing
+- `scripts/extract_key_metrics.py` - Financial data extraction prompt generator
+- `scripts/calculate_credit_metrics.py` - Safe calculation library (no hardcoded data)
+- `scripts/generate_final_report.py` - Report template engine
+- `scripts/validate_extraction_schema.py` - Schema validation
+
+#### Slash Commands
+- `.claude/commands/analyzeREissuer.md` - Complete pipeline execution
+- `.claude/commands/verifyreport.md` - Report verification
+- `.claude/commands/README.md` - Commands documentation
 
 #### Testing
 - Comprehensive test suite covering all 5 phases
@@ -104,6 +57,9 @@ None - Backward compatibility maintained for existing extractions
 #### Features
 - **Multi-phase architecture** - Avoids context length limitations
 - **Token efficiency** - 85% reduction (121,500 → 18,000 tokens)
+- **Schema validation** - Automated error detection before Phase 3
+- **Backward compatibility** - Supports legacy field naming conventions
+- **Null handling** - Graceful conversion of null to 0 for numeric fields
 - **Issuer-specific folders** - Organized output with temp/reports separation
 - **Zero-API dependency** - Works entirely within Claude Code
 - **Production-ready reports** - Professional Moody's-style credit opinions
@@ -120,12 +76,24 @@ None - Backward compatibility maintained for existing extractions
 - Balance sheet validation
 - NOI margin checks
 - Occupancy range validation
+- Schema compliance validation
 
 #### Documentation
-- Comprehensive README.md
+- `README.md` - Comprehensive project documentation
+- `CLAUDE.md` - Guidance for Claude Code instances
+- `CHANGELOG.md` - Version history and release notes
+- `PIPELINE_QUICK_REFERENCE.md` - Quick reference guide
+- `.claude/knowledge/SCHEMA_README.md` - Schema documentation
 - Domain knowledge documentation
 - Research summaries
 - Scope and limitations
+
+### Fixed
+- **Critical:** Schema inconsistencies between Phase 2 extraction and Phase 3 calculations
+- **TypeError:** Division by None when `portfolio.total_gla_sf` was null
+- **KeyError:** Missing top-level `income_statement.noi` and `ffo_affo.*` fields
+- **KeyError:** Nested `balance_sheet` structure causing field access errors
+- Occupancy rate interpretation (decimal vs percentage format)
 
 ---
 
@@ -141,9 +109,10 @@ This project uses [Semantic Versioning](https://semver.org/):
 
 | Component | Version | Notes |
 |-----------|---------|-------|
-| Pipeline | 2.0 | Schema standardization |
-| Schema | 1.0 | Initial standardized schema |
+| Pipeline | 1.0.0 | Initial release with schema standardization |
+| Schema | 1.0.0 | Initial standardized schema |
 | CLAUDE.md | 1.0.0 | Initial guidance document |
+| CHANGELOG.md | 1.0.0 | Initial changelog |
 
 ---
 

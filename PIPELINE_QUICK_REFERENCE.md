@@ -259,4 +259,5 @@ python scripts/validate_extraction_schema.py <your_file.json>
 ---
 
 **Last Updated:** 2025-10-17
-**Pipeline Version:** 2.0 (Schema Standardization)
+**Pipeline Version:** 1.0.0
+**Schema Version:** 1.0.0
