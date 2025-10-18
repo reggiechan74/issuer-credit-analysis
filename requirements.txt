@@ -1,5 +1,8 @@
 # PDF Processing
-markitdown>=0.0.1a0
+markitdown>=0.0.1a0  # Legacy - being phased out
+pymupdf4llm>=0.0.27  # Enhanced PDF to Markdown conversion
+camelot-py[cv]>=1.0.9  # Table extraction from PDFs
+opencv-python-headless>=4.7.0.68  # Required for Camelot
 
 # Date/Time
 pytz>=2024.1

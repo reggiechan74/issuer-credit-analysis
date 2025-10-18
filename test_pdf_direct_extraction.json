@@ -1,0 +1,40 @@
+{
+  "issuer_name": "Artis Real Estate Investment Trust",
+  "reporting_date": "2025-06-30",
+  "reporting_period": "Q2 2025 (Six months ended June 30, 2025)",
+  "currency": "CAD",
+  "balance_sheet": {
+    "total_assets": 2611435,
+    "mortgages_noncurrent": 217903,
+    "mortgages_current": 423519,
+    "credit_facilities": 0,
+    "cash": 16639,
+    "senior_unsecured_debentures": 0,
+    "investment_properties": 2025831,
+    "total_liabilities": 0,
+    "unitholders_equity": 1474366
+  },
+  "income_statement": {
+    "noi": 61896,
+    "interest_expense": 34367,
+    "revenue": 121384,
+    "property_operating_expenses": 42466,
+    "net_income": -12065
+  },
+  "ffo_affo": {
+    "ffo": 34491,
+    "affo": 16939,
+    "ffo_per_unit": 0.34,
+    "affo_per_unit": 0.17,
+    "distributions_per_unit": 0.30,
+    "ffo_payout_ratio": 0.882,
+    "affo_payout_ratio": 1.765,
+    "weighted_avg_units_diluted": 101500
+  },
+  "portfolio": {
+    "property_count": 82,
+    "total_gla_sf": 9549000,
+    "occupancy_rate": 0.878,
+    "occupancy_with_commitments": 0.890
+  }
+}

@@ -23,11 +23,13 @@ You are tasked with performing comprehensive credit analysis on a real estate is
 **NO MANUAL AGENT INVOCATION NEEDED!**
 
 When you run `/analyzeREissuer`, Claude Code will:
-- **Phase 1:** Run bash script to convert PDFs → markdown
-- **Phase 2:** Extract financial data (you handle this directly, no API key needed)
+- **Phase 1 (Sequential):** Convert PDFs → markdown (PyMuPDF4LLM + Camelot, foreground)
+- **Phase 2 (Sequential):** Extract JSON from markdown (file references, after Phase 1)
 - **Phase 3:** Run bash script for calculations
 - **Phase 4:** **You invoke the slim agent automatically** (using Task tool)
 - **Phase 5:** Run bash script to generate final report
+
+**Key Architecture:** Sequential markdown-first approach ensures token efficiency (~1K prompt vs ~136K direct PDF reading) and reliable extraction with pre-processed, structured data.
 
 **You DO NOT need to manually activate the agent** - the slash command handles everything.
 
@@ -35,73 +37,69 @@ When you run `/analyzeREissuer`, Claude Code will:
 
 Execute the following phases sequentially:
 
-### Phase 1: PDF Preprocessing (markitdown)
-Convert PDF(s) to markdown format.
+### Phase 1: PDF to Markdown Conversion
+Convert PDFs to clean, structured markdown using PyMuPDF4LLM + Camelot.
 
-**IMPORTANT:** Before running Phase 1, extract the issuer name from command arguments.
+**IMPORTANT:** This phase MUST complete before Phase 2 begins.
 
 **Steps:**
 1. Identify all PDF arguments (those with @ prefix)
 2. Identify issuer name (last argument without @ prefix, or ask user if not provided)
-3. Pass issuer name to script using `--issuer-name` parameter
+3. Pass issuer name and PDFs to preprocessing script
 
 ```bash
 echo "=========================================="
-echo "PHASE 1: PDF PREPROCESSING"
+echo "PHASE 1: PDF TO MARKDOWN CONVERSION"
 echo "=========================================="
 
-# Convert PDFs to markdown (auto-creates folder: Issuer_Reports/{issuer_name}/temp/phase1_markdown)
-python scripts/preprocess_pdfs_markitdown.py \
+# Phase 1: Convert PDFs to markdown (FOREGROUND - must complete first)
+echo "📄 Phase 1: Converting PDFs to markdown (PyMuPDF4LLM + Camelot)..."
+python scripts/preprocess_pdfs_enhanced.py \
   --issuer-name "{ISSUER_NAME}" \
   {PDF_FILES}
 
 if [ $? -ne 0 ]; then
-  echo "❌ Phase 1 failed: PDF preprocessing error"
+  echo "❌ Phase 1 failed: PDF conversion error"
   exit 1
 fi
 
-echo "✅ Phase 1 complete: Markdown files created in Issuer_Reports/{ISSUER_NAME}/temp/phase1_markdown/"
+echo "✅ Phase 1 complete: Markdown files created"
+echo "   → Output: ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase1_markdown/"
 ```
 
-**Output Structure:**
-```
-Issuer_Reports/
-  {Issuer_Name}/
-    temp/
-      phase1_markdown/
-        {pdf1}.md
-        {pdf2}.md
-```
+**Output:** `./Issuer_Reports/{issuer}/temp/phase1_markdown/*.md`
 
-### Phase 2: Financial Data Extraction (Claude Code)
-Extract structured data using Claude Code (no API key required).
+### Phase 2: Extract Financial Data from Markdown
+Extract structured JSON using file references (context-efficient).
 
-**Process:**
-1. Run extraction script with issuer name and markdown files
-2. Script creates extraction prompt
-3. Read the prompt and extract financial data according to schema
-4. Save JSON to issuer's temp folder
+**IMPORTANT:** Runs AFTER Phase 1 completes. Uses markdown files from Phase 1.
 
 ```bash
 echo ""
 echo "=========================================="
-echo "PHASE 2: FINANCIAL DATA EXTRACTION"
+echo "PHASE 2: MARKDOWN TO JSON EXTRACTION"
 echo "=========================================="
 
-# Create extraction prompt
-python scripts/extract_key_metrics.py \
+# Phase 2: Extract JSON from markdown files (uses file references)
+echo "📊 Phase 2: Extracting financial data from markdown..."
+python scripts/extract_key_metrics_efficient.py \
   --issuer-name "{ISSUER_NAME}" \
-  ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase1_markdown/*.md
+  Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase1_markdown/*.md
 
-# Read prompt and perform extraction (you handle this step directly)
+if [ $? -ne 0 ]; then
+  echo "❌ Phase 2 failed: Extraction error"
+  exit 1
+fi
+
+echo "✅ Phase 2 complete: JSON data extracted"
+echo "   → Output: ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase2_extracted_data.json"
 ```
 
-**Manual Steps (Claude Code handles automatically):**
-1. Read the prompt from `./Issuer_Reports/{issuer}/temp/phase2_extraction_prompt.txt`
-2. Extract the financial data according to the prompt schema
-3. Save JSON to `./Issuer_Reports/{issuer}/temp/phase2_extracted_data.json`
-
-**Required JSON Schema:** issuer_name, reporting_date, balance_sheet (assets, liabilities, debt), income_statement (revenue, NOI, interest), ffo_affo (FFO, AFFO, distributions), portfolio (occupancy, NOI growth)
+**What Claude Code Does:**
+1. Read the extraction prompt from `./Issuer_Reports/{issuer}/temp/phase2_extraction_prompt.txt`
+2. Use Read tool to access markdown files (file references, ~1K tokens)
+3. Extract financial data according to schema
+4. Save JSON to `./Issuer_Reports/{issuer}/temp/phase2_extracted_data.json`
 
 **Output:** `./Issuer_Reports/{issuer}/temp/phase2_extracted_data.json`
 
@@ -116,7 +114,7 @@ echo "=========================================="
 
 # Calculate credit metrics (output auto-generated in same folder as input)
 python scripts/calculate_credit_metrics.py \
-  ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase2_extracted_data.json
+  Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase2_extracted_data.json
 
 if [ $? -ne 0 ]; then
   echo "❌ Phase 3 failed: Calculation error"
@@ -152,12 +150,12 @@ After Phase 3 completes:
 **Steps:**
 ```python
 # Read metrics
-metrics_path = "./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json"
+metrics_path = "Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json"
 with open(metrics_path) as f:
     metrics = json.load(f)
 
 # Invoke agent using Task tool
-# Save output to: ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_credit_analysis.md
+# Save output to: Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_credit_analysis.md
 ```
 
 **Output:** `./Issuer_Reports/{issuer}/temp/phase4_credit_analysis.md`
@@ -177,8 +175,8 @@ echo "=========================================="
 
 # Generate final credit opinion report (auto-saves to reports/ folder with timestamp)
 python scripts/generate_final_report.py \
-  ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json \
-  ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_credit_analysis.md
+  Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json \
+  Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_credit_analysis.md
 
 if [ $? -ne 0 ]; then
   echo "❌ Phase 5 failed: Report generation error"
@@ -218,11 +216,13 @@ Issuer_Reports/
 
 ## Current Implementation Status
 
-✅ **Phase 1: Working** - PDF to markdown conversion (markitdown)
-✅ **Phase 2: Working** - LLM extraction with validation
+✅ **Phase 1: Working** - PDF to markdown conversion (PyMuPDF4LLM + Camelot, foreground)
+✅ **Phase 2: Working** - Markdown→JSON extraction (file references, ~1K tokens)
 ✅ **Phase 3: Working** - Safe calculation library (pure functions)
 ✅ **Phase 4: Working** - Slim agent for credit analysis (7.7KB agent profile)
 ✅ **Phase 5: Working** - Report template engine (pure Python, 0 tokens)
+
+**Architecture:** Sequential markdown-first approach. Phase 1 completes before Phase 2 begins, ensuring clean pre-processed data and context-efficient extraction.
 
 ## Success Indicators
 
@@ -248,16 +248,18 @@ Issuer_Reports/
 
 ## Token Usage Optimization
 
-This multi-phase approach reduces token usage by **85%**:
+This multi-phase approach reduces token usage by **89%** with markdown-first extraction:
 - ❌ Old approach: 121,500 tokens (failed with context errors)
-- ✅ New approach: 18,000 tokens total across all phases
-  - Phase 1: 0 tokens (markitdown preprocessing)
-  - Phase 2: ~6,000 tokens (LLM extraction with validation)
+- ✅ New approach: ~13,000 tokens total across all phases
+  - Phase 1: 0 tokens (Python preprocessing, PyMuPDF4LLM+Camelot)
+  - Phase 2: ~1,000 tokens (file references, not embedded content)
   - Phase 3: 0 tokens (pure Python calculations)
   - Phase 4: ~12,000 tokens (slim agent credit analysis)
   - Phase 5: 0 tokens (pure Python templating)
 
-**Total Cost:** ~$0.45 per issuer analysis
+**Key Benefit:** File references (~1K tokens) vs direct PDF reading (~136K tokens) preserves context for extraction logic.
+
+**Total Cost:** ~$0.30 per issuer analysis
 
 ## Example Usage
 

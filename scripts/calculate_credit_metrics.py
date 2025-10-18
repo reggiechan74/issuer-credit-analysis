@@ -262,7 +262,7 @@ def calculate_all_metrics(financial_data):
         )
 
         portfolio_metrics = {
-            'total_properties': portfolio.get('total_properties', 0),
+            'total_properties': portfolio.get('property_count', portfolio.get('total_properties', 0)),
             'gla_sf': gla,
             'occupancy_rate': portfolio.get('occupancy_rate', 0),
             'occupancy_including_commitments': occ_with_commitments,

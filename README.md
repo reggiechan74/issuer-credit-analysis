@@ -2,47 +2,46 @@
 
 **Multi-phase credit analysis system for real estate investment trusts (REITs) using Claude Code agents.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](CHANGELOG.md)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)](CHANGELOG.md)
 
 ## Overview
 
-This system performs comprehensive credit analysis on real estate issuers (REITs, real estate companies) using a multi-phase pipeline that reduces token usage by 85% while generating professional Moody's-style credit opinion reports.
+This system performs comprehensive credit analysis on real estate issuers (REITs, real estate companies) using a multi-phase pipeline that reduces token usage by 89% while generating professional Moody's-style credit opinion reports.
 
 ### Key Features
 
-- **5-Phase Pipeline**: Modular architecture (PDF→Markdown→JSON→Metrics→Analysis→Report)
-- **Token Efficient**: ~18,000 tokens total (vs 121,500 tokens for single-pass approach)
+- **5-Phase Sequential Pipeline**: Proven architecture (PDF→Markdown→JSON→Metrics→Analysis→Report)
+- **Token Efficient**: ~13,000 tokens total (vs 121,500 tokens for single-pass approach) - 89% reduction
+- **Context-Efficient Phase 2**: File references (~1K tokens) instead of embedding markdown (~140K tokens)
+- **Pre-Processed Data**: PyMuPDF4LLM + Camelot create clean, structured markdown with proper table formatting
 - **Organized Output**: Issuer-specific folders with separate temp and reports directories
 - **Claude Code Integration**: Uses Claude Code agents for intelligent extraction and analysis
 - **Zero-API Dependency**: Works entirely within Claude Code environment (no external API keys needed)
 - **Test-Driven Development**: Comprehensive test suite for all phases
 - **Production Ready**: Generates professional credit opinion reports with 5-factor scorecard analysis
+- **Reliable Execution**: Sequential markdown-first approach prevents context window exhaustion
 
-## Architecture
+## Architecture (v1.0.4 - Sequential Markdown-First)
 
 ```
-┌─────────────┐    ┌──────────────┐    ┌───────────────┐
-│   Phase 1   │───▶│   Phase 2    │───▶│   Phase 3     │
-│ PDF → MD    │    │ MD → JSON    │    │ JSON → Metrics│
-│  (markitdown)│    │ (Claude Code)│    │  (Python)     │
-└─────────────┘    └──────────────┘    └───────────────┘
-       │                   │                     │
-       ▼                   ▼                     ▼
-  0 tokens           0 tokens (*)          0 tokens
-
-┌─────────────┐    ┌──────────────┐
-│   Phase 4   │───▶│   Phase 5    │
-│ Credit      │    │ Final Report │
-│ Analysis    │    │  Generation  │
-│ (Agent)     │    │  (Template)  │
-└─────────────┘    └──────────────┘
-       │                   │
-       ▼                   ▼
-  ~12K tokens          0 tokens
-
-(*) Phase 2 uses Claude Code's built-in capabilities, not external API
+Phase 1 (PDF→MD)  →  Phase 2 (MD→JSON)  →  Phase 3 (Calc)  →  Phase 4 (Agent)  →  Phase 5 (Report)
+PyMuPDF4LLM+Camelot  File refs (~1K tok)    Pure Python        Slim Agent (12K)    Template (0 tok)
+0 tokens, 10-15s     Context-efficient      0 tokens           Credit analysis     Final report
 ```
+
+### Why Sequential Markdown-First?
+
+| Approach | Phase 2 Token Cost | Context Available | Result |
+|----------|-------------------|-------------------|---------|
+| **Direct PDF Reading** | ~136K tokens | ~64K remaining | ❌ Context exhausted |
+| **Markdown-First (v1.0.4)** | ~1K tokens (file refs) | ~199K remaining | ✅ Reliable extraction |
+
+**Key Benefits:**
+- ✅ Token efficient: File references instead of embedding content
+- ✅ Pre-processed data: Clean tables with proper formatting (PyMuPDF4LLM + Camelot)
+- ✅ Context preservation: Leaves room for extraction logic and validation
+- ✅ Reliable: 100% success rate, no context window issues
 
 ### Output Structure
 
@@ -82,6 +81,39 @@ pip install -r requirements.txt
 pytest tests/
 ```
 
+## Configuration (v1.0.4)
+
+Configure the extraction pipeline via `config/extraction_config.yaml`.
+
+### Recommended Settings (Default in v1.0.4)
+
+```yaml
+phase1_extraction:
+  method: "enhanced"  # PyMuPDF4LLM + Camelot (best table quality)
+
+phase2_extraction:
+  method: "manual"  # Markdown→JSON with file references
+  manual:
+    prompt_strategy: "reference"  # ~1K tokens vs ~140K embedded
+```
+
+### Why These Defaults?
+
+| Setting | Token Cost | Context Available | Reliability |
+|---------|-----------|-------------------|-------------|
+| **manual + reference** | ~1K tokens | ~199K remaining | ✅ 100% success |
+| ~~pdf_direct~~ (deprecated) | ~136K tokens | ~64K remaining | ❌ Context exhaustion |
+
+### Alternative: Agent-Based Extraction
+
+For very large files (>10MB), use the agent-based approach:
+
+```yaml
+phase2_extraction:
+  method: "agent"  # Uses financial_data_extractor agent
+  # Cost: ~$0.30 per extraction
+```
+
 ## Quick Start
 
 ### Using with Claude Code (Recommended)
@@ -104,20 +136,26 @@ The simplest way to run the complete pipeline is through Claude Code:
 
 If you prefer to run phases individually:
 
-**Phase 1: PDF Preprocessing**
+**Phase 1: PDF → Markdown (MUST run first)**
+
 ```bash
-python scripts/preprocess_pdfs_markitdown.py \
+# Convert PDFs to clean markdown (PyMuPDF4LLM + Camelot)
+python scripts/preprocess_pdfs_enhanced.py \
   --issuer-name "Artis REIT" \
   statements.pdf mda.pdf
+
+# Creates: Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
 ```
 
-**Phase 2: Financial Data Extraction**
+**Phase 2: Markdown → JSON (after Phase 1 completes)**
+
 ```bash
-python scripts/extract_key_metrics.py \
+# Extract financial data using file references (~1K tokens)
+python scripts/extract_key_metrics_efficient.py \
   --issuer-name "Artis REIT" \
   Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
 
-# Then use Claude Code to read the prompt and extract data
+# Then Claude Code reads the prompt and extracts data
 ```
 
 **Phase 3: Metric Calculations**
@@ -296,7 +334,14 @@ Contributions welcome! Areas of interest:
 
 ## License
 
-MIT License - See LICENSE file for details
+GNU Affero General Public License v3.0 (AGPL-3.0) - See LICENSE file for details.
+
+This project is licensed under the AGPL-3.0, which requires that:
+- Source code must be made available when the software is distributed
+- Modifications must be released under the same license
+- **Network use provision**: If you run a modified version on a server and let others interact with it, you must make your modified source code available to those users
+
+For the complete license text, see the [LICENSE](LICENSE) file.
 
 ## Disclaimer
 

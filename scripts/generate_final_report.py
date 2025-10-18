@@ -599,15 +599,16 @@ def main():
             clean_name = re.sub(r'[^a-zA-Z0-9_-]', '', clean_name)
 
             # Infer issuer folder from metrics path (e.g., ./Issuer_Reports/{issuer}/temp/...)
-            metrics_path = Path(args.metrics_json)
+            metrics_path = Path(args.metrics_json).resolve()  # Convert to absolute path
             # Navigate up from temp/ to issuer folder
             if 'temp' in metrics_path.parts:
                 temp_index = metrics_path.parts.index('temp')
                 issuer_folder = Path(*metrics_path.parts[:temp_index])
                 reports_folder = issuer_folder / 'reports'
             else:
-                # Fallback: create in Issuer_Reports/{clean_name}/reports/
-                reports_folder = Path(f'./Issuer_Reports/{clean_name}/reports')
+                # Fallback: create in Issuer_Reports/{clean_name}/reports/ (absolute path)
+                cwd = Path.cwd()
+                reports_folder = cwd / 'Issuer_Reports' / clean_name / 'reports'
 
             # Create reports folder
             reports_folder.mkdir(parents=True, exist_ok=True)

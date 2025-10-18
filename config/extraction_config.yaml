@@ -1,0 +1,153 @@
+# Extraction Configuration for Issuer Credit Analysis Pipeline
+# Version: 1.1.0 - Direct PDF Extraction with Parallel Processing
+# Last Updated: 2025-10-17
+
+# ============================================================================
+# PHASE 1: PDF TO MARKDOWN EXTRACTION
+# ============================================================================
+phase1_extraction:
+  # Method options:
+  #   - "enhanced": PyMuPDF4LLM + Camelot hybrid (recommended for best table quality)
+  #   - "skip": Skip Phase 1 if using agent-based extraction
+  #
+  # Recommendation: "enhanced" provides best table extraction quality
+  method: "enhanced"
+
+  # Output directory for markdown files
+  markdown_output_dir: "temp/phase1_markdown"
+
+  # Save markdown files for debugging/analysis
+  # Set to false if using agent-based Phase 2 and don't need artifacts
+  save_markdown: true
+
+
+# ============================================================================
+# PHASE 2: DATA EXTRACTION TO JSON
+# ============================================================================
+phase2_extraction:
+  # Method options:
+  #   - "manual": Claude Code reads markdown files (RECOMMENDED - v1.0.x)
+  #     ✅ Efficient: Uses file references (~1K tokens vs ~136K for direct PDF reading)
+  #     ✅ Reliable: Pre-processed markdown with clean tables
+  #     ✅ Context-efficient: Leaves room for extraction logic
+  #     ✅ Free (uses built-in Claude Code reading)
+  #     ⚠️  Requires Phase 1 to complete first (10-15s preprocessing)
+  #
+  #   - "pdf_direct": Claude Code reads PDFs directly (DEPRECATED - causes context exhaustion)
+  #     ❌ Token inefficient: ~136K tokens just to read PDFs
+  #     ❌ Context exhaustion: Leaves no room for extraction
+  #     ❌ Unreliable: Fails with large financial statements
+  #     ⚠️  Not recommended - use "manual" instead
+  #
+  #   - "agent": Use financial_data_extractor agent (alternative)
+  #     ✅ Handles large files (>25K tokens) without chunking
+  #     ✅ Built-in validation and error handling
+  #     💰 Cost: ~$0.30 per extraction
+  #
+  # Recommendation: "manual" (proven approach - efficient and reliable)
+  method: "manual"
+
+  # Agent-specific settings (when method: "agent")
+  agent:
+    # Agent type to use for extraction
+    agent_type: "financial_data_extractor"
+
+    # Fallback to manual extraction if agent fails
+    fallback_to_manual: true
+
+    # Maximum retries for agent extraction
+    max_retries: 2
+
+  # PDF Direct extraction settings (when method: "pdf_direct")
+  pdf_direct:
+    # Use native Claude Code PDF reading
+    # No chunking needed - Claude Code handles large PDFs
+    use_native_pdf_reading: true
+
+    # Validate extraction after completion
+    validate_after_extraction: true
+
+  # Manual extraction settings (when method: "manual" - legacy)
+  manual:
+    # Prompt generation strategy:
+    #   - "reference": Generate small prompt with file references (efficient)
+    #   - "embedded": Embed full content in prompt (DEPRECATED - 140K tokens!)
+    #
+    # Recommendation: "reference" if using manual mode
+    prompt_strategy: "reference"
+
+    # Automatic file chunking for large files
+    auto_chunk_large_files: true
+
+    # Chunk size for files exceeding 25K tokens
+    chunk_size_lines: 2000
+
+  # Output directory for extracted JSON
+  json_output_dir: "temp"
+
+  # Schema validation (runs automatically after extraction)
+  validate_schema: true
+
+
+# ============================================================================
+# GENERAL SETTINGS
+# ============================================================================
+general:
+  # Currency code (CAD or USD)
+  default_currency: "CAD"
+
+  # Verbose logging
+  verbose: false
+
+  # Temporary file retention
+  keep_temp_files: true
+
+
+# ============================================================================
+# PERFORMANCE SETTINGS
+# ============================================================================
+performance:
+  # Token usage estimation
+  estimate_tokens: true
+
+  # Show progress bars
+  show_progress: true
+
+  # Maximum file size for direct PDF reading (MB)
+  # Files larger than this will fall back to markitdown
+  max_pdf_size_mb: 10
+
+
+# ============================================================================
+# WORKFLOW PRESETS
+# ============================================================================
+# Uncomment a preset to quickly configure the pipeline
+# Or use individual settings above for custom configuration
+
+# Preset 1: MARKDOWN_FIRST (v1.0.x - RECOMMENDED)
+# preset: "markdown_first"
+#   - phase1: enhanced (foreground, completes before Phase 2)
+#   - phase2: manual (reads markdown with file references)
+#   - Result: Token-efficient, reliable extraction
+#   - ✅ Active by default - proven approach
+
+# Preset 2: AGENT_BASED (alternative for very large files)
+# preset: "agent_based"
+#   - phase1: enhanced
+#   - phase2: agent (financial_data_extractor)
+#   - Result: Best for files >10MB or complex tables
+#   - 💰 Cost: ~$0.30 per extraction
+
+# Preset 3: PARALLEL_DIRECT (DEPRECATED - causes context exhaustion)
+# preset: "parallel_direct"
+#   - phase1: enhanced (background)
+#   - phase2: pdf_direct (foreground)
+#   - Result: FAILS - Claude Code runs out of context reading large PDFs
+#   - ❌ Not recommended - use "markdown_first" instead
+
+# Preset 4: PDF_ONLY (DEPRECATED - not recommended)
+# preset: "pdf_only"
+#   - phase1: skip
+#   - phase2: pdf_direct
+#   - Result: FAILS - same context exhaustion issues
+#   - ❌ Not recommended
