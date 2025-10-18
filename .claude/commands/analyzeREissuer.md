@@ -12,11 +12,11 @@ You are tasked with performing comprehensive credit analysis on a real estate is
 
 - `$1`: Path to financial statements PDF (use @ prefix for file reference)
 - Additional PDFs: Can provide multiple PDF files (e.g., consolidated statements + MD&A)
-- `issuer-name`: **REQUIRED** issuer name for folder organization (last argument without @ prefix)
+- `issuer-name`: **OPTIONAL** issuer name for folder organization (last argument without @ prefix). If not provided, the first PDF filename will be used.
 
 **Example:** `/analyzeREissuer @statements.pdf @mda.pdf "Artis REIT"`
 
-**IMPORTANT:** You must extract the issuer name from the command arguments and pass it to all phases using `--issuer-name` parameter. The issuer name creates folder structure: `Issuer_Reports/{issuer_name}/temp/` and `Issuer_Reports/{issuer_name}/reports/`
+**IMPORTANT:** The issuer name (from arguments or first PDF filename) creates folder structure: `Issuer_Reports/{issuer_name}/temp/` and `Issuer_Reports/{issuer_name}/reports/`
 
 ## Overview: What Happens Automatically
 
@@ -40,12 +40,18 @@ Execute the following phases sequentially:
 ### Phase 1: PDF to Markdown Conversion
 Convert PDFs to clean, structured markdown using PyMuPDF4LLM + Camelot.
 
-**IMPORTANT:** This phase MUST complete before Phase 2 begins.
+**IMPORTANT:**
+- This phase MUST complete before Phase 2 begins
+- **DO NOT read PDF files into context** - pass the file paths directly to the Python script
+- **DO NOT attempt to determine issuer name from PDF content** - use command arguments or filename only
+- The preprocessing script handles all PDF parsing internally
 
 **Steps:**
-1. Identify all PDF arguments (those with @ prefix)
-2. Identify issuer name (last argument without @ prefix, or ask user if not provided)
-3. Pass issuer name and PDFs to preprocessing script
+1. Extract PDF file paths from command arguments (those with @ prefix)
+2. Determine issuer name:
+   - If last argument has no @ prefix, use it as issuer name
+   - Otherwise, extract issuer name from first PDF filename (remove extension and path)
+3. Immediately run the preprocessing script (do NOT read PDFs or search for issuer name)
 
 ```bash
 echo "=========================================="
@@ -263,17 +269,16 @@ This multi-phase approach reduces token usage by **89%** with markdown-first ext
 
 ## Example Usage
 
-**IMPORTANT:** Always provide issuer name as the last argument (without @ prefix).
-
 ```bash
-# Multiple PDFs (financial statements + MD&A) - RECOMMENDED
+# Multiple PDFs with explicit issuer name - RECOMMENDED
 /analyzeREissuer @ArtisREIT-Q2-25-Consol-FS-Aug-7.pdf @ArtisREIT-Q2-25-MDA-Aug-7.pdf "Artis REIT"
 
-# Single PDF
+# Single PDF with explicit issuer name
 /analyzeREissuer @CapitaLand-Q2-25-FS.pdf "CapitaLand Ascendas REIT"
 
-# Complex issuer name with spaces
-/analyzeREissuer @statements.pdf @mda.pdf "Allied Properties Real Estate Investment Trust"
+# Without issuer name (uses first PDF filename)
+/analyzeREissuer @ArtisREIT-Q2-25-Consol-FS-Aug-7.pdf @ArtisREIT-Q2-25-MDA-Aug-7.pdf
+# Creates folder: Artis_REIT/ (from "ArtisREIT-Q2-25-Consol-FS-Aug-7.pdf")
 ```
 
 **What gets created:**

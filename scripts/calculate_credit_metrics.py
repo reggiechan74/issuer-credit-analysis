@@ -159,7 +159,8 @@ def calculate_reit_metrics(financial_data):
 
     # Calculate payout ratios
     ffo_payout = (ffo_data['distributions_per_unit'] / ffo_data['ffo_per_unit']) * 100
-    affo_payout = (ffo_data['distributions_per_unit'] / ffo_data['affo_per_unit']) * 100
+    # Handle AFFO=0 case (some REITs don't report AFFO)
+    affo_payout = (ffo_data['distributions_per_unit'] / ffo_data['affo_per_unit']) * 100 if ffo_data['affo_per_unit'] > 0 else 0.0
 
     return {
         'ffo': ffo_data['ffo'],
