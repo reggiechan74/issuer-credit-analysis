@@ -14,6 +14,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.5] - 2025-10-18
+
+### Fixed
+- **Critical Fix:** Annualized interest calculation in `scripts/calculate_credit_metrics.py`
+  - **Root Cause:** `calculate_coverage_ratios()` hardcoded assumption that all interest_expense was quarterly (×4 multiplier)
+  - **Impact:** Semi-annual data was incorrectly annualized (e.g., Dream Industrial REIT: $169,484 instead of $84,742 - 100% overstatement)
+  - **Solution:** Added intelligent period detection logic that identifies:
+    - Semi-annual periods: "six months", "6 months" → multiply by 2
+    - Quarterly periods: "three months", "quarterly", "quarter" → multiply by 4
+    - Annual periods: "year", "annual" → multiply by 1
+    - Unknown periods: Default to quarterly with warning
+  - **New Metadata:** Added `annualization_factor` and `detected_period` fields to output
+  - **Field Rename:** `quarterly_interest_expense` → `period_interest_expense` (more accurate terminology)
+  - **Validation:** Discovered via comprehensive validation report for Dream Industrial REIT Q2 2025
+
+### Validation Details
+- **Test Case:** Dream Industrial REIT Q2 2025 (six months ended June 30, 2025)
+- **Period Interest Expense:** $42,371 (actual 6-month data from financial statements)
+- **Before Fix:** $42,371 × 4 = $169,484 (wrong - treated as quarterly)
+- **After Fix:** $42,371 × 2 = $84,742 (correct - detected as semi-annual)
+- **Coverage Ratio:** 4.40x (remained correct because both NOI and interest were same period)
+
+### Migration Notes
+- Existing Phase 3 outputs should be regenerated for accuracy
+- No schema changes - backward compatible with existing JSON structure
+- New fields (`annualization_factor`, `detected_period`) are additive enhancements
+
+### Performance
+- No performance impact
+- Detection adds ~10 lines of code (minimal overhead)
+- Warning messages help identify edge cases where period can't be detected
+
+---
+
 ## [1.0.4] - 2025-10-17
 
 ### Changed - REVERT v1.1.0 Parallel PDF Approach
@@ -266,10 +300,10 @@ This project uses [Semantic Versioning](https://semver.org/):
 
 | Component | Version | Notes |
 |-----------|---------|-------|
-| Pipeline | 1.0.1 | Parallel peer research in Phase 4 agent |
+| Pipeline | 1.0.5 | Fixed annualized interest calculation |
 | Schema | 1.0.0 | Initial standardized schema |
-| CLAUDE.md | 1.0.1 | Updated with peer research enhancements |
-| CHANGELOG.md | 1.0.1 | Added v1.0.1 release notes |
+| CLAUDE.md | 1.0.4 | Sequential markdown-first architecture |
+| CHANGELOG.md | 1.0.5 | Added v1.0.5 release notes |
 
 ---
 
