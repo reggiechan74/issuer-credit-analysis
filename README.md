@@ -2,7 +2,7 @@
 
 **Multi-phase credit analysis system for real estate investment trusts (REITs) using Claude Code agents.**
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)](CHANGELOG.md)
 
 ## Overview
@@ -372,12 +372,12 @@ Contributions welcome! Areas of interest:
 
 ## License
 
-GNU Affero General Public License v3.0 (AGPL-3.0) - See LICENSE file for details.
+GNU General Public License v3.0 (GPL-3.0) - See LICENSE file for details.
 
-This project is licensed under the AGPL-3.0, which requires that:
+This project is licensed under the GPL-3.0, which requires that:
 - Source code must be made available when the software is distributed
 - Modifications must be released under the same license
-- **Network use provision**: If you run a modified version on a server and let others interact with it, you must make your modified source code available to those users
+- You may use this software for any purpose, but modified versions distributed to others must also be open source under GPL-3.0
 
 For the complete license text, see the [LICENSE](LICENSE) file.
 
