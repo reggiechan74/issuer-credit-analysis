@@ -15,7 +15,44 @@
     "investment_properties": "Optional: number",
     "total_liabilities": "Optional: number",
     "total_unitholders_equity": "Optional: number",
-    "common_units_outstanding": "Optional: number"
+    "common_units_outstanding": "Optional: number - Basic weighted average units/shares",
+    "diluted_units_outstanding": "Optional: number - Diluted weighted average units/shares"
+  },
+
+  "dilution_detail": {
+    "_comment": "OPTIONAL: Extract when issuer discloses dilution calculation in MD&A. Examples: Artis REIT Q2 2025 MD&A page 21",
+    "_usage": "Provides transparency on dilution sources and materiality for credit analysis",
+    "basic_units": "number - Starting point (matches common_units_outstanding)",
+    "dilutive_instruments": {
+      "_comment": "Breakdown by instrument type - use 0 for instruments not present",
+      "restricted_units": "number - RSUs/PSUs (usually 0.5-2% dilution)",
+      "deferred_units": "number - DSUs/DUs for directors (usually <1% dilution)",
+      "stock_options": "number - Employee/director options (usually 1-3% dilution)",
+      "convertible_debentures": "number - If-converted units (can be material: 5-15%)",
+      "warrants": "number - Outstanding warrants (varies)",
+      "other": "number - Other dilutive securities"
+    },
+    "diluted_units_calculated": "number - basic_units + sum(dilutive_instruments)",
+    "diluted_units_reported": "number - What issuer reports (may exclude anti-dilutive instruments)",
+    "dilution_percentage": "number - (diluted - basic) / basic * 100",
+    "reconciliation_note": "string - Explain any variance between calculated vs reported",
+    "disclosure_source": "string - 'Q2 2025 MD&A page 21'",
+    "_example_artis": {
+      "basic_units": 99444,
+      "dilutive_instruments": {
+        "restricted_units": 1500,
+        "deferred_units": 500,
+        "stock_options": 0,
+        "convertible_debentures": 0,
+        "warrants": 0,
+        "other": 0
+      },
+      "diluted_units_calculated": 101444,
+      "diluted_units_reported": 101444,
+      "dilution_percentage": 2.01,
+      "reconciliation_note": "Calculated matches reported - no anti-dilutive exclusions",
+      "disclosure_source": "Q2 2025 MD&A page 21"
+    }
   },
 
   "income_statement": {

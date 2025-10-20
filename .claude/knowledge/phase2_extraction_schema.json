@@ -109,6 +109,66 @@
         }
       }
     },
+    "dilution_detail": {
+      "type": "object",
+      "description": "Optional detailed breakdown of share dilution (extract when issuer discloses calculation in MD&A)",
+      "properties": {
+        "basic_units": {
+          "type": "number",
+          "description": "Basic weighted average units (starting point for dilution calc)"
+        },
+        "dilutive_instruments": {
+          "type": "object",
+          "description": "Breakdown of dilutive securities by type",
+          "properties": {
+            "restricted_units": {
+              "type": "number",
+              "description": "Dilutive effect of restricted share/unit awards (RSUs/PSUs)"
+            },
+            "deferred_units": {
+              "type": "number",
+              "description": "Dilutive effect of deferred share/unit awards (DSUs/DUs)"
+            },
+            "stock_options": {
+              "type": "number",
+              "description": "Dilutive effect of employee/director stock options"
+            },
+            "convertible_debentures": {
+              "type": "number",
+              "description": "Dilutive effect of convertible debt (if-converted basis)"
+            },
+            "warrants": {
+              "type": "number",
+              "description": "Dilutive effect of outstanding warrants"
+            },
+            "other": {
+              "type": "number",
+              "description": "Other dilutive securities not categorized above"
+            }
+          }
+        },
+        "diluted_units_calculated": {
+          "type": "number",
+          "description": "Sum of basic + all dilutive instruments (for reconciliation)"
+        },
+        "diluted_units_reported": {
+          "type": "number",
+          "description": "Diluted units as reported by issuer (may differ if anti-dilutive instruments excluded)"
+        },
+        "dilution_percentage": {
+          "type": "number",
+          "description": "Percentage dilution: (diluted - basic) / basic * 100"
+        },
+        "reconciliation_note": {
+          "type": "string",
+          "description": "Explanation of any variance between calculated and reported diluted units"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'Q2 2025 MD&A page 21')"
+        }
+      }
+    },
     "income_statement": {
       "type": "object",
       "description": "Income statement data - MUST include top-level noi and interest_expense",

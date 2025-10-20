@@ -187,6 +187,125 @@ Use these EXACT field names (case-sensitive):
 
 **Note:** Phase 3 now supports both naming conventions for backward compatibility, but new extractions should use the standardized names.
 
+## Dilution Tracking (Optional)
+
+### Overview
+
+The `dilution_detail` section provides transparency on share dilution sources and materiality for credit analysis. Extract this when the issuer discloses dilution calculations in their MD&A.
+
+### When to Extract
+
+✅ **Extract dilution_detail when:**
+- Issuer provides detailed dilution calculation (e.g., Artis REIT Q2 2025 MD&A page 21)
+- Shows breakdown by instrument type (RSUs, options, convertibles, etc.)
+- Useful for assessing dilution materiality and quality
+
+❌ **Skip dilution_detail when:**
+- Issuer only reports basic vs diluted totals (e.g., DIR)
+- No detailed breakdown available
+- Just include `common_units_outstanding` and `diluted_units_outstanding` in balance_sheet
+
+### Structure
+
+```json
+{
+  "dilution_detail": {
+    "basic_units": 99444,
+    "dilutive_instruments": {
+      "restricted_units": 1500,        // RSUs/PSUs
+      "deferred_units": 500,           // DSUs (director awards)
+      "stock_options": 0,              // Employee options
+      "convertible_debentures": 0,     // If-converted units
+      "warrants": 0,                   // Outstanding warrants
+      "other": 0                       // Other dilutive securities
+    },
+    "diluted_units_calculated": 101444,
+    "diluted_units_reported": 101444,
+    "dilution_percentage": 2.01,
+    "reconciliation_note": "Calculated matches reported - no anti-dilutive exclusions",
+    "disclosure_source": "Q2 2025 MD&A page 21"
+  }
+}
+```
+
+### Typical Dilution Levels by Instrument
+
+| Instrument | Typical Range | Credit Concern |
+|------------|---------------|----------------|
+| Restricted Units (RSUs/PSUs) | 0.5-2% | Low - part of normal compensation |
+| Deferred Units (DSUs) | <1% | Low - director compensation only |
+| Stock Options | 1-3% | Low-Moderate - typical for REITs |
+| Convertible Debentures | 5-15% | **Moderate-High** - can be material |
+| Warrants | Varies | Case-by-case assessment |
+
+### Credit Analysis Use Cases
+
+**1. Assess Dilution Materiality:**
+```
+Artis REIT: 2.01% dilution (101,444 diluted vs 99,444 basic)
+→ Low dilution risk, minimal equity overhang
+→ Positive for credit quality
+```
+
+**2. Identify Material Convertibles:**
+```
+If convertible_debentures = 10,000 units (10% dilution):
+→ Material equity overhang
+→ Review conversion terms and potential forced conversion scenarios
+→ Factor into debt capacity assessment
+```
+
+**3. Governance/Disclosure Quality:**
+```
+Provides detailed breakdown → Higher transparency
+Only reports totals → Standard disclosure
+→ Can be factored into governance score
+```
+
+### Example: Artis REIT (Q2 2025 MD&A Page 21)
+
+```json
+{
+  "balance_sheet": {
+    "common_units_outstanding": 99444,
+    "diluted_units_outstanding": 101444
+  },
+  "dilution_detail": {
+    "basic_units": 99444,
+    "dilutive_instruments": {
+      "restricted_units": 1500,
+      "deferred_units": 500,
+      "stock_options": 0,
+      "convertible_debentures": 0,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 101444,
+    "diluted_units_reported": 101444,
+    "dilution_percentage": 2.01,
+    "reconciliation_note": "All dilutive instruments included, no anti-dilutive exclusions",
+    "disclosure_source": "Q2 2025 MD&A page 21"
+  }
+}
+```
+
+### Reconciliation Notes - Common Scenarios
+
+**Scenario 1: Calculated = Reported**
+```
+"reconciliation_note": "Calculated matches reported - no anti-dilutive exclusions"
+```
+
+**Scenario 2: Calculated > Reported (Anti-dilutive Exclusion)**
+```
+"reconciliation_note": "Issuer excluded 500 anti-dilutive options per IAS 33"
+```
+
+**Scenario 3: Calculated < Reported (Missing Detail)**
+```
+"reconciliation_note": "Full detail not disclosed - 200 units unattributed to specific instrument"
+```
+
 ## Complete Example
 
 ```json
