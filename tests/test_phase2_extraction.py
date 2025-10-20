@@ -142,9 +142,16 @@ class TestPhase2OutputFormat:
         """Test that extraction script exists and has proper interface"""
         from pathlib import Path
 
-        # Check that the efficient extraction script exists
-        script_path = Path(__file__).parent.parent / 'scripts' / 'extract_key_metrics_efficient.py'
+        # Check that the v2 enhanced extraction script exists
+        script_path = Path(__file__).parent.parent / 'scripts' / 'extract_key_metrics_v2.py'
         assert script_path.exists(), f"Extraction script not found at {script_path}"
+
+        # Also check supporting modules
+        indexer_path = Path(__file__).parent.parent / 'scripts' / 'extraction_indexer.py'
+        assert indexer_path.exists(), f"Indexer module not found at {indexer_path}"
+
+        extractor_path = Path(__file__).parent.parent / 'scripts' / 'section_extractor.py'
+        assert extractor_path.exists(), f"Extractor module not found at {extractor_path}"
 
     def test_extraction_output_structure(self):
         """Test validation of a properly structured output"""
@@ -205,7 +212,7 @@ class TestPhase2MainScript:
         import subprocess
 
         result = subprocess.run(
-            ['python', 'scripts/extract_key_metrics_efficient.py'],
+            ['python', 'scripts/extract_key_metrics_v2.py'],
             capture_output=True,
             text=True
         )

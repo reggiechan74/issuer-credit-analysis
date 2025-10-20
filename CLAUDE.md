@@ -40,8 +40,8 @@ This slash command automatically executes all 5 phases sequentially.
 # Phase 1: PDF → Markdown (MUST run first)
 python scripts/preprocess_pdfs_enhanced.py --issuer-name "Artis REIT" statements.pdf mda.pdf
 
-# Phase 2: Markdown → JSON (run AFTER Phase 1 completes)
-python scripts/extract_key_metrics_efficient.py --issuer-name "Artis REIT" \
+# Phase 2: Markdown → JSON (run AFTER Phase 1 completes, uses v2 enhanced extraction)
+python scripts/extract_key_metrics_v2.py --issuer-name "Artis REIT" \
   Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
 
 # Validate schema (before Phase 3)
@@ -787,7 +787,9 @@ Debt maturity in 18 months, Current runway = 10 months
 
 **Pipeline Scripts:**
 - `scripts/preprocess_pdfs_enhanced.py` - Phase 1: PDF→Markdown (PyMuPDF4LLM + Camelot)
-- `scripts/extract_key_metrics_efficient.py` - Phase 2: PDF/Markdown→JSON extraction
+- `scripts/extract_key_metrics_v2.py` - Phase 2: Enhanced extraction orchestrator (grep-based indexing)
+- `scripts/extraction_indexer.py` - Phase 2: Section indexing (0 tokens)
+- `scripts/section_extractor.py` - Phase 2: Targeted extraction with validation
 - `scripts/calculate_credit_metrics.py` - Phase 3: Metric calculations
 - `scripts/generate_final_report.py` - Phase 5: Report generation
 
