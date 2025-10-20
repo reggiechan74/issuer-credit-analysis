@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.7
+**Version:** 1.0.8
 **Last Updated:** 2025-10-20
-**Pipeline Version:** 1.0.7 (Sequential markdown-first + AFCF + Burn Rate analysis)
+**Pipeline Version:** 1.0.8 (Sequential markdown-first + AFCF + Burn Rate + Dilution Tracking)
 
 ## Project Overview
 
@@ -365,6 +365,215 @@ All calculation functions automatically compute per-unit metrics when share data
 **Note:** Basic per-unit uses `common_units_outstanding`. Diluted per-unit uses `diluted_units_outstanding` (if available in Phase 2 extraction). Diluted calculations account for convertible securities, options, and warrants.
 
 **See:** `docs/AFCF_Research_Proposal.md` for complete methodology
+
+## Dilution Tracking and Analysis (v1.0.8)
+
+**Share dilution** from convertible securities, options, and warrants can materially impact per-unit metrics and credit quality. The pipeline now supports optional detailed dilution tracking for enhanced credit analysis.
+
+### What is Dilution Tracking?
+
+The `dilution_detail` section (optional in Phase 2 extraction) provides transparency on dilution sources and materiality:
+
+```json
+{
+  "dilution_detail": {
+    "basic_units": 99444,
+    "dilutive_instruments": {
+      "restricted_units": 1500,        // RSUs/PSUs
+      "deferred_units": 500,           // DSUs (director awards)
+      "stock_options": 0,              // Employee options
+      "convertible_debentures": 0,     // If-converted units
+      "warrants": 0,                   // Outstanding warrants
+      "other": 0                       // Other dilutive securities
+    },
+    "diluted_units_calculated": 101444,
+    "diluted_units_reported": 101444,
+    "dilution_percentage": 2.01,
+    "reconciliation_note": "Calculated matches reported - no anti-dilutive exclusions",
+    "disclosure_source": "Q2 2025 MD&A page 21"
+  }
+}
+```
+
+### When to Extract Dilution Detail
+
+**✅ Extract dilution_detail when:**
+- Issuer provides detailed dilution calculation in MD&A (e.g., Artis REIT Q2 2025 MD&A page 21)
+- Shows breakdown by instrument type (RSUs, options, convertibles, warrants)
+- Useful for assessing dilution materiality and quality
+
+**❌ Skip dilution_detail when:**
+- Issuer only reports basic vs diluted totals (e.g., DIR)
+- No detailed breakdown available
+- Just include `common_units_outstanding` and `diluted_units_outstanding` in balance_sheet
+
+**Hybrid Approach:** The schema supports both simple (totals only) and detailed (instrument breakdown) disclosures.
+
+### Materiality Assessment
+
+Phase 3 automatically analyzes dilution when `dilution_detail` is present:
+
+| Dilution % | Materiality | Typical Sources | Credit Impact |
+|------------|-------------|-----------------|---------------|
+| < 1% | **Minimal** | RSUs/DSUs only | Negligible |
+| 1-3% | **Low** | Normal equity compensation | Low concern |
+| 3-7% | **Moderate** | Options + RSUs | Monitor equity overhang |
+| > 7% | **High** | Material convertibles or warrants | Credit concern |
+
+**Special Case - Convertible Debt:**
+- Convertible debentures > 5% dilution = **Moderate-High credit risk**
+- Review conversion terms and forced conversion scenarios
+- Factor into debt capacity assessment
+
+### Phase 3 Analysis Function
+
+The `analyze_dilution()` function automatically runs when `dilution_detail` is present:
+
+**Output:**
+```json
+{
+  "dilution_analysis": {
+    "has_dilution_detail": true,
+    "dilution_percentage": 2.01,
+    "dilution_materiality": "low",
+    "material_instruments": ["restricted_units", "deferred_units"],
+    "convertible_debt_risk": "none",
+    "governance_score": "enhanced",
+    "credit_assessment": "Minimal dilution (2.01%) from normal equity compensation. No material convertible debt. Enhanced disclosure suggests strong governance."
+  }
+}
+```
+
+**Materiality Levels:**
+- `minimal` - < 1% dilution
+- `low` - 1-3% dilution
+- `moderate` - 3-7% dilution
+- `high` - > 7% dilution
+
+**Convertible Debt Risk:**
+- `none` - No convertible debt or < 1% dilution
+- `low` - 1-5% dilution from convertibles
+- `moderate` - 5-10% dilution from convertibles
+- `high` - > 10% dilution from convertibles
+
+**Governance Score:**
+- `standard` - Only reports basic/diluted totals
+- `enhanced` - Provides detailed instrument breakdown
+
+### Phase 4 Integration
+
+Phase 4 credit assessment incorporates dilution analysis into **Factor 4: Capital Structure and Financial Flexibility**:
+
+**Impact on Credit Rating:**
+```
+Low dilution (< 3%) + Enhanced disclosure = Positive for governance
+Moderate dilution (3-7%) = Neutral, monitor equity overhang
+High dilution (> 7%) or Material convertibles = Negative adjustment
+```
+
+**Example Assessment:**
+```
+Artis REIT: 2.01% dilution from RSUs/DSUs
+→ Minimal equity overhang risk
+→ Enhanced disclosure demonstrates transparency
+→ Positive governance signal
+→ No adjustment to credit rating
+```
+
+### Credit Analysis Use Cases
+
+**1. Assess Equity Overhang**
+```
+10% dilution from convertible debentures:
+→ Material potential equity issuance
+→ Review conversion terms (forced conversion risk?)
+→ Factor into debt capacity calculations
+```
+
+**2. Identify Governance Quality**
+```
+Provides detailed breakdown (Artis) vs totals only (DIR):
+→ Enhanced disclosure = better transparency
+→ Can be factored into governance/management score
+```
+
+**3. Evaluate Distribution Sustainability**
+```
+High dilution increases unit count over time:
+→ Must grow distributions to maintain per-unit payout
+→ Assess if AFFO growth can support dilution + distribution growth
+```
+
+**4. Forced Conversion Analysis**
+```
+Convertible debt with $X conversion price, current price $Y:
+→ If Y > X, conversion likely
+→ Dilution impact on metrics
+→ Covenant implications
+```
+
+### Required Phase 2 Fields
+
+**Minimum (all issuers):**
+```json
+{
+  "balance_sheet": {
+    "common_units_outstanding": 99444,      // Basic weighted average
+    "diluted_units_outstanding": 101444     // Diluted weighted average
+  }
+}
+```
+
+**Enhanced (when detailed breakdown available):**
+```json
+{
+  "dilution_detail": {
+    "basic_units": 99444,
+    "dilutive_instruments": {
+      "restricted_units": 1500,
+      "deferred_units": 500,
+      "stock_options": 0,
+      "convertible_debentures": 0,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 101444,
+    "diluted_units_reported": 101444,
+    "dilution_percentage": 2.01,
+    "reconciliation_note": "...",
+    "disclosure_source": "Q2 2025 MD&A page 21"
+  }
+}
+```
+
+### Per-Unit Calculations (Basic vs Diluted)
+
+All Phase 3 functions automatically calculate both basic and diluted per-unit metrics:
+
+**Functions:**
+- `calculate_ffo_from_components()` → `ffo_per_unit` + `ffo_per_unit_diluted`
+- `calculate_affo_from_ffo()` → `affo_per_unit` + `affo_per_unit_diluted`
+- `calculate_acfo_from_components()` → `acfo_per_unit` + `acfo_per_unit_diluted`
+- `calculate_afcf()` → `afcf_per_unit` + `afcf_per_unit_diluted`
+- `analyze_dilution()` → Dilution materiality and credit assessment
+
+**Example Output:**
+```json
+{
+  "ffo_metrics": {
+    "ffo": 34500,
+    "ffo_per_unit": 0.3471,           // Basic: 34500 / 99444
+    "ffo_per_unit_diluted": 0.3401,   // Diluted: 34500 / 101444
+    "data_source": "calculated"
+  }
+}
+```
+
+**Documentation:**
+- Schema: `.claude/knowledge/phase2_extraction_schema.json`
+- Template: `.claude/knowledge/phase2_extraction_template.json`
+- Complete guide: `.claude/knowledge/SCHEMA_README.md` (Dilution Tracking section, lines 190-307)
+- Phase 4 agent: `.claude/agents/domain_expert/issuer_due_diligence_expert_slim.md` (Dilution Analysis section)
 
 ## Burn Rate and Cash Runway Analysis (v1.0.7)
 
