@@ -210,6 +210,138 @@
         }
       }
     },
+    "ffo_affo_components": {
+      "type": "object",
+      "description": "Optional FFO/AFFO calculation components per REALPAC methodology. Include when issuer doesn't report FFO/AFFO or to enable validation.",
+      "properties": {
+        "net_income_ifrs": {
+          "type": "number",
+          "description": "IFRS net income (starting point for FFO calculation)"
+        },
+        "unrealized_fv_changes": {
+          "type": "number",
+          "description": "Adjustment A: Unrealized fair value changes in investment properties"
+        },
+        "depreciation_real_estate": {
+          "type": "number",
+          "description": "Adjustment B: Depreciation of depreciable real estate assets"
+        },
+        "amortization_tenant_allowances": {
+          "type": "number",
+          "description": "Adjustment C: Amortization of tenant allowances for fit-out"
+        },
+        "amortization_intangibles": {
+          "type": "number",
+          "description": "Adjustment D: Amortization of tenant/customer relationship intangibles"
+        },
+        "gains_losses_property_sales": {
+          "type": "number",
+          "description": "Adjustment E: Gains/losses from sales of investment properties"
+        },
+        "tax_on_disposals": {
+          "type": "number",
+          "description": "Adjustment F: Tax on gains or losses on disposals of properties"
+        },
+        "deferred_taxes": {
+          "type": "number",
+          "description": "Adjustment G: Deferred taxes"
+        },
+        "impairment_losses_reversals": {
+          "type": "number",
+          "description": "Adjustment H: Impairment losses or reversals on real estate"
+        },
+        "revaluation_gains_losses": {
+          "type": "number",
+          "description": "Adjustment I: Revaluation gains/losses on owner-occupied properties"
+        },
+        "transaction_costs_business_comb": {
+          "type": "number",
+          "description": "Adjustment J: Transaction costs from business combinations"
+        },
+        "foreign_exchange_gains_losses": {
+          "type": "number",
+          "description": "Adjustment K: Foreign exchange gains/losses (non-net investment)"
+        },
+        "sale_foreign_operations": {
+          "type": "number",
+          "description": "Adjustment L: Gain/loss on sale of foreign operations"
+        },
+        "fv_changes_hedges": {
+          "type": "number",
+          "description": "Adjustment M: Fair value changes of economically effective hedges"
+        },
+        "goodwill_impairment": {
+          "type": "number",
+          "description": "Adjustment N: Goodwill impairment or negative goodwill"
+        },
+        "puttable_instruments_effects": {
+          "type": "number",
+          "description": "Adjustment O: Effects of puttable instruments classified as liabilities"
+        },
+        "discontinued_operations": {
+          "type": "number",
+          "description": "Adjustment P: Results of discontinued operations"
+        },
+        "equity_accounted_adjustments": {
+          "type": "number",
+          "description": "Adjustment Q: Adjustments for equity accounted entities"
+        },
+        "incremental_leasing_costs": {
+          "type": "number",
+          "description": "Adjustment R: Incremental leasing costs"
+        },
+        "property_taxes_ifric21": {
+          "type": "number",
+          "description": "Adjustment S: Property taxes accounted for under IFRIC 21"
+        },
+        "rou_asset_revenue_expense": {
+          "type": "number",
+          "description": "Adjustment T: Operational revenue/expenses from Right of Use Assets"
+        },
+        "non_controlling_interests_ffo": {
+          "type": "number",
+          "description": "Adjustment U: Non-controlling interests in respect of FFO adjustments"
+        },
+        "capex_sustaining": {
+          "type": "number",
+          "description": "Adjustment V: Sustaining/maintenance capital expenditures (for AFFO)"
+        },
+        "capex_development": {
+          "type": "number",
+          "description": "Development CAPEX (for disclosure, excluded from AFFO)"
+        },
+        "leasing_costs": {
+          "type": "number",
+          "description": "Adjustment W: Leasing costs (internal + external, non-development)"
+        },
+        "tenant_improvements": {
+          "type": "number",
+          "description": "Adjustment X: Tenant improvements (sustaining only)"
+        },
+        "straight_line_rent": {
+          "type": "number",
+          "description": "Adjustment Y: Straight-line rent adjustment"
+        },
+        "non_controlling_interests_affo": {
+          "type": "number",
+          "description": "Adjustment Z: Non-controlling interests in respect of AFFO adjustments"
+        },
+        "calculation_method": {
+          "type": "string",
+          "enum": ["actual", "reserve", "hybrid"],
+          "description": "Method used: actual amounts, reserve estimates, or hybrid"
+        },
+        "reserve_methodology": {
+          "type": "string",
+          "description": "If reserve used, describe calculation (e.g., '3-year rolling average')"
+        },
+        "missing_adjustments": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of adjustments that couldn't be extracted"
+        }
+      }
+    },
     "validation": {
       "type": "object",
       "description": "Optional validation checks",

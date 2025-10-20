@@ -1,0 +1,69 @@
+{
+  "issuer_name": "Artis Real Estate Investment Trust",
+  "reporting_date": "2025-06-30",
+  "reporting_period": "Six months ended June 30, 2025",
+  "currency": "CAD",
+
+  "balance_sheet": {
+    "total_assets": 2611435,
+    "mortgages_noncurrent": 217903,
+    "mortgages_current": 423519,
+    "credit_facilities": 437590,
+    "cash": 16639,
+    "common_units_outstanding": 101444,
+    "senior_unsecured_debentures": 0
+  },
+
+  "ffo_affo": {
+    "ffo": 34491,
+    "affo": 16939,
+    "ffo_per_unit": 0.34,
+    "affo_per_unit": 0.17,
+    "distributions_per_unit": 0.30
+  },
+
+  "ffo_affo_components": {
+    "_note": "Extracted from Artis REIT Q2 2025 MD&A FFO/AFFO reconciliation table (six months ended June 30, 2025)",
+
+    "net_income_ifrs": -12065,
+
+    "amortization_tenant_allowances": 11321,
+    "incremental_leasing_costs": 770,
+    "puttable_instruments_effects": 381,
+    "unrealized_fv_changes": 862,
+    "fv_changes_hedges": 3149,
+    "foreign_exchange_gains_losses": -327,
+    "deferred_taxes": 26,
+    "tax_on_disposals": 644,
+    "equity_accounted_adjustments": -424,
+    "gains_losses_property_sales": 1192,
+
+    "depreciation_real_estate": 1138,
+    "amortization_intangibles": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 0,
+    "sale_foreign_operations": 0,
+    "goodwill_impairment": 0,
+    "discontinued_operations": 0,
+    "property_taxes_ifric21": 0,
+    "rou_asset_revenue_expense": 0,
+    "impairment_losses_reversals": 34184,
+    "non_controlling_interests_ffo": 6360,
+
+    "capex_sustaining": 10000,
+    "leasing_costs": 7552,
+    "tenant_improvements": 0,
+    "straight_line_rent": 0,
+    "non_controlling_interests_affo": 0,
+
+    "calculation_method": "actual",
+    "missing_adjustments": [],
+
+    "_artis_specific_adjustments": {
+      "corporate_strategy_expenses": 1138,
+      "expected_credit_loss_preferred_investments": 34184,
+      "preferred_unit_distributions": -6360,
+      "_note": "These are Artis-specific adjustments not in standard REALPAC methodology"
+    }
+  }
+}

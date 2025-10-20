@@ -41,6 +41,11 @@ def create_efficient_extraction_prompt(markdown_files, output_path, issuer_name)
         str: Compact prompt for Claude Code
     """
 
+    # Load schema template from single source of truth
+    template_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_template.json'
+    with open(template_path, 'r') as f:
+        schema_template = f.read()
+
     # Create file list with paths
     file_list = "\n".join([f"- `{f}`" for f in markdown_files])
 
@@ -65,50 +70,7 @@ Use the Read tool to access each markdown file listed above.
 Follow this **EXACT schema** (required for Phase 3 compatibility):
 
 ```json
-{{
-  "issuer_name": "Full legal name",
-  "reporting_date": "YYYY-MM-DD",
-  "reporting_period": "Q2 2025 (Six months ended...)",
-  "currency": "CAD or USD",
-
-  "balance_sheet": {{
-    "total_assets": 0,
-    "mortgages_noncurrent": 0,
-    "mortgages_current": 0,
-    "credit_facilities": 0,
-    "cash": 0,
-    "senior_unsecured_debentures": 0,
-    "investment_properties": 0,
-    "total_liabilities": 0,
-    "unitholders_equity": 0
-  }},
-
-  "income_statement": {{
-    "noi": 0,
-    "interest_expense": 0,
-    "revenue": 0,
-    "property_operating_expenses": 0,
-    "net_income": 0
-  }},
-
-  "ffo_affo": {{
-    "ffo": 0,
-    "affo": 0,
-    "ffo_per_unit": 0.0,
-    "affo_per_unit": 0.0,
-    "distributions_per_unit": 0.0,
-    "ffo_payout_ratio": 0.0,
-    "affo_payout_ratio": 0.0,
-    "weighted_avg_units_diluted": 0
-  }},
-
-  "portfolio": {{
-    "property_count": 0,
-    "total_gla_sf": 0,
-    "occupancy_rate": 0.0,
-    "occupancy_with_commitments": 0.0
-  }}
-}}
+{schema_template}
 ```
 
 ### Step 3: Data Extraction Guidelines
@@ -207,6 +169,11 @@ def create_pdf_direct_extraction_prompt(pdf_files, output_path, issuer_name):
         str: Compact prompt for Claude Code
     """
 
+    # Load schema template from single source of truth
+    template_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_template.json'
+    with open(template_path, 'r') as f:
+        schema_template = f.read()
+
     # Create file list with paths
     file_list = "\n".join([f"- `{f}`" for f in pdf_files])
 
@@ -231,50 +198,7 @@ Use the Read tool to access each PDF file listed above. Claude Code can read PDF
 Follow this **EXACT schema** (required for Phase 3 compatibility):
 
 ```json
-{{
-  "issuer_name": "Full legal name",
-  "reporting_date": "YYYY-MM-DD",
-  "reporting_period": "Q2 2025 (Six months ended...)",
-  "currency": "CAD or USD",
-
-  "balance_sheet": {{
-    "total_assets": 0,
-    "mortgages_noncurrent": 0,
-    "mortgages_current": 0,
-    "credit_facilities": 0,
-    "cash": 0,
-    "senior_unsecured_debentures": 0,
-    "investment_properties": 0,
-    "total_liabilities": 0,
-    "unitholders_equity": 0
-  }},
-
-  "income_statement": {{
-    "noi": 0,
-    "interest_expense": 0,
-    "revenue": 0,
-    "property_operating_expenses": 0,
-    "net_income": 0
-  }},
-
-  "ffo_affo": {{
-    "ffo": 0,
-    "affo": 0,
-    "ffo_per_unit": 0.0,
-    "affo_per_unit": 0.0,
-    "distributions_per_unit": 0.0,
-    "ffo_payout_ratio": 0.0,
-    "affo_payout_ratio": 0.0,
-    "weighted_avg_units_diluted": 0
-  }},
-
-  "portfolio": {{
-    "property_count": 0,
-    "total_gla_sf": 0,
-    "occupancy_rate": 0.0,
-    "occupancy_with_commitments": 0.0
-  }}
-}}
+{schema_template}
 ```
 
 ### Step 3: Data Extraction Guidelines
