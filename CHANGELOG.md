@@ -14,6 +14,110 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.10] - 2025-10-20
+
+### Added - Phase 5 Integration for AFCF and Burn Rate Metrics
+
+**Completed Implementation:** Phase 5 script (`generate_final_report.py`) now fully supports all 55 new template variables introduced in v1.0.9 for AFCF (v1.0.6) and burn rate (v1.0.7) metrics.
+
+#### New Helper Functions (5 functions)
+Added assessment functions for AFCF and liquidity risk analysis:
+
+1. **`assess_afcf_coverage(coverage_ratio)`** - AFCF debt service coverage assessment
+   - Strong (≥1.5x), Adequate (≥1.0x), Moderate (≥0.75x), Weak (≥0.5x), Critical (<0.5x)
+   - Maps coverage ratios to credit quality descriptors
+
+2. **`assess_self_funding_ratio(ratio)`** - Self-funding capability assessment
+   - Excellent (≥1.2x), Strong (≥1.0x), Moderate (≥0.75x), Weak (≥0.5x), Critical (<0.5x)
+   - Identifies capital markets reliance level
+
+3. **`assess_liquidity_risk(risk_level)`** - Liquidity risk level interpretation
+   - Maps risk levels (LOW/MODERATE/HIGH/CRITICAL) to descriptive assessments
+   - Provides actionable credit insights with visual indicators
+
+4. **`assess_burn_rate_sustainability(status)`** - Burn rate sustainability assessment
+   - Interprets sustainability status from Phase 3 output
+   - Identifies if burn rate is below target, at target, or requires corrective action
+
+5. All functions include comprehensive docstrings and return formatted assessment strings ready for template substitution
+
+#### Metric Extraction Enhancement
+Added extraction for 8 new metric groups from Phase 3 output:
+
+```python
+# New metric extractions (lines 374-382)
+afcf_metrics = metrics.get('afcf_metrics', {})
+afcf_coverage = metrics.get('afcf_coverage', {})
+burn_rate_analysis = metrics.get('burn_rate_analysis', {})
+cash_runway = metrics.get('cash_runway', {})
+liquidity_position = metrics.get('liquidity_position', {})
+liquidity_risk = metrics.get('liquidity_risk', {})
+sustainable_burn = metrics.get('sustainable_burn', {})
+acfo_metrics = metrics.get('acfo_metrics', {})
+```
+
+#### Template Variable Mapping (55 new variables)
+
+**AFCF Metrics (12 variables):**
+- `ACFO`, `ACFO_PER_UNIT` - Starting point for AFCF calculation
+- `NET_CFI`, `AFCF`, `AFCF_PER_UNIT` - Core AFCF metrics
+- `AFCF_DEBT_SERVICE_COVERAGE`, `AFCF_PAYOUT_RATIO`, `AFCF_SELF_FUNDING_RATIO` - Coverage ratios
+- `TOTAL_DEBT_SERVICE`, `NET_FINANCING_NEEDS` - Financing components
+- `AFCF_COVERAGE_ASSESSMENT`, `SELF_FUNDING_ASSESSMENT` - Qualitative assessments
+
+**AFCF Components (5 variables):**
+- `DEV_CAPEX`, `PROPERTY_ACQUISITIONS`, `PROPERTY_DISPOSITIONS` - Investment activities
+- `JV_CONTRIBUTIONS`, `JV_DISTRIBUTIONS` - Joint venture cash flows
+
+**Liquidity Position (7 variables):**
+- `CASH_AND_EQUIVALENTS`, `MARKETABLE_SECURITIES`, `RESTRICTED_CASH` - Cash components
+- `AVAILABLE_CASH`, `UNDRAWN_CREDIT_FACILITIES`, `CREDIT_FACILITY_LIMIT` - Liquidity sources
+- `TOTAL_AVAILABLE_LIQUIDITY` - Total liquidity calculation
+
+**Burn Rate Analysis (17 variables):**
+- `BURN_RATE_APPLICABLE`, `MONTHLY_BURN_RATE`, `ANNUALIZED_BURN_RATE` - Burn rate metrics
+- `CASH_RUNWAY_MONTHS`, `CASH_RUNWAY_YEARS`, `CASH_DEPLETION_DATE` - Cash runway
+- `EXTENDED_RUNWAY_MONTHS`, `EXTENDED_RUNWAY_YEARS`, `EXTENDED_DEPLETION_DATE` - Extended runway (w/ facilities)
+- `LIQUIDITY_RISK_LEVEL`, `LIQUIDITY_RISK_SCORE`, `LIQUIDITY_RISK_ASSESSMENT` - Risk assessment
+- `RUNWAY_RISK`, `EXTENDED_RISK` - Risk levels for both runway calculations
+- `SUSTAINABLE_MONTHLY_BURN`, `EXCESS_BURN`, `BURN_SUSTAINABILITY_STATUS`, `BURN_SUSTAINABILITY_ASSESSMENT` - Sustainability metrics
+
+**Liquidity Risk Management (2 variables):**
+- `WARNING_FLAGS` - Comma-separated list of liquidity warning flags
+- `LIQUIDITY_RECOMMENDATIONS` - Bulleted list of recommended actions
+
+#### Safe Default Handling
+All 55 variables include safe default values when data is unavailable:
+- Numeric metrics: Display "Not available" or "N/A"
+- Assessment strings: Display "Not available"
+- Conditional fields: Check for data existence before formatting
+- No runtime errors if Phase 3 output lacks AFCF/burn rate calculations
+
+#### Code Quality
+- **Lines Added:** ~90 lines (helper functions + metric extractions + variable mappings)
+- **Backward Compatible:** Existing template variables unchanged
+- **Zero Token Cost:** Pure Python string replacement in Phase 5
+- **Robust:** Handles missing data gracefully with `.get()` and conditional checks
+- **Documented:** All functions include comprehensive docstrings
+
+#### Integration Testing Recommendations
+When Phase 3 output includes AFCF and burn rate metrics:
+1. Verify all 55 variables populate correctly in final report
+2. Confirm assessments render with proper formatting
+3. Test with partial data (e.g., AFCF present, burn rate not applicable)
+4. Validate conditional sections display correctly
+
+#### Files Modified
+- `scripts/generate_final_report.py` - Added 5 helper functions, 8 metric extractions, 55 template variable mappings
+
+#### Related Versions
+- **v1.0.6:** AFCF calculations added to Phase 3
+- **v1.0.7:** Burn rate and cash runway calculations added to Phase 3
+- **v1.0.9:** Template enhanced with AFCF and burn rate sections
+- **v1.0.10:** Phase 5 integration completed (this version)
+
+---
+
 ## [1.0.9] - 2025-10-20
 
 ### Changed - Enhanced Credit Opinion Template

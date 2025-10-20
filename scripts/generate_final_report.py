@@ -264,6 +264,89 @@ def assess_noi_growth(noi_growth):
         return "Negative NOI growth"
 
 
+def assess_afcf_coverage(coverage_ratio):
+    """
+    Assess AFCF debt service coverage level
+
+    Args:
+        coverage_ratio: AFCF / Total Debt Service
+
+    Returns:
+        str: Assessment text
+    """
+    if coverage_ratio >= 1.5:
+        return "Strong - AFCF significantly exceeds financing needs"
+    elif coverage_ratio >= 1.0:
+        return "Adequate - AFCF covers financing needs"
+    elif coverage_ratio >= 0.75:
+        return "Moderate - Partial capital markets reliance"
+    elif coverage_ratio >= 0.5:
+        return "Weak - Significant capital markets dependence"
+    else:
+        return "Critical - Heavy reliance on external financing"
+
+
+def assess_self_funding_ratio(ratio):
+    """
+    Assess self-funding ratio (AFCF / Net Financing Needs)
+
+    Args:
+        ratio: Self-funding ratio
+
+    Returns:
+        str: Assessment text
+    """
+    if ratio >= 1.2:
+        return "Excellent - Fully self-funding with cushion"
+    elif ratio >= 1.0:
+        return "Strong - Self-funding operations"
+    elif ratio >= 0.75:
+        return "Moderate - Requires periodic capital access"
+    elif ratio >= 0.5:
+        return "Weak - Regular capital markets reliance"
+    else:
+        return "Critical - Heavy capital markets dependence"
+
+
+def assess_liquidity_risk(risk_level):
+    """
+    Assess liquidity risk level based on cash runway
+
+    Args:
+        risk_level: Risk level string (LOW/MODERATE/HIGH/CRITICAL)
+
+    Returns:
+        str: Assessment text
+    """
+    risk_map = {
+        'LOW': '✓ Low Risk - Adequate liquidity runway (> 24 months)',
+        'MODERATE': '⚠️ Moderate Risk - Plan financing within 12 months',
+        'HIGH': '⚠️ High Risk - Near-term capital raise needed (6-12 months)',
+        'CRITICAL': '🚨 Critical Risk - Immediate financing required (< 6 months)'
+    }
+    return risk_map.get(risk_level, 'Unknown risk level')
+
+
+def assess_burn_rate_sustainability(status):
+    """
+    Assess burn rate sustainability status
+
+    Args:
+        status: Sustainability status string from Phase 3
+
+    Returns:
+        str: Assessment text
+    """
+    if 'below sustainable' in status.lower() or 'cushion' in status.lower():
+        return "✓ Burn rate is sustainable - operating below target"
+    elif 'at sustainable' in status.lower():
+        return "Burn rate at target - monitor closely"
+    elif 'exceeds sustainable' in status.lower():
+        return "⚠️ Burn rate exceeds sustainable level - corrective action needed"
+    else:
+        return status
+
+
 def generate_final_report(metrics, analysis_sections, template):
     """
     Generate final report by combining metrics and analysis with template
@@ -287,6 +370,16 @@ def generate_final_report(metrics, analysis_sections, template):
     reit_metrics = metrics.get('reit_metrics', {})
     coverage_ratios = metrics.get('coverage_ratios', {})
     portfolio_metrics = metrics.get('portfolio_metrics', {})
+
+    # Extract AFCF, burn rate, and liquidity metrics (v1.0.6, v1.0.7)
+    afcf_metrics = metrics.get('afcf_metrics', {})
+    afcf_coverage = metrics.get('afcf_coverage', {})
+    burn_rate_analysis = metrics.get('burn_rate_analysis', {})
+    cash_runway = metrics.get('cash_runway', {})
+    liquidity_position = metrics.get('liquidity_position', {})
+    liquidity_risk = metrics.get('liquidity_risk', {})
+    sustainable_burn = metrics.get('sustainable_burn', {})
+    acfo_metrics = metrics.get('acfo_metrics', {})
 
     # Extract specific values
     total_debt = leverage_metrics.get('total_debt', 0)
@@ -531,6 +624,58 @@ def generate_final_report(metrics, analysis_sections, template):
         'STRESS_LIKELIHOOD': 'Not available',
         'DOWNGRADE_TRIGGERS': 'Not available',
         'DELEVERAGING_SCENARIOS': 'Not available',
+
+        # AFCF Metrics (v1.0.6) - Section 2.7
+        'ACFO': f"{acfo_metrics.get('acfo', 0):,.0f}" if acfo_metrics.get('acfo') else 'Not available',
+        'ACFO_PER_UNIT': f"{acfo_metrics.get('acfo_per_unit', 0):.4f}" if acfo_metrics.get('acfo_per_unit') else 'Not available',
+        'NET_CFI': f"{afcf_metrics.get('net_cfi', 0):,.0f}" if afcf_metrics.get('net_cfi') else 'Not available',
+        'AFCF': f"{afcf_metrics.get('afcf', 0):,.0f}" if afcf_metrics.get('afcf') else 'Not available',
+        'AFCF_PER_UNIT': f"{afcf_metrics.get('afcf_per_unit', 0):.4f}" if afcf_metrics.get('afcf_per_unit') else 'Not available',
+        'AFCF_DEBT_SERVICE_COVERAGE': f"{afcf_coverage.get('afcf_debt_service_coverage', 0):.2f}" if afcf_coverage.get('afcf_debt_service_coverage') else 'Not available',
+        'AFCF_PAYOUT_RATIO': f"{afcf_coverage.get('afcf_payout_ratio', 0):.1f}" if afcf_coverage.get('afcf_payout_ratio') else 'Not available',
+        'AFCF_SELF_FUNDING_RATIO': f"{afcf_coverage.get('afcf_self_funding_ratio', 0):.2f}" if afcf_coverage.get('afcf_self_funding_ratio') else 'Not available',
+        'TOTAL_DEBT_SERVICE': f"{afcf_coverage.get('total_debt_service', 0):,.0f}" if afcf_coverage.get('total_debt_service') else 'Not available',
+        'NET_FINANCING_NEEDS': f"{afcf_coverage.get('net_financing_needs', 0):,.0f}" if afcf_coverage.get('net_financing_needs') else 'Not available',
+        'AFCF_COVERAGE_ASSESSMENT': assess_afcf_coverage(afcf_coverage.get('afcf_debt_service_coverage', 0)) if afcf_coverage.get('afcf_debt_service_coverage') else 'Not available',
+        'SELF_FUNDING_ASSESSMENT': assess_self_funding_ratio(afcf_coverage.get('afcf_self_funding_ratio', 0)) if afcf_coverage.get('afcf_self_funding_ratio') else 'Not available',
+
+        # AFCF Components (CFI breakdown)
+        'DEV_CAPEX': f"{afcf_metrics.get('cfi_breakdown', {}).get('development_capex', {}).get('amount', 0):,.0f}" if afcf_metrics.get('cfi_breakdown') else 'Not available',
+        'PROPERTY_ACQUISITIONS': f"{afcf_metrics.get('cfi_breakdown', {}).get('property_acquisitions', {}).get('amount', 0):,.0f}" if afcf_metrics.get('cfi_breakdown') else 'Not available',
+        'PROPERTY_DISPOSITIONS': f"{afcf_metrics.get('cfi_breakdown', {}).get('property_dispositions', {}).get('amount', 0):,.0f}" if afcf_metrics.get('cfi_breakdown') else 'Not available',
+        'JV_CONTRIBUTIONS': f"{afcf_metrics.get('cfi_breakdown', {}).get('jv_capital_contributions', {}).get('amount', 0):,.0f}" if afcf_metrics.get('cfi_breakdown') else 'Not available',
+        'JV_DISTRIBUTIONS': f"{afcf_metrics.get('cfi_breakdown', {}).get('jv_return_of_capital', {}).get('amount', 0):,.0f}" if afcf_metrics.get('cfi_breakdown') else 'Not available',
+
+        # Liquidity Position (v1.0.7) - Section 4.1
+        'CASH_AND_EQUIVALENTS': f"{liquidity_position.get('cash_and_equivalents', 0):,.0f}" if liquidity_position.get('cash_and_equivalents') else 'Not available',
+        'MARKETABLE_SECURITIES': f"{liquidity_position.get('marketable_securities', 0):,.0f}" if liquidity_position.get('marketable_securities') else 'Not available',
+        'RESTRICTED_CASH': f"{liquidity_position.get('restricted_cash', 0):,.0f}" if liquidity_position.get('restricted_cash') else 'Not available',
+        'AVAILABLE_CASH': f"{liquidity_position.get('available_cash', 0):,.0f}" if liquidity_position.get('available_cash') else 'Not available',
+        'UNDRAWN_CREDIT_FACILITIES': f"{liquidity_position.get('undrawn_credit_facilities', 0):,.0f}" if liquidity_position.get('undrawn_credit_facilities') else 'Not available',
+        'CREDIT_FACILITY_LIMIT': f"{liquidity_position.get('credit_facility_limit', 0):,.0f}" if liquidity_position.get('credit_facility_limit') else 'Not available',
+        'TOTAL_AVAILABLE_LIQUIDITY': f"{liquidity_position.get('total_available_liquidity', 0):,.0f}" if liquidity_position.get('total_available_liquidity') else 'Not available',
+
+        # Burn Rate Analysis (v1.0.7) - Section 4.3
+        'BURN_RATE_APPLICABLE': 'Yes' if burn_rate_analysis.get('applicable') else 'No',
+        'MONTHLY_BURN_RATE': f"{burn_rate_analysis.get('monthly_burn_rate', 0):,.0f}" if burn_rate_analysis.get('monthly_burn_rate') else 'N/A',
+        'ANNUALIZED_BURN_RATE': f"{burn_rate_analysis.get('annualized_burn_rate', 0):,.0f}" if burn_rate_analysis.get('annualized_burn_rate') else 'N/A',
+        'CASH_RUNWAY_MONTHS': f"{cash_runway.get('runway_months', 0):.1f}" if cash_runway.get('runway_months') else 'N/A',
+        'CASH_RUNWAY_YEARS': f"{cash_runway.get('runway_years', 0):.1f}" if cash_runway.get('runway_years') else 'N/A',
+        'CASH_DEPLETION_DATE': cash_runway.get('depletion_date', 'N/A') if cash_runway.get('depletion_date') else 'N/A',
+        'EXTENDED_RUNWAY_MONTHS': f"{cash_runway.get('extended_runway_months', 0):.1f}" if cash_runway.get('extended_runway_months') else 'N/A',
+        'EXTENDED_RUNWAY_YEARS': f"{cash_runway.get('extended_runway_years', 0):.1f}" if cash_runway.get('extended_runway_years') else 'N/A',
+        'EXTENDED_DEPLETION_DATE': cash_runway.get('extended_depletion_date', 'N/A') if cash_runway.get('extended_depletion_date') else 'N/A',
+        'LIQUIDITY_RISK_LEVEL': liquidity_risk.get('risk_level', 'N/A') if liquidity_risk.get('risk_level') else 'N/A',
+        'LIQUIDITY_RISK_SCORE': str(liquidity_risk.get('risk_score', 'N/A')) if liquidity_risk.get('risk_score') else 'N/A',
+        'LIQUIDITY_RISK_ASSESSMENT': assess_liquidity_risk(liquidity_risk.get('risk_level', '')) if liquidity_risk.get('risk_level') else 'Not available',
+        'RUNWAY_RISK': liquidity_risk.get('risk_level', 'N/A') if liquidity_risk.get('risk_level') else 'N/A',
+        'EXTENDED_RISK': liquidity_risk.get('risk_level', 'N/A') if liquidity_risk.get('risk_level') else 'N/A',  # Same as runway risk for extended
+        'SUSTAINABLE_MONTHLY_BURN': f"{sustainable_burn.get('sustainable_monthly_burn', 0):,.0f}" if sustainable_burn.get('sustainable_monthly_burn') else 'N/A',
+        'EXCESS_BURN': f"{sustainable_burn.get('excess_burn_per_month', 0):,.0f}" if sustainable_burn.get('excess_burn_per_month') else 'N/A',
+        'BURN_SUSTAINABILITY_STATUS': sustainable_burn.get('status', 'Not available') if sustainable_burn.get('status') else 'Not available',
+        'BURN_SUSTAINABILITY_ASSESSMENT': assess_burn_rate_sustainability(sustainable_burn.get('status', '')) if sustainable_burn.get('status') else 'Not available',
+        'WARNING_FLAGS': ', '.join(liquidity_risk.get('warning_flags', [])) if liquidity_risk.get('warning_flags') else 'None',
+        'LIQUIDITY_RECOMMENDATIONS': '\n'.join([f"- {rec}" for rec in liquidity_risk.get('recommendations', [])]) if liquidity_risk.get('recommendations') else 'Monitor liquidity position quarterly',
 
         # Generation metadata
         'GENERATION_TIMESTAMP': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
