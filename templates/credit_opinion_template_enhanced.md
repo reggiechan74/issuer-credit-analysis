@@ -28,9 +28,23 @@
     - [Management and Governance](#management-and-governance)
 13. [Detailed Credit Analysis](#detailed-credit-analysis)
     - [1. Earnings Analysis](#1-earnings-analysis)
-    - [2. FFO, AFFO, and ACFO Analysis](#2-ffo-affo-and-acfo-analysis)
+    - [2. FFO, AFFO, ACFO, and AFCF Analysis](#2-ffo-affo-acfo-and-afcf-analysis)
+        - [2.1 Overview](#21-overview)
+        - [2.2 FFO/AFFO/ACFO/AFCF Summary](#22-ffoaffoacfoafcf-summary)
+        - [2.3 FFO/AFFO Reconciliation](#23-ffoaffo-reconciliation)
+        - [2.4 ACFO Reconciliation](#24-acfo-reconciliation)
+        - [2.5 Distribution Coverage Analysis](#25-distribution-coverage-analysis)
+        - [2.6 FFO → AFFO → ACFO Bridge Analysis](#26-ffo--affo--acfo-bridge-analysis)
+        - [2.7 AFCF (Adjusted Free Cash Flow) Analysis](#27-afcf-adjusted-free-cash-flow-analysis)
+        - [2.8 Capital Expenditure Analysis](#28-capital-expenditure-analysis)
+        - [2.9 Peer Comparison](#29-peer-comparison-ffoaffoacfoafcf)
+        - [2.10 Recommendations for Credit Committee](#210-recommendations-for-credit-committee)
     - [3. Leverage and Coverage Analysis](#3-leverage-and-coverage-analysis)
     - [4. Liquidity Analysis](#4-liquidity-analysis)
+        - [4.1 Liquidity Position](#41-liquidity-position)
+        - [4.2 Sources and Uses](#42-sources-and-uses)
+        - [4.3 Burn Rate and Cash Runway Analysis](#43-burn-rate-and-cash-runway-analysis)
+        - [4.4 Liquidity Assessment](#44-liquidity-assessment)
     - [5. Growth Strategy and Capital Allocation](#5-growth-strategy-and-capital-allocation)
     - [6. Operating Track Record and Portfolio Quality](#6-operating-track-record-and-portfolio-quality)
 14. [Scenario Analysis and Stress Testing](#scenario-analysis-and-stress-testing)
@@ -43,7 +57,7 @@
     - [Appendix C: Calculation Methodologies](#appendix-c-calculation-methodologies)
     - [Appendix D: Rating Category Thresholds](#appendix-d-rating-category-thresholds)
     - [Appendix E: Data Reconciliation](#appendix-e-data-reconciliation)
-    - [Appendix F: FFO/AFFO/ACFO Detailed Reconciliations](#appendix-f-ffoaffoacfo-detailed-reconciliations)
+    - [Appendix F: FFO/AFFO/ACFO/AFCF Detailed Reconciliations](#appendix-f-ffoaffoacfoafcf-detailed-reconciliations)
 
 ---
 
@@ -222,18 +236,19 @@
 
 {{EARNINGS_ANALYSIS}}
 
-### 2. FFO, AFFO, and ACFO Analysis
+### 2. FFO, AFFO, ACFO, and AFCF Analysis
 
 #### 2.1 Overview
 
-This section analyzes the issuer's recurring economic earnings (FFO/AFFO) and sustainable cash flow (ACFO) metrics, providing both earnings-based and cash flow-based perspectives on distribution sustainability.
+This section analyzes the issuer's recurring economic earnings (FFO/AFFO), sustainable cash flow (ACFO), and adjusted free cash flow (AFCF) metrics, providing comprehensive earnings-based and cash flow-based perspectives on distribution sustainability and capital markets reliance.
 
 **Metric Definitions:**
 - **FFO (Funds From Operations)**: Earnings metric starting from IFRS Net Income, adjusted for non-cash items per REALPAC (January 2022)
 - **AFFO (Adjusted Funds From Operations)**: FFO adjusted for sustaining capital requirements (earnings-based recurring income)
 - **ACFO (Adjusted Cash Flow from Operations)**: Cash flow metric starting from IFRS CFO, adjusted per REALPAC (January 2023)
+- **AFCF (Adjusted Free Cash Flow)**: ACFO + Net Cash Flow from Investing Activities (most conservative free cash flow measure)
 
-#### 2.2 FFO/AFFO/ACFO Summary
+#### 2.2 FFO/AFFO/ACFO/AFCF Summary
 
 | Metric | Amount ({{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Payout Ratio |
 |--------|---------------------------|------------------------|--------------|
@@ -242,9 +257,11 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO) and su
 | **AFFO** | {{AFFO}} | {{AFFO_PER_UNIT}} | {{AFFO_PAYOUT}}% |
 | **IFRS Cash Flow from Operations** | {{CASH_FLOW_FROM_OPERATIONS}} | N/A | N/A |
 | **ACFO** | {{ACFO}} | {{ACFO_PER_UNIT}} | {{ACFO_PAYOUT}}% |
+| **Net Cash Flow from Investing** | {{NET_CFI}} | N/A | N/A |
+| **AFCF** | {{AFCF}} | {{AFCF_PER_UNIT}} | {{AFCF_PAYOUT}}% |
 | **Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DISTRIBUTIONS_PER_UNIT}} | N/A |
 
-**Data Source:** {{FFO_AFFO_ACFO_SOURCE}}
+**Data Source:** {{FFO_AFFO_ACFO_AFCF_SOURCE}}
 
 #### 2.3 FFO/AFFO Reconciliation
 
@@ -281,6 +298,7 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO) and su
 | **FFO Coverage** | {{FFO_COVERAGE}}x | {{FFO_COVERAGE_ASSESSMENT}} | {{FFO_CUSHION}}% |
 | **AFFO Coverage** | {{AFFO_COVERAGE}}x | {{AFFO_COVERAGE_ASSESSMENT}} | {{AFFO_CUSHION}}% |
 | **ACFO Coverage** | {{ACFO_COVERAGE}}x | {{ACFO_COVERAGE_ASSESSMENT}} | {{ACFO_CUSHION}}% |
+| **AFCF Coverage** | {{AFCF_COVERAGE}}x | {{AFCF_COVERAGE_ASSESSMENT}} | {{AFCF_CUSHION}}% |
 
 **Credit Assessment:**
 
@@ -307,7 +325,54 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO) and su
 - **Percentage Difference:** {{AFFO_ACFO_GAP_PERCENT}}%
 - **Interpretation:** {{AFFO_ACFO_GAP_ANALYSIS}}
 
-#### 2.7 Capital Expenditure Analysis
+#### 2.7 AFCF (Adjusted Free Cash Flow) Analysis
+
+**What is AFCF:**
+AFCF extends the analysis beyond ACFO to measure cash available for financing obligations after ALL investing activities (acquisitions, development, JV investments). It provides the most conservative view of true free cash flow generation.
+
+**Formula:** AFCF = ACFO + Net Cash Flow from Investing Activities
+
+**AFCF Summary:**
+
+| Metric | Amount ({{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Coverage Ratio |
+|--------|---------------------------|------------------------|----------------|
+| **ACFO (Starting Point)** | {{ACFO}} | {{ACFO_PER_UNIT}} | - |
+| **Net Cash Flow from Investing** | {{NET_CFI}} | - | - |
+| **AFCF** | {{AFCF}} | {{AFCF_PER_UNIT}} | - |
+| **Total Debt Service** | {{TOTAL_DEBT_SERVICE}} | - | {{AFCF_DEBT_SERVICE_COVERAGE}}x |
+| **Total Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DISTRIBUTIONS_PER_UNIT}} | {{AFCF_DISTRIBUTION_COVERAGE}}x |
+
+**Data Source:** {{AFCF_DATA_SOURCE}}
+**Data Quality:** {{AFCF_DATA_QUALITY}}
+
+**Investing Activities Breakdown:**
+
+{{AFCF_CFI_BREAKDOWN_TABLE}}
+
+**AFCF Coverage Ratios:**
+
+| Coverage Metric | Ratio | Assessment | Benchmark |
+|-----------------|-------|------------|-----------|
+| **AFCF Debt Service Coverage** | {{AFCF_DEBT_SERVICE_COVERAGE}}x | {{AFCF_DS_ASSESSMENT}} | > 1.0x = Self-funding |
+| **AFCF Payout Ratio** | {{AFCF_PAYOUT_RATIO}}% | {{AFCF_PAYOUT_ASSESSMENT}} | < 100% = Sustainable |
+| **AFCF Self-Funding Ratio** | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SF_ASSESSMENT}} | > 1.0x = No capital markets reliance |
+
+**Key Observations:**
+
+{{AFCF_KEY_OBSERVATIONS}}
+
+**Credit Assessment:**
+
+{{AFCF_CREDIT_ASSESSMENT}}
+
+**AFCF Reconciliation:**
+
+{{AFCF_RECONCILIATION_TABLE}}
+
+**Validation Notes:**
+{{AFCF_VALIDATION_NOTES}}
+
+#### 2.8 Capital Expenditure Analysis
 
 Understanding CAPEX composition provides insight into portfolio quality and maintenance requirements:
 
@@ -317,11 +382,11 @@ Understanding CAPEX composition provides insight into portfolio quality and main
 
 {{CAPEX_INSIGHTS}}
 
-#### 2.8 Peer Comparison (FFO/AFFO/ACFO)
+#### 2.9 Peer Comparison (FFO/AFFO/ACFO/AFCF)
 
-{{PEER_FFO_AFFO_ACFO_COMPARISON}}
+{{PEER_FFO_AFFO_ACFO_AFCF_COMPARISON}}
 
-#### 2.9 Recommendations for Credit Committee
+#### 2.10 Recommendations for Credit Committee
 
 **Rating Implications:**
 {{FFO_AFFO_ACFO_RATING_IMPLICATIONS}}
@@ -351,28 +416,118 @@ Interest coverage metrics show NOI/Interest of {{NOI_INTEREST_COVERAGE}}x, indic
 
 ### 4. Liquidity Analysis
 
-### Sources and Uses
+#### 4.1 Liquidity Position
+
+**Available Liquidity:**
+
+| Source | Amount ({{CURRENCY}} 000s) | Notes |
+|--------|---------------------------|-------|
+| **Cash and Equivalents** | {{CASH_AND_EQUIVALENTS}} | {{CASH_SOURCE}} |
+| **Marketable Securities** | {{MARKETABLE_SECURITIES}} | Short-term investments |
+| **Less: Restricted Cash** | ({{RESTRICTED_CASH}}) | Unavailable for operations |
+| **Available Cash** | {{AVAILABLE_CASH}} | Cash + Securities - Restricted |
+| **Undrawn Credit Facilities** | {{UNDRAWN_FACILITIES}} | {{FACILITY_LIMIT}} limit |
+| **Total Available Liquidity** | {{TOTAL_LIQUIDITY}} | Available + Undrawn |
+
+**Data Source:** {{LIQUIDITY_DATA_SOURCE}}
+
+#### 4.2 Sources and Uses
 
 **Sources:**
-- Cash on hand: Reflected in net debt position
+- Cash on hand: {{AVAILABLE_CASH}} {{CURRENCY}} thousands
 - Operating cash flow: Based on NOI of {{NOI}} {{CURRENCY}} thousands (quarterly)
 - ACFO (sustainable cash flow): {{ACFO}} {{CURRENCY}} thousands ({{ACFO_PERIOD}})
-- Available credit facilities: To be determined based on debt schedule
+- AFCF (free cash flow): {{AFCF}} {{CURRENCY}} thousands ({{AFCF_PERIOD}})
+- Available credit facilities: {{UNDRAWN_FACILITIES}} {{CURRENCY}} thousands
 
 **Uses:**
 - Interest expense: {{QUARTERLY_INTEREST}} {{CURRENCY}} thousands (quarterly)
-- Distributions: {{DISTRIBUTIONS_PER_UNIT}} {{CURRENCY}} per unit × {{DILUTED_UNITS}} units (if provided)
+- Principal repayments: {{PRINCIPAL_REPAYMENTS}} {{CURRENCY}} thousands ({{DEBT_SERVICE_PERIOD}})
+- Distributions: {{DISTRIBUTIONS_PER_UNIT}} {{CURRENCY}} per unit × {{DILUTED_UNITS}} units
 - Sustaining capital expenditures: {{SUSTAINING_CAPEX}} {{CURRENCY}} thousands (per ACFO calculation)
-- Debt maturities: Requires detailed debt schedule review
+- Debt maturities: {{DEBT_MATURITIES_SUMMARY}}
 
-### Liquidity Assessment
+#### 4.3 Burn Rate and Cash Runway Analysis
+
+**Applicability:** {{BURN_RATE_APPLICABLE}}
+
+{{#if BURN_RATE_APPLICABLE}}
+
+**What is Burn Rate:**
+Burn rate measures the speed at which a REIT depletes cash reserves when AFCF cannot cover financing obligations. A REIT can have *positive AFCF* but still burn cash if free cash flow is insufficient to cover debt service + distributions.
+
+**Formula:** Burn Rate = Net Financing Needs - AFCF (when AFCF < Net Financing Needs)
+
+**Burn Rate Analysis:**
+
+| Metric | Amount ({{CURRENCY}} 000s) | Period | Annualized |
+|--------|---------------------------|--------|------------|
+| **AFCF** | {{AFCF}} | {{AFCF_PERIOD}} | {{AFCF_ANNUALIZED}} |
+| **Total Debt Service** | {{TOTAL_DEBT_SERVICE}} | {{DEBT_SERVICE_PERIOD}} | {{DEBT_SERVICE_ANNUALIZED}} |
+| **Total Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DIST_PERIOD}} | {{DIST_ANNUALIZED}} |
+| **New Financing** | {{NEW_FINANCING}} | {{FINANCING_PERIOD}} | {{FINANCING_ANNUALIZED}} |
+| **Net Financing Needs** | {{NET_FINANCING_NEEDS}} | - | {{NET_FINANCING_ANNUALIZED}} |
+| **Self-Funding Ratio** | {{SELF_FUNDING_RATIO}}x | - | - |
+| **Monthly Burn Rate** | {{MONTHLY_BURN_RATE}} | Monthly | - |
+| **Annualized Burn Rate** | {{ANNUALIZED_BURN_RATE}} | Annual | - |
+
+**Self-Funding Analysis:**
+- **Self-Funding Ratio:** {{SELF_FUNDING_RATIO}}x ({{SELF_FUNDING_PERCENT}}%)
+- **Interpretation:** {{SELF_FUNDING_INTERPRETATION}}
+- **Capital Markets Reliance:** {{CAPITAL_MARKETS_RELIANCE}}
+
+**Cash Runway:**
+
+| Runway Metric | Months | Years | Depletion Date | Risk Level |
+|---------------|--------|-------|----------------|------------|
+| **Available Cash Runway** | {{CASH_RUNWAY_MONTHS}} | {{CASH_RUNWAY_YEARS}} | {{CASH_DEPLETION_DATE}} | {{RUNWAY_RISK}} |
+| **Extended Runway** (incl. facilities) | {{EXTENDED_RUNWAY_MONTHS}} | {{EXTENDED_RUNWAY_YEARS}} | {{EXTENDED_DEPLETION_DATE}} | {{EXTENDED_RISK}} |
+
+**Liquidity Risk Assessment:**
+
+| Risk Factor | Risk Level | Risk Score | Assessment |
+|-------------|------------|------------|------------|
+| **Cash Runway** | {{LIQUIDITY_RISK_LEVEL}} | {{LIQUIDITY_RISK_SCORE}}/4 | {{LIQUIDITY_RISK_ASSESSMENT}} |
+
+**Risk Thresholds:**
+- 🚨 **CRITICAL** (Score 4): < 6 months runway - Immediate financing required
+- ⚠️ **HIGH** (Score 3): 6-12 months runway - Near-term capital raise needed
+- ⚠️ **MODERATE** (Score 2): 12-24 months runway - Plan financing within 12 months
+- ✓ **LOW** (Score 1): > 24 months runway - Adequate liquidity runway
+
+**Warning Flags:**
+{{LIQUIDITY_WARNING_FLAGS}}
+
+**Recommendations:**
+{{LIQUIDITY_RECOMMENDATIONS}}
+
+**Sustainable Burn Rate Analysis:**
+
+| Metric | Amount ({{CURRENCY}} 000s) | Assessment |
+|--------|---------------------------|------------|
+| **Target Runway** | {{TARGET_RUNWAY_MONTHS}} months | Management target |
+| **Sustainable Monthly Burn** | {{SUSTAINABLE_MONTHLY_BURN}} | Maximum sustainable burn rate |
+| **Actual Monthly Burn** | {{MONTHLY_BURN_RATE}} | Current burn rate |
+| **Excess/(Deficit) Burn** | {{EXCESS_BURN}} | {{BURN_STATUS}} |
+
+**Burn Rate Interpretation:**
+{{BURN_RATE_INTERPRETATION}}
+
+**Credit Implications:**
+{{BURN_RATE_CREDIT_IMPLICATIONS}}
+
+{{/if}}
+
+#### 4.4 Liquidity Assessment
 
 {{LIQUIDITY_ASSESSMENT}}
 
-**ACFO Coverage of Cash Needs:**
+**ACFO/AFCF Coverage of Cash Needs:**
 - ACFO provides {{ACFO_COVERAGE}}x coverage of distributions
+- AFCF provides {{AFCF_COVERAGE}}x coverage of total financing needs
 - After distributions, residual ACFO available: {{RESIDUAL_ACFO}} {{CURRENCY}} thousands
-- Sufficient to cover: {{ACFO_COVERAGE_ANALYSIS}}
+- After all financing, residual AFCF available: {{RESIDUAL_AFCF}} {{CURRENCY}} thousands
+- Sufficient to cover: {{COVERAGE_ANALYSIS}}
 
 ### 5. Growth Strategy and Capital Allocation
 

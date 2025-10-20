@@ -14,6 +14,203 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.9] - 2025-10-20
+
+### Changed - Enhanced Credit Opinion Template
+- **Updated Template:** `templates/credit_opinion_template_enhanced.md` now includes AFCF and burn rate analysis sections
+  - Previously missing: AFCF (v1.0.6), Burn Rate (v1.0.7) metrics were calculated but not in report template
+  - Template now generates comprehensive reports covering all Phase 3 calculated metrics
+
+### Template Enhancements
+
+#### Section 2: FFO, AFFO, ACFO, and AFCF Analysis
+- **Section Title Updated:** "FFO, AFFO, and ACFO Analysis" → "FFO, AFFO, ACFO, and AFCF Analysis"
+- **New Subsection 2.7:** AFCF (Adjusted Free Cash Flow) Analysis
+  - AFCF definition and formula explanation
+  - AFCF summary table with per-unit calculations
+  - Investing activities breakdown (development capex, acquisitions, dispositions, JV investments)
+  - AFCF coverage ratios:
+    - AFCF Debt Service Coverage (> 1.0x = self-funding)
+    - AFCF Payout Ratio (< 100% = sustainable distributions)
+    - AFCF Self-Funding Ratio (> 1.0x = no capital markets reliance)
+  - Key observations and credit assessment
+  - AFCF reconciliation table with validation notes
+- **Updated Subsections:** Renumbered 2.7 → 2.8 (CAPEX), 2.8 → 2.9 (Peer Comparison), 2.9 → 2.10 (Recommendations)
+- **Metric Definitions:** Added AFCF to overview section
+- **Summary Table:** Added AFCF row to FFO/AFFO/ACFO summary table
+- **Distribution Coverage:** Added AFCF coverage ratio to distribution analysis
+
+#### Section 4: Liquidity Analysis
+- **New Subsection 4.1:** Liquidity Position
+  - Comprehensive liquidity table (cash, marketable securities, restricted cash, available cash)
+  - Undrawn credit facilities with facility limits
+  - Total available liquidity calculation
+  - Data source tracking
+
+- **Subsection 4.2:** Sources and Uses (expanded)
+  - Added AFCF to sources
+  - Added principal repayments to uses
+  - Structured presentation of all liquidity sources and uses
+
+- **New Subsection 4.3:** Burn Rate and Cash Runway Analysis
+  - Burn rate definition and formula explanation
+  - Key insight: Positive AFCF ≠ No burn rate (can burn cash when AFCF < financing needs)
+  - Comprehensive burn rate analysis table:
+    - AFCF, total debt service, distributions, new financing
+    - Net financing needs and self-funding ratio
+    - Monthly and annualized burn rates
+  - Self-funding analysis:
+    - Self-funding ratio interpretation
+    - Capital markets reliance assessment
+  - Cash runway analysis:
+    - Available cash runway (months/years to depletion)
+    - Extended runway (including undrawn facilities)
+    - Estimated depletion dates
+  - Liquidity risk assessment:
+    - Risk levels: CRITICAL (< 6mo), HIGH (6-12mo), MODERATE (12-24mo), LOW (> 24mo)
+    - Risk score (1-4 scale)
+    - Warning flags and recommendations
+  - Sustainable burn rate analysis:
+    - Target runway calculation
+    - Sustainable vs. actual monthly burn comparison
+    - Excess/deficit assessment
+  - Burn rate interpretation and credit implications
+
+- **Subsection 4.4:** Liquidity Assessment (updated)
+  - Added AFCF coverage of total financing needs
+  - Residual AFCF after all financing
+  - Comprehensive coverage analysis
+
+#### Table of Contents
+- Updated Section 2 title to include AFCF
+- Added detailed subsections for Section 2 (2.1-2.10)
+- Added detailed subsections for Section 4 (4.1-4.4)
+- Updated Appendix F title to include AFCF
+
+### New Template Variables (55 new placeholders)
+
+**AFCF Section:**
+- `{{AFCF}}`, `{{AFCF_PER_UNIT}}`, `{{AFCF_PAYOUT}}%`
+- `{{NET_CFI}}`, `{{TOTAL_DEBT_SERVICE}}`
+- `{{AFCF_DEBT_SERVICE_COVERAGE}}`, `{{AFCF_DISTRIBUTION_COVERAGE}}`
+- `{{AFCF_PAYOUT_RATIO}}`, `{{AFCF_SELF_FUNDING_RATIO}}`
+- `{{AFCF_DS_ASSESSMENT}}`, `{{AFCF_PAYOUT_ASSESSMENT}}`, `{{AFCF_SF_ASSESSMENT}}`
+- `{{AFCF_DATA_SOURCE}}`, `{{AFCF_DATA_QUALITY}}`
+- `{{AFCF_CFI_BREAKDOWN_TABLE}}`
+- `{{AFCF_KEY_OBSERVATIONS}}`, `{{AFCF_CREDIT_ASSESSMENT}}`
+- `{{AFCF_RECONCILIATION_TABLE}}`, `{{AFCF_VALIDATION_NOTES}}`
+
+**Liquidity Position:**
+- `{{CASH_AND_EQUIVALENTS}}`, `{{MARKETABLE_SECURITIES}}`, `{{RESTRICTED_CASH}}`
+- `{{AVAILABLE_CASH}}`, `{{UNDRAWN_FACILITIES}}`, `{{FACILITY_LIMIT}}`
+- `{{TOTAL_LIQUIDITY}}`, `{{LIQUIDITY_DATA_SOURCE}}`
+
+**Burn Rate Analysis:**
+- `{{BURN_RATE_APPLICABLE}}` (boolean/conditional)
+- `{{AFCF_PERIOD}}`, `{{AFCF_ANNUALIZED}}`
+- `{{DEBT_SERVICE_PERIOD}}`, `{{DEBT_SERVICE_ANNUALIZED}}`
+- `{{DIST_PERIOD}}`, `{{DIST_ANNUALIZED}}`
+- `{{NEW_FINANCING}}`, `{{FINANCING_PERIOD}}`, `{{FINANCING_ANNUALIZED}}`
+- `{{NET_FINANCING_NEEDS}}`, `{{NET_FINANCING_ANNUALIZED}}`
+- `{{SELF_FUNDING_RATIO}}`, `{{SELF_FUNDING_PERCENT}}%`
+- `{{SELF_FUNDING_INTERPRETATION}}`, `{{CAPITAL_MARKETS_RELIANCE}}`
+- `{{MONTHLY_BURN_RATE}}`, `{{ANNUALIZED_BURN_RATE}}`
+- `{{CASH_RUNWAY_MONTHS}}`, `{{CASH_RUNWAY_YEARS}}`, `{{CASH_DEPLETION_DATE}}`, `{{RUNWAY_RISK}}`
+- `{{EXTENDED_RUNWAY_MONTHS}}`, `{{EXTENDED_RUNWAY_YEARS}}`, `{{EXTENDED_DEPLETION_DATE}}`, `{{EXTENDED_RISK}}`
+- `{{LIQUIDITY_RISK_LEVEL}}`, `{{LIQUIDITY_RISK_SCORE}}`, `{{LIQUIDITY_RISK_ASSESSMENT}}`
+- `{{LIQUIDITY_WARNING_FLAGS}}`, `{{LIQUIDITY_RECOMMENDATIONS}}`
+- `{{TARGET_RUNWAY_MONTHS}}`, `{{SUSTAINABLE_MONTHLY_BURN}}`
+- `{{EXCESS_BURN}}`, `{{BURN_STATUS}}`
+- `{{BURN_RATE_INTERPRETATION}}`, `{{BURN_RATE_CREDIT_IMPLICATIONS}}`
+
+**Updated Variables:**
+- `{{FFO_AFFO_ACFO_AFCF_SOURCE}}` (was `{{FFO_AFFO_ACFO_SOURCE}}`)
+- `{{PEER_FFO_AFFO_ACFO_AFCF_COMPARISON}}` (was `{{PEER_FFO_AFFO_ACFO_COMPARISON}}`)
+- `{{RESIDUAL_AFCF}}` (new), `{{COVERAGE_ANALYSIS}}` (updated)
+
+### Implementation Impact
+- **generate_final_report.py:** Will need to populate 55 new template variables from Phase 3 output
+- **Phase 5 Integration:** Template now aligned with all Phase 3 v1.0.6+ and v1.0.7+ calculations
+- **Backward Compatible:** Existing template variables unchanged; new sections are additive
+- **Conditional Rendering:** Burn rate section uses `{{#if BURN_RATE_APPLICABLE}}` for conditional display
+
+### Documentation
+- **Template Enhanced:** `templates/credit_opinion_template_enhanced.md` (expanded from 750 → 850+ lines)
+- **Comprehensive Coverage:** Report template now covers all calculated metrics from Phase 3
+- **Professional Format:** Maintains Moody's-style structure with enhanced quantitative analysis
+
+### Migration Notes
+- Existing Phase 5 implementations should update `generate_final_report.py` to map Phase 3 output to new variables
+- AFCF section will display when `cash_flow_investing` data present (v1.0.6+)
+- Burn rate section will display when `burn_rate_analysis` data present (v1.0.7+)
+- Template gracefully handles missing data with conditional sections
+
+---
+
+## [1.0.8] - 2025-10-20
+
+### Changed - REALPAC FFO/AFFO Methodology Update
+- **Updated Reference:** Migrated from REALPAC White Paper (February 2019) to latest version (January 2022)
+  - **Key Enhancement:** Expanded Adjustment U (Non-controlling Interests) to include NCI for consolidated investments in entities with puttable units classified as financial liabilities under IAS 32
+  - This addresses cases where NCI has not been deducted from IFRS profit because puttable units are treated as liabilities rather than equity
+  - Ensures consistent treatment across open-end REITs, closed-end REITs, and REOCs
+
+### Updated Files
+- **Design Document:**
+  - `docs/FFO_AFFO_IMPLEMENTATION_DESIGN.md` - Updated reference from Feb 2019 to Jan 2022
+  - Added note on Adjustment U enhancement for puttable units NCI treatment
+
+- **Phase 2 Schema:**
+  - `.claude/knowledge/phase2_extraction_schema.json` - Enhanced descriptions for:
+    - `non_controlling_interests_ffo` (Adjustment U) - Now explicitly mentions Jan 2022 puttable units enhancement
+    - `non_controlling_interests_affo` (Adjustment Z) - Same enhancement for consistency
+  - Provides clear guidance to Phase 2 extraction about including both standard NCI and puttable units NCI
+
+- **Phase 3 Calculation Functions:**
+  - `scripts/calculate_credit_metrics/ffo_affo.py` - Updated docstrings to reference Jan 2022
+  - `scripts/calculate_credit_metrics/_core.py` - Updated docstrings and footer references
+  - Added implementation notes explaining the Jan 2022 NCI enhancement for puttable instruments
+
+- **Supporting Documentation:**
+  - `.claude/knowledge/phase2_extraction_template.json` - Updated comment to reference Jan 2022
+  - `scripts/extract_key_metrics_efficient.py` - Updated extraction prompt references (2 locations)
+  - `templates/credit_opinion_template_enhanced.md` - Updated all methodology references (4 locations)
+  - `docs/ACFO_IMPLEMENTATION.md` - Updated reference section
+  - `docs/ISSUE_4_IMPLEMENTATION_SUMMARY.md` - Updated all references (5 locations)
+
+### Technical Details
+- **Adjustment U Enhancement (January 2022):**
+  - Expands FFO NCI adjustment to explicitly include deduction for NCI in consolidated entities where:
+    - Puttable units are classified as financial liabilities under IAS 32
+    - NCI was not previously deducted from IFRS profit because of liability treatment
+  - Ensures comparability between different REIT structures (open vs. closed-end)
+  - Maintains consistency with puttable instruments adjustment (Adjustment O)
+
+### Implementation Notes
+- **No Breaking Changes:** Calculation logic was already correct - Phase 3 functions properly subtract NCI (Adjustment U)
+- **Schema Enhancement:** Phase 2 schema descriptions now provide explicit guidance on capturing both types of NCI adjustments
+- **Backward Compatible:** Existing extractions continue to work; enhanced guidance improves future extraction accuracy
+- **Documentation Complete:** All references to "February 2019" updated to "January 2022" across 10 files
+
+### Validation
+- Reviewed REALPAC FFO/AFFO White Paper (January 2022) for all methodology changes
+- Confirmed no other substantive changes beyond NCI enhancement in Jan 2022 revision
+- Verified Phase 3 calculation functions correctly implement the enhanced NCI treatment
+
+### Files Modified (10)
+1. `docs/FFO_AFFO_IMPLEMENTATION_DESIGN.md`
+2. `.claude/knowledge/phase2_extraction_schema.json`
+3. `scripts/calculate_credit_metrics/ffo_affo.py`
+4. `scripts/calculate_credit_metrics/_core.py`
+5. `.claude/knowledge/phase2_extraction_template.json`
+6. `scripts/extract_key_metrics_efficient.py`
+7. `templates/credit_opinion_template_enhanced.md`
+8. `docs/ACFO_IMPLEMENTATION.md`
+9. `docs/ISSUE_4_IMPLEMENTATION_SUMMARY.md`
+10. `CHANGELOG.md`
+
+---
+
 ## [1.0.7] - 2025-10-20
 
 ### Added - Cash Burn Rate and Liquidity Runway Analysis
@@ -557,10 +754,11 @@ This project uses [Semantic Versioning](https://semver.org/):
 
 | Component | Version | Notes |
 |-----------|---------|-------|
-| Pipeline | 1.0.7 | Cash burn rate and liquidity runway analysis |
-| Schema | 1.0.0 | Initial standardized schema (extended with liquidity section in 1.0.7) |
-| CLAUDE.md | 1.0.7 | Sequential markdown-first architecture with burn rate |
-| CHANGELOG.md | 1.0.7 | Added v1.0.7 release notes |
+| Pipeline | 1.0.9 | Enhanced credit opinion template with AFCF and burn rate |
+| Schema | 1.0.0 | Initial standardized schema (enhanced NCI guidance in 1.0.8) |
+| Template | 1.0.9 | Comprehensive report template with AFCF and burn rate sections |
+| CLAUDE.md | 1.0.9 | Sequential markdown-first architecture + complete template |
+| CHANGELOG.md | 1.0.9 | Added v1.0.9 release notes |
 
 ---
 

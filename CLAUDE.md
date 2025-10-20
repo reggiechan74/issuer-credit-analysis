@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.8
+**Version:** 1.0.9
 **Last Updated:** 2025-10-20
-**Pipeline Version:** 1.0.8 (Sequential markdown-first + AFCF + Burn Rate + Dilution Tracking)
+**Pipeline Version:** 1.0.9 (Sequential markdown-first + AFCF + Burn Rate + Dilution + REALPAC Jan 2022 + Enhanced Template)
 
 ## Project Overview
 
