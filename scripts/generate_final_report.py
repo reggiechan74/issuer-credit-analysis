@@ -743,6 +743,62 @@ def generate_reported_adjustments_list(ffo_affo_components):
     return '\n'.join(lines) if lines else 'No material adjustments disclosed'
 
 
+def generate_top_adjustments_list(adjustments_dict, top_n=5, clean_names=True):
+    """
+    Generate formatted list of top N adjustments by absolute value
+
+    Args:
+        adjustments_dict (dict): Dictionary of {adjustment_name: amount}
+        top_n (int): Number of top adjustments to return (default 5)
+        clean_names (bool): Whether to clean up adjustment names (default True)
+
+    Returns:
+        str: Formatted markdown list
+
+    Example Output:
+        - Amortization Tenant Allowances: $11,321k
+        - Fair Value Changes Hedges: $3,149k
+        - Unrealized FV Changes: $862k
+    """
+    if not adjustments_dict:
+        return "No adjustments available"
+
+    # Filter out zero/null values
+    non_zero = {k: v for k, v in adjustments_dict.items()
+                if v is not None and v != 0}
+
+    if not non_zero:
+        return "No material adjustments (all adjustments are zero)"
+
+    # Sort by absolute value descending
+    sorted_adjustments = sorted(non_zero.items(),
+                               key=lambda x: abs(x[1]),
+                               reverse=True)
+
+    # Take top N
+    top_adjustments = sorted_adjustments[:top_n]
+
+    # Format as markdown list
+    lines = []
+    for name, amount in top_adjustments:
+        # Clean up adjustment name if requested
+        if clean_names:
+            # Remove 'adjustment_' prefix and underscores
+            clean_name = name.replace('adjustment_', '').replace('_', ' ')
+            # Remove leading letter codes (A_, B_, etc.)
+            import re
+            clean_name = re.sub(r'^[A-Z0-9]+\s+', '', clean_name)
+            clean_name = clean_name.title()
+        else:
+            clean_name = name
+
+        # Format amount with sign
+        sign = '+' if amount > 0 else ''
+        lines.append(f"- {clean_name}: {sign}${amount:,.0f}k")
+
+    return '\n'.join(lines)
+
+
 def generate_final_report(metrics, analysis_sections, template, phase2_data=None):
     """
     Generate final report by combining metrics and analysis with template
@@ -870,6 +926,86 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     afcf_value = afcf_metrics.get('afcf', 0)
     net_cfi_value = afcf_metrics.get('net_cfi', 0)
     afcf_recon_table = format_afcf_reconciliation_table(acfo_value, afcf_value, net_cfi_value, currency)
+
+    # Bridge Analysis (Section 2.6) - FFO → AFFO → ACFO
+    # Extract calculated values
+    ffo_calculated = reit_metrics.get('ffo_calculated', 0) or 0
+    affo_calculated = reit_metrics.get('affo_calculated', 0) or 0
+    acfo_calculated = reit_metrics.get('acfo_calculated', 0) or 0
+
+    # FFO → AFFO Bridge (Calculated vs Reported)
+    # Try calculated values first
+    if ffo_calculated and affo_calculated:
+        ffo_affo_reduction_calc = ffo_calculated - affo_calculated
+        ffo_affo_reduction_pct = (ffo_affo_reduction_calc / ffo_calculated * 100) if ffo_calculated else 0
+
+        # Get top adjustments from AFFO calculation detail
+        affo_calc_detail = reit_metrics.get('affo_calculation_detail', {})
+        affo_adjustments = affo_calc_detail.get('adjustments_detail', {})
+        ffo_affo_top_adjustments = generate_top_adjustments_list(affo_adjustments, top_n=5)
+
+        # If calculated has no material adjustments (reserve methodology), use reported values
+        if "No material adjustments" in ffo_affo_top_adjustments or ffo_affo_reduction_calc == 0:
+            # Try to use reported values instead
+            ffo_reported = reit_metrics.get('ffo', 0) or 0
+            affo_reported = reit_metrics.get('affo', 0) or 0
+
+            if ffo_reported and affo_reported and ffo_reported != affo_reported:
+                # Use reported values for bridge
+                ffo_affo_reduction_calc = ffo_reported - affo_reported
+                ffo_affo_reduction_pct = (ffo_affo_reduction_calc / ffo_reported * 100) if ffo_reported else 0
+
+                # Check for reserve methodology note
+                reserve_methodology = affo_calc_detail.get('reserve_methodology', '')
+                if reserve_methodology:
+                    ffo_affo_top_adjustments = f"**Reserve Methodology Used:** {reserve_methodology}\n\n**Note:** Detailed component breakdown not disclosed by issuer. Total adjustment of ${ffo_affo_reduction_calc:,.0f}k represents sustaining capital reserve."
+                else:
+                    ffo_affo_top_adjustments = f"**Note:** Detailed component breakdown not disclosed by issuer. Total adjustment of ${ffo_affo_reduction_calc:,.0f}k calculated from reported FFO and AFFO values."
+    else:
+        ffo_affo_reduction_calc = 0
+        ffo_affo_reduction_pct = 0
+        ffo_affo_top_adjustments = "FFO/AFFO calculation detail not available"
+
+    # AFFO → ACFO Bridge (Calculated)
+    if affo_calculated is not None and acfo_calculated:
+        affo_acfo_adjustment = acfo_calculated - affo_calculated
+        affo_acfo_adjustment_pct = (affo_acfo_adjustment / affo_calculated * 100) if affo_calculated and affo_calculated != 0 else 0
+
+        # Get top adjustments from ACFO calculation detail
+        acfo_calc_detail = reit_metrics.get('acfo_calculation_detail', {})
+        acfo_adjustments = acfo_calc_detail.get('adjustments_detail', {})
+        affo_acfo_top_adjustments = generate_top_adjustments_list(acfo_adjustments, top_n=5)
+    else:
+        affo_acfo_adjustment = 0
+        affo_acfo_adjustment_pct = 0
+        affo_acfo_top_adjustments = "ACFO calculation detail not available"
+
+    # Gap Analysis Interpretation
+    # Use calculated ACFO, but use reported AFFO if calculated AFFO had no adjustments
+    affo_for_comparison = affo_calculated
+    affo_comparison_source = "calculated"
+
+    # If we used reported values for FFO→AFFO bridge, use reported AFFO for gap analysis too
+    if ffo_affo_reduction_calc != 0 and (affo_calculated == 0 or ffo_calculated == affo_calculated):
+        affo_reported = reit_metrics.get('affo', 0) or 0
+        if affo_reported:
+            affo_for_comparison = affo_reported
+            affo_comparison_source = "reported"
+
+    if acfo_calculated and affo_for_comparison:
+        gap = acfo_calculated - affo_for_comparison
+        gap_pct = (gap / affo_for_comparison * 100) if affo_for_comparison and affo_for_comparison != 0 else 0
+
+        if acfo_calculated > affo_for_comparison:
+            gap_interpretation = f"ACFO (${acfo_calculated:,.0f}k calculated) exceeds AFFO (${affo_for_comparison:,.0f}k {affo_comparison_source}) by ${abs(gap):,.0f}k ({abs(gap_pct):.1f}%). This indicates stronger cash generation when accounting for working capital changes and actual capital expenditures."
+        elif acfo_calculated < affo_for_comparison:
+            gap_interpretation = f"ACFO (${acfo_calculated:,.0f}k calculated) is below AFFO (${affo_for_comparison:,.0f}k {affo_comparison_source}) by ${abs(gap):,.0f}k ({abs(gap_pct):.1f}%). This indicates that ACFO provides a more conservative measure of sustainable cash flow after accounting for working capital changes and actual capital expenditures."
+        else:
+            gap_interpretation = f"ACFO equals AFFO (${acfo_calculated:,.0f}k), indicating no material working capital impact on cash flow."
+    elif acfo_calculated and not affo_for_comparison:
+        gap_interpretation = "ACFO calculated but AFFO not available for comparison"
+    else:
+        gap_interpretation = "ACFO not calculated - requires cash flow statement data"
 
     # Dilution analysis (v1.0.8)
     dilution_analysis = metrics.get('dilution_analysis', {})
@@ -1157,25 +1293,32 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # ========================================
         # Section 2.6.2: Bridge Analysis (Calculated)
         # ========================================
-        # These use existing calculated values
-        'FFO_TO_AFFO_REDUCTION_CALCULATED': f"{(reit_metrics.get('ffo_calculated', ffo) - reit_metrics.get('affo_calculated', affo)):,.0f}",
-        'FFO_TO_AFFO_PERCENT_CALCULATED': f"{((reit_metrics.get('ffo_calculated', ffo) - reit_metrics.get('affo_calculated', affo)) / reit_metrics.get('ffo_calculated', ffo) * 100) if reit_metrics.get('ffo_calculated', ffo) else 0:.1f}",
-        'FFO_TO_AFFO_ADJUSTMENTS_CALCULATED': f"Calculated sustaining CAPEX, leasing costs, tenant improvements totaling ${(reit_metrics.get('ffo_calculated', ffo) - reit_metrics.get('affo_calculated', affo)):,.0f}k",
-        'CFO_TO_ACFO_REDUCTION_CALCULATED': f"{(phase2_data.get('cash_flow_from_operations', {}).get('total_cfo', 0) - acfo_metrics.get('acfo', 0)):,.0f}" if phase2_data and acfo_metrics.get('acfo') else 'Not available',
-        'CFO_TO_ACFO_PERCENT_CALCULATED': f"{((phase2_data.get('cash_flow_from_operations', {}).get('total_cfo', 0) - acfo_metrics.get('acfo', 0)) / phase2_data.get('cash_flow_from_operations', {}).get('total_cfo', 1) * 100) if phase2_data and acfo_metrics.get('acfo') else 0:.1f}" if phase2_data and acfo_metrics.get('acfo') else 'Not available',
-        'CFO_TO_ACFO_ADJUSTMENTS_CALCULATED': 'See ACFO reconciliation table for details' if acfo_metrics.get('acfo') else 'Not available',
+        # FFO → AFFO Bridge (uses calculated values from lines 930-948)
+        'FFO_TO_AFFO_REDUCTION_CALCULATED': f"{ffo_affo_reduction_calc:,.0f}",
+        'FFO_TO_AFFO_PERCENT_CALCULATED': f"{ffo_affo_reduction_pct:.1f}",
+        'FFO_TO_AFFO_ADJUSTMENTS_CALCULATED': ffo_affo_top_adjustments,
+
+        # AFFO → ACFO Bridge (uses calculated values from lines 950-962)
+        'AFFO_TO_ACFO_ADJUSTMENT_CALCULATED': f"{affo_acfo_adjustment:,.0f}",
+        'AFFO_TO_ACFO_PERCENT_CALCULATED': f"{affo_acfo_adjustment_pct:.1f}",
+        'AFFO_TO_ACFO_ADJUSTMENTS_CALCULATED': affo_acfo_top_adjustments,
+
+        # Legacy placeholders (kept for backward compatibility)
+        'CFO_TO_ACFO_REDUCTION_CALCULATED': f"{affo_acfo_adjustment:,.0f}",
+        'CFO_TO_ACFO_PERCENT_CALCULATED': f"{affo_acfo_adjustment_pct:.1f}",
+        'CFO_TO_ACFO_ADJUSTMENTS_CALCULATED': affo_acfo_top_adjustments,
 
         # ========================================
         # Section 2.6.3: AFFO vs ACFO Gap Analysis
         # ========================================
-
-
+        'BRIDGE_ANALYSIS_INTERPRETATION': gap_interpretation,
+        'AFFO_ACFO_GAP_ANALYSIS': gap_interpretation,  # Template uses this name
 
         'AFFO_ACFO_GAP_REPORTED': f"{affo_acfo_gap_rep:,.0f}" if acfo_rep else 'N/A',
         'AFFO_ACFO_GAP_PERCENT_REPORTED': f"{affo_acfo_gap_pct_rep:.1f}" if acfo_rep else 'N/A',
-        'AFFO_ACFO_GAP_CALCULATED': f"{affo_acfo_gap_calc:,.0f}" if acfo_calc else 'Not available',
-        'AFFO_ACFO_GAP_PERCENT_CALCULATED': f"{affo_acfo_gap_pct_calc:.1f}" if acfo_calc else 'Not available',
-        'AFFO_ACFO_GAP_VARIANCE': f"{(affo_acfo_gap_calc - affo_acfo_gap_rep):,.0f}" if acfo_rep and acfo_calc else 'Not available',
+        'AFFO_ACFO_GAP_CALCULATED': f"{affo_acfo_adjustment:,.0f}",
+        'AFFO_ACFO_GAP_PERCENT_CALCULATED': f"{affo_acfo_adjustment_pct:.1f}",
+        'AFFO_ACFO_GAP_VARIANCE': f"{(affo_acfo_adjustment - affo_acfo_gap_rep):,.0f}" if acfo_rep else 'Not available',
 
         # ========================================
         # Section 2.7: AFCF Analysis (Enhanced)
@@ -1467,7 +1610,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'FFO_AFFO_REDUCTION_ASSESSMENT': f"{'High' if (ffo - affo) / ffo > 0.3 else 'Moderate'} reduction from FFO to AFFO",
         'AFFO_ACFO_GAP': 'Not available',
         'AFFO_ACFO_GAP_PERCENT': 'Not available',
-        'AFFO_ACFO_GAP_ANALYSIS': 'ACFO not calculated - requires cash flow statement data',
+        # 'AFFO_ACFO_GAP_ANALYSIS' is set earlier at line 1315 with calculated value - don't override here
         'AFFO_ACFO_GAP_INTERPRETATION': 'Gap analysis unavailable without ACFO',
 
         # ACFO Placeholders
