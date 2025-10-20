@@ -3,7 +3,7 @@
 **Multi-phase credit analysis system for real estate investment trusts (REITs) using Claude Code agents.**
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)](CHANGELOG.md)
 
 ## Overview
 
@@ -66,21 +66,43 @@ Issuer_Reports/
 ### Prerequisites
 
 - Python 3.10+
-- [Claude Code](https://claude.com/claude-code) (for agent execution)
+- Node.js 18+ (for Claude Code)
 - Git
 
 ### Setup
+
+**1. Install Claude Code:**
+
+```bash
+# Install Claude Code CLI globally
+npm install -g @anthropic-ai/claude-code
+
+# Verify installation
+claude-code --version
+```
+
+**2. Set up the project:**
 
 ```bash
 # Clone repository
 git clone https://github.com/reggiechan74/issuer-credit-analysis.git
 cd issuer-credit-analysis
 
-# Install dependencies
+# Install Python dependencies
 pip install -r requirements.txt
 
 # Run tests to verify installation
 pytest tests/
+```
+
+**3. Start Claude Code:**
+
+```bash
+# Open Claude Code in the project directory
+claude-code
+
+# Or use the web interface at:
+# https://claude.com/claude-code
 ```
 
 ## Configuration (v1.0.4)
@@ -118,9 +140,11 @@ phase2_extraction:
 
 ## Quick Start
 
-### Using Slash Command (Recommended)
+### Using Slash Commands (Recommended)
 
-The simplest way to run the complete pipeline is through the `/analyzeREissuer` slash command:
+**Complete Credit Analysis:** `/analyzeREissuer`
+
+The simplest way to run the complete pipeline:
 
 ```bash
 # With Claude Code open in this directory:
@@ -134,6 +158,28 @@ The simplest way to run the complete pipeline is through the `/analyzeREissuer` 
 # 5. Phase 5: Generate report (0 tokens, templating)
 
 # Total time: ~60 seconds | Total cost: ~$0.30
+```
+
+**Burn Rate Analysis:** `/burnrate` (New in v1.0.7)
+
+Generate comprehensive cash burn rate and liquidity runway analysis:
+
+```bash
+# Using issuer name (searches Issuer_Reports/)
+/burnrate "Dream Industrial REIT"
+
+# Using issuer abbreviation
+/burnrate DIR
+
+# Using direct path to Phase 2 JSON
+/burnrate Issuer_Reports/DIR-Q2-Report-FINAL/temp/phase2_extracted_data.json
+
+# Report includes:
+# - Cash burn rate (monthly & annualized)
+# - Cash runway (months until depletion)
+# - Liquidity risk assessment (CRITICAL/HIGH/MODERATE/LOW)
+# - Self-funding ratio and sustainable burn analysis
+# - Credit implications and recommended actions
 ```
 
 ### Manual Execution (Individual Phases)
@@ -273,6 +319,8 @@ pytest tests/ --cov=scripts --cov-report=html
 **REIT Metrics:**
 - FFO (Funds From Operations)
 - AFFO (Adjusted FFO)
+- ACFO (Adjusted Cash Flow from Operations)
+- AFCF (Adjusted Free Cash Flow)
 - FFO/AFFO per unit
 - FFO/AFFO payout ratios
 - Distribution coverage
@@ -281,6 +329,16 @@ pytest tests/ --cov=scripts --cov-report=html
 - NOI/Interest Coverage
 - EBITDA/Interest Coverage
 - Debt Service Coverage
+- AFCF Debt Service Coverage
+- AFCF Self-Funding Ratio
+
+**Liquidity & Burn Rate Analysis (v1.0.7):**
+- Cash burn rate (monthly & annualized)
+- Cash runway (months until depletion)
+- Liquidity risk assessment (CRITICAL/HIGH/MODERATE/LOW)
+- Sustainable burn rate analysis
+- Self-funding ratio (AFCF / Net Financing Needs)
+- **Key Insight:** Identifies REITs with positive AFCF that still burn cash
 
 ### Credit Analysis Sections
 
@@ -339,6 +397,26 @@ The credit analysis pipeline was developed as a domain expert implementation dem
 - Production-ready financial analysis
 
 ## Recent Improvements
+
+### v1.0.7 Updates (Latest)
+
+**Issue #7 - Cash Burn Rate and Liquidity Runway Analysis (Implemented)**
+- ✅ 4 new calculation functions: burn rate, cash runway, liquidity risk, sustainable burn
+- ✅ New `/burnrate` slash command for comprehensive liquidity analysis
+- ✅ 36 tests passing (25 unit + 11 integration)
+- ✅ **Critical Discovery:** REITs can have positive AFCF but still burn cash when financing needs exceed free cash flow
+- ✅ Production-ready: Tested with Dream Industrial REIT and Artis REIT
+
+**Issue #6 - AFCF (Adjusted Free Cash Flow) Calculations (Implemented)**
+- ✅ New metric: AFCF = ACFO + Net Cash Flow from Investing
+- ✅ More conservative than ACFO - includes ALL investment activities
+- ✅ AFCF coverage ratios: debt service, distributions, self-funding
+- ✅ 17 tests passing with comprehensive validation
+
+**Issue #5 - ACFO Implementation (Implemented)**
+- ✅ Automated ACFO calculation using REALPAC methodology
+- ✅ 17 adjustments to IFRS CFO for normalized operating cash flow
+- ✅ Prevents double-counting with AFCF calculations
 
 ### v1.0.4 Updates
 

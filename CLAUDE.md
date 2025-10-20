@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.6
+**Version:** 1.0.7
 **Last Updated:** 2025-10-20
-**Pipeline Version:** 1.0.6 (Sequential markdown-first extraction + AFCF analysis)
+**Pipeline Version:** 1.0.7 (Sequential markdown-first + AFCF + Burn Rate analysis)
 
 ## Project Overview
 
@@ -350,6 +350,214 @@ AFCF = $22M, Distributions = $19M → Coverage = 1.16x
 
 **See:** `docs/AFCF_Research_Proposal.md` for complete methodology
 
+## Burn Rate and Cash Runway Analysis (v1.0.7)
+
+**Cash burn rate** measures the speed at which a REIT depletes cash reserves when AFCF cannot cover financing obligations.
+
+### What is Burn Rate?
+
+```
+Burn Rate = Net Financing Needs - AFCF (when AFCF < Net Financing Needs)
+```
+
+**Key Insight:** A REIT can have *positive AFCF* but still burn cash if free cash flow is insufficient to cover debt service + distributions.
+
+**When Burn Rate Applies:**
+- ✅ AFCF < (Debt Service + Distributions - New Financing)
+- ✅ Self-funding ratio < 1.0x
+- ❌ NOT just when AFCF is negative
+
+### Formula Components
+
+```
+Net Financing Needs = Total Debt Service + Total Distributions - New Financing
+
+Where:
+  Total Debt Service = Annualized Interest Expense + Principal Repayments
+  Total Distributions = Common + Preferred + NCI distributions
+  New Financing = New Debt Issuances + Equity Issuances
+```
+
+### Required Phase 2 Data
+
+Burn rate analysis requires liquidity data extraction:
+
+```json
+{
+  "liquidity": {
+    "cash_and_equivalents": 65000,
+    "marketable_securities": 20000,
+    "restricted_cash": 5000,
+    "undrawn_credit_facilities": 150000,
+    "credit_facility_limit": 200000,
+    "available_cash": 80000,
+    "total_available_liquidity": 230000,
+    "data_source": "balance sheet + note 12"
+  }
+}
+```
+
+### Burn Rate Metrics
+
+**1. Monthly Burn Rate**
+```
+Monthly Burn Rate = Annualized Burn Rate / 12 months
+```
+- Measures cash depletion per month
+- Denominator for runway calculations
+
+**2. Cash Runway**
+```
+Available Cash = Cash + Marketable Securities - Restricted Cash
+Cash Runway (months) = Available Cash / Monthly Burn Rate
+Extended Runway = (Available Cash + Undrawn Facilities) / Monthly Burn Rate
+```
+- Months until cash depletion at current burn rate
+- Extended runway includes credit facility capacity
+
+**3. Liquidity Risk Assessment**
+
+| Runway | Risk Level | Risk Score | Action Required |
+|--------|------------|------------|-----------------|
+| < 6 months | 🚨 **CRITICAL** | 4 | Immediate financing required |
+| 6-12 months | ⚠️ **HIGH** | 3 | Near-term capital raise needed |
+| 12-24 months | ⚠️ **MODERATE** | 2 | Plan financing within 12 months |
+| > 24 months | ✓ **LOW** | 1 | Adequate liquidity runway |
+
+**4. Sustainable Burn Rate**
+```
+Sustainable Monthly Burn = Available Cash / Target Runway (24 months)
+Excess Burn = Actual Monthly Burn - Sustainable Monthly Burn
+```
+- Maximum burn rate to maintain target runway
+- Identifies overspend requiring corrective action
+
+### Example Calculation
+
+**Scenario:** REIT with positive AFCF but burning cash
+
+**Input:**
+- AFCF = $28M (positive - operations are healthy)
+- Annualized Interest = $22M
+- Principal Repayments = $25M
+- Distributions = $19M
+- New Debt = $10M
+- New Equity = $5M
+- Available Cash = $80M
+- Undrawn Facilities = $150M
+
+**Calculation:**
+```
+Net Financing Needs = (22M + 25M + 19M) - (10M + 5M) = 51M
+AFCF = 28M
+
+Burn Rate Applicable? Yes (28M < 51M)
+Self-Funding Ratio = 28M / 51M = 0.55x (REIT cannot self-fund)
+
+Annualized Burn = 51M - 28M = 23M
+Monthly Burn = 23M / 12 = 1.92M/month
+
+Cash Runway = 80M / 1.92M = 41.7 months
+Extended Runway = (80M + 150M) / 1.92M = 119.8 months
+
+Risk Level = LOW (> 24 months)
+```
+
+**Interpretation:**
+- ⚠️ REIT burns $1.92M/month despite positive AFCF
+- ✓ Comfortable 41.7-month runway without new financing
+- ✓ Extended runway of 10 years if credit facility accessed
+- ✓ Growth-oriented strategy is sustainable
+
+### Output Schema
+
+```json
+{
+  "burn_rate_analysis": {
+    "applicable": true,
+    "monthly_burn_rate": 1916667,
+    "annualized_burn_rate": 23000000,
+    "afcf": 28000000,
+    "net_financing_needs": 51000000,
+    "self_funding_ratio": 0.55
+  },
+  "liquidity_position": {
+    "cash_and_equivalents": 65000000,
+    "marketable_securities": 20000000,
+    "restricted_cash": 5000000,
+    "available_cash": 80000000,
+    "undrawn_credit_facilities": 150000000,
+    "total_available_liquidity": 230000000
+  },
+  "cash_runway": {
+    "runway_months": 41.7,
+    "runway_years": 3.5,
+    "extended_runway_months": 119.8,
+    "extended_runway_years": 10.0,
+    "depletion_date": "2029-04-15"
+  },
+  "liquidity_risk": {
+    "risk_level": "LOW",
+    "risk_score": 1,
+    "warning_flags": [],
+    "assessment": "✓ Adequate liquidity runway (> 24 months)",
+    "recommendations": [
+      "Monitor burn rate quarterly",
+      "Maintain covenant compliance"
+    ]
+  },
+  "sustainable_burn": {
+    "target_runway_months": 24,
+    "sustainable_monthly_burn": 3333333,
+    "excess_burn_per_month": -1416666,
+    "status": "Below sustainable - $1,417,000/month cushion"
+  }
+}
+```
+
+### Credit Analysis Use Cases
+
+**1. Differentiate Growth vs. Distress**
+```
+Positive AFCF + Burn Rate = Growth investments exceed operating cash flow
+Negative AFCF + Burn Rate = Operational distress
+```
+
+**2. Assess Financing Dependency**
+```
+Self-Funding Ratio < 1.0 = Reliant on capital markets
+Short Runway (<12mo) + High Burn = Forced seller/financing risk
+```
+
+**3. Distribution Sustainability**
+```
+If suspending distributions (saving $19M/year):
+  New Burn Rate = $4M/year
+  New Runway = 80M / (4M/12) = 240 months
+→ Distribution cut would extend runway dramatically
+```
+
+**4. Refinancing Risk**
+```
+Debt maturity in 18 months, Current runway = 10 months
+→ Must refinance before cash depletion
+→ Weak negotiating position
+```
+
+### Functions
+
+**Phase 3 Functions (automatic if AFCF + financing + liquidity data present):**
+- `calculate_burn_rate()` - Calculate burn rate from AFCF vs financing needs
+- `calculate_cash_runway()` - Calculate months until cash depletion
+- `assess_liquidity_risk()` - Risk level assessment (CRITICAL/HIGH/MODERATE/LOW)
+- `calculate_sustainable_burn_rate()` - Maximum sustainable burn rate
+
+**Testing:**
+- Unit tests: `tests/test_burn_rate_calculations.py` (25 tests)
+- Integration tests: `tests/test_burn_rate_integration.py` (11 tests)
+
+**See:** GitHub Issue #7 for complete implementation details
+
 ## Key Files
 
 **Pipeline Scripts:**
@@ -442,26 +650,4 @@ All credit decisions require review by qualified analysts and credit committee a
 
 ---
 
-## Version History
-
-### v1.0.4 (2025-10-17) - Revert to Sequential Markdown-First Architecture
-**Major Changes:**
-- **REVERTED v1.1.0 parallel PDF approach** (caused context window exhaustion)
-- Restored v1.0.x sequential architecture: Phase 1 (PDF→MD) completes before Phase 2 (MD→JSON)
-- Config default changed from `pdf_direct` back to `manual` (markdown-first)
-- Updated all documentation to reflect correct architecture
-
-**Why the Reversion:**
-- ❌ v1.1.0 PDF direct reading consumed ~136K tokens (545KB PDFs)
-- ❌ Context exhaustion left no room for extraction logic
-- ✅ v1.0.x markdown-first uses ~1K prompt tokens + file references
-- ✅ Pre-processed markdown is cleaner and more reliable for extraction
-
-**Architecture:**
-- Phase 1 runs FIRST (foreground): PDF → Markdown (PyMuPDF4LLM + Camelot)
-- Phase 2 runs SECOND: Markdown → JSON (file references, context-efficient)
-- Total tokens: ~13K (vs ~148K for direct PDF reading)
-
----
-
-See [CHANGELOG.md](CHANGELOG.md) for complete version history.
+For version history and release notes, see [CHANGELOG.md](CHANGELOG.md).

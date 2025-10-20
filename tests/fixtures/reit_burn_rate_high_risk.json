@@ -1,0 +1,97 @@
+{
+  "issuer_name": "Hypothetical REIT - High Burn Rate Scenario",
+  "reporting_date": "2025-06-30",
+  "reporting_period": "Six months ended June 30, 2025",
+  "currency": "CAD",
+  "_scenario": "REIT with aggressive development program exceeding operating cash flow - HIGH risk (10.8 month runway)",
+
+  "balance_sheet": {
+    "total_assets": 800000,
+    "mortgages_noncurrent": 350000,
+    "mortgages_current": 15000,
+    "credit_facilities": 80000,
+    "senior_unsecured_debentures": 100000,
+    "cash": 35000,
+    "common_units_outstanding": 75000,
+    "total_liabilities": 565000,
+    "total_unitholders_equity": 235000
+  },
+
+  "income_statement": {
+    "noi": 28000,
+    "interest_expense": 18000,
+    "revenue": 45000
+  },
+
+  "ffo_affo": {
+    "ffo": 22000,
+    "affo": 18000,
+    "ffo_per_unit": 0.29,
+    "affo_per_unit": 0.24,
+    "distributions_per_unit": 0.18
+  },
+
+  "acfo_components": {
+    "cash_flow_from_operations": 32000,
+    "change_in_working_capital": -800,
+    "interest_financing": 2000,
+    "capex_sustaining_acfo": -4500,
+    "leasing_costs_external": -600,
+    "tenant_improvements_acfo": -900,
+    "calculation_method_acfo": "actual"
+  },
+
+  "cash_flow_investing": {
+    "_note": "Massive development program: -$60M in new developments and acquisitions",
+    "development_capex": -35000,
+    "property_acquisitions": -25000,
+    "property_dispositions": 5000,
+    "jv_capital_contributions": -5000,
+    "total_cfi": -60000
+  },
+
+  "cash_flow_financing": {
+    "debt_principal_repayments": -12000,
+    "new_debt_issuances": 40000,
+    "distributions_common": -13500,
+    "equity_issuances": 8000,
+    "total_cff": 22500
+  },
+
+  "coverage_ratios": {
+    "annualized_interest_expense": 36000
+  },
+
+  "liquidity": {
+    "_note": "Moderate liquidity with HIGH risk runway (10.8 months)",
+    "cash_and_equivalents": 35000,
+    "marketable_securities": 8000,
+    "restricted_cash": 1500,
+    "undrawn_credit_facilities": 45000,
+    "credit_facility_limit": 125000,
+    "available_cash": 41500,
+    "total_available_liquidity": 86500,
+    "data_source": "balance sheet + note 10 - credit facilities"
+  },
+
+  "portfolio": {
+    "total_properties": 42,
+    "total_gla_sf": 2100000,
+    "occupancy_rate": 0.88,
+    "same_property_noi_growth_6m": 0.015
+  },
+
+  "expected_results": {
+    "_note": "Expected burn rate analysis results for testing (corrected formula: Burn = Net Financing Needs - AFCF)",
+    "acfo_calculated": 27200,
+    "net_cfi": -60000,
+    "afcf_calculated": -32800,
+    "afcf_expected_sign": "negative",
+    "net_financing_needs": 13500,
+    "burn_rate_applicable": true,
+    "monthly_burn_rate": 3858.33,
+    "annualized_burn_rate": 46300,
+    "runway_months": 10.8,
+    "risk_level": "HIGH"
+  }
+}

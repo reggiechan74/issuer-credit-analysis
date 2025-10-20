@@ -151,6 +151,18 @@
     "total_cff": "number - Total net cash from financing per IFRS (for reconciliation)"
   },
 
+  "liquidity": {
+    "_comment": "OPTIONAL: Required for burn rate and cash runway analysis. Extract from balance sheet and credit facility disclosures.",
+    "cash_and_equivalents": "number - Cash and cash equivalents (should match balance_sheet.cash)",
+    "marketable_securities": "number - Short-term marketable securities (0 if not disclosed)",
+    "restricted_cash": "number - Restricted cash not available for operations (0 if none)",
+    "undrawn_credit_facilities": "number - Available undrawn capacity = facility_limit - facility_drawn (0 if unavailable)",
+    "credit_facility_limit": "number - Total credit facility limit/commitment",
+    "available_cash": "number - Calculated: cash_and_equivalents + marketable_securities - restricted_cash",
+    "total_available_liquidity": "number - Calculated: available_cash + undrawn_credit_facilities",
+    "data_source": "string - Source of data (e.g., 'balance sheet', 'note 15', 'estimated')"
+  },
+
   "validation": {
     "_comment": "Optional validation checks",
     "balance_sheet_balanced": "boolean",

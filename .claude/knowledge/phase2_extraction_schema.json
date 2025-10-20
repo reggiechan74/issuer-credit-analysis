@@ -567,6 +567,44 @@
         }
       }
     },
+    "liquidity": {
+      "type": "object",
+      "description": "Optional liquidity position data (required for burn rate and cash runway analysis). Extract from balance sheet and note disclosures.",
+      "properties": {
+        "cash_and_equivalents": {
+          "type": "number",
+          "description": "Cash and cash equivalents (should match balance_sheet.cash)"
+        },
+        "marketable_securities": {
+          "type": "number",
+          "description": "Short-term marketable securities or investments (positive number, 0 if not disclosed separately)"
+        },
+        "restricted_cash": {
+          "type": "number",
+          "description": "Restricted cash that cannot be used for operations (positive number, 0 if none)"
+        },
+        "undrawn_credit_facilities": {
+          "type": "number",
+          "description": "Available undrawn capacity on credit facilities (positive number). Calculate as: facility_limit - facility_drawn. Use 0 if unavailable."
+        },
+        "credit_facility_limit": {
+          "type": "number",
+          "description": "Total credit facility limit/commitment (positive number)"
+        },
+        "available_cash": {
+          "type": "number",
+          "description": "Calculated: cash_and_equivalents + marketable_securities - restricted_cash"
+        },
+        "total_available_liquidity": {
+          "type": "number",
+          "description": "Calculated: available_cash + undrawn_credit_facilities"
+        },
+        "data_source": {
+          "type": "string",
+          "description": "Source of liquidity data (e.g., 'balance sheet', 'note 15 - credit facilities', 'estimated')"
+        }
+      }
+    },
     "validation": {
       "type": "object",
       "description": "Optional validation checks",
