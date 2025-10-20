@@ -200,12 +200,12 @@ python scripts/preprocess_pdfs_enhanced.py \
 **Phase 2: Markdown → JSON (after Phase 1 completes)**
 
 ```bash
-# Extract financial data using v2 enhanced extraction (grep-based indexing)
-python scripts/extract_key_metrics_v2.py \
+# Extract financial data using file references (~1K tokens)
+python scripts/extract_key_metrics_efficient.py \
   --issuer-name "Artis REIT" \
   Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
 
-# V2 creates section index (0 tokens), then extracts targeted sections (89% savings)
+# Then Claude Code reads the prompt and extracts data
 ```
 
 **Phase 3: Metric Calculations**

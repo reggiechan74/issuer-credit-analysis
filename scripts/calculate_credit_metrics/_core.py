@@ -2103,6 +2103,19 @@ def calculate_all_metrics(financial_data):
     reit_metrics = calculate_reit_metrics(financial_data)
     coverage_ratios = calculate_coverage_ratios(financial_data)
 
+    # Calculate ACFO if cash flow statement data available
+    acfo_metrics = None
+    if 'cash_flow_operating' in financial_data or ('ffo_affo_components' in financial_data and 'acfo_components' in financial_data):
+        try:
+            acfo_result = calculate_acfo_from_components(financial_data)
+            if acfo_result and acfo_result.get('acfo') is not None:
+                acfo_metrics = acfo_result
+                # Add to financial_data for AFCF calculation
+                financial_data['acfo_calculated'] = acfo_result['acfo']
+        except (KeyError, ValueError) as e:
+            # ACFO calculation failed - continue without it
+            pass
+
     # Calculate AFCF metrics if cash flow data available
     afcf_metrics = None
     afcf_coverage = None
@@ -2113,6 +2126,8 @@ def calculate_all_metrics(financial_data):
         # ACFO may be in reit_metrics or acfo_calculated at top level
         if 'acfo' in reit_metrics:
             financial_data['acfo_calculated'] = reit_metrics['acfo']
+        elif acfo_metrics and 'acfo' in acfo_metrics:
+            financial_data['acfo_calculated'] = acfo_metrics['acfo']
 
         # Calculate AFCF
         afcf_result = calculate_afcf(financial_data)
@@ -2176,6 +2191,10 @@ def calculate_all_metrics(financial_data):
         'coverage_ratios': coverage_ratios,
         'portfolio_metrics': portfolio_metrics
     }
+
+    # Add ACFO metrics if calculated
+    if acfo_metrics is not None:
+        result['acfo_metrics'] = acfo_metrics
 
     # Add AFCF metrics if calculated
     if afcf_metrics is not None:

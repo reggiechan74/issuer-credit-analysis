@@ -86,9 +86,9 @@ echo "=========================================="
 echo "PHASE 2: MARKDOWN TO JSON EXTRACTION"
 echo "=========================================="
 
-# Phase 2: Extract JSON from markdown files (enhanced v2 with grep-based indexing)
-echo "📊 Phase 2: Extracting financial data from markdown (v2 enhanced)..."
-python scripts/extract_key_metrics_v2.py \
+# Phase 2: Extract JSON from markdown files (uses file references)
+echo "📊 Phase 2: Extracting financial data from markdown..."
+python scripts/extract_key_metrics_efficient.py \
   --issuer-name "{ISSUER_NAME}" \
   Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase1_markdown/*.md
 
@@ -101,22 +101,18 @@ echo "✅ Phase 2 complete: JSON data extracted"
 echo "   → Output: ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase2_extracted_data.json"
 ```
 
-**What Phase 2 v2 Does (Enhanced):**
-1. **Phase 2a (Indexing):** Use grep to find section locations (0 tokens, <1 second)
-2. **Phase 2b (Prompt):** Generate targeted extraction prompt with line ranges
-3. **Phase 2c (Extract):** Read ONLY indexed sections using targeted line ranges
-4. **Phase 2d (Validate):** Validate each section, auto-expand if fields missing
-5. **Checkpointing:** Save validated sections for resumable extraction
+**What Claude Code Does:**
+1. Read the extraction prompt from `./Issuer_Reports/{issuer}/temp/phase2_extraction_prompt.txt`
+2. Use Read tool to access markdown files (file references, ~1K tokens)
+3. Extract financial data according to schema
+4. Save JSON to `./Issuer_Reports/{issuer}/temp/phase2_extracted_data.json`
 
 **Efficiency:**
-- Full files: ~140,000 tokens → Context window errors
-- Enhanced v2: ~15,000 tokens (89% savings)
-- Progressive enhancement: Auto-expands reads if validation fails
-- Checkpoints: Resume failed extractions without re-work
+- Prompt uses file references (~1K tokens) instead of embedding content (~140K tokens)
+- Claude Code reads markdown files directly using Read tool
+- Simple, fast, one-pass extraction
 
-**Output:**
-- `./Issuer_Reports/{issuer}/temp/phase2_extracted_data.json`
-- `./Issuer_Reports/{issuer}/temp/section_index.json` (cached index)
+**Output:** `./Issuer_Reports/{issuer}/temp/phase2_extracted_data.json`
 
 ### Phase 3: Metric Calculations (Safe Python Library)
 Calculate credit metrics using pure functions (NO hardcoded data).
@@ -232,16 +228,12 @@ Issuer_Reports/
 ## Current Implementation Status
 
 ✅ **Phase 1: Working** - PDF to markdown conversion (PyMuPDF4LLM + Camelot, foreground)
-✅ **Phase 2 v2: Working** - Enhanced grep-based extraction with progressive enhancement
-  - Grep-based section indexing (0 tokens)
-  - Targeted section reads (89% token savings)
-  - Progressive enhancement (auto-expands if fields missing)
-  - Checkpointing (resumable extraction)
+✅ **Phase 2: Working** - Markdown→JSON extraction (file references, ~1K tokens)
 ✅ **Phase 3: Working** - Safe calculation library (pure functions)
 ✅ **Phase 4: Working** - Slim agent for credit analysis (7.7KB agent profile)
 ✅ **Phase 5: Working** - Report template engine (pure Python, 0 tokens)
 
-**Architecture:** Sequential markdown-first approach with v2 enhanced extraction. Phase 1 completes before Phase 2 begins, ensuring clean pre-processed data and context-efficient extraction.
+**Architecture:** Sequential markdown-first approach. Phase 1 completes before Phase 2 begins, ensuring clean pre-processed data and context-efficient extraction.
 
 ## Success Indicators
 
@@ -267,22 +259,16 @@ Issuer_Reports/
 
 ## Token Usage Optimization
 
-This multi-phase approach reduces token usage by **89%** with enhanced v2 grep-based extraction:
+This multi-phase approach reduces token usage by **89%** with markdown-first extraction:
 - ❌ Old approach: 121,500 tokens (failed with context errors)
-- ✅ New approach (v2): ~13,000 tokens total across all phases
+- ✅ New approach: ~13,000 tokens total across all phases
   - Phase 1: 0 tokens (Python preprocessing, PyMuPDF4LLM+Camelot)
-  - Phase 2: ~1,000 tokens (v2 grep-based section indexing + targeted reads)
-    - Phase 2a: 0 tokens (grep-based indexing)
-    - Phase 2b-d: ~1,000 tokens (targeted section reads only)
+  - Phase 2: ~1,000 tokens (file references, not embedded content)
   - Phase 3: 0 tokens (pure Python calculations)
   - Phase 4: ~12,000 tokens (slim agent credit analysis)
   - Phase 5: 0 tokens (pure Python templating)
 
-**Key Benefits:**
-- **v2 Enhancement:** Grep-based indexing eliminates reading entire files
-- **Targeted reads:** Read ONLY the ~15K tokens needed vs 140K full files
-- **Progressive enhancement:** Auto-expands if fields missing
-- **Checkpointing:** Resume failed extractions without re-work
+**Key Benefit:** File references (~1K tokens) vs direct PDF reading (~136K tokens) preserves context for extraction logic.
 
 **Total Cost:** ~$0.30 per issuer analysis
 

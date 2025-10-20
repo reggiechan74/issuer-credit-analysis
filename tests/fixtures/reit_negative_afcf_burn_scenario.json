@@ -1,0 +1,89 @@
+{
+  "issuer_name": "Hypothetical REIT - Growth Investment Phase",
+  "reporting_date": "2025-06-30",
+  "reporting_period": "Six months ended June 30, 2025",
+  "currency": "CAD",
+  "_scenario": "REIT deploying significant capital for acquisitions, resulting in negative AFCF but comfortable cash runway",
+
+  "balance_sheet": {
+    "total_assets": 1500000,
+    "mortgages_noncurrent": 550000,
+    "mortgages_current": 25000,
+    "credit_facilities": 125000,
+    "senior_unsecured_debentures": 200000,
+    "cash": 65000,
+    "common_units_outstanding": 100000,
+    "total_liabilities": 950000,
+    "total_unitholders_equity": 550000
+  },
+
+  "income_statement": {
+    "noi": 45000,
+    "interest_expense": 22000,
+    "revenue": 72000
+  },
+
+  "ffo_affo": {
+    "ffo": 38000,
+    "affo": 32000,
+    "ffo_per_unit": 0.38,
+    "affo_per_unit": 0.32,
+    "distributions_per_unit": 0.20
+  },
+
+  "acfo_components": {
+    "cash_flow_from_operations": 55000,
+    "change_in_working_capital": -1500,
+    "interest_financing": 3000,
+    "capex_sustaining_acfo": -6000,
+    "leasing_costs_external": -800,
+    "tenant_improvements_acfo": -1200,
+    "calculation_method_acfo": "actual"
+  },
+
+  "cash_flow_investing": {
+    "_note": "Heavy acquisition activity resulting in negative AFCF",
+    "development_capex": -8000,
+    "property_acquisitions": -45000,
+    "property_dispositions": 12000,
+    "jv_capital_contributions": -3000,
+    "jv_return_of_capital": 1000,
+    "total_cfi": -43000
+  },
+
+  "cash_flow_financing": {
+    "debt_principal_repayments": -18000,
+    "new_debt_issuances": 35000,
+    "distributions_common": -20000,
+    "equity_issuances": 15000,
+    "total_cff": 12000
+  },
+
+  "liquidity": {
+    "_note": "Comfortable liquidity position despite negative AFCF",
+    "cash_and_equivalents": 65000,
+    "marketable_securities": 15000,
+    "restricted_cash": 3000,
+    "undrawn_credit_facilities": 75000,
+    "credit_facility_limit": 200000,
+    "available_cash": 77000,
+    "total_available_liquidity": 152000,
+    "data_source": "balance sheet + note 12 - credit facilities"
+  },
+
+  "portfolio": {
+    "total_properties": 85,
+    "total_gla_sf": 4200000,
+    "occupancy_rate": 0.94,
+    "same_property_noi_growth_6m": 0.035
+  },
+
+  "expected_results": {
+    "_note": "Expected burn rate analysis results for testing",
+    "acfo_calculated": 48500,
+    "afcf_calculated": 5500,
+    "afcf_expected_sign": "positive",
+    "burn_rate_applicable": false,
+    "reason": "Positive AFCF despite heavy acquisitions - REIT still cash-generative"
+  }
+}
