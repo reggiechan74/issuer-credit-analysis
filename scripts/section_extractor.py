@@ -12,6 +12,7 @@ This module works with ExtractionIndexer to read and extract specific sections.
 """
 
 import json
+import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass, field
@@ -28,6 +29,130 @@ class ExtractionResult:
     errors: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
     expanded: bool = False  # True if progressive enhancement was used
+
+
+class ExtractionUtilities:
+    """Utilities for extracting financial data from markdown content"""
+
+    @staticmethod
+    def clean_number(value: str) -> Optional[float]:
+        """
+        Clean and convert a string value to float
+
+        Handles:
+        - Commas: "1,234,567" → 1234567
+        - Parentheses (negative): "(123)" → -123
+        - Percentage: "12.5%" → 0.125
+        - Dollar signs: "$123" → 123
+        - Dashes/empty: "—" or "-" → None
+
+        Args:
+            value: String representation of a number
+
+        Returns:
+            Float value or None if cannot parse
+        """
+        if not value or value.strip() in ['—', '-', 'N/A', 'n/a', '']:
+            return None
+
+        # Clean the value
+        cleaned = value.strip()
+
+        # Handle parentheses (negative values)
+        is_negative = cleaned.startswith('(') and cleaned.endswith(')')
+        if is_negative:
+            cleaned = cleaned[1:-1]
+
+        # Handle percentage
+        is_percentage = '%' in cleaned
+
+        # Remove non-numeric characters except decimal point and minus
+        cleaned = re.sub(r'[^0-9.\-]', '', cleaned)
+
+        if not cleaned or cleaned == '.':
+            return None
+
+        try:
+            num = float(cleaned)
+            if is_negative:
+                num = -num
+            if is_percentage:
+                num = num / 100
+            return num
+        except ValueError:
+            return None
+
+    @staticmethod
+    def extract_table_rows(content: str) -> List[List[str]]:
+        """
+        Extract table rows from markdown content
+
+        Args:
+            content: Markdown content with tables
+
+        Returns:
+            List of rows, where each row is a list of cell values
+        """
+        rows = []
+        lines = content.split('\n')
+
+        for line in lines:
+            # Skip header separators (|---|---|)
+            if re.match(r'^\s*\|[\s\-:]+\|\s*$', line):
+                continue
+
+            # Check if line is a table row
+            if '|' in line:
+                # Split by | and clean cells
+                cells = [cell.strip() for cell in line.split('|')]
+                # Remove empty first/last cells from markdown syntax
+                cells = [c for c in cells if c]
+                if cells:
+                    rows.append(cells)
+
+        return rows
+
+    @staticmethod
+    def find_row_by_label(rows: List[List[str]], label_patterns: List[str]) -> Optional[List[str]]:
+        """
+        Find a table row by label pattern
+
+        Args:
+            rows: List of table rows
+            label_patterns: List of regex patterns to match against first column
+
+        Returns:
+            Matching row or None
+        """
+        for row in rows:
+            if not row:
+                continue
+
+            first_cell = row[0].lower()
+
+            for pattern in label_patterns:
+                if re.search(pattern.lower(), first_cell):
+                    return row
+
+        return None
+
+    @staticmethod
+    def extract_value_from_row(row: List[str], column_index: int = -1) -> Optional[float]:
+        """
+        Extract numeric value from a table row
+
+        Args:
+            row: Table row cells
+            column_index: Column index to extract (default: -1 = last column)
+
+        Returns:
+            Numeric value or None
+        """
+        if not row or len(row) <= abs(column_index):
+            return None
+
+        cell_value = row[column_index]
+        return ExtractionUtilities.clean_number(cell_value)
 
 
 class SectionValidator:
@@ -123,11 +248,11 @@ class SectionValidator:
 
         # Payout ratio checks
         if 'ffo_payout_ratio' in data:
-            if data['ffo_payout_ratio'] > 1.5:
+            if data['ffo_payout_ratio'] >= 1.5:
                 warnings.append(f"FFO payout ratio {data['ffo_payout_ratio']:.1%} is very high")
 
         if 'affo_payout_ratio' in data:
-            if data['affo_payout_ratio'] > 2.0:
+            if data['affo_payout_ratio'] >= 2.0:
                 warnings.append(f"AFFO payout ratio {data['affo_payout_ratio']:.1%} is unsustainable")
 
         is_valid = len(errors) == 0
@@ -214,16 +339,88 @@ class SectionExtractor:
         Returns:
             ExtractionResult with extracted data
         """
-        # This is a simplified extractor - in real implementation,
-        # Claude Code would parse the content using Read tool
-        # For now, return structure for testing
-        data = {
-            "total_assets": None,
-            "mortgages_noncurrent": None,
-            "mortgages_current": None,
-            "credit_facilities": None,
-            "cash": None
-        }
+        util = ExtractionUtilities()
+        rows = util.extract_table_rows(content)
+
+        # Extract balance sheet items
+        data = {}
+
+        # Assets
+        total_assets_row = util.find_row_by_label(rows, [
+            r'total assets',
+            r'total.*assets'
+        ])
+        if total_assets_row:
+            data['total_assets'] = util.extract_value_from_row(total_assets_row)
+
+        # Cash
+        cash_row = util.find_row_by_label(rows, [
+            r'^cash$',
+            r'cash and.*equivalents',
+            r'cash.*restricted'
+        ])
+        if cash_row:
+            data['cash'] = util.extract_value_from_row(cash_row)
+
+        # Mortgages (noncurrent)
+        mortgages_nc_row = util.find_row_by_label(rows, [
+            r'mortgages.*payable.*non',
+            r'mortgages.*non.*current',
+            r'long.*term.*mortgages'
+        ])
+        if mortgages_nc_row:
+            data['mortgages_noncurrent'] = util.extract_value_from_row(mortgages_nc_row)
+
+        # Mortgages (current)
+        mortgages_c_row = util.find_row_by_label(rows, [
+            r'mortgages.*payable.*current',
+            r'mortgages.*current',
+            r'current.*portion.*mortgages'
+        ])
+        if mortgages_c_row:
+            data['mortgages_current'] = util.extract_value_from_row(mortgages_c_row)
+
+        # Credit facilities
+        credit_row = util.find_row_by_label(rows, [
+            r'credit.*facilit',
+            r'line.*of.*credit',
+            r'revolv.*credit'
+        ])
+        if credit_row:
+            data['credit_facilities'] = util.extract_value_from_row(credit_row)
+
+        # Liabilities
+        total_liab_row = util.find_row_by_label(rows, [
+            r'total.*liabilit'
+        ])
+        if total_liab_row:
+            data['total_liabilities'] = util.extract_value_from_row(total_liab_row)
+
+        # Equity
+        equity_row = util.find_row_by_label(rows, [
+            r'total.*unitholders.*equity',
+            r'total.*shareholders.*equity',
+            r'total.*equity'
+        ])
+        if equity_row:
+            data['total_unitholders_equity'] = util.extract_value_from_row(equity_row)
+
+        # Units outstanding
+        units_row = util.find_row_by_label(rows, [
+            r'units.*outstanding',
+            r'common.*units',
+            r'weighted.*average.*basic'
+        ])
+        if units_row:
+            data['common_units_outstanding'] = util.extract_value_from_row(units_row)
+
+        # Diluted units
+        diluted_row = util.find_row_by_label(rows, [
+            r'diluted.*units',
+            r'weighted.*average.*diluted'
+        ])
+        if diluted_row:
+            data['diluted_units_outstanding'] = util.extract_value_from_row(diluted_row)
 
         # Validate
         is_valid, errors, warnings = self.validator.validate_balance_sheet(data)
@@ -269,15 +466,18 @@ class SectionExtractor:
             # Read section (with expansion if retrying)
             content = self.read_section(location, expand_by=expansion)
 
-            # Extract data (this would call Claude Code in real implementation)
-            # For now, create placeholder result
-            result = ExtractionResult(
-                section_name=section_name,
-                data={},
-                is_valid=False,
-                errors=["Extraction not implemented - placeholder"],
-                expanded=(expansion > 0)
-            )
+            # Extract data based on section type
+            if section_name == 'balance_sheet':
+                result = self.extract_balance_sheet(content, progressive=(expansion > 0))
+            else:
+                # Other sections not yet implemented - return placeholder
+                result = ExtractionResult(
+                    section_name=section_name,
+                    data={},
+                    is_valid=False,
+                    errors=[f"Extraction for {section_name} not yet implemented"],
+                    expanded=(expansion > 0)
+                )
 
             # If valid, we're done
             if result.is_valid:
