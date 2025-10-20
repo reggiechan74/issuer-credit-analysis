@@ -486,7 +486,7 @@ pytest tests/test_acfo*.py -v
    - Source: Real Property Association of Canada
    - Key Sections: ACFO methodology, adjustments A-17, reserve methodology
 
-2. **REALPAC FFO/AFFO White Paper (February 2019)**
+2. **REALPAC FFO/AFFO White Paper (January 2022)**
    - Reference for comparison with AFFO methodology
    - Used for consistency requirements
 
