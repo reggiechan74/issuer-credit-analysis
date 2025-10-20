@@ -2,9 +2,36 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.10
+**Version:** 1.0.11
 **Last Updated:** 2025-10-20
-**Pipeline Version:** 1.0.10 (Sequential markdown-first + AFCF + Burn Rate + Dilution + REALPAC Jan 2022 + Phase 5 Complete)
+**Pipeline Version:** 1.0.11 (Sequential markdown-first + AFCF + Burn Rate + Dilution + REALPAC Jan 2022 + Phase 5 Complete + Comprehensive Phase 2 Extraction)
+
+## What's New in v1.0.11
+
+**Comprehensive Phase 2 Extraction (Option 2 Implementation from docs/reportfix.md)**
+
+Enhanced Phase 2 extraction to extract detailed FFO/AFFO/ACFO reconciliation components, enabling full reconciliation tables in credit reports:
+
+**New Capabilities:**
+- ✅ **FFO/AFFO Components:** Extract all 26 REALPAC adjustments (A-U + V-Z) from reconciliation tables
+- ✅ **ACFO Components:** Extract all 17 REALPAC ACFO adjustments from cash flow statements
+- ✅ **Comprehensive Extraction Guide:** 14.5KB detailed guide (`.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`)
+- ✅ **Enhanced Prompts:** Upgraded extraction prompts in `extract_key_metrics_efficient.py` with detailed where-to-find guidance
+- ✅ **Validation Procedures:** Built-in validation against issuer-reported values
+- ✅ **Consistency Checks:** Automatic validation of ACFO vs AFFO consistency
+
+**What This Unlocks:**
+- Full FFO/AFFO/ACFO reconciliation tables in Phase 5 reports
+- Validation of issuer-reported metrics against calculated values
+- 90%+ template placeholder population (vs 40-50% previously)
+- Enhanced credit analysis transparency and auditability
+- Enables all Phase 3 calculations that were previously data-starved
+
+**Token Impact:** +3-4K tokens for comprehensive extraction (still within 20K budget)
+
+**Implementation Details:** See `docs/reportfix.md` for complete analysis
+
+---
 
 ## Project Overview
 
@@ -791,11 +818,11 @@ Debt maturity in 18 months, Current runway = 10 months
 - `scripts/calculate_credit_metrics.py` - Phase 3: Metric calculations
 - `scripts/generate_final_report.py` - Phase 5: Report generation
 
-**Alternative Phase 2 (experimental):**
-- `scripts/extract_key_metrics_v2.py` - Enhanced extraction with grep-based indexing
-- `scripts/extraction_indexer.py` - Section indexing module
-- `scripts/section_extractor.py` - Targeted extraction with validation
-- Note: V2 is more token-efficient but slower in practice due to overhead
+**Alternative Phase 2 (experimental - NOT RECOMMENDED):**
+- `scripts/experimental/extract_key_metrics_v2.py` - Enhanced extraction with grep-based indexing
+- `scripts/experimental/extraction_indexer.py` - Section indexing module
+- `scripts/experimental/section_extractor.py` - Targeted extraction with validation
+- Note: V2 is more token-efficient than original embedded approach (89% reduction) but slower in practice due to overhead. The production method achieves 99% reduction (~1K tokens) making v2 unnecessary.
 
 **Validation:**
 - `scripts/validate_extraction_schema.py` - Schema validator (use before Phase 3)

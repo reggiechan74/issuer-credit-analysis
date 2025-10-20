@@ -101,7 +101,7 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - Extract: FFO, AFFO, per unit amounts, payout ratios
 - **Minimum Required:** `ffo`, `affo`, `ffo_per_unit`, `affo_per_unit`, `distributions_per_unit`
 
-**FFO/AFFO Components (OPTIONAL - for REALPAC calculation/validation):**
+**FFO/AFFO Components (COMPREHENSIVE - enables reconciliation tables):**
 - Enables calculating FFO/AFFO from first principles per REALPAC methodology (Jan 2022)
 - Look in "Notes to Financial Statements" - often has FFO/AFFO reconciliation table
 - **Starting Point:** Net income from Statement of Comprehensive Income
@@ -205,9 +205,21 @@ Fix any errors before proceeding to Phase 3.
 
 ## REFERENCE DOCUMENTS
 
-Schema specification: `.claude/knowledge/phase2_extraction_schema.json`
-Template with examples: `.claude/knowledge/phase2_extraction_template.json`
-Full documentation: `.claude/knowledge/SCHEMA_README.md`
+**Schema & Templates:**
+- Schema specification: `.claude/knowledge/phase2_extraction_schema.json`
+- Template with examples: `.claude/knowledge/phase2_extraction_template.json`
+- Full schema documentation: `.claude/knowledge/SCHEMA_README.md`
+
+**Comprehensive Extraction Guide (NEW - v1.0.11):**
+- **Detailed extraction guide:** `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
+- **Purpose:** Step-by-step instructions for extracting FFO/AFFO/ACFO components
+- **Includes:**
+  - 26 FFO/AFFO adjustments (A-U + V-Z) with lookup tables
+  - 17 ACFO adjustments with consistency checks
+  - Cash flow investing/financing extraction
+  - Liquidity and dilution data extraction
+  - Validation procedures and sign conventions
+- **🔥 READ THIS GUIDE FIRST** before starting comprehensive extraction
 
 ---
 
@@ -296,7 +308,7 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - Extract: FFO, AFFO, per unit amounts, payout ratios
 - **Minimum Required:** `ffo`, `affo`, `ffo_per_unit`, `affo_per_unit`, `distributions_per_unit`
 
-**FFO/AFFO Components (OPTIONAL - for REALPAC calculation/validation):**
+**FFO/AFFO Components (COMPREHENSIVE - enables reconciliation tables):**
 - Enables calculating FFO/AFFO from first principles per REALPAC methodology (Jan 2022)
 - Look in "Notes to Financial Statements" - often has FFO/AFFO reconciliation table
 - **Starting Point:** Net income from Statement of Comprehensive Income
@@ -400,9 +412,21 @@ Fix any errors before proceeding to Phase 3.
 
 ## REFERENCE DOCUMENTS
 
-Schema specification: `.claude/knowledge/phase2_extraction_schema.json`
-Template with examples: `.claude/knowledge/phase2_extraction_template.json`
-Full documentation: `.claude/knowledge/SCHEMA_README.md`
+**Schema & Templates:**
+- Schema specification: `.claude/knowledge/phase2_extraction_schema.json`
+- Template with examples: `.claude/knowledge/phase2_extraction_template.json`
+- Full schema documentation: `.claude/knowledge/SCHEMA_README.md`
+
+**Comprehensive Extraction Guide (NEW - v1.0.11):**
+- **Detailed extraction guide:** `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
+- **Purpose:** Step-by-step instructions for extracting FFO/AFFO/ACFO components
+- **Includes:**
+  - 26 FFO/AFFO adjustments (A-U + V-Z) with lookup tables
+  - 17 ACFO adjustments with consistency checks
+  - Cash flow investing/financing extraction
+  - Liquidity and dilution data extraction
+  - Validation procedures and sign conventions
+- **🔥 READ THIS GUIDE FIRST** before starting comprehensive extraction
 
 ---
 
