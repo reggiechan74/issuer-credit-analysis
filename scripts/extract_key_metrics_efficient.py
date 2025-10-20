@@ -217,7 +217,9 @@ Fix any errors before proceeding to Phase 3.
   - 26 FFO/AFFO adjustments (A-U + V-Z) with lookup tables
   - 17 ACFO adjustments with consistency checks
   - Cash flow investing/financing extraction
-  - Liquidity and dilution data extraction
+  - Liquidity and dilution data extraction (including multiple credit facilities)
+  - Credit facility extraction priority order (MD&A → Notes → Balance Sheet)
+  - Handling conflicting information and borrowing base limitations
   - Validation procedures and sign conventions
 - **🔥 READ THIS GUIDE FIRST** before starting comprehensive extraction
 
@@ -424,7 +426,9 @@ Fix any errors before proceeding to Phase 3.
   - 26 FFO/AFFO adjustments (A-U + V-Z) with lookup tables
   - 17 ACFO adjustments with consistency checks
   - Cash flow investing/financing extraction
-  - Liquidity and dilution data extraction
+  - Liquidity and dilution data extraction (including multiple credit facilities)
+  - Credit facility extraction priority order (MD&A → Notes → Balance Sheet)
+  - Handling conflicting information and borrowing base limitations
   - Validation procedures and sign conventions
 - **🔥 READ THIS GUIDE FIRST** before starting comprehensive extraction
 

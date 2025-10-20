@@ -454,24 +454,139 @@ Required for burn rate and cash runway analysis
 | `cash_and_equivalents` | Balance sheet | Should match `balance_sheet.cash` |
 | `marketable_securities` | Balance sheet - Current assets | Short-term investments (0 if not disclosed) |
 | `restricted_cash` | Balance sheet notes | Cash not available for operations (0 if none) |
-| `credit_facility_limit` | Notes - Credit Facilities | Total facility limit/commitment |
-| `undrawn_credit_facilities` | Notes - Credit Facilities | Calculated: `facility_limit - facility_drawn` |
+| `credit_facility_limit` | Notes - Credit Facilities | **Total limit across ALL facilities** |
+| `undrawn_credit_facilities` | Notes - Credit Facilities | **Sum of undrawn across ALL facilities** (see below) |
 | `available_cash` | Calculated | `cash_and_equivalents + marketable_securities - restricted_cash` |
 | `total_available_liquidity` | Calculated | `available_cash + undrawn_credit_facilities` |
 | `data_source` | Text | Note the source (e.g., "balance sheet + note 12") |
 
-**Example:**
+### Handling Multiple Credit Facilities
+
+**IMPORTANT:** Many REITs have multiple credit facilities (e.g., revolving + non-revolving, or multiple tranches).
+
+#### Where to Look for Credit Facility Information (Priority Order)
+
+**🔍 Search these locations in order until you find complete information:**
+
+1. **MD&A "Credit Facilities" or "Liquidity" section** (MOST AUTHORITATIVE)
+   - Usually includes current facility limits, drawn amounts, and available capacity
+   - May include borrowing base limitations
+   - Example: "At June 30, 2025, the REIT had $78,400 available on its revolving term credit facilities"
+
+2. **Financial Statement Notes** (e.g., Note 10 - Credit Facilities)
+   - Detailed terms, covenants, and facility descriptions
+   - May show historical balances and limits
+
+3. **Balance Sheet line items**
+   - Shows total drawn amount but rarely shows limits or available capacity
+   - Can be used to verify drawn amounts from other sources
+
+4. **Subsequent Events notes**
+   - May reference facility amendments or renewals
+   - ⚠️ May reference future/planned limits, not current limits
+   - Always verify against current period MD&A
+
+#### If Multiple Facilities Exist:
+
+1. **Identify each facility separately** (revolving, non-revolving, term loans, etc.)
+2. **Find the limit for EACH facility** (not just total)
+3. **Find the drawn amount for EACH facility**
+4. **Calculate undrawn for each:** `facility_limit - facility_drawn`
+5. **Sum all undrawn amounts** for total undrawn capacity
+
+#### Handling Conflicting Information
+
+**If you find conflicting facility limits (e.g., $275M in one place, $350M in another):**
+
+1. **Prioritize MD&A credit facilities section** - this is the most current, detailed source
+2. **Check dates** - subsequent events may reference future amendments, not current limits
+3. **Look for "available" or "undrawn" disclosures** - these are often stated directly
+4. **DO NOT make conservative assumptions** - if something looks wrong, search more thoroughly
+
+**⚠️ WARNING - Borrowing Base vs Facility Limit:**
+
+Many secured credit facilities have BOTH:
+- **Facility Limit**: Maximum committed amount (e.g., $350M)
+- **Borrowing Base**: Current capacity based on secured property values (e.g., $514M)
+
+The **facility limit** is what matters for undrawn capacity calculation.
+
+**Example - When something appears wrong:**
+```
+❌ WRONG APPROACH:
+"Balance sheet shows $437.6M drawn, but I found a $275M limit reference.
+Facility appears overdrawn. Conservative estimate: $0 undrawn."
+
+✓ CORRECT APPROACH:
+"Balance sheet shows $437.6M drawn. Found $275M in subsequent events.
+This seems inconsistent - let me check MD&A credit facilities section...
+Found: MD&A page 36 states $350M revolving facility with $78.4M available.
+The $437.6M includes both revolving ($271.6M) and non-revolving ($170M) facilities."
+```
+
+#### Example - Artis REIT Q2 2025 (CORRECT EXTRACTION)
+
+**Source hierarchy used:**
+1. ✓ MD&A page 36: "The REIT has a secured revolving term credit facility in the amount of $350,000... At June 30, 2025, the REIT had $78,400 available"
+2. ✓ Notes: "As at June 30, 2025, there was $271,600 drawn on the revolving credit facility and $170,000 drawn on the non-revolving credit facility"
+3. ⚠️ Subsequent events: Mentioned "$275,000 limit" - this was either outdated or referred to a different facility component
+
+**Calculation:**
+```
+Revolving facility:
+  Limit: $350,000 (from MD&A page 36)
+  Drawn: $271,600 (from notes)
+  Available: $78,400 (directly stated in MD&A, or calculated: 350,000 - 271,600)
+
+Non-revolving facility:
+  Limit: Not disclosed (assume fully drawn)
+  Drawn: $170,000 (from notes)
+  Available: $0 (assume fully drawn)
+
+Total:
+  Total facility limit: $350,000 + $170,000 = $520,000
+  Total drawn: $271,600 + $170,000 = $441,600
+  Total undrawn: $78,400
+```
+
+**Common patterns:**
+- "Revolving credit facility" + "Non-revolving credit facility"
+- "Tranche A" + "Tranche B"
+- "Secured facility" + "Unsecured facility"
+- "Term loan" + "Revolver"
+
+**If limit not disclosed for a facility:**
+- If fully drawn, assume limit = drawn amount (undrawn = $0)
+- Note this assumption in `data_source`
+
+**Example JSON (Artis REIT - Correct):**
 ```json
 {
   "liquidity": {
     "cash_and_equivalents": 16639,
     "marketable_securities": 0,
     "restricted_cash": 0,
-    "undrawn_credit_facilities": 225000,
-    "credit_facility_limit": 275000,
+    "undrawn_credit_facilities": 78400,
+    "credit_facility_limit": 520000,
     "available_cash": 16639,
-    "total_available_liquidity": 241639,
-    "data_source": "Q2 2025 balance sheet + note 10 (credit facilities)"
+    "total_available_liquidity": 95039,
+    "data_source": "Q2 2025 MD&A page 36. Revolving facility $350M, $271.6M drawn, $78.4M available. Non-revolving facility $170M drawn (assumed fully drawn)."
+  }
+}
+```
+
+**Example (Single Facility):**
+```json
+{
+  "liquidity": {
+    "cash_and_equivalents": 65000,
+    "marketable_securities": 20000,
+    "restricted_cash": 5000,
+    "undrawn_credit_facilities": 150000,
+    "credit_facility_limit": 200000,
+    "available_cash": 80000,
+    "total_available_liquidity": 230000,
+    "data_source": "Balance sheet + note 12. Revolving facility $200M limit, $50M drawn."
   }
 }
 ```

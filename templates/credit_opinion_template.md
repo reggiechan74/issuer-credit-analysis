@@ -597,37 +597,56 @@ Interest coverage metrics show NOI/Interest of {{NOI_INTEREST_COVERAGE}}x, indic
 
 **Applicability:** {{BURN_RATE_APPLICABLE}}
 
-{{#if BURN_RATE_APPLICABLE}}
-
 **What is Burn Rate:**
-Burn rate measures the speed at which a REIT depletes cash reserves when AFCF cannot cover financing obligations. A REIT can have *positive AFCF* but still burn cash if free cash flow is insufficient to cover debt service + distributions.
+Burn rate measures the forward-looking speed at which a REIT depletes cash reserves based on current run rate. This is a **liquidity stress test** assuming NO future access to capital markets. A REIT can have *positive AFCF* but still burn cash if free cash flow is insufficient to cover mandatory obligations (debt service + distributions).
 
-**Formula:** Burn Rate = Net Financing Needs - AFCF (when AFCF < Net Financing Needs)
+**Formula:**
+```
+Mandatory Obligations = Debt Service + Distributions (period amounts)
+Period Deficit = AFCF - Mandatory Obligations (when AFCF < Obligations)
+Monthly Burn Rate = Period Deficit / Number of Months in Period
+```
+
+**Note:** New financing is NOT subtracted - burn rate assumes no future capital raises.
 
 **Burn Rate Analysis:**
 
-| Metric | Amount ({{CURRENCY}} 000s) | Period | Annualized |
-|--------|---------------------------|--------|------------|
-| **AFCF** | {{AFCF}} | {{AFCF_PERIOD}} | {{AFCF_ANNUALIZED}} |
-| **Total Debt Service** | {{TOTAL_DEBT_SERVICE}} | {{DEBT_SERVICE_PERIOD}} | {{DEBT_SERVICE_ANNUALIZED}} |
-| **Total Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DIST_PERIOD}} | {{DIST_ANNUALIZED}} |
-| **New Financing** | {{NEW_FINANCING}} | {{FINANCING_PERIOD}} | {{FINANCING_ANNUALIZED}} |
-| **Net Financing Needs** | {{NET_FINANCING_NEEDS}} | - | {{NET_FINANCING_ANNUALIZED}} |
-| **Self-Funding Ratio** | {{SELF_FUNDING_RATIO}}x | - | - |
-| **Monthly Burn Rate** | {{MONTHLY_BURN_RATE}} | Monthly | - |
-| **Annualized Burn Rate** | {{ANNUALIZED_BURN_RATE}} | Annual | - |
+| Metric | Amount ({{CURRENCY}} 000s) | Reporting Period | Assessment |
+|--------|---------------------------|------------------|------------|
+| **AFCF (Period)** | {{AFCF_CALCULATED}} | {{REPORTING_PERIOD}} | Free cash flow |
+| **Mandatory Obligations:** | | | |
+| - Total Debt Service | {{TOTAL_DEBT_SERVICE}} | {{REPORTING_PERIOD}} | Interest + Principal |
+| - Total Distributions | {{DISTRIBUTIONS_TOTAL}} | {{REPORTING_PERIOD}} | Common + Preferred |
+| **Total Obligations** | {{BURN_MANDATORY_OBLIGATIONS}} | {{REPORTING_PERIOD}} | - |
+| **Period Deficit/(Surplus)** | {{BURN_PERIOD_DEFICIT}} | {{REPORTING_PERIOD}} | AFCF - Obligations |
+| **Monthly Burn Rate** | {{MONTHLY_BURN_RATE}} | Per month | {{BURN_PERIOD_MONTHS}}-month period |
 
 **Self-Funding Analysis:**
-- **Self-Funding Ratio:** {{SELF_FUNDING_RATIO}}x ({{SELF_FUNDING_PERCENT}}%)
+- **Self-Funding Ratio:** {{SELF_FUNDING_RATIO}}x (AFCF / Mandatory Obligations)
 - **Interpretation:** {{SELF_FUNDING_INTERPRETATION}}
 - **Capital Markets Reliance:** {{CAPITAL_MARKETS_RELIANCE}}
 
-**Cash Runway:**
+**Liquidity Position:**
 
-| Runway Metric | Months | Years | Depletion Date | Risk Level |
-|---------------|--------|-------|----------------|------------|
-| **Available Cash Runway** | {{CASH_RUNWAY_MONTHS}} | {{CASH_RUNWAY_YEARS}} | {{CASH_DEPLETION_DATE}} | {{RUNWAY_RISK}} |
-| **Extended Runway** (incl. facilities) | {{EXTENDED_RUNWAY_MONTHS}} | {{EXTENDED_RUNWAY_YEARS}} | {{EXTENDED_DEPLETION_DATE}} | {{EXTENDED_RISK}} |
+| Liquidity Source | Amount ({{CURRENCY}} 000s) | Notes |
+|------------------|---------------------------|-------|
+| **Cash and Cash Equivalents** | {{END_PERIOD_CASH}} | End of period |
+| **Marketable Securities** | {{MARKETABLE_SECURITIES}} | Liquid investments |
+| **Less: Restricted Cash** | ({{RESTRICTED_CASH}}) | Not available for operations |
+| **Available Cash** | {{AVAILABLE_CASH}} | Immediately available |
+| **Undrawn Credit Facilities** | {{UNDRAWN_CREDIT_FACILITIES}} | Remaining capacity |
+| **Total Available Liquidity** | {{TOTAL_AVAILABLE_LIQUIDITY}} | Cash + facilities |
+
+**Cash Runway Analysis:**
+
+| Scenario | Liquidity Base | Runway (Months) | Runway (Years) | Depletion Date | Risk Level |
+|----------|----------------|-----------------|----------------|----------------|------------|
+| **Cash Only** | {{AVAILABLE_CASH}} | {{CASH_RUNWAY_MONTHS}} | {{CASH_RUNWAY_YEARS}} | {{CASH_DEPLETION_DATE}} | {{RUNWAY_RISK}} |
+| **Extended** (w/ facilities) | {{TOTAL_AVAILABLE_LIQUIDITY}} | {{EXTENDED_RUNWAY_MONTHS}} | {{EXTENDED_RUNWAY_YEARS}} | {{EXTENDED_DEPLETION_DATE}} | {{EXTENDED_RISK}} |
+
+**Runway Calculation:**
+- **Cash Only:** Available Cash ({{AVAILABLE_CASH}}) ÷ Monthly Burn ({{MONTHLY_BURN_RATE_ABS}}) = {{CASH_RUNWAY_MONTHS}} months
+- **Extended:** Total Liquidity ({{TOTAL_AVAILABLE_LIQUIDITY}}) ÷ Monthly Burn ({{MONTHLY_BURN_RATE_ABS}}) = {{EXTENDED_RUNWAY_MONTHS}} months
 
 **Liquidity Risk Assessment:**
 
@@ -661,8 +680,6 @@ Burn rate measures the speed at which a REIT depletes cash reserves when AFCF ca
 
 **Credit Implications:**
 {{BURN_RATE_CREDIT_IMPLICATIONS}}
-
-{{/if}}
 
 #### 4.4 Liquidity Assessment
 

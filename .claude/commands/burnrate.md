@@ -21,8 +21,8 @@ Generate a comprehensive cash burn rate and liquidity runway analysis report for
 2. **Calculates Metrics**:
    - ACFO (Adjusted Cash Flow from Operations)
    - AFCF (Adjusted Free Cash Flow)
-   - Net Financing Needs
-   - Burn Rate (when AFCF < Net Financing Needs)
+   - Mandatory Obligations (Debt Service + Distributions, NO new financing)
+   - Burn Rate (when AFCF < Mandatory Obligations)
    - Cash Runway (months until cash depletion)
    - Liquidity Risk Assessment
    - Sustainable Burn Rate
@@ -40,8 +40,9 @@ Generate a comprehensive cash burn rate and liquidity runway analysis report for
 
 The Phase 2 extracted data JSON must include:
 - ✅ `cash_flow_investing` section (for AFCF calculation)
-- ✅ `cash_flow_financing` section (for Net Financing Needs)
+- ✅ `cash_flow_financing` section (for Mandatory Obligations)
 - ✅ `liquidity` section (for cash runway)
+- ✅ `coverage_ratios` section (for period interest and annualization factor)
 - ✅ `acfo_components` section (optional, for ACFO calculation)
 
 If liquidity data is missing, you'll be prompted to extract it from the issuer's MD&A.
@@ -103,11 +104,11 @@ data['acfo_calculated'] = acfo_result['acfo_calculated']
 # Calculate AFCF
 afcf_result = calculate_afcf(data)
 
-# Calculate Net Financing Needs components
-annualized_interest = data['income_statement']['interest_expense'] * 2
-data['coverage_ratios'] = {'annualized_interest_expense': annualized_interest}
+# Ensure coverage_ratios exists with period_interest_expense
+# (This should already be calculated in Phase 3 calculate_credit_metrics.py)
+# coverage_ratios contains: period_interest_expense, annualization_factor
 
-# Calculate Burn Rate
+# Calculate Burn Rate (uses period amounts, NO new financing)
 burn_result = calculate_burn_rate(data, afcf_result)
 
 # If burn rate applicable, calculate runway and risk
@@ -151,9 +152,9 @@ Create a markdown report using this template:
 |--------|--------|--------|
 | **ACFO** | ${acfo_result['acfo_calculated']:,.0f}K | {POSITIVE/NEGATIVE} |
 | **AFCF** | ${afcf_result['afcf']:,.0f}K | {POSITIVE/NEGATIVE} |
-| **Net Financing Needs** | ${burn_result['net_financing_needs']:,.0f}K | - |
+| **Mandatory Obligations** | ${burn_result['mandatory_obligations']:,.0f}K | - |
 | **Self-Funding Ratio** | {burn_result['self_funding_ratio']:.2f}x | {✓ if >= 1.0 else ⚠️} |
-| **Burn Rate** | ${burn_result['annualized_burn_rate']:,.0f}K/year | {if applicable} |
+| **Burn Rate** | ${burn_result['monthly_burn_rate']:,.0f}K/month | {if applicable} |
 | **Cash Runway** | {runway_result['runway_months']:.1f} months | {if applicable} |
 | **Available Liquidity** | ${data['liquidity']['total_available_liquidity']:,.0f}K | - |
 
@@ -188,43 +189,41 @@ ACFO:                    ${acfo_result['acfo_calculated']:,.0f}K
 
 ---
 
-## 2. Financing Obligations & Burn Rate
+## 2. Mandatory Obligations & Burn Rate
 
-### Net Financing Needs
+### Mandatory Obligations (Forward-Looking Stress Test)
 
-**Total Debt Service:**
-- Annualized Interest: ${annualized_interest:,.0f}K
+**Total Debt Service (Period):**
+- Period Interest: ${period_interest:,.0f}K
 - Principal Repayments: ${principal_repayments:,.0f}K
 - **TOTAL:** ${total_debt_service:,.0f}K
 
-**Total Distributions:**
+**Total Distributions (Period):**
 - Common Unitholders: ${distributions_common:,.0f}K
 - Preferred Unitholders: ${distributions_preferred:,.0f}K
 - **TOTAL:** ${total_distributions:,.0f}K
 
-**New Financing:**
-- New Debt Issuances: ${new_debt:,.0f}K
-- Equity Issuances: ${new_equity:,.0f}K
-- **TOTAL:** ${new_financing:,.0f}K
+**Mandatory Obligations:** ${mandatory_obligations:,.0f}K
 
-**Net Financing Needs:** ${net_financing_needs:,.0f}K
+**Note:** Burn rate is a forward-looking stress test. New financing is NOT subtracted - we assume NO future access to capital markets.
 
 ### Burn Rate Analysis
 
-**AFCF:** ${afcf:,.0f}K
-**Net Financing Needs:** ${net_financing_needs:,.0f}K
+**AFCF (Period):** ${afcf:,.0f}K
+**Mandatory Obligations (Period):** ${mandatory_obligations:,.0f}K
 **Self-Funding Ratio:** {ratio:.2f}x
+**Reporting Period:** {period_months} months
 
 {If burn_result['applicable']:}
 **⚠️ BURN RATE APPLICABLE**
 
-The REIT's AFCF (${afcf:,.0f}K) cannot cover its financing obligations (${net_financing_needs:,.0f}K).
+The REIT's AFCF (${afcf:,.0f}K) cannot cover its mandatory obligations (${mandatory_obligations:,.0f}K).
 
+**Period Deficit:** ${burn_result['period_burn_rate']:,.0f}K (for {period_months}-month period)
 **Monthly Burn Rate:** ${burn_result['monthly_burn_rate']:,.0f}K/month
-**Annualized Burn Rate:** ${burn_result['annualized_burn_rate']:,.0f}K/year
 
 **What This Means:**
-The REIT depletes ${burn_result['monthly_burn_rate']:,.0f}K of cash reserves per month to cover the shortfall between free cash flow and financing obligations (debt service + distributions).
+At the current run rate, the REIT depletes ${abs(burn_result['monthly_burn_rate']):,.0f}K of cash per month. This assumes distributions and debt service continue at current levels with NO new financing.
 
 {Else:}
 **✓ SELF-FUNDED**
@@ -232,7 +231,6 @@ The REIT depletes ${burn_result['monthly_burn_rate']:,.0f}K of cash reserves per
 {burn_result['reason']}
 
 **Monthly Surplus:** ${burn_result['monthly_surplus']:,.0f}K/month
-**Annual Surplus:** ${burn_result['monthly_surplus'] * 12:,.0f}K/year
 
 ---
 
@@ -342,12 +340,16 @@ To maintain a **{sustainable_result['target_runway_months']}-month cash runway**
 
 **Burn Rate Definition:**
 ```
-Burn Rate = Net Financing Needs - AFCF (when AFCF < Net Financing Needs)
+Burn Rate = Mandatory Obligations - AFCF (when AFCF < Mandatory Obligations)
 
 Where:
-  Net Financing Needs = Debt Service + Distributions - New Financing
-  Debt Service = Annualized Interest + Principal Repayments
-  AFCF = ACFO + Net Cash Flow from Investing
+  Mandatory Obligations = Debt Service + Distributions (period amounts)
+  Debt Service = Period Interest + Period Principal Repayments
+  AFCF = ACFO + Net Cash Flow from Investing (period amount)
+  Monthly Burn Rate = Period Deficit / Number of Months in Period
+
+IMPORTANT: Do NOT subtract new financing - burn rate is a forward-looking stress test
+           that assumes NO future access to capital markets.
 ```
 
 **Cash Runway:**
@@ -394,7 +396,82 @@ Report saved to: {report_path}
 
 ## Error Handling
 
-- If liquidity section missing: Prompt user to extract from MD&A first
+### If Liquidity Section Missing or Incorrect
+
+If the `liquidity` section is missing or shows incorrect data (e.g., $0 undrawn when facilities exist), extract it from the issuer's MD&A using this guidance:
+
+**Where to Look (Priority Order):**
+1. **MD&A "Credit Facilities" or "Liquidity" section** (MOST AUTHORITATIVE)
+   - Usually includes current facility limits, drawn amounts, and available capacity
+   - Example: "At June 30, 2025, the REIT had $78,400 available on its revolving term credit facilities"
+
+2. **Financial Statement Notes** (e.g., Note 10 - Credit Facilities)
+   - Detailed terms and facility descriptions
+   - May show balances and limits
+
+3. **Balance Sheet line items**
+   - Shows total drawn amount but rarely shows available capacity
+   - Use to verify drawn amounts from other sources
+
+4. **Subsequent Events notes**
+   - ⚠️ May reference future/planned limits, not current limits
+   - Always verify against current period MD&A
+
+**Handling Multiple Credit Facilities:**
+
+Many REITs have multiple facilities (revolving + non-revolving, or multiple tranches). For each facility:
+1. Identify facility type (revolving, non-revolving, term loan, etc.)
+2. Find the limit for EACH facility (not just total)
+3. Find the drawn amount for EACH facility
+4. Calculate undrawn: `facility_limit - facility_drawn`
+5. Sum all undrawn amounts for total capacity
+
+**Example - Artis REIT Q2 2025:**
+```
+MD&A page 36: "The REIT has a secured revolving term credit facility
+in the amount of $350,000... At June 30, 2025, the REIT had $78,400 available"
+
+Notes: "As at June 30, 2025, there was $271,600 drawn on the revolving
+credit facility and $170,000 drawn on the non-revolving credit facility"
+
+Calculation:
+- Revolving: $350,000 limit - $271,600 drawn = $78,400 available ✓
+- Non-revolving: $170,000 drawn (assume fully drawn if limit not stated) = $0 available
+- Total undrawn: $78,400K
+```
+
+**Handling Conflicting Information:**
+
+If you find conflicting facility limits (e.g., $275M in one place, $350M in another):
+1. Prioritize MD&A credit facilities section - this is the most current source
+2. Check dates - subsequent events may reference future amendments
+3. Look for "available" or "undrawn" disclosures stated directly
+4. DO NOT make conservative assumptions - search more thoroughly
+
+**⚠️ Borrowing Base vs Facility Limit:**
+
+Many secured facilities have BOTH:
+- **Facility Limit**: Maximum committed amount (e.g., $350M) - use this for undrawn calculation
+- **Borrowing Base**: Current capacity based on secured property values (e.g., $514M) - informational only
+
+**Required JSON Format:**
+```json
+{
+  "liquidity": {
+    "cash_and_equivalents": 16639,
+    "marketable_securities": 0,
+    "restricted_cash": 0,
+    "undrawn_credit_facilities": 78400,
+    "credit_facility_limit": 520000,
+    "available_cash": 16639,
+    "total_available_liquidity": 95039,
+    "data_source": "Q2 2025 MD&A page 36. Revolving facility $350M, $271.6M drawn, $78.4M available. Non-revolving $170M drawn (assumed fully drawn)."
+  }
+}
+```
+
+### Other Error Conditions
+
 - If cash_flow_financing missing: Cannot calculate burn rate - inform user
 - If ACFO components missing: Try to use FFO/AFFO data as proxy
 - If issuer not found: List available issuers in Issuer_Reports/
@@ -403,5 +480,6 @@ Report saved to: {report_path}
 
 - This command requires Phase 2 data with complete cash flow information
 - For best results, ensure liquidity data is extracted from the issuer's MD&A
-- The burn rate calculation uses the corrected formula: AFCF - Net Financing Needs
-- A REIT can have positive AFCF but still burn cash if financing needs exceed free cash flow
+- Burn rate is a forward-looking stress test that assumes NO future capital markets access
+- New financing is NOT subtracted - we measure mandatory obligations only (debt service + distributions)
+- A REIT can have positive AFCF but still burn cash if mandatory obligations exceed free cash flow

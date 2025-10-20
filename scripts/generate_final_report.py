@@ -1331,21 +1331,61 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'CREDIT_FACILITY_LIMIT': f"{liquidity_position.get('credit_facility_limit', 0):,.0f}" if liquidity_position.get('credit_facility_limit') else 'Not available',
         'TOTAL_AVAILABLE_LIQUIDITY': f"{liquidity_position.get('total_available_liquidity', 0):,.0f}" if liquidity_position.get('total_available_liquidity') else 'Not available',
 
-        # Burn Rate Analysis (v1.0.7) - Section 4.3
+        # Burn Rate Analysis (v1.0.7+) - Section 4.3
+        'REPORTING_PERIOD': metrics.get('reporting_period', 'Unknown'),
         'BURN_RATE_APPLICABLE': 'Yes' if burn_rate_analysis.get('applicable') else 'No',
         'MONTHLY_BURN_RATE': f"{burn_rate_analysis.get('monthly_burn_rate', 0):,.0f}" if burn_rate_analysis.get('monthly_burn_rate') else 'N/A',
+        'MONTHLY_BURN_RATE_ABS': f"{abs(burn_rate_analysis.get('monthly_burn_rate', 0)):,.0f}" if burn_rate_analysis.get('monthly_burn_rate') else 'N/A',
+        'BURN_MANDATORY_OBLIGATIONS': f"{burn_rate_analysis.get('mandatory_obligations', 0):,.0f}" if burn_rate_analysis.get('mandatory_obligations') else 'N/A',
+        'BURN_PERIOD_DEFICIT': f"{burn_rate_analysis.get('period_burn_rate', 0):,.0f}" if burn_rate_analysis.get('period_burn_rate') else 'N/A',
+        'BURN_PERIOD_MONTHS': str(burn_rate_analysis.get('period_months', 'N/A')) if burn_rate_analysis.get('period_months') else 'N/A',
         'ANNUALIZED_BURN_RATE': f"{burn_rate_analysis.get('annualized_burn_rate', 0):,.0f}" if burn_rate_analysis.get('annualized_burn_rate') else 'N/A',
+
+        # Self-Funding & Burn Rate Interpretation
+        'SELF_FUNDING_RATIO': f"{burn_rate_analysis.get('self_funding_ratio', 0):.2f}" if burn_rate_analysis.get('self_funding_ratio') else 'Not available',
+        'SELF_FUNDING_INTERPRETATION': (
+            'Strong self-funding capacity' if burn_rate_analysis.get('self_funding_ratio', 0) >= 1.0 else
+            'Near self-sufficient' if burn_rate_analysis.get('self_funding_ratio', 0) >= 0.8 else
+            'Moderate capital markets reliance' if burn_rate_analysis.get('self_funding_ratio', 0) >= 0.5 else
+            'High capital markets reliance'
+        ) if burn_rate_analysis.get('self_funding_ratio') else 'Not calculated without AFCF',
+        'CAPITAL_MARKETS_RELIANCE': (
+            'No external financing required' if burn_rate_analysis.get('self_funding_ratio', 0) >= 1.0 else
+            f'Requires ${(burn_rate_analysis.get("mandatory_obligations", 0) - burn_rate_analysis.get("afcf", 0)):,.0f} external financing ({(1 - burn_rate_analysis.get("self_funding_ratio", 0)) * 100:.0f}% of obligations)'
+        ) if burn_rate_analysis.get('self_funding_ratio') and burn_rate_analysis.get('applicable') else 'Unable to assess without AFCF self-funding ratio',
+        'BURN_RATE_INTERPRETATION': (
+            f"AFCF of ${burn_rate_analysis.get('afcf', 0):,.0f} covers {burn_rate_analysis.get('self_funding_ratio', 0):.0%} of mandatory obligations (${burn_rate_analysis.get('mandatory_obligations', 0):,.0f}). "
+            f"Monthly cash deficit of ${abs(burn_rate_analysis.get('monthly_burn_rate', 0)):,.0f} must be funded through capital markets or asset sales."
+        ) if burn_rate_analysis.get('applicable') else 'AFCF sufficient to cover all mandatory obligations - no burn rate',
+        'BURN_RATE_CREDIT_IMPLICATIONS': (
+            '🚨 Critical - High dependence on capital markets and undrawn credit facilities' if burn_rate_analysis.get('self_funding_ratio', 0) < 0.5 else
+            '⚠️ Moderate - Partial reliance on capital markets for financing obligations' if burn_rate_analysis.get('self_funding_ratio', 0) < 0.8 else
+            '✓ Adequate - Near self-sufficient with minimal capital markets reliance' if burn_rate_analysis.get('self_funding_ratio', 0) < 1.0 else
+            '✓ Strong - Fully self-funded from operating and investing cash flows'
+        ) if burn_rate_analysis.get('self_funding_ratio') else 'Not assessed without AFCF data',
+        'BURN_STATUS': sustainable_burn.get('status', 'Not calculated') if sustainable_burn.get('status') else 'Not calculated',
+
+        # Liquidity Position Details
+        'END_PERIOD_CASH': f"{liquidity_position.get('cash_and_equivalents', 0):,.0f}" if liquidity_position.get('cash_and_equivalents') else 'Not available',
+        'MARKETABLE_SECURITIES': f"{liquidity_position.get('marketable_securities', 0):,.0f}" if liquidity_position.get('marketable_securities') is not None else '0',
+        'RESTRICTED_CASH': f"{liquidity_position.get('restricted_cash', 0):,.0f}" if liquidity_position.get('restricted_cash') is not None else '0',
+
+        # Cash Runway Details
         'CASH_RUNWAY_MONTHS': f"{cash_runway.get('runway_months', 0):.1f}" if cash_runway.get('runway_months') else 'N/A',
         'CASH_RUNWAY_YEARS': f"{cash_runway.get('runway_years', 0):.1f}" if cash_runway.get('runway_years') else 'N/A',
         'CASH_DEPLETION_DATE': cash_runway.get('depletion_date', 'N/A') if cash_runway.get('depletion_date') else 'N/A',
         'EXTENDED_RUNWAY_MONTHS': f"{cash_runway.get('extended_runway_months', 0):.1f}" if cash_runway.get('extended_runway_months') else 'N/A',
         'EXTENDED_RUNWAY_YEARS': f"{cash_runway.get('extended_runway_years', 0):.1f}" if cash_runway.get('extended_runway_years') else 'N/A',
         'EXTENDED_DEPLETION_DATE': cash_runway.get('extended_depletion_date', 'N/A') if cash_runway.get('extended_depletion_date') else 'N/A',
+
+        # Risk Assessment
         'LIQUIDITY_RISK_LEVEL': liquidity_risk.get('risk_level', 'N/A') if liquidity_risk.get('risk_level') else 'N/A',
         'LIQUIDITY_RISK_SCORE': str(liquidity_risk.get('risk_score', 'N/A')) if liquidity_risk.get('risk_score') else 'N/A',
         'LIQUIDITY_RISK_ASSESSMENT': assess_liquidity_risk(liquidity_risk.get('risk_level', '')) if liquidity_risk.get('risk_level') else 'Not available',
         'RUNWAY_RISK': liquidity_risk.get('risk_level', 'N/A') if liquidity_risk.get('risk_level') else 'N/A',
         'EXTENDED_RISK': liquidity_risk.get('risk_level', 'N/A') if liquidity_risk.get('risk_level') else 'N/A',  # Same as runway risk for extended
+
+        # Sustainable Burn Analysis
         'SUSTAINABLE_MONTHLY_BURN': f"{sustainable_burn.get('sustainable_monthly_burn', 0):,.0f}" if sustainable_burn.get('sustainable_monthly_burn') else 'N/A',
         'EXCESS_BURN': f"{sustainable_burn.get('excess_burn_per_month', 0):,.0f}" if sustainable_burn.get('excess_burn_per_month') else 'N/A',
         'BURN_SUSTAINABILITY_STATUS': sustainable_burn.get('status', 'Not available') if sustainable_burn.get('status') else 'Not available',
@@ -1492,17 +1532,11 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'LIQUIDITY_DATA_SOURCE': phase2_data.get('liquidity', {}).get('data_source', 'Not available') if phase2_data else 'Not available',
         'LIQUIDITY_WARNING_FLAGS': 'None identified' if phase2_data and phase2_data.get('liquidity', {}).get('total_available_liquidity', 0) > 50000 else 'Monitor liquidity position',
 
-        # Burn Rate Placeholders (Not available without AFCF)
-        'BURN_STATUS': 'Not calculated',
-        'BURN_RATE_INTERPRETATION': 'Burn rate analysis requires AFCF calculation',
-        'BURN_RATE_CREDIT_IMPLICATIONS': 'Not assessed without AFCF data',
+        # Target runway for sustainable burn analysis
         'TARGET_RUNWAY_MONTHS': '24',
 
-        # Self-Funding & Capital Markets Placeholders
-        'SELF_FUNDING_RATIO': 'Not available',
+        # Additional placeholders
         'SELF_FUNDING_PERCENT': 'Not available',
-        'SELF_FUNDING_INTERPRETATION': 'Not calculated without AFCF',
-        'CAPITAL_MARKETS_RELIANCE': 'Unable to assess without AFCF self-funding ratio',
         'RESIDUAL_ACFO': 'Not available',
         'RESIDUAL_AFCF': 'Not available',
 

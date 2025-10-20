@@ -673,11 +673,11 @@
         },
         "undrawn_credit_facilities": {
           "type": "number",
-          "description": "Available undrawn capacity on credit facilities (positive number). Calculate as: facility_limit - facility_drawn. Use 0 if unavailable."
+          "description": "Available undrawn capacity on ALL credit facilities (positive number). IMPORTANT: If multiple facilities exist (revolving + non-revolving, multiple tranches), calculate undrawn for EACH facility separately, then sum. Formula per facility: facility_limit - facility_drawn. See COMPREHENSIVE_EXTRACTION_GUIDE.md for handling multiple facilities. Use 0 if unavailable."
         },
         "credit_facility_limit": {
           "type": "number",
-          "description": "Total credit facility limit/commitment (positive number)"
+          "description": "Total credit facility limit/commitment across ALL facilities (positive number). If multiple facilities exist, sum all limits."
         },
         "available_cash": {
           "type": "number",

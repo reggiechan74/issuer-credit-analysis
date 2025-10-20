@@ -8,29 +8,32 @@ Per v1.0.7+ methodology.
 
 def calculate_burn_rate(financial_data, afcf_metrics, afcf_coverage=None):
     """
-    Calculate monthly and annualized burn rate when AFCF cannot cover financing needs
+    Calculate monthly burn rate when AFCF cannot cover mandatory financing obligations
 
-    Burn rate measures cash depletion when AFCF < Net Financing Needs.
-    This occurs when free cash flow is insufficient to cover debt service + distributions.
+    Burn rate measures forward-looking cash depletion based on current run rate.
+    This is a liquidity stress test assuming NO future access to capital markets.
 
-    Formula:
-        Net Financing Needs = Total Debt Service + Distributions - New Financing
-        Burn Rate = Net Financing Needs - AFCF (when AFCF < Net Financing Needs)
-        Monthly Burn Rate = Annualized Burn Rate / 12
+    Formula (forward-looking, period-based):
+        Mandatory Obligations = Total Debt Service + Distributions (period amounts)
+        Period Deficit = AFCF - Mandatory Obligations (when AFCF < Obligations)
+        Monthly Burn Rate = Period Deficit / Number of Months in Period
+
+    NOTE: New Financing is NOT subtracted - burn rate assumes no future capital raises.
 
     Args:
-        financial_data (dict): Validated JSON with cash_flow_financing data
+        financial_data (dict): Validated JSON with cash_flow_financing and coverage_ratios
         afcf_metrics (dict): Result from calculate_afcf() with 'afcf' key
-        afcf_coverage (dict): Optional AFCF coverage metrics with net_financing_needs
+        afcf_coverage (dict): Optional AFCF coverage metrics (not used - recalculated)
 
     Returns:
         dict: {
-            'applicable': bool,  # True when AFCF < Net Financing Needs
+            'applicable': bool,  # True when AFCF < Mandatory Obligations
             'monthly_burn_rate': float or None,
-            'annualized_burn_rate': float or None,
+            'period_burn_rate': float or None,  # Deficit for the reporting period
+            'period_months': int or None,  # Number of months in reporting period
             'afcf': float,
-            'net_financing_needs': float or None,
-            'self_funding_ratio': float or None,  # AFCF / Net Financing Needs
+            'mandatory_obligations': float or None,
+            'self_funding_ratio': float or None,  # AFCF / Mandatory Obligations
             'reason': str,  # Explanation if not applicable
             'data_quality': str
         }
@@ -39,9 +42,10 @@ def calculate_burn_rate(financial_data, afcf_metrics, afcf_coverage=None):
     result = {
         'applicable': False,
         'monthly_burn_rate': None,
-        'annualized_burn_rate': None,
+        'period_burn_rate': None,
+        'period_months': None,
         'afcf': None,
-        'net_financing_needs': None,
+        'mandatory_obligations': None,
         'self_funding_ratio': None,
         'reason': None,
         'data_quality': 'none'
@@ -61,63 +65,65 @@ def calculate_burn_rate(financial_data, afcf_metrics, afcf_coverage=None):
 
     result['afcf'] = afcf
 
-    # Get net financing needs from AFCF coverage or calculate from cash_flow_financing
-    net_financing_needs = None
-
-    if afcf_coverage and 'net_financing_needs' in afcf_coverage:
-        net_financing_needs = afcf_coverage['net_financing_needs']
-    elif 'cash_flow_financing' in financial_data and 'coverage_ratios' in financial_data:
-        # Calculate net financing needs
-        cff = financial_data['cash_flow_financing']
-        coverage = financial_data['coverage_ratios']
-
-        # Debt service = Interest + Principal Repayments
-        annualized_interest = coverage.get('annualized_interest_expense', 0) or 0
-        principal = abs(cff.get('debt_principal_repayments', 0) or 0)
-        total_debt_service = annualized_interest + principal
-
-        # Distributions (all outflows are negative, so abs())
-        dist_common = abs(cff.get('distributions_common', 0) or 0)
-        dist_preferred = abs(cff.get('distributions_preferred', 0) or 0)
-        dist_nci = abs(cff.get('distributions_nci', 0) or 0)
-        total_distributions = dist_common + dist_preferred + dist_nci
-
-        # New financing (positive inflows)
-        new_debt = cff.get('new_debt_issuances', 0) or 0
-        new_equity = cff.get('equity_issuances', 0) or 0
-        new_financing = new_debt + new_equity
-
-        net_financing_needs = total_debt_service + total_distributions - new_financing
-
-    if net_financing_needs is None:
+    # Calculate mandatory obligations (period amounts - NO new financing)
+    if 'cash_flow_financing' not in financial_data or 'coverage_ratios' not in financial_data:
         result['reason'] = 'Cannot calculate burn rate - missing financing data'
         result['data_quality'] = 'limited'
         return result
 
-    result['net_financing_needs'] = net_financing_needs
+    cff = financial_data['cash_flow_financing']
+    coverage = financial_data['coverage_ratios']
 
-    # Calculate self-funding ratio
-    if net_financing_needs > 0:
-        result['self_funding_ratio'] = round(afcf / net_financing_needs, 2)
+    # Get period months from annualization factor
+    annualization_factor = coverage.get('annualization_factor', 1)
+    if annualization_factor and annualization_factor > 0:
+        period_months = round(12 / annualization_factor)
+    else:
+        period_months = 12  # Default to annual if factor missing
+
+    result['period_months'] = period_months
+
+    # Debt service = PERIOD Interest + PERIOD Principal Repayments
+    # Use period_interest_expense (not annualized) for consistency
+    period_interest = coverage.get('period_interest_expense', 0) or 0
+    period_principal = abs(cff.get('debt_principal_repayments', 0) or 0)
+    total_debt_service = period_interest + period_principal
+
+    # Distributions (all outflows are negative in data, so abs())
+    # These are already period amounts
+    dist_common = abs(cff.get('distributions_common', 0) or 0)
+    dist_preferred = abs(cff.get('distributions_preferred', 0) or 0)
+    dist_nci = abs(cff.get('distributions_nci', 0) or 0)
+    total_distributions = dist_common + dist_preferred + dist_nci
+
+    # MANDATORY OBLIGATIONS = Debt Service + Distributions
+    # DO NOT subtract new financing - burn rate is forward-looking stress test
+    mandatory_obligations = total_debt_service + total_distributions
+
+    result['mandatory_obligations'] = mandatory_obligations
+
+    # Calculate self-funding ratio (AFCF / Mandatory Obligations)
+    if mandatory_obligations > 0:
+        result['self_funding_ratio'] = round(afcf / mandatory_obligations, 2)
     else:
         result['self_funding_ratio'] = None
 
-    # Burn rate applicable when AFCF < Net Financing Needs
-    if afcf >= net_financing_needs:
+    # Burn rate applicable when AFCF < Mandatory Obligations
+    if afcf >= mandatory_obligations:
         result['applicable'] = False
-        surplus = afcf - net_financing_needs
-        result['reason'] = f'AFCF covers financing needs - surplus of ${surplus:,.0f} annually'
-        result['monthly_surplus'] = round(surplus / 12, 2)
+        surplus = afcf - mandatory_obligations
+        result['reason'] = f'AFCF covers mandatory obligations - surplus of ${surplus:,.0f} for the {period_months}-month period'
+        result['monthly_surplus'] = round(surplus / period_months, 2)
         result['data_quality'] = 'complete'
         return result
 
-    # Calculate burn rate (Net Financing Needs exceeds AFCF)
-    annualized_burn = net_financing_needs - afcf
-    monthly_burn = annualized_burn / 12
+    # Calculate burn rate (Mandatory Obligations exceed AFCF)
+    period_deficit = afcf - mandatory_obligations  # Negative number
+    monthly_burn = period_deficit / period_months
 
     result['applicable'] = True
+    result['period_burn_rate'] = round(period_deficit, 2)
     result['monthly_burn_rate'] = round(monthly_burn, 2)
-    result['annualized_burn_rate'] = round(annualized_burn, 2)
     result['data_quality'] = afcf_metrics.get('data_quality', 'moderate')
 
     return result
@@ -171,9 +177,12 @@ def calculate_cash_runway(financial_data, burn_rate_metrics):
         return result
 
     monthly_burn = burn_rate_metrics.get('monthly_burn_rate')
-    if not monthly_burn or monthly_burn <= 0:
+    if monthly_burn is None or monthly_burn == 0:
         result['error'] = 'Invalid monthly burn rate'
         return result
+
+    # Use absolute value for runway calculation (burn rate is negative when depleting cash)
+    monthly_burn_abs = abs(monthly_burn)
 
     # Get liquidity data
     if 'liquidity' not in financial_data:
@@ -201,7 +210,7 @@ def calculate_cash_runway(financial_data, burn_rate_metrics):
         result['data_quality'] = 'complete'
         return result
 
-    runway_months = available_cash / monthly_burn
+    runway_months = available_cash / monthly_burn_abs
     runway_years = runway_months / 12
 
     result['runway_months'] = round(runway_months, 1)
@@ -209,18 +218,24 @@ def calculate_cash_runway(financial_data, burn_rate_metrics):
 
     # Calculate extended runway with credit facilities
     if total_liquidity > 0:
-        extended_months = total_liquidity / monthly_burn
+        extended_months = total_liquidity / monthly_burn_abs
         extended_years = extended_months / 12
         result['extended_runway_months'] = round(extended_months, 1)
         result['extended_runway_years'] = round(extended_years, 1)
 
-    # Estimate depletion date (from reporting date if available)
+    # Estimate depletion dates (from reporting date if available)
     if 'reporting_date' in financial_data:
         from datetime import datetime, timedelta
         try:
             reporting_date = datetime.strptime(financial_data['reporting_date'], '%Y-%m-%d')
+            # Cash-only depletion date
             depletion_date = reporting_date + timedelta(days=int(runway_months * 30))
             result['depletion_date'] = depletion_date.strftime('%Y-%m-%d')
+
+            # Extended depletion date (with credit facilities)
+            if result.get('extended_runway_months'):
+                extended_depletion = reporting_date + timedelta(days=int(result['extended_runway_months'] * 30))
+                result['extended_depletion_date'] = extended_depletion.strftime('%Y-%m-%d')
         except:
             pass  # Skip if date parsing fails
 
@@ -425,12 +440,14 @@ def calculate_sustainable_burn_rate(financial_data, burn_rate_metrics, target_ru
         result['status'] = 'Critical - No available cash'
         return result
 
-    # Calculate sustainable burn rate
+    # Calculate sustainable burn rate (use absolute value of actual burn)
+    # Burn rate is negative when cash is being depleted
+    actual_monthly_burn_abs = abs(actual_monthly_burn)
     sustainable_burn = available_cash / target_runway_months
     result['sustainable_monthly_burn'] = round(sustainable_burn, 2)
 
-    # Calculate excess burn
-    excess_burn = actual_monthly_burn - sustainable_burn
+    # Calculate excess burn (positive = overspending, negative = cushion)
+    excess_burn = actual_monthly_burn_abs - sustainable_burn
     result['excess_burn_per_month'] = round(excess_burn, 2)
     result['excess_burn_annualized'] = round(excess_burn * 12, 2)
 
