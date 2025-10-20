@@ -1262,12 +1262,20 @@ def calculate_afcf_coverage_ratios(financial_data, afcf):
 
     # Calculate self-funding ratio
     net_financing_needs = total_debt_service + total_distributions - new_financing
+    result['net_financing_needs'] = net_financing_needs
+
     if net_financing_needs > 0:
+        # Normal case: REIT needs external capital
+        # Self-funding ratio = AFCF / Net Financing Needs
         result['afcf_self_funding_ratio'] = round(afcf / net_financing_needs, 2)
-        result['net_financing_needs'] = net_financing_needs
+    elif net_financing_needs < 0:
+        # Surplus case: New financing exceeds total obligations
+        # REIT is over-financed - report as "fully self-funding" with very high ratio
+        # Use 999.99 to indicate no financing constraint
+        result['afcf_self_funding_ratio'] = 999.99
     else:
-        result['afcf_self_funding_ratio'] = None
-        result['net_financing_needs'] = net_financing_needs
+        # Perfect balance: AFCF exactly meets needs (rare)
+        result['afcf_self_funding_ratio'] = 1.0
 
     # Assess data quality
     has_debt_service = total_debt_service > 0
