@@ -25,7 +25,8 @@ class TestPhase5ScriptExists:
 
     def test_report_assembly_script_exists(self):
         """Test that report assembly script exists"""
-        script_path = Path("/workspaces/geniusstrategies/Issuer_Reports/scripts/generate_final_report.py")
+        project_root = Path(__file__).parent.parent
+        script_path = project_root / "scripts/generate_final_report.py"
 
         assert script_path.exists(), (
             f"Phase 5 report assembly script not found at {script_path}"
@@ -70,20 +71,33 @@ class TestPhase5Templates:
 
     def test_template_directory_exists(self):
         """Test that template directory exists"""
-        template_dir = Path("/workspaces/geniusstrategies/Issuer_Reports/templates")
+        project_root = Path(__file__).parent.parent
+        template_dir = project_root / "templates"
 
         assert template_dir.exists(), f"Template directory not found at {template_dir}"
         assert template_dir.is_dir(), "Template path should be a directory"
 
     def test_main_template_exists(self):
         """Test that main report template exists"""
-        template_path = Path("/workspaces/geniusstrategies/Issuer_Reports/templates/credit_opinion_template.md")
+        project_root = Path(__file__).parent.parent
+        # Check for either the basic or enhanced template
+        template_path_basic = project_root / "templates/credit_opinion_template.md"
+        template_path_enhanced = project_root / "templates/credit_opinion_template_enhanced.md"
 
-        assert template_path.exists(), f"Main template not found at {template_path}"
+        template_exists = template_path_basic.exists() or template_path_enhanced.exists()
+        assert template_exists, (
+            f"Main template not found. Checked:\n"
+            f"  - {template_path_basic}\n"
+            f"  - {template_path_enhanced}"
+        )
 
     def test_template_has_placeholders(self):
         """Test that template has proper placeholder format"""
-        template_path = Path("/workspaces/geniusstrategies/Issuer_Reports/templates/credit_opinion_template.md")
+        project_root = Path(__file__).parent.parent
+        # Try both template names
+        template_path = project_root / "templates/credit_opinion_template_enhanced.md"
+        if not template_path.exists():
+            template_path = project_root / "templates/credit_opinion_template.md"
 
         if not template_path.exists():
             pytest.skip("Template not created yet")
@@ -99,7 +113,11 @@ class TestPhase5Templates:
 
     def test_template_has_required_sections(self):
         """Test that template includes all required report sections"""
-        template_path = Path("/workspaces/geniusstrategies/Issuer_Reports/templates/credit_opinion_template.md")
+        project_root = Path(__file__).parent.parent
+        # Try both template names
+        template_path = project_root / "templates/credit_opinion_template_enhanced.md"
+        if not template_path.exists():
+            template_path = project_root / "templates/credit_opinion_template.md"
 
         if not template_path.exists():
             pytest.skip("Template not created yet")

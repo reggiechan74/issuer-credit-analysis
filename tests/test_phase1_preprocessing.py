@@ -13,7 +13,7 @@ import shutil
 sys.path.insert(0, str(Path(__file__).parent.parent / 'scripts'))
 
 # Import the preprocessing function
-from scripts.preprocess_pdfs_markitdown import preprocess_financial_pdfs
+from preprocess_pdfs_enhanced import preprocess_financial_pdfs
 
 
 class TestPhase1Preprocessing:
@@ -53,7 +53,8 @@ class TestPhase1Preprocessing:
     def test_preprocess_with_real_pdf(self):
         """Test preprocessing with actual Artis REIT PDF"""
         # Use existing Artis REIT PDF if available
-        pdf_path = Path("/workspaces/geniusstrategies/Issuer_Reports/ArtisREIT-Q2-25-Consol-FS-Aug-7.pdf")
+        project_root = Path(__file__).parent.parent
+        pdf_path = project_root / "Issuer_Reports/ArtisREIT-Q2-25-Consol-FS-Aug-7.pdf"
 
         if not pdf_path.exists():
             pytest.skip("Artis REIT PDF not found")
