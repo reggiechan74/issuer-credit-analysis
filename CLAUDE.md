@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.4
-**Last Updated:** 2025-10-17
-**Pipeline Version:** 1.0.4 (Sequential markdown-first extraction - proven architecture)
+**Version:** 1.0.6
+**Last Updated:** 2025-10-20
+**Pipeline Version:** 1.0.6 (Sequential markdown-first extraction + AFCF analysis)
 
 ## Project Overview
 
@@ -203,6 +203,152 @@ with open("Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json") as f:
 **Key Enhancement (v1.0.1):** The slim agent now uses parallel web searches for peer comparison research in Section 9, researching 3-4 comparable REITs simultaneously instead of sequentially for improved performance.
 
 **DO NOT** run Python scripts for Phase 4 - use the Task tool to invoke the agent directly.
+
+## AFCF Metrics (v1.0.6)
+
+**Adjusted Free Cash Flow (AFCF)** extends the analysis beyond ACFO to measure cash available for financing obligations after ALL investing activities.
+
+### What is AFCF?
+
+```
+AFCF = ACFO + Net Cash Flow from Investing Activities
+```
+
+**Purpose:** Measure cash available to service debt and distributions after operating cash flow AND growth investments (acquisitions, development, JV investments).
+
+**Key Distinction:**
+- **ACFO** = Sustainable operating cash flow (deducts sustaining capex/TI/leasing costs)
+- **AFCF** = Free cash flow after ALL investments (more conservative, includes growth capex and acquisitions)
+
+### Double-Counting Prevention ⚠️
+
+**CRITICAL:** ACFO already deducts these items - DO NOT include in AFCF:
+- ✅ Sustaining CAPEX (ACFO Adj 4) - Already deducted
+- ✅ Sustaining tenant improvements (ACFO Adj 6) - Already deducted
+- ✅ External leasing costs (ACFO Adj 5) - Already deducted
+- ✅ JV distributions received (ACFO Adj 3) - Already included
+
+**AFCF should ONLY add:**
+- Development CAPEX (growth projects, not sustaining)
+- Property acquisitions and dispositions
+- JV capital contributions/returns (not distributions)
+- Business combinations
+- Other investing activities
+
+### Required Phase 2 Data
+
+Add to Phase 2 extraction for AFCF support:
+
+```json
+{
+  "cash_flow_investing": {
+    "development_capex": -20000,           // Growth capex (negative)
+    "property_acquisitions": -30000,       // Acquisitions (negative)
+    "property_dispositions": 25000,         // Sale proceeds (positive)
+    "jv_capital_contributions": -5000,     // JV investments (negative)
+    "jv_return_of_capital": 2000,          // JV exits (positive)
+    "total_cfi": -28000                    // For reconciliation
+  },
+  "cash_flow_financing": {
+    "debt_principal_repayments": -15000,   // Principal payments (negative)
+    "new_debt_issuances": 10000,           // New debt (positive)
+    "distributions_common": -18000,        // Distributions (negative)
+    "equity_issuances": 5000,              // New equity (positive)
+    "total_cff": -18000                    // For reconciliation
+  }
+}
+```
+
+### AFCF Coverage Ratios
+
+**1. AFCF Debt Service Coverage**
+```
+AFCF / (Annualized Interest + Principal Repayments)
+```
+- More conservative than NOI/Interest coverage
+- Measures ability to service ALL debt obligations from free cash flow
+- < 1.0x = Cannot self-fund debt service (needs external financing)
+
+**2. AFCF Distribution Coverage**
+```
+AFCF / Total Distributions
+```
+- Modified payout ratio based on free cash flow
+- More conservative than AFFO payout ratio
+- < 1.0x = Distributions exceed free cash flow
+
+**3. AFCF Self-Funding Ratio**
+```
+AFCF / (Debt Service + Distributions - New Financing)
+```
+- Measures true self-sustainability
+- < 1.0x = Reliant on capital markets for financing
+- Identifies growth vs. income-oriented REITs
+
+### Example Output
+
+```json
+{
+  "afcf_metrics": {
+    "afcf": 22000,
+    "acfo_starting_point": 50000,
+    "net_cfi": -28000,
+    "cfi_breakdown": {
+      "development_capex": {"amount": -20000},
+      "property_acquisitions": {"amount": -30000},
+      "property_dispositions": {"amount": 25000}
+    },
+    "data_quality": "strong"
+  },
+  "afcf_coverage": {
+    "afcf_debt_service_coverage": 0.40,    // ⚠️ LOW - needs external financing
+    "afcf_payout_ratio": 86.4,             // Distributions sustainable from FCF
+    "afcf_self_funding_ratio": 0.37,       // Reliant on capital markets
+    "total_debt_service": 55000,
+    "net_financing_needs": 59000
+  },
+  "afcf_reconciliation": {
+    "afcf_calculation_valid": true,
+    "development_capex_consistent": true,
+    "validation_notes": ["✓ AFCF calculation correct: ACFO + Net CFI = AFCF"]
+  }
+}
+```
+
+### Credit Analysis Use Cases
+
+**Identify Financing Reliance:**
+```
+AFCF = $22M, Debt Service = $55M → Coverage = 0.40x
+⚠️ REIT cannot self-fund debt service from free cash flow
+→ Must access capital markets for debt refinancing
+→ Higher credit risk during market stress
+```
+
+**Assess Growth Strategy:**
+```
+ACFO = $50M (strong operations)
+Net CFI = -$28M (growth investments)
+AFCF = $22M (positive but constrained)
+→ Growth-oriented REIT deploying capital actively
+→ Sustainable if capital markets remain accessible
+```
+
+**Distribution Sustainability:**
+```
+AFCF = $22M, Distributions = $19M → Coverage = 1.16x
+✓ Distributions covered by free cash flow
+→ Sustainable payout even without new financing
+```
+
+### Functions
+
+**Phase 3 Functions (automatic if CFI/CFF data present):**
+- `calculate_afcf()` - Main AFCF calculation
+- `calculate_afcf_coverage_ratios()` - Coverage metrics
+- `validate_afcf_reconciliation()` - Validation checks
+
+**See:** `docs/AFCF_Research_Proposal.md` for complete methodology
 
 ## Key Files
 

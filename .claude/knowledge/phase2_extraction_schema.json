@@ -475,6 +475,98 @@
         }
       }
     },
+    "cash_flow_investing": {
+      "type": "object",
+      "description": "Optional cash flow from investing activities (required for AFCF calculation). Extract from IFRS Cash Flow Statement investing section.",
+      "properties": {
+        "development_capex": {
+          "type": "number",
+          "description": "Development/growth capital expenditures NOT included in sustaining capex (negative number). Should match capex_development_acfo if available."
+        },
+        "property_acquisitions": {
+          "type": "number",
+          "description": "Cash paid for property acquisitions (negative number)"
+        },
+        "property_dispositions": {
+          "type": "number",
+          "description": "Cash received from property sales/dispositions (positive number)"
+        },
+        "jv_capital_contributions": {
+          "type": "number",
+          "description": "Capital invested in joint ventures (negative number)"
+        },
+        "jv_return_of_capital": {
+          "type": "number",
+          "description": "Return of capital from JV dispositions or exits (positive number)"
+        },
+        "business_combinations": {
+          "type": "number",
+          "description": "Cash paid for acquiring entire entities/portfolios (negative number)"
+        },
+        "other_investing_outflows": {
+          "type": "number",
+          "description": "Other investing cash outflows not categorized above (negative number)"
+        },
+        "other_investing_inflows": {
+          "type": "number",
+          "description": "Other investing cash inflows not categorized above (positive number)"
+        },
+        "total_cfi": {
+          "type": "number",
+          "description": "Total net cash from investing activities per IFRS cash flow statement (for reconciliation)"
+        }
+      }
+    },
+    "cash_flow_financing": {
+      "type": "object",
+      "description": "Optional cash flow from financing activities (required for AFCF coverage analysis). Extract from IFRS Cash Flow Statement financing section.",
+      "properties": {
+        "debt_principal_repayments": {
+          "type": "number",
+          "description": "Principal repayments on all debt (mortgages, credit facilities, debentures) (negative number)"
+        },
+        "new_debt_issuances": {
+          "type": "number",
+          "description": "Proceeds from new debt issuances (positive number)"
+        },
+        "distributions_common": {
+          "type": "number",
+          "description": "Distributions/dividends to common unitholders/shareholders (negative number)"
+        },
+        "distributions_preferred": {
+          "type": "number",
+          "description": "Distributions to preferred unitholders (negative number)"
+        },
+        "distributions_nci": {
+          "type": "number",
+          "description": "Distributions to non-controlling interests (negative number)"
+        },
+        "equity_issuances": {
+          "type": "number",
+          "description": "Proceeds from equity/unit issuances (positive number)"
+        },
+        "unit_buybacks": {
+          "type": "number",
+          "description": "Cash paid for unit/share buybacks (negative number)"
+        },
+        "deferred_financing_costs_paid": {
+          "type": "number",
+          "description": "Cash paid for deferred financing fees (negative number)"
+        },
+        "other_financing_outflows": {
+          "type": "number",
+          "description": "Other financing cash outflows not categorized above (negative number)"
+        },
+        "other_financing_inflows": {
+          "type": "number",
+          "description": "Other financing cash inflows not categorized above (positive number)"
+        },
+        "total_cff": {
+          "type": "number",
+          "description": "Total net cash from financing activities per IFRS cash flow statement (for reconciliation)"
+        }
+      }
+    },
     "validation": {
       "type": "object",
       "description": "Optional validation checks",

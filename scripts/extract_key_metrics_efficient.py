@@ -95,10 +95,47 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - Calculate NOI = Revenue - Operating Expenses - Realty Taxes
 - Extract: revenue, NOI, interest expense, net income
 
-**FFO/AFFO:**
+**FFO/AFFO (Basic - Required):**
 - Usually in MD&A document
 - Look for "FFO and AFFO" section or tables showing "Funds from Operations"
 - Extract: FFO, AFFO, per unit amounts, payout ratios
+- **Minimum Required:** `ffo`, `affo`, `ffo_per_unit`, `affo_per_unit`, `distributions_per_unit`
+
+**FFO/AFFO Components (OPTIONAL - for REALPAC calculation/validation):**
+- Enables calculating FFO/AFFO from first principles per REALPAC methodology (Feb 2019)
+- Look in "Notes to Financial Statements" - often has FFO/AFFO reconciliation table
+- **Starting Point:** Net income from Statement of Comprehensive Income
+- **Key Adjustments to Extract:**
+  - **Adjustment A:** Unrealized fair value changes in investment properties
+  - **Adjustment B:** Depreciation of depreciable real estate assets
+  - **Adjustment C:** Amortization of tenant allowances
+  - **Adjustment D:** Amortization of tenant/customer relationship intangibles
+  - **Adjustment E:** Gains/losses from property sales
+  - **Adjustment V (for AFFO):** Sustaining capital expenditures
+  - **Adjustment W (for AFFO):** Leasing costs (internal + external)
+  - **Adjustment X (for AFFO):** Tenant improvements (sustaining only)
+  - **Adjustment Y (for AFFO):** Straight-line rent adjustment
+- **Common Section:** "Reconciliation of Net Income to FFO" or "FFO Calculation"
+- **Note:** Extract actual amounts shown in reconciliation, not formulas
+
+**ACFO Components (OPTIONAL - for REALPAC ACFO calculation):**
+- Enables calculating ACFO per REALPAC ACFO White Paper (January 2023)
+- Look for "Consolidated Statements of Cash Flows" for starting point
+- **Starting Point:** Cash flow from operations (IFRS) from cash flow statement
+- **Key Adjustments to Extract (if disclosed in notes):**
+  - **Adjustment 1:** Change in working capital (to eliminate non-sustainable fluctuations)
+  - **Adjustment 2:** Interest expense in financing activities (add back)
+  - **Adjustment 3:** JV distributions received OR calculated JV ACFO
+  - **Adjustment 4:** Sustaining/maintenance CAPEX (should match AFFO Adj V)
+  - **Adjustment 5:** External leasing costs only
+  - **Adjustment 6:** Sustaining tenant improvements (should match AFFO Adj X)
+  - **Adjustment 14:** Interest expense/income timing adjustments
+  - **Adjustment 16:** ROU (Right of Use) asset adjustments for ground leases
+- **Common Sections:**
+  - Cash flow statement for CFO starting point
+  - Notes showing "Non-IFRS measures" or "ACFO reconciliation"
+  - May be in MD&A "Adjusted Cash Flow from Operations" section
+- **Important:** Many issuers don't disclose full ACFO - extract what's available
 
 **Portfolio Data:**
 - Look in MD&A "PROPERTY PORTFOLIO" section
@@ -110,6 +147,36 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - Current vs non-current mortgages usually in Notes (e.g., "Note 11: Mortgages")
 - Debentures in separate note (e.g., "Note 12: Debentures")
 - Check cash flow statement for recent repayments
+
+**Cash Flow from Investing Activities (OPTIONAL - for AFCF analysis):**
+- Look for "Consolidated Statements of Cash Flows" or "Cash Flow Statement"
+- Find the "INVESTING ACTIVITIES" section
+- Extract the following (use NEGATIVE for outflows, POSITIVE for inflows):
+  - **Development CAPEX:** "Additions to investment properties" or "Development expenditures" (negative)
+    - Should match `capex_development_acfo` if extracting ACFO components
+  - **Property Acquisitions:** "Acquisition of investment properties" (negative)
+  - **Property Dispositions:** "Proceeds from sale of investment properties" (positive)
+  - **JV Capital Contributions:** "Investment in equity accounted entities" or "Contributions to joint ventures" (negative)
+  - **JV Return of Capital:** "Distribution from equity accounted entities" or "Return of capital from JVs" (positive)
+  - **Business Combinations:** "Acquisition of subsidiaries" or "Business combinations" (negative)
+  - **Total CFI:** "Net cash used in investing activities" (for reconciliation)
+- **IMPORTANT:** Do NOT include sustaining CAPEX here - that's already in ACFO components
+- **Sign Convention:** Outflows are negative, inflows are positive (as shown in cash flow statement)
+
+**Cash Flow from Financing Activities (OPTIONAL - for AFCF coverage analysis):**
+- Look in the "FINANCING ACTIVITIES" section of the cash flow statement
+- Extract the following (use NEGATIVE for outflows, POSITIVE for inflows):
+  - **Debt Principal Repayments:** "Repayment of mortgages" or "Principal payments on debt" (negative)
+  - **New Debt Issuances:** "Proceeds from mortgages" or "Issuance of debentures" (positive)
+  - **Distributions - Common:** "Distributions to unitholders" or "Dividends paid" (negative)
+  - **Distributions - Preferred:** "Distributions on preferred units" (negative, if separate line)
+  - **Distributions - NCI:** "Distributions to non-controlling interests" (negative, if separate line)
+  - **Equity Issuances:** "Issuance of units" or "Proceeds from equity" (positive)
+  - **Unit Buybacks:** "Repurchase of units" or "Unit buyback" (negative)
+  - **Deferred Financing Costs:** "Deferred financing costs paid" (negative)
+  - **Total CFF:** "Net cash from (used in) financing activities" (for reconciliation)
+- **Note:** Some statements combine all distributions into one line - extract as `distributions_common`
+- **Sign Convention:** Outflows are negative, inflows are positive (as shown in statement)
 
 ### Step 4: Validation
 
@@ -223,10 +290,47 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - Calculate NOI = Revenue - Operating Expenses - Realty Taxes
 - Extract: revenue, NOI, interest expense, net income
 
-**FFO/AFFO:**
+**FFO/AFFO (Basic - Required):**
 - Usually in MD&A document
 - Look for "FFO and AFFO" section or tables showing "Funds from Operations"
 - Extract: FFO, AFFO, per unit amounts, payout ratios
+- **Minimum Required:** `ffo`, `affo`, `ffo_per_unit`, `affo_per_unit`, `distributions_per_unit`
+
+**FFO/AFFO Components (OPTIONAL - for REALPAC calculation/validation):**
+- Enables calculating FFO/AFFO from first principles per REALPAC methodology (Feb 2019)
+- Look in "Notes to Financial Statements" - often has FFO/AFFO reconciliation table
+- **Starting Point:** Net income from Statement of Comprehensive Income
+- **Key Adjustments to Extract:**
+  - **Adjustment A:** Unrealized fair value changes in investment properties
+  - **Adjustment B:** Depreciation of depreciable real estate assets
+  - **Adjustment C:** Amortization of tenant allowances
+  - **Adjustment D:** Amortization of tenant/customer relationship intangibles
+  - **Adjustment E:** Gains/losses from property sales
+  - **Adjustment V (for AFFO):** Sustaining capital expenditures
+  - **Adjustment W (for AFFO):** Leasing costs (internal + external)
+  - **Adjustment X (for AFFO):** Tenant improvements (sustaining only)
+  - **Adjustment Y (for AFFO):** Straight-line rent adjustment
+- **Common Section:** "Reconciliation of Net Income to FFO" or "FFO Calculation"
+- **Note:** Extract actual amounts shown in reconciliation, not formulas
+
+**ACFO Components (OPTIONAL - for REALPAC ACFO calculation):**
+- Enables calculating ACFO per REALPAC ACFO White Paper (January 2023)
+- Look for "Consolidated Statements of Cash Flows" for starting point
+- **Starting Point:** Cash flow from operations (IFRS) from cash flow statement
+- **Key Adjustments to Extract (if disclosed in notes):**
+  - **Adjustment 1:** Change in working capital (to eliminate non-sustainable fluctuations)
+  - **Adjustment 2:** Interest expense in financing activities (add back)
+  - **Adjustment 3:** JV distributions received OR calculated JV ACFO
+  - **Adjustment 4:** Sustaining/maintenance CAPEX (should match AFFO Adj V)
+  - **Adjustment 5:** External leasing costs only
+  - **Adjustment 6:** Sustaining tenant improvements (should match AFFO Adj X)
+  - **Adjustment 14:** Interest expense/income timing adjustments
+  - **Adjustment 16:** ROU (Right of Use) asset adjustments for ground leases
+- **Common Sections:**
+  - Cash flow statement for CFO starting point
+  - Notes showing "Non-IFRS measures" or "ACFO reconciliation"
+  - May be in MD&A "Adjusted Cash Flow from Operations" section
+- **Important:** Many issuers don't disclose full ACFO - extract what's available
 
 **Portfolio Data:**
 - Look in MD&A "PROPERTY PORTFOLIO" section
@@ -238,6 +342,36 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - Current vs non-current mortgages usually in Notes (e.g., "Note 11: Mortgages")
 - Debentures in separate note (e.g., "Note 12: Debentures")
 - Check cash flow statement for recent repayments
+
+**Cash Flow from Investing Activities (OPTIONAL - for AFCF analysis):**
+- Look for "Consolidated Statements of Cash Flows" or "Cash Flow Statement"
+- Find the "INVESTING ACTIVITIES" section
+- Extract the following (use NEGATIVE for outflows, POSITIVE for inflows):
+  - **Development CAPEX:** "Additions to investment properties" or "Development expenditures" (negative)
+    - Should match `capex_development_acfo` if extracting ACFO components
+  - **Property Acquisitions:** "Acquisition of investment properties" (negative)
+  - **Property Dispositions:** "Proceeds from sale of investment properties" (positive)
+  - **JV Capital Contributions:** "Investment in equity accounted entities" or "Contributions to joint ventures" (negative)
+  - **JV Return of Capital:** "Distribution from equity accounted entities" or "Return of capital from JVs" (positive)
+  - **Business Combinations:** "Acquisition of subsidiaries" or "Business combinations" (negative)
+  - **Total CFI:** "Net cash used in investing activities" (for reconciliation)
+- **IMPORTANT:** Do NOT include sustaining CAPEX here - that's already in ACFO components
+- **Sign Convention:** Outflows are negative, inflows are positive (as shown in cash flow statement)
+
+**Cash Flow from Financing Activities (OPTIONAL - for AFCF coverage analysis):**
+- Look in the "FINANCING ACTIVITIES" section of the cash flow statement
+- Extract the following (use NEGATIVE for outflows, POSITIVE for inflows):
+  - **Debt Principal Repayments:** "Repayment of mortgages" or "Principal payments on debt" (negative)
+  - **New Debt Issuances:** "Proceeds from mortgages" or "Issuance of debentures" (positive)
+  - **Distributions - Common:** "Distributions to unitholders" or "Dividends paid" (negative)
+  - **Distributions - Preferred:** "Distributions on preferred units" (negative, if separate line)
+  - **Distributions - NCI:** "Distributions to non-controlling interests" (negative, if separate line)
+  - **Equity Issuances:** "Issuance of units" or "Proceeds from equity" (positive)
+  - **Unit Buybacks:** "Repurchase of units" or "Unit buyback" (negative)
+  - **Deferred Financing Costs:** "Deferred financing costs paid" (negative)
+  - **Total CFF:** "Net cash from (used in) financing activities" (for reconciliation)
+- **Note:** Some statements combine all distributions into one line - extract as `distributions_common`
+- **Sign Convention:** Outflows are negative, inflows are positive (as shown in statement)
 
 ### Step 4: Validation
 

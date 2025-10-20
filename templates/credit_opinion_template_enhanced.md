@@ -6,6 +6,47 @@
 
 ---
 
+## Table of Contents
+
+1. [Ratings Summary](#ratings-summary)
+2. [Executive Summary](#executive-summary)
+3. [Credit Strengths](#credit-strengths)
+4. [Credit Challenges](#credit-challenges)
+5. [Rating Outlook](#rating-outlook)
+6. [Factors That Could Lead to an Upgrade](#factors-that-could-lead-to-an-upgrade)
+7. [Factors That Could Lead to a Downgrade](#factors-that-could-lead-to-a-downgrade)
+8. [Key Indicators](#key-indicators)
+9. [5-Factor Rating Scorecard](#5-factor-rating-scorecard)
+10. [Key Observations](#key-observations)
+11. [Peer Comparison](#peer-comparison)
+12. [Profile](#profile)
+    - [Company Background](#company-background)
+    - [Business Strategy](#business-strategy)
+    - [Portfolio Composition](#portfolio-composition)
+    - [Financial Summary](#financial-summary)
+    - [Operational Metrics](#operational-metrics)
+    - [Management and Governance](#management-and-governance)
+13. [Detailed Credit Analysis](#detailed-credit-analysis)
+    - [1. Earnings Analysis](#1-earnings-analysis)
+    - [2. FFO, AFFO, and ACFO Analysis](#2-ffo-affo-and-acfo-analysis)
+    - [3. Leverage and Coverage Analysis](#3-leverage-and-coverage-analysis)
+    - [4. Liquidity Analysis](#4-liquidity-analysis)
+    - [5. Growth Strategy and Capital Allocation](#5-growth-strategy-and-capital-allocation)
+    - [6. Operating Track Record and Portfolio Quality](#6-operating-track-record-and-portfolio-quality)
+14. [Scenario Analysis and Stress Testing](#scenario-analysis-and-stress-testing)
+15. [Structural Considerations](#structural-considerations)
+16. [ESG Considerations](#esg-considerations)
+17. [Methodology and Limitations](#methodology-and-limitations)
+18. [Appendices](#appendix-a-moodys-adjusted-debt-reconciliation)
+    - [Appendix A: Moody's-Adjusted Debt Reconciliation](#appendix-a-moodys-adjusted-debt-reconciliation)
+    - [Appendix B: Moody's-Adjusted EBITDA Reconciliation](#appendix-b-moodys-adjusted-ebitda-reconciliation)
+    - [Appendix C: Calculation Methodologies](#appendix-c-calculation-methodologies)
+    - [Appendix D: Rating Category Thresholds](#appendix-d-rating-category-thresholds)
+    - [Appendix E: Data Reconciliation](#appendix-e-data-reconciliation)
+    - [Appendix F: FFO/AFFO/ACFO Detailed Reconciliations](#appendix-f-ffoaffoacfo-detailed-reconciliations)
+
+---
+
 ## Ratings Summary
 
 | Rating Category | Rating | Outlook |

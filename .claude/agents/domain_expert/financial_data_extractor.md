@@ -86,6 +86,25 @@ You will receive:
     "total_gla_sf": 0,
     "occupancy_rate": 0.0,
     "occupancy_with_commitments": 0.0
+  },
+
+  "cash_flow_investing": {
+    "_comment": "OPTIONAL - for AFCF analysis",
+    "development_capex": 0,
+    "property_acquisitions": 0,
+    "property_dispositions": 0,
+    "jv_capital_contributions": 0,
+    "jv_return_of_capital": 0,
+    "total_cfi": 0
+  },
+
+  "cash_flow_financing": {
+    "_comment": "OPTIONAL - for AFCF coverage analysis",
+    "debt_principal_repayments": 0,
+    "new_debt_issuances": 0,
+    "distributions_common": 0,
+    "equity_issuances": 0,
+    "total_cff": 0
   }
 }
 ```

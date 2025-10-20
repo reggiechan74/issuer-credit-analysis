@@ -123,6 +123,34 @@
     "missing_adjustments_acfo": "array - List of ACFO adjustments that couldn't be extracted"
   },
 
+  "cash_flow_investing": {
+    "_comment": "OPTIONAL: Required for AFCF calculation. Extract from IFRS Cash Flow Statement - Investing Activities section. Use negative numbers for outflows, positive for inflows.",
+    "development_capex": "number - Development/growth CAPEX (negative). Should match capex_development_acfo.",
+    "property_acquisitions": "number - Cash paid for property acquisitions (negative)",
+    "property_dispositions": "number - Proceeds from property sales (positive)",
+    "jv_capital_contributions": "number - Capital invested in JVs (negative)",
+    "jv_return_of_capital": "number - Return of capital from JV exits (positive)",
+    "business_combinations": "number - Cash paid for acquiring entities (negative)",
+    "other_investing_outflows": "number - Other investing outflows (negative)",
+    "other_investing_inflows": "number - Other investing inflows (positive)",
+    "total_cfi": "number - Total net cash from investing per IFRS (for reconciliation)"
+  },
+
+  "cash_flow_financing": {
+    "_comment": "OPTIONAL: Required for AFCF coverage analysis. Extract from IFRS Cash Flow Statement - Financing Activities section. Use negative numbers for outflows, positive for inflows.",
+    "debt_principal_repayments": "number - Principal repayments on all debt (negative)",
+    "new_debt_issuances": "number - Proceeds from new debt (positive)",
+    "distributions_common": "number - Distributions to common unitholders (negative)",
+    "distributions_preferred": "number - Distributions to preferred unitholders (negative)",
+    "distributions_nci": "number - Distributions to non-controlling interests (negative)",
+    "equity_issuances": "number - Proceeds from equity issuances (positive)",
+    "unit_buybacks": "number - Cash paid for unit buybacks (negative)",
+    "deferred_financing_costs_paid": "number - Cash paid for financing fees (negative)",
+    "other_financing_outflows": "number - Other financing outflows (negative)",
+    "other_financing_inflows": "number - Other financing inflows (positive)",
+    "total_cff": "number - Total net cash from financing per IFRS (for reconciliation)"
+  },
+
   "validation": {
     "_comment": "Optional validation checks",
     "balance_sheet_balanced": "boolean",

@@ -14,6 +14,99 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.6] - 2025-10-20
+
+### Added - AFCF (Adjusted Free Cash Flow) Calculations
+- **New Metric:** Implemented Adjusted Free Cash Flow (AFCF) for comprehensive credit analysis
+  - **Formula:** AFCF = ACFO + Net Cash Flow from Investing Activities
+  - **Purpose:** Measures cash available for debt service and distributions after ALL operating and investing activities
+  - **Key Distinction:** More conservative than ACFO - accounts for growth investments (property acquisitions, development capex, JV investments)
+
+### Schema Extensions
+- **Phase 2 Schema:** Added `cash_flow_investing` section
+  - Captures development CAPEX, property acquisitions/dispositions, JV investments, business combinations
+  - Uses negative numbers for outflows, positive for inflows
+  - Includes `total_cfi` for reconciliation with IFRS cash flow statement
+
+- **Phase 2 Schema:** Added `cash_flow_financing` section
+  - Captures debt principal repayments, distributions, new financing (debt/equity issuances)
+  - Enables AFCF coverage ratio analysis
+  - Includes `total_cff` for reconciliation
+
+### New Functions (Phase 3)
+- **`calculate_afcf()`** - Calculates AFCF from ACFO and investing activities
+  - Prevents double-counting with ACFO components (sustaining capex, TI, leasing costs already deducted)
+  - Returns AFCF value, net CFI breakdown, data quality assessment, reconciliation checks
+  - Automatically validates against reported total_cfi if available
+
+- **`calculate_afcf_coverage_ratios()`** - Calculates financing obligation coverage metrics
+  - **AFCF Debt Service Coverage:** AFCF / (Interest + Principal Repayments)
+  - **AFCF Distribution Coverage:** AFCF / Total Distributions (inverted payout ratio)
+  - **AFCF Self-Funding Ratio:** AFCF / (Debt Service + Distributions - New Financing)
+  - More conservative than traditional NOI/Interest coverage
+
+- **`validate_afcf_reconciliation()`** - Validates AFCF calculation accuracy
+  - Checks: AFCF = ACFO + Net CFI
+  - Validates development CAPEX consistency between ACFO and CFI
+  - Reconciles to IFRS cash flow statement if all components available (CFO + CFI + CFF = Change in Cash)
+
+### Integration
+- **`calculate_all_metrics()`** - Integrated AFCF into Phase 3 output
+  - Automatically calculates AFCF if `cash_flow_investing` data present
+  - Adds `afcf_metrics`, `afcf_coverage`, and `afcf_reconciliation` to output JSON
+  - Backward compatible - AFCF calculation is optional (gracefully skipped if data unavailable)
+
+### Testing
+- **New Test Suite:** `tests/test_afcf_financial_calculations.py` (17 comprehensive tests)
+  - Tests basic AFCF calculation with all components
+  - Tests data quality assessment (strong/moderate/limited)
+  - Tests coverage ratios (debt service, distributions, self-funding)
+  - Tests reconciliation validation and error detection
+  - Tests double-counting prevention with ACFO
+  - Tests edge cases (negative FCF, positive net CFI, missing data)
+  - **All tests passing** ✅
+
+### Use Cases
+- **Credit Analysis:** Identifies REITs reliant on external financing for debt service
+- **Distribution Sustainability:** Modified payout ratio based on true free cash flow (more conservative than AFFO payout)
+- **Growth Assessment:** Distinguishes between self-funding growth vs. capital market dependent growth
+- **Debt Service Coverage:** More comprehensive than NOI/Interest (includes principal repayments and capex)
+
+### Example
+```json
+{
+  "afcf_metrics": {
+    "afcf": 22000,
+    "acfo_starting_point": 50000,
+    "net_cfi": -28000,
+    "data_quality": "strong"
+  },
+  "afcf_coverage": {
+    "afcf_debt_service_coverage": 0.40,  // ⚠️ Low - needs external financing
+    "afcf_payout_ratio": 86.4,           // Sustainable from FCF
+    "afcf_self_funding_ratio": 0.37      // Reliant on capital markets
+  }
+}
+```
+
+### Documentation
+- **Research Paper:** `docs/AFCF_Research_Proposal.md` - Comprehensive methodology and implementation guide
+- **Schema Documentation:** Updated `.claude/knowledge/phase2_extraction_schema.json` and template
+- **GitHub Issue:** #6 - Complete implementation roadmap
+
+### Migration Notes
+- **Backward Compatible:** Existing Phase 3 outputs will continue to work
+- **Optional Feature:** AFCF only calculated if `cash_flow_investing` data provided in Phase 2
+- **Phase 2 Enhancement:** Update extraction prompts to include CFI/CFF sections for full AFCF support
+- **No Breaking Changes:** All existing metrics (FFO, AFFO, ACFO, leverage, coverage) unchanged
+
+### Performance
+- **Minimal Overhead:** AFCF adds ~500 lines of well-tested code
+- **Token Impact:** None for Phase 2 (uses file references)
+- **Execution Time:** < 100ms for AFCF calculations
+
+---
+
 ## [1.0.5] - 2025-10-18
 
 ### Fixed
