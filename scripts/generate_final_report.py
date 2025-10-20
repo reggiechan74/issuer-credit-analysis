@@ -17,6 +17,15 @@ import re
 from pathlib import Path
 from datetime import datetime
 
+# Import reconciliation functions for v1.0.11+ comprehensive tables
+sys.path.insert(0, str(Path(__file__).parent))
+from calculate_credit_metrics.reconciliation import (
+    generate_ffo_affo_reconciliation,
+    format_reconciliation_table,
+    format_acfo_reconciliation_table
+)
+from calculate_credit_metrics.acfo import generate_acfo_reconciliation
+
 
 def load_metrics(metrics_path):
     """
@@ -347,6 +356,134 @@ def assess_burn_rate_sustainability(status):
         return status
 
 
+def format_cfi_breakdown_table(cfi_breakdown, currency='CAD'):
+    """
+    Format cash flow investing breakdown as markdown table
+
+    Args:
+        cfi_breakdown: Dictionary of CFI components from Phase 3
+        currency: Currency code
+
+    Returns:
+        str: Formatted markdown table
+    """
+    if not cfi_breakdown or not isinstance(cfi_breakdown, dict):
+        return "No cash flow investing data available"
+
+    lines = []
+    lines.append(f"| Investing Activity | Amount ({currency} 000s) |")
+    lines.append("|--------------------|-----------------------------|")
+
+    component_labels = {
+        'development_capex': 'Development CAPEX',
+        'property_acquisitions': 'Property Acquisitions',
+        'property_dispositions': 'Property Dispositions',
+        'jv_capital_contributions': 'JV Capital Contributions',
+        'jv_return_of_capital': 'JV Return of Capital',
+        'business_combinations': 'Business Combinations',
+        'other_investing_outflows': 'Other Investing Outflows',
+        'other_investing_inflows': 'Other Investing Inflows'
+    }
+
+    for component, data in cfi_breakdown.items():
+        label = component_labels.get(component, component.replace('_', ' ').title())
+        amount = data.get('amount', 0) if isinstance(data, dict) else data
+        # Format with parentheses for negatives (accounting convention)
+        if amount < 0:
+            formatted = f"({abs(amount):,.0f})"
+        else:
+            formatted = f"{amount:,.0f}"
+        lines.append(f"| {label} | {formatted} |")
+
+    lines.append(f"| **Net Cash from Investing** | **See total above** |")
+
+    return "\n".join(lines)
+
+
+def format_afcf_reconciliation_table(acfo, afcf, net_cfi, currency='CAD'):
+    """
+    Format ACFO → AFCF reconciliation as markdown table
+
+    Args:
+        acfo: ACFO amount
+        afcf: AFCF amount
+        net_cfi: Net cash from investing
+        currency: Currency code
+
+    Returns:
+        str: Formatted markdown table
+    """
+    if not acfo or not afcf:
+        return "Insufficient data - AFCF reconciliation not available"
+
+    lines = []
+    lines.append(f"| Line Item | Amount ({currency} 000s) |")
+    lines.append("|-----------|----------------------------|")
+    lines.append(f"| **Adjusted Cash Flow from Operations (ACFO)** | **{acfo:,.0f}** |")
+
+    # Format net CFI with parentheses if negative
+    if net_cfi < 0:
+        cfi_formatted = f"({abs(net_cfi):,.0f})"
+    else:
+        cfi_formatted = f"{net_cfi:,.0f}"
+    lines.append(f"| Add: Net Cash Flow from Investing Activities | {cfi_formatted} |")
+    lines.append(f"| **Adjusted Free Cash Flow (AFCF)** | **{afcf:,.0f}** |")
+
+    return "\n".join(lines)
+
+
+def generate_acfo_validation_summary(acfo_metrics):
+    """
+    Generate ACFO validation summary text
+
+    Args:
+        acfo_metrics: ACFO metrics from Phase 3
+
+    Returns:
+        str: Validation summary text
+    """
+    if not acfo_metrics:
+        return "ACFO validation not available"
+
+    validation = acfo_metrics.get('acfo_validation', {})
+
+    lines = []
+
+    # Variance vs reported
+    if 'acfo_variance_percent' in validation:
+        variance = validation['acfo_variance_percent']
+        within_threshold = validation.get('acfo_within_threshold', False)
+        if within_threshold:
+            lines.append(f"✓ **ACFO Variance:** Calculated matches reported (variance: {abs(variance):.1f}%)")
+        else:
+            lines.append(f"⚠️ **ACFO Variance:** Calculated differs from reported (variance: {abs(variance):.1f}%)")
+    else:
+        lines.append("**ACFO Variance:** Issuer did not report ACFO - using calculated value")
+
+    # Consistency checks
+    consistency = acfo_metrics.get('consistency_checks', {})
+    if consistency:
+        lines.append("\n**Consistency Checks:**")
+        capex_check = consistency.get('capex_sustaining_consistent')
+        ti_check = consistency.get('tenant_improvements_consistent')
+
+        if capex_check is True:
+            lines.append("- Sustaining CAPEX matches AFFO: ✓")
+        elif capex_check is False:
+            lines.append("- Sustaining CAPEX differs from AFFO: ⚠️")
+
+        if ti_check is True:
+            lines.append("- Tenant improvements match AFFO: ✓")
+        elif ti_check is False:
+            lines.append("- Tenant improvements differ from AFFO: ⚠️")
+
+    # Data quality
+    data_quality = acfo_metrics.get('data_quality', 'unknown')
+    lines.append(f"\n**Data Quality:** {data_quality.capitalize()}")
+
+    return "\n".join(lines) if lines else "ACFO validation not available"
+
+
 def generate_final_report(metrics, analysis_sections, template):
     """
     Generate final report by combining metrics and analysis with template
@@ -413,6 +550,35 @@ def generate_final_report(metrics, analysis_sections, template):
     affo_assessment = assess_payout_ratio(affo_payout, "AFFO")
     occupancy_assessment = assess_occupancy(occupancy)
     noi_growth_assessment = assess_noi_growth(noi_growth)
+
+    # Generate reconciliation tables (v1.0.11+ comprehensive extraction)
+    try:
+        # FFO/AFFO Reconciliation Table
+        ffo_affo_recon_data = generate_ffo_affo_reconciliation(metrics)
+        ffo_affo_table = format_reconciliation_table(ffo_affo_recon_data) if ffo_affo_recon_data else "Insufficient data - FFO/AFFO reconciliation not available. Enable comprehensive Phase 2 extraction for detailed reconciliations."
+    except Exception as e:
+        ffo_affo_table = f"Error generating FFO/AFFO reconciliation: {str(e)}"
+
+    try:
+        # ACFO Reconciliation Table
+        acfo_recon_data = generate_acfo_reconciliation(metrics)
+        acfo_table = format_acfo_reconciliation_table(acfo_recon_data) if acfo_recon_data else "Insufficient data - ACFO reconciliation not available. Requires cash flow statement data in Phase 2 extraction."
+    except Exception as e:
+        acfo_table = f"Error generating ACFO reconciliation: {str(e)}"
+
+    # ACFO Validation Summary
+    acfo_validation_summary = generate_acfo_validation_summary(acfo_metrics)
+
+    # AFCF Tables
+    cfi_breakdown_table = format_cfi_breakdown_table(afcf_metrics.get('cfi_breakdown'), currency)
+
+    acfo_value = acfo_metrics.get('acfo', 0)
+    afcf_value = afcf_metrics.get('afcf', 0)
+    net_cfi_value = afcf_metrics.get('net_cfi', 0)
+    afcf_recon_table = format_afcf_reconciliation_table(acfo_value, afcf_value, net_cfi_value, currency)
+
+    # Dilution analysis (v1.0.8)
+    dilution_analysis = metrics.get('dilution_analysis', {})
 
     # Extract Phase 4 sections (with flexible lookup for variations)
     def get_section(sections, *possible_names):
@@ -676,6 +842,29 @@ def generate_final_report(metrics, analysis_sections, template):
         'BURN_SUSTAINABILITY_ASSESSMENT': assess_burn_rate_sustainability(sustainable_burn.get('status', '')) if sustainable_burn.get('status') else 'Not available',
         'WARNING_FLAGS': ', '.join(liquidity_risk.get('warning_flags', [])) if liquidity_risk.get('warning_flags') else 'None',
         'LIQUIDITY_RECOMMENDATIONS': '\n'.join([f"- {rec}" for rec in liquidity_risk.get('recommendations', [])]) if liquidity_risk.get('recommendations') else 'Monitor liquidity position quarterly',
+
+        # Reconciliation Tables (v1.0.11) - Comprehensive extraction
+        'FFO_AFFO_RECONCILIATION_TABLE': ffo_affo_table,
+        'ACFO_RECONCILIATION_TABLE': acfo_table,
+        'ACFO_VALIDATION_SUMMARY': acfo_validation_summary,
+        'AFCF_CFI_BREAKDOWN_TABLE': cfi_breakdown_table,
+        'AFCF_RECONCILIATION_TABLE': afcf_recon_table,
+
+        # Additional Payout Ratios (v1.0.11)
+        'ACFO_PAYOUT': f"{(distributions / acfo_metrics.get('acfo_per_unit', 1) * 100):.1f}" if acfo_metrics.get('acfo_per_unit', 0) > 0 else 'Not available',
+        'AFCF_PAYOUT': f"{afcf_coverage.get('afcf_payout_ratio', 0):.1f}" if afcf_coverage.get('afcf_payout_ratio') else 'Not available',
+
+        # Dilution Analysis (v1.0.8) - Optional
+        'DILUTION_AVAILABLE': 'Yes' if dilution_analysis.get('has_dilution_detail') else 'No',
+        'DILUTION_PERCENTAGE': f"{dilution_analysis.get('dilution_percentage', 0):.2f}" if dilution_analysis.get('dilution_percentage') else 'Not available',
+        'DILUTION_MATERIALITY': dilution_analysis.get('dilution_materiality', 'Not assessed').upper() if dilution_analysis.get('dilution_materiality') else 'Not available',
+        'MATERIAL_INSTRUMENTS': ', '.join([item.get('instrument', str(item)) if isinstance(item, dict) else str(item) for item in dilution_analysis.get('material_instruments', [])]) if dilution_analysis.get('material_instruments') else 'None',
+        'CONVERTIBLE_DEBT_RISK': dilution_analysis.get('convertible_debt_risk', 'Not assessed').upper() if dilution_analysis.get('convertible_debt_risk') else 'Not available',
+        'GOVERNANCE_SCORE': dilution_analysis.get('governance_score', 'Not assessed').capitalize() if dilution_analysis.get('governance_score') else 'Not available',
+        'DILUTION_CREDIT_ASSESSMENT': dilution_analysis.get('credit_assessment', 'Dilution analysis not available') if dilution_analysis.get('credit_assessment') else 'Not available',
+        'BASIC_UNITS': f"{dilution_analysis.get('detail', {}).get('basic_units', 0):,.0f}" if dilution_analysis.get('detail', {}).get('basic_units') else 'Not available',
+        'DILUTED_UNITS_TOTAL': f"{dilution_analysis.get('detail', {}).get('diluted_units_reported', 0):,.0f}" if dilution_analysis.get('detail', {}).get('diluted_units_reported') else 'Not available',
+        'DILUTION_ANALYSIS': dilution_analysis.get('credit_assessment', 'Dilution detail not extracted in Phase 2. Enable comprehensive extraction for detailed dilution analysis.') if dilution_analysis else 'Dilution detail not extracted in Phase 2.',
 
         # Generation metadata
         'GENERATION_TIMESTAMP': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
