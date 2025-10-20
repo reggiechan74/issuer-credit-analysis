@@ -207,10 +207,11 @@ def calculate_afcf_coverage_ratios(financial_data, afcf):
         result['error'] = 'AFCF must be calculated first'
         return result
 
-    # Get annualized interest expense from coverage_ratios
-    annualized_interest = 0
+    # Get PERIOD interest expense from coverage_ratios (NOT annualized)
+    # AFCF coverage uses period-to-period comparison
+    period_interest = 0
     if 'coverage_ratios' in financial_data:
-        annualized_interest = financial_data['coverage_ratios'].get('annualized_interest_expense', 0)
+        period_interest = financial_data['coverage_ratios'].get('period_interest_expense', 0)
 
     # Get principal repayments and distributions from cash_flow_financing
     principal_repayments = 0
@@ -221,10 +222,12 @@ def calculate_afcf_coverage_ratios(financial_data, afcf):
         cff_data = financial_data['cash_flow_financing']
 
         # Principal repayments (negative number in data, make positive for calculation)
+        # Use PERIOD amount (NOT annualized) - period-to-period comparison with AFCF
         if 'debt_principal_repayments' in cff_data and cff_data['debt_principal_repayments'] is not None:
             principal_repayments = abs(cff_data['debt_principal_repayments'])
 
         # Distributions (sum all types, make positive)
+        # These are already period amounts
         dist_common = abs(cff_data.get('distributions_common', 0) or 0)
         dist_preferred = abs(cff_data.get('distributions_preferred', 0) or 0)
         dist_nci = abs(cff_data.get('distributions_nci', 0) or 0)
@@ -235,8 +238,8 @@ def calculate_afcf_coverage_ratios(financial_data, afcf):
         new_equity = cff_data.get('equity_issuances', 0) or 0
         new_financing = new_debt + new_equity
 
-    # Calculate total debt service
-    total_debt_service = annualized_interest + principal_repayments
+    # Calculate total debt service (PERIOD amounts for period-to-period comparison with AFCF)
+    total_debt_service = period_interest + principal_repayments
 
     # Calculate AFCF debt service coverage
     if total_debt_service > 0:

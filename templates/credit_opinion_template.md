@@ -460,7 +460,8 @@ AFCF extends the analysis beyond ACFO to measure cash available for financing ob
 | **AFCF** | {{AFCF_CALCULATED}} | - | - |
 | **Total Debt Service** | {{TOTAL_DEBT_SERVICE}} | {{AFCF_DEBT_SERVICE_COVERAGE}}x | {{AFCF_DEBT_SERVICE_ASSESSMENT}} |
 | **Total Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_DISTRIBUTION_COVERAGE}}x | {{AFCF_DISTRIBUTION_ASSESSMENT}} |
-| **Combined Obligations Coverage** | {{AFCF_SELF_FUNDING_CAPACITY}} | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SELF_FUNDING_ASSESSMENT}} |
+| **Total Debt Service & Distributions** | {{TOTAL_OBLIGATIONS}} | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SELF_FUNDING_ASSESSMENT}} |
+| **Surplus/(Shortfall)** | {{AFCF_SURPLUS_SHORTFALL}} | - | - |
 
 **Data Source:** {{AFCF_DATA_SOURCE}}
 **Data Quality:** {{AFCF_DATA_QUALITY}}
