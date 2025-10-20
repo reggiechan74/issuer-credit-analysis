@@ -1307,6 +1307,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'AFCF_DEBT_SERVICE_COVERAGE': f"{afcf_coverage.get('afcf_debt_service_coverage', 0):.2f}" if afcf_coverage.get('afcf_debt_service_coverage') else 'Not available',
         'AFCF_PAYOUT_RATIO': f"{afcf_coverage.get('afcf_payout_ratio', 0):.1f}" if afcf_coverage.get('afcf_payout_ratio') else 'Not available',
         'AFCF_SELF_FUNDING_RATIO': f"{afcf_coverage.get('afcf_self_funding_ratio', 0):.2f}" if afcf_coverage.get('afcf_self_funding_ratio') else 'Not available',
+        'AFCF_SELF_FUNDING_CAPACITY': f"{afcf_coverage.get('afcf_self_funding_capacity', 0):,.0f}" if afcf_coverage.get('afcf_self_funding_capacity') is not None else 'Not available',
         'TOTAL_DEBT_SERVICE': f"{afcf_coverage.get('total_debt_service', 0):,.0f}" if afcf_coverage.get('total_debt_service') else 'Not available',
         'NET_FINANCING_NEEDS': f"{afcf_coverage.get('net_financing_needs', 0):,.0f}" if afcf_coverage.get('net_financing_needs') else 'Not available',
         'AFCF_COVERAGE_ASSESSMENT': assess_afcf_coverage(afcf_coverage.get('afcf_debt_service_coverage', 0)) if afcf_coverage.get('afcf_debt_service_coverage') else 'Not available',
