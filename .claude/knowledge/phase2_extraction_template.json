@@ -91,7 +91,7 @@
   },
 
   "ffo_affo_components": {
-    "_comment": "OPTIONAL: Include when issuer doesn't report FFO/AFFO or to enable validation. Per REALPAC methodology (Feb 2019)",
+    "_comment": "OPTIONAL: Include when issuer doesn't report FFO/AFFO or to enable validation. Per REALPAC methodology (Jan 2022)",
     "net_income_ifrs": "number - IFRS net income from statement of comprehensive income",
     "unrealized_fv_changes": "number - Adj A: Unrealized fair value changes (investment properties)",
     "depreciation_real_estate": "number - Adj B: Depreciation of depreciable real estate",

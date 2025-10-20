@@ -102,7 +102,7 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - **Minimum Required:** `ffo`, `affo`, `ffo_per_unit`, `affo_per_unit`, `distributions_per_unit`
 
 **FFO/AFFO Components (OPTIONAL - for REALPAC calculation/validation):**
-- Enables calculating FFO/AFFO from first principles per REALPAC methodology (Feb 2019)
+- Enables calculating FFO/AFFO from first principles per REALPAC methodology (Jan 2022)
 - Look in "Notes to Financial Statements" - often has FFO/AFFO reconciliation table
 - **Starting Point:** Net income from Statement of Comprehensive Income
 - **Key Adjustments to Extract:**
@@ -297,7 +297,7 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - **Minimum Required:** `ffo`, `affo`, `ffo_per_unit`, `affo_per_unit`, `distributions_per_unit`
 
 **FFO/AFFO Components (OPTIONAL - for REALPAC calculation/validation):**
-- Enables calculating FFO/AFFO from first principles per REALPAC methodology (Feb 2019)
+- Enables calculating FFO/AFFO from first principles per REALPAC methodology (Jan 2022)
 - Look in "Notes to Financial Statements" - often has FFO/AFFO reconciliation table
 - **Starting Point:** Net income from Statement of Comprehensive Income
 - **Key Adjustments to Extract:**

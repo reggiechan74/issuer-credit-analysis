@@ -372,7 +372,7 @@
         },
         "non_controlling_interests_ffo": {
           "type": "number",
-          "description": "Adjustment U: Non-controlling interests in respect of FFO adjustments"
+          "description": "Adjustment U: Non-controlling interests in respect of FFO adjustments. Per REALPAC Jan 2022: Include NCI adjustment to deduct NCI for consolidated investments in entities that have puttable units classified as financial liabilities under IAS 32, where NCI has not been deducted as a result of being treated as a liability rather than equity."
         },
         "capex_sustaining": {
           "type": "number",
@@ -396,7 +396,7 @@
         },
         "non_controlling_interests_affo": {
           "type": "number",
-          "description": "Adjustment Z: Non-controlling interests in respect of AFFO adjustments"
+          "description": "Adjustment Z: Non-controlling interests in respect of AFFO adjustments. Per REALPAC Jan 2022: Include NCI adjustment to deduct NCI for consolidated investments in entities that have puttable units classified as financial liabilities under IAS 32, where NCI has not been deducted as a result of being treated as a liability rather than equity."
         },
         "calculation_method": {
           "type": "string",

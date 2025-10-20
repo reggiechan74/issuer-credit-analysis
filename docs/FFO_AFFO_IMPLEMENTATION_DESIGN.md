@@ -2,7 +2,7 @@
 
 **Issue**: #4 - Implement AFFO Calculation When Issuer Does Not Provide It
 **Date**: 2025-10-20
-**Reference**: REALPAC White Paper on FFO & AFFO for IFRS (February 2019)
+**Reference**: REALPAC White Paper on FFO & AFFO for IFRS (January 2022)
 
 ## Overview
 
@@ -40,7 +40,7 @@ FFO = IFRS Net Income
 - **R**: Incremental leasing costs
 - **S**: Property taxes (IFRIC 21)
 - **T**: Right of Use Asset revenue/expenses (IFRS 16)
-- **U**: Non-controlling interests
+- **U**: Non-controlling interests (including NCI for consolidated entities with puttable units classified as financial liabilities under IAS 32) - **Enhanced in January 2022**
 
 ### AFFO Calculation (FFO → AFFO)
 
