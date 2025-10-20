@@ -412,25 +412,26 @@ def validate_ffo_affo(calculated_ffo, calculated_affo, reported_ffo, reported_af
 
 def calculate_reit_metrics(financial_data):
     """
-    Calculate REIT-specific metrics (FFO, AFFO, payout ratios)
+    Calculate REIT-specific metrics (FFO, AFFO, ACFO, payout ratios)
 
     Enhanced to support both:
-    1. Issuer-reported FFO/AFFO (original behavior)
-    2. Calculated FFO/AFFO from components (new REALPAC methodology)
+    1. Issuer-reported FFO/AFFO/ACFO (original behavior)
+    2. Calculated FFO/AFFO/ACFO from components (new REALPAC methodology)
 
     Args:
         financial_data (dict): Validated JSON from Phase 2 extraction
 
     Returns:
-        dict: REIT metrics (including calculated FFO/AFFO if components available)
+        dict: REIT metrics (including calculated FFO/AFFO/ACFO if components available)
 
     Raises:
         KeyError: If required fields are missing
     """
 
-    # Check if issuer reported FFO/AFFO
+    # Check if issuer reported FFO/AFFO and if components available
     has_reported_ffo_affo = 'ffo_affo' in financial_data
-    has_components = 'ffo_affo_components' in financial_data
+    has_ffo_affo_components = 'ffo_affo_components' in financial_data
+    has_acfo_components = 'acfo_components' in financial_data
 
     result = {}
 
@@ -468,7 +469,7 @@ def calculate_reit_metrics(financial_data):
             has_reported_ffo_affo = False
 
     # Calculate FFO/AFFO from components if available
-    if has_components:
+    if has_ffo_affo_components:
         ffo_calc_result = calculate_ffo_from_components(financial_data)
 
         if ffo_calc_result.get('ffo_calculated') is not None:
@@ -513,6 +514,43 @@ def calculate_reit_metrics(financial_data):
                             result['ffo_payout_ratio'] = round((dist / result['ffo_per_unit']) * 100, 1)
                             result['affo_payout_ratio'] = round((dist / result['affo_per_unit']) * 100, 1)
 
+    # Calculate ACFO from components if available
+    if has_acfo_components:
+        acfo_calc_result = calculate_acfo_from_components(financial_data)
+
+        if acfo_calc_result.get('acfo_calculated') is not None:
+            # Get reported ACFO if available (rare, but some issuers report it)
+            reported_acfo = None
+            if 'ffo_affo' in financial_data and 'acfo' in financial_data['ffo_affo']:
+                reported_acfo = financial_data['ffo_affo']['acfo']
+
+            # Validate against reported ACFO if available
+            acfo_validation = validate_acfo(
+                acfo_calc_result['acfo_calculated'],
+                reported_acfo
+            )
+
+            # Add ACFO to result
+            result['acfo_calculated'] = acfo_calc_result['acfo_calculated']
+            result['acfo_calculation_detail'] = acfo_calc_result
+            result['acfo_validation'] = acfo_validation
+
+            # If no reported ACFO, use calculated value
+            if reported_acfo is None:
+                result['acfo'] = acfo_calc_result['acfo_calculated']
+
+                # Calculate per-unit ACFO if shares outstanding available
+                if 'balance_sheet' in financial_data and 'common_units_outstanding' in financial_data['balance_sheet']:
+                    units = financial_data['balance_sheet']['common_units_outstanding']
+                    if units > 0:
+                        result['acfo_per_unit'] = round(result['acfo'] / units, 4)
+
+                        # Calculate ACFO payout ratio if distributions available
+                        if 'distributions_per_unit' in result:
+                            result['acfo_payout_ratio'] = round((result['distributions_per_unit'] / result['acfo_per_unit']) * 100, 1)
+            else:
+                result['acfo'] = reported_acfo
+
     # If we still don't have any FFO/AFFO data, raise error
     if 'ffo' not in result or 'affo' not in result:
         raise KeyError(
@@ -522,6 +560,306 @@ def calculate_reit_metrics(financial_data):
         )
 
     return result
+
+
+def calculate_acfo_from_components(financial_data):
+    """
+    Calculate ACFO from IFRS Cash Flow from Operations using REALPAC methodology (17 adjustments)
+
+    Per REALPAC ACFO White Paper (January 2023), ACFO is a sustainable economic cash flow measure
+    that starts from IFRS CFO and applies adjustments for recurring vs non-recurring items.
+
+    CRITICAL: CAPEX, leasing costs, and tenant improvements MUST match AFFO values.
+
+    Args:
+        financial_data (dict): Validated JSON from Phase 2 with acfo_components section
+
+    Returns:
+        dict: {
+            'acfo_calculated': float,
+            'cash_flow_from_operations': float,
+            'total_adjustments': float,
+            'adjustments_detail': dict,  # All 17 adjustments breakdown
+            'missing_components': list,
+            'calculation_method': str,  # 'actual', 'reserve', 'hybrid'
+            'jv_treatment_method': str,  # 'distributions' or 'acfo'
+            'consistency_checks': dict,  # Validation against AFFO
+            'data_quality': str  # 'strong', 'moderate', 'limited'
+        }
+    """
+
+    # Check if components section exists
+    if 'acfo_components' not in financial_data:
+        return {
+            'acfo_calculated': None,
+            'error': 'No acfo_components section in financial data',
+            'data_quality': 'none'
+        }
+
+    components = financial_data['acfo_components']
+
+    # Require cash_flow_from_operations as starting point
+    if 'cash_flow_from_operations' not in components or components['cash_flow_from_operations'] is None:
+        return {
+            'acfo_calculated': None,
+            'error': 'Missing cash_flow_from_operations - cannot calculate ACFO',
+            'data_quality': 'insufficient'
+        }
+
+    cfo = components['cash_flow_from_operations']
+
+    # Define all ACFO adjustments (17 adjustments per REALPAC Jan 2023)
+    # Adjustments 1-17 with clear categorization
+    adjustment_fields = {
+        # Working capital & financing
+        'change_in_working_capital': '1',
+        'interest_financing': '2',
+        # Joint ventures (3 fields, mutually exclusive)
+        'jv_distributions': '3a',
+        'jv_acfo': '3b',
+        'jv_notional_interest': '3c',
+        # Capital expenditures & leasing (MUST match AFFO)
+        'capex_sustaining_acfo': '4',
+        'capex_development_acfo': '4_dev',  # Disclosure only
+        'leasing_costs_external': '5',
+        'tenant_improvements_acfo': '6',
+        # Investment & tax items
+        'realized_investment_gains_losses': '7',
+        'taxes_non_operating': '8',
+        # Transaction costs
+        'transaction_costs_acquisitions': '9',
+        'transaction_costs_disposals': '10',
+        # Financing items
+        'deferred_financing_fees': '11',
+        'debt_termination_costs': '12',
+        'off_market_debt_favorable': '13a',
+        'off_market_debt_unfavorable': '13b',
+        # Interest timing
+        'interest_income_timing': '14a',
+        'interest_expense_timing': '14b',
+        # Puttable instruments (IAS 32)
+        'puttable_instruments_distributions': '15',
+        # ROU assets (IFRS 16) - 4 components
+        'rou_sublease_principal_received': '16a',
+        'rou_sublease_interest_received': '16b',
+        'rou_lease_principal_paid': '16c',
+        'rou_depreciation_amortization': '16d',
+        # Non-controlling interests
+        'non_controlling_interests_acfo': '17a',
+        'nci_puttable_units': '17b'
+    }
+
+    # Collect adjustments and track missing ones
+    adjustments = {}
+    missing_components = []
+    total_adjustments = 0.0
+
+    for field, adj_num in adjustment_fields.items():
+        if field in components and components[field] is not None:
+            value = components[field]
+            adjustments[f'adjustment_{adj_num}_{field}'] = value
+            total_adjustments += value
+        else:
+            missing_components.append(f'adjustment_{adj_num}')
+            adjustments[f'adjustment_{adj_num}_{field}'] = 0.0
+
+    # Calculate ACFO
+    acfo_calculated = cfo + total_adjustments
+
+    # Get calculation methods if provided
+    calculation_method = components.get('calculation_method_acfo', 'unknown')
+    jv_treatment_method = components.get('jv_treatment_method', 'unknown')
+    reserve_methodology = components.get('reserve_methodology_acfo')
+
+    # Check consistency with AFFO (critical requirement)
+    consistency_checks = {}
+    if 'ffo_affo_components' in financial_data:
+        affo_components = financial_data['ffo_affo_components']
+
+        # CAPEX must match
+        if 'capex_sustaining' in affo_components and 'capex_sustaining_acfo' in components:
+            affo_capex = affo_components['capex_sustaining']
+            acfo_capex = components['capex_sustaining_acfo']
+            if affo_capex is not None and acfo_capex is not None:
+                consistency_checks['capex_match'] = (affo_capex == acfo_capex)
+                consistency_checks['capex_variance'] = acfo_capex - affo_capex
+
+        # Tenant improvements must match
+        if 'tenant_improvements' in affo_components and 'tenant_improvements_acfo' in components:
+            affo_ti = affo_components['tenant_improvements']
+            acfo_ti = components['tenant_improvements_acfo']
+            if affo_ti is not None and acfo_ti is not None:
+                consistency_checks['tenant_improvements_match'] = (affo_ti == acfo_ti)
+                consistency_checks['tenant_improvements_variance'] = acfo_ti - affo_ti
+
+    # Assess data quality
+    # ACFO has 17 core adjustments (excluding development CAPEX disclosure)
+    core_adjustments = 17
+    available_count = len([f for f in adjustment_fields.keys() if f in components and components[f] is not None])
+
+    if available_count >= 12:  # 12+ of 17 adjustments
+        data_quality = 'strong'
+    elif available_count >= 6:  # 6-11 of 17 adjustments
+        data_quality = 'moderate'
+    else:
+        data_quality = 'limited'
+
+    return {
+        'acfo_calculated': round(acfo_calculated, 0),
+        'cash_flow_from_operations': cfo,
+        'total_adjustments': round(total_adjustments, 0),
+        'adjustments_detail': adjustments,
+        'missing_components': missing_components,
+        'available_adjustments': available_count,
+        'total_adjustments_count': core_adjustments,
+        'calculation_method': calculation_method,
+        'jv_treatment_method': jv_treatment_method,
+        'reserve_methodology': reserve_methodology,
+        'consistency_checks': consistency_checks,
+        'data_quality': data_quality
+    }
+
+
+def validate_acfo(calculated_acfo, reported_acfo):
+    """
+    Compare calculated vs. reported ACFO to validate calculation accuracy
+
+    Per REALPAC guidelines, variance > 5% should be flagged and investigated.
+
+    Args:
+        calculated_acfo (float): Calculated ACFO value
+        reported_acfo (float | None): Issuer-reported ACFO
+
+    Returns:
+        dict: {
+            'acfo_variance_amount': float | None,
+            'acfo_variance_percent': float | None,
+            'acfo_within_threshold': bool | None,
+            'validation_notes': str
+        }
+    """
+
+    result = {
+        'acfo_variance_amount': None,
+        'acfo_variance_percent': None,
+        'acfo_within_threshold': None,
+        'validation_notes': []
+    }
+
+    # Validate ACFO
+    if calculated_acfo is not None and reported_acfo is not None and reported_acfo != 0:
+        acfo_variance_amount = calculated_acfo - reported_acfo
+        acfo_variance_percent = (acfo_variance_amount / abs(reported_acfo)) * 100
+
+        result['acfo_variance_amount'] = round(acfo_variance_amount, 0)
+        result['acfo_variance_percent'] = round(acfo_variance_percent, 2)
+        result['acfo_within_threshold'] = abs(acfo_variance_percent) <= 5.0
+
+        if not result['acfo_within_threshold']:
+            result['validation_notes'].append(
+                f'ACFO variance ({acfo_variance_percent:.1f}%) exceeds 5% threshold. '
+                f'Review methodology differences (joint venture treatment, CAPEX/leasing cost methods).'
+            )
+        else:
+            result['validation_notes'].append(
+                f'ACFO calculation validated: {acfo_variance_percent:.1f}% variance (within 5% threshold).'
+            )
+    elif calculated_acfo is not None and reported_acfo is None:
+        result['validation_notes'].append(
+            'Issuer did not report ACFO - calculated value used.'
+        )
+
+    result['validation_summary'] = ' '.join(result['validation_notes'])
+
+    return result
+
+
+def generate_acfo_reconciliation(financial_data):
+    """
+    Generate IFRS CFO → ACFO reconciliation table per REALPAC format
+
+    This creates a detailed reconciliation showing all adjustments from
+    IFRS Cash Flow from Operations to ACFO, suitable for disclosure in reports.
+
+    Args:
+        financial_data (dict): Validated JSON from Phase 2
+
+    Returns:
+        dict: Complete reconciliation table with line items, or None if insufficient data
+    """
+
+    if 'acfo_components' not in financial_data:
+        return None
+
+    components = financial_data['acfo_components']
+
+    if 'cash_flow_from_operations' not in components or components['cash_flow_from_operations'] is None:
+        return None
+
+    # Calculate ACFO
+    acfo_result = calculate_acfo_from_components(financial_data)
+    if acfo_result.get('acfo_calculated') is None:
+        return None
+
+    # Build reconciliation table
+    reconciliation = {
+        'starting_point': {
+            'description': 'IFRS Cash Flow from Operations',
+            'amount': components['cash_flow_from_operations']
+        },
+        'acfo_adjustments': [],
+        'acfo_total': {
+            'description': 'Adjusted Cash Flow from Operations (ACFO)',
+            'amount': acfo_result['acfo_calculated']
+        },
+        'metadata': {
+            'data_quality': acfo_result['data_quality'],
+            'calculation_method': acfo_result.get('calculation_method', 'unknown'),
+            'jv_treatment_method': acfo_result.get('jv_treatment_method', 'unknown'),
+            'reserve_methodology': acfo_result.get('reserve_methodology'),
+            'missing_components': acfo_result['missing_components'],
+            'consistency_checks': acfo_result.get('consistency_checks', {})
+        }
+    }
+
+    # Add ACFO adjustments (17 adjustments per REALPAC Jan 2023)
+    acfo_adjustment_names = {
+        'adjustment_1_change_in_working_capital': '1. Change in working capital (non-sustainable fluctuations)',
+        'adjustment_2_interest_financing': '2. Interest expense included in financing activities',
+        'adjustment_3a_jv_distributions': '3. Distributions from joint ventures',
+        'adjustment_3b_jv_acfo': '3. ACFO from joint ventures (alternative)',
+        'adjustment_3c_jv_notional_interest': '3. Notional interest on JV development',
+        'adjustment_4_capex_sustaining_acfo': '4. Sustaining capital expenditures',
+        'adjustment_4_dev_capex_development_acfo': '4. Development CAPEX (disclosure only, excluded from ACFO)',
+        'adjustment_5_leasing_costs_external': '5. External leasing costs',
+        'adjustment_6_tenant_improvements_acfo': '6. Sustaining tenant improvements',
+        'adjustment_7_realized_investment_gains_losses': '7. Realized gains/losses on marketable securities',
+        'adjustment_8_taxes_non_operating': '8. Taxes related to non-operating activities',
+        'adjustment_9_transaction_costs_acquisitions': '9. Transaction costs for acquiring properties',
+        'adjustment_10_transaction_costs_disposals': '10. Transaction costs for disposing properties',
+        'adjustment_11_deferred_financing_fees': '11. Deferred financing fees (amortization)',
+        'adjustment_12_debt_termination_costs': '12. Costs to terminate debt',
+        'adjustment_13a_off_market_debt_favorable': '13. Favorable off-market debt adjustments',
+        'adjustment_13b_off_market_debt_unfavorable': '13. Unfavorable off-market debt adjustments',
+        'adjustment_14a_interest_income_timing': '14. Interest income timing adjustments',
+        'adjustment_14b_interest_expense_timing': '14. Interest expense timing adjustments',
+        'adjustment_15_puttable_instruments_distributions': '15. Distributions on puttable instruments (IAS 32)',
+        'adjustment_16a_rou_sublease_principal_received': '16. Principal from finance lease subleases (IFRS 16)',
+        'adjustment_16b_rou_sublease_interest_received': '16. Interest from finance lease subleases (IFRS 16)',
+        'adjustment_16c_rou_lease_principal_paid': '16. Principal payments on ground leases (IFRS 16)',
+        'adjustment_16d_rou_depreciation_amortization': '16. Depreciation/amortization on ROU assets (IFRS 16)',
+        'adjustment_17a_non_controlling_interests_acfo': '17. Non-controlling interests (ACFO adjustments)',
+        'adjustment_17b_nci_puttable_units': '17. NCI for puttable units as liabilities (IAS 32)'
+    }
+
+    for adj_key, amount in acfo_result['adjustments_detail'].items():
+        if amount != 0.0:  # Only include non-zero adjustments
+            reconciliation['acfo_adjustments'].append({
+                'description': acfo_adjustment_names.get(adj_key, adj_key),
+                'amount': amount
+            })
+
+    return reconciliation
 
 
 def generate_ffo_affo_reconciliation(financial_data):
@@ -686,6 +1024,72 @@ def format_reconciliation_table(reconciliation):
 
     lines.append("")
     lines.append("*Source: Calculated per REALPAC White Paper on FFO & AFFO for IFRS (February 2019)*")
+
+    return "\n".join(lines)
+
+
+def format_acfo_reconciliation_table(reconciliation):
+    """
+    Format ACFO reconciliation table as markdown for reports
+
+    Args:
+        reconciliation (dict): Output from generate_acfo_reconciliation()
+
+    Returns:
+        str: Markdown-formatted ACFO reconciliation table
+    """
+
+    if not reconciliation:
+        return "**ACFO Reconciliation**: Insufficient data to generate reconciliation table.\n"
+
+    lines = []
+    lines.append("## ACFO Reconciliation Table (REALPAC Methodology)")
+    lines.append("")
+    lines.append("| Line Item | Amount (000s) |")
+    lines.append("|-----------|---------------|")
+
+    # Starting point
+    lines.append(f"| **{reconciliation['starting_point']['description']}** | **{reconciliation['starting_point']['amount']:,.0f}** |")
+
+    # ACFO adjustments
+    if reconciliation['acfo_adjustments']:
+        lines.append("| **ACFO Adjustments (1-17):** | |")
+        for adj in reconciliation['acfo_adjustments']:
+            sign = "+" if adj['amount'] >= 0 else ""
+            lines.append(f"| {adj['description']} | {sign}{adj['amount']:,.0f} |")
+
+    # ACFO total
+    lines.append(f"| **{reconciliation['acfo_total']['description']}** | **{reconciliation['acfo_total']['amount']:,.0f}** |")
+
+    # Add metadata notes
+    lines.append("")
+    lines.append("**Data Quality:**")
+    lines.append(f"- ACFO: {reconciliation['metadata']['data_quality'].upper()}")
+    lines.append(f"- Calculation Method: {reconciliation['metadata']['calculation_method']}")
+    lines.append(f"- JV Treatment: {reconciliation['metadata']['jv_treatment_method']}")
+
+    if reconciliation['metadata']['missing_components']:
+        lines.append(f"- Missing components: {len(reconciliation['metadata']['missing_components'])}")
+
+    # Consistency checks
+    if reconciliation['metadata'].get('consistency_checks'):
+        lines.append("")
+        lines.append("**Consistency Checks (vs AFFO):**")
+        checks = reconciliation['metadata']['consistency_checks']
+
+        if 'capex_match' in checks:
+            status = "✅ Match" if checks['capex_match'] else f"⚠️ Variance: {checks.get('capex_variance', 0):,.0f}"
+            lines.append(f"- CAPEX (sustaining): {status}")
+
+        if 'tenant_improvements_match' in checks:
+            status = "✅ Match" if checks['tenant_improvements_match'] else f"⚠️ Variance: {checks.get('tenant_improvements_variance', 0):,.0f}"
+            lines.append(f"- Tenant Improvements: {status}")
+
+    if reconciliation['metadata'].get('reserve_methodology'):
+        lines.append(f"- Reserve Methodology: {reconciliation['metadata']['reserve_methodology']}")
+
+    lines.append("")
+    lines.append("*Source: Calculated per REALPAC ACFO White Paper for IFRS (January 2023)*")
 
     return "\n".join(lines)
 

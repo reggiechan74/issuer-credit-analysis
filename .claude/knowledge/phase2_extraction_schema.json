@@ -342,6 +342,139 @@
         }
       }
     },
+    "acfo_components": {
+      "type": "object",
+      "description": "Optional ACFO calculation components per REALPAC ACFO White Paper (January 2023). Include when issuer doesn't report ACFO or to enable validation.",
+      "properties": {
+        "cash_flow_from_operations": {
+          "type": "number",
+          "description": "IFRS Cash Flow from Operations (starting point for ACFO calculation)"
+        },
+        "change_in_working_capital": {
+          "type": "number",
+          "description": "Adjustment 1: Change in working capital to eliminate non-sustainable fluctuations"
+        },
+        "interest_financing": {
+          "type": "number",
+          "description": "Adjustment 2: Interest expense included in cash flow from financing activities"
+        },
+        "jv_distributions": {
+          "type": "number",
+          "description": "Adjustment 3: Distributions received from joint ventures"
+        },
+        "jv_acfo": {
+          "type": "number",
+          "description": "Adjustment 3 (alternative): ACFO from joint ventures (calculated per REALPAC)"
+        },
+        "jv_notional_interest": {
+          "type": "number",
+          "description": "Adjustment 3: Notional interest that would have been capitalized on JV development"
+        },
+        "capex_sustaining_acfo": {
+          "type": "number",
+          "description": "Adjustment 4: Sustaining/maintenance capital expenditures (must match AFFO capex_sustaining)"
+        },
+        "capex_development_acfo": {
+          "type": "number",
+          "description": "Adjustment 4: Development capital expenditures (disclosure only, excluded from ACFO)"
+        },
+        "leasing_costs_external": {
+          "type": "number",
+          "description": "Adjustment 5: External leasing costs only (internal already expensed in CFO)"
+        },
+        "tenant_improvements_acfo": {
+          "type": "number",
+          "description": "Adjustment 6: Sustaining tenant improvements (must match AFFO tenant_improvements)"
+        },
+        "realized_investment_gains_losses": {
+          "type": "number",
+          "description": "Adjustment 7: Realized gains/losses on marketable securities not in CFO"
+        },
+        "taxes_non_operating": {
+          "type": "number",
+          "description": "Adjustment 8: Taxes related to non-operating activities (e.g., disposal taxes)"
+        },
+        "transaction_costs_acquisitions": {
+          "type": "number",
+          "description": "Adjustment 9: Transaction costs for acquiring investment properties"
+        },
+        "transaction_costs_disposals": {
+          "type": "number",
+          "description": "Adjustment 10: Transaction costs for disposing of investment properties"
+        },
+        "deferred_financing_fees": {
+          "type": "number",
+          "description": "Adjustment 11: Deferred financing fees (amortization)"
+        },
+        "debt_termination_costs": {
+          "type": "number",
+          "description": "Adjustment 12: Costs to terminate debt"
+        },
+        "off_market_debt_favorable": {
+          "type": "number",
+          "description": "Adjustment 13: Favorable off-market debt adjustments"
+        },
+        "off_market_debt_unfavorable": {
+          "type": "number",
+          "description": "Adjustment 13: Unfavorable off-market debt adjustments"
+        },
+        "interest_income_timing": {
+          "type": "number",
+          "description": "Adjustment 14: Interest income timing adjustments"
+        },
+        "interest_expense_timing": {
+          "type": "number",
+          "description": "Adjustment 14: Interest expense timing adjustments"
+        },
+        "puttable_instruments_distributions": {
+          "type": "number",
+          "description": "Adjustment 15: Distributions on puttable instruments treated as interest expense"
+        },
+        "rou_sublease_principal_received": {
+          "type": "number",
+          "description": "Adjustment 16: Principal portion of finance lease payments earned (ROU revenue)"
+        },
+        "rou_sublease_interest_received": {
+          "type": "number",
+          "description": "Adjustment 16: Interest income on finance lease subleases (ROU revenue)"
+        },
+        "rou_lease_principal_paid": {
+          "type": "number",
+          "description": "Adjustment 16: Principal payments on ground leases (ROU expense)"
+        },
+        "rou_depreciation_amortization": {
+          "type": "number",
+          "description": "Adjustment 16: Depreciation/amortization on ROU assets (add back if cost model)"
+        },
+        "non_controlling_interests_acfo": {
+          "type": "number",
+          "description": "Adjustment 17: NCI in respect of all above ACFO adjustments"
+        },
+        "nci_puttable_units": {
+          "type": "number",
+          "description": "Adjustment 17: NCI for consolidated entities with puttable units as liabilities (IAS 32)"
+        },
+        "calculation_method_acfo": {
+          "type": "string",
+          "enum": ["actual", "reserve", "hybrid"],
+          "description": "Method used for CAPEX/leasing costs/TI: actual, reserve, or hybrid"
+        },
+        "reserve_methodology_acfo": {
+          "type": "string",
+          "description": "If reserve used, describe calculation methodology"
+        },
+        "jv_treatment_method": {
+          "type": "string",
+          "enum": ["distributions", "acfo"],
+          "description": "Joint venture treatment: use distributions received or calculated ACFO"
+        },
+        "missing_adjustments_acfo": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of ACFO adjustments that couldn't be extracted"
+        }
+      }
+    },
     "validation": {
       "type": "object",
       "description": "Optional validation checks",

@@ -1,0 +1,127 @@
+{
+  "issuer_name": "Dream Industrial Real Estate Investment Trust",
+  "reporting_date": "2025-06-30",
+  "reporting_period": "Six months ended June 30, 2025",
+  "currency": "CAD",
+
+  "balance_sheet": {
+    "total_assets": 8269717,
+    "mortgages_noncurrent": 0,
+    "mortgages_current": 0,
+    "credit_facilities": 0,
+    "cash": 42595,
+    "common_units_outstanding": 292674,
+    "senior_unsecured_debentures": 2345300
+  },
+
+  "income_statement": {
+    "noi": 186409,
+    "interest_expense": 42365,
+    "revenue": 246895
+  },
+
+  "ffo_affo": {
+    "ffo": 149437,
+    "affo": 0,
+    "ffo_per_unit": 0.51,
+    "affo_per_unit": 0.0,
+    "distributions_per_unit": 0.35
+  },
+
+  "ffo_affo_components": {
+    "_note": "Extracted from Dream Industrial REIT Q2 2025 MD&A FFO reconciliation table (six months ended June 30, 2025)",
+
+    "net_income_ifrs": 94096,
+
+    "amortization_tenant_allowances": 2145,
+    "incremental_leasing_costs": 2985,
+    "puttable_instruments_effects": 0,
+    "unrealized_fv_changes": 27653,
+    "fv_changes_hedges": 0,
+    "foreign_exchange_gains_losses": 2136,
+    "deferred_taxes": -3215,
+    "tax_on_disposals": 2051,
+    "equity_accounted_adjustments": 14716,
+    "gains_losses_property_sales": 0,
+
+    "depreciation_real_estate": 0,
+    "amortization_intangibles": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 3574,
+    "sale_foreign_operations": 0,
+    "goodwill_impairment": 0,
+    "discontinued_operations": 0,
+    "property_taxes_ifric21": 0,
+    "rou_asset_revenue_expense": 0,
+    "impairment_losses_reversals": 0,
+    "non_controlling_interests_ffo": 3296,
+
+    "capex_sustaining": 7700,
+    "leasing_costs": 0,
+    "tenant_improvements": 0,
+    "straight_line_rent": 5079,
+    "non_controlling_interests_affo": 0,
+
+    "calculation_method": "actual",
+    "missing_adjustments": []
+  },
+
+  "acfo_components": {
+    "_note": "Hypothetical ACFO calculation for Dream Industrial REIT Q2 2025 - demonstrating REALPAC methodology (Jan 2023). Note: DIR does not report cash flow statement details publicly, so this is illustrative.",
+
+    "cash_flow_from_operations": 165000,
+
+    "change_in_working_capital": -3500,
+    "interest_financing": 8500,
+    "jv_distributions": 4200,
+    "jv_acfo": 0,
+    "jv_notional_interest": 0,
+
+    "capex_sustaining_acfo": -7700,
+    "capex_development_acfo": -11074,
+    "leasing_costs_external": -1200,
+    "tenant_improvements_acfo": 0,
+
+    "realized_investment_gains_losses": 0,
+    "taxes_non_operating": 850,
+    "transaction_costs_acquisitions": 1500,
+    "transaction_costs_disposals": 0,
+
+    "deferred_financing_fees": 800,
+    "debt_termination_costs": 0,
+    "off_market_debt_favorable": 0,
+    "off_market_debt_unfavorable": 0,
+
+    "interest_income_timing": 0,
+    "interest_expense_timing": -1200,
+
+    "puttable_instruments_distributions": 0,
+
+    "rou_sublease_principal_received": 0,
+    "rou_sublease_interest_received": 0,
+    "rou_lease_principal_paid": 0,
+    "rou_depreciation_amortization": 0,
+
+    "non_controlling_interests_acfo": -850,
+    "nci_puttable_units": 0,
+
+    "calculation_method_acfo": "actual",
+    "jv_treatment_method": "distributions",
+    "reserve_methodology_acfo": null,
+    "missing_adjustments_acfo": []
+  },
+
+  "portfolio": {
+    "total_properties": 338,
+    "total_gla_sf": 65800000,
+    "occupancy_rate": 0.96,
+    "occupancy_with_commitments": 0.973,
+    "same_property_noi_growth_6m": 0.023
+  },
+
+  "data_quality": {
+    "completeness": "strong",
+    "source": "Q2 2025 MD&A and Financial Statements",
+    "validation_notes": "FFO components from MD&A page 18-19. ACFO components are hypothetical for demonstration."
+  }
+}
