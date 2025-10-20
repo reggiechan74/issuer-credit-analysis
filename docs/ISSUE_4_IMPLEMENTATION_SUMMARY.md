@@ -3,11 +3,11 @@
 **Issue**: Implement AFFO Calculation When Issuer Does Not Provide It
 **Status**: ✅ COMPLETED
 **Date**: 2025-10-20
-**Reference**: REALPAC White Paper on FFO & AFFO for IFRS (February 2019)
+**Reference**: REALPAC White Paper on FFO & AFFO for IFRS (January 2022)
 
 ## Overview
 
-Successfully implemented automated FFO/AFFO calculation capability following REALPAC methodology (February 2019). The system can now calculate these critical REIT metrics when issuers don't report them, enabling comprehensive credit analysis for all real estate issuers.
+Successfully implemented automated FFO/AFFO calculation capability following REALPAC methodology (January 2022). The system can now calculate these critical REIT metrics when issuers don't report them, enabling comprehensive credit analysis for all real estate issuers.
 
 ## What Was Implemented
 
@@ -231,7 +231,7 @@ python scripts/calculate_credit_metrics.py \
 - FFO: STRONG
 - AFFO: STRONG
 
-*Source: Calculated per REALPAC White Paper on FFO & AFFO for IFRS (February 2019)*
+*Source: Calculated per REALPAC White Paper on FFO & AFFO for IFRS (January 2022)*
 ```
 
 ## Success Criteria (from Issue #4)
@@ -251,7 +251,7 @@ python scripts/calculate_credit_metrics.py \
 3. **Data Quality Tracking**: Automatic assessment of completeness
 4. **Flexible Input**: Works with complete or partial data
 5. **Clear Documentation**: Design doc, implementation guide, and inline comments
-6. **REALPAC Compliant**: Implements full February 2019 methodology
+6. **REALPAC Compliant**: Implements full January 2022 methodology
 
 ## Related Metrics Enabled
 
@@ -297,7 +297,7 @@ To complete Issue #4:
 
 ## References
 
-- REALPAC White Paper on FFO & AFFO for IFRS (February 2019)
+- REALPAC White Paper on FFO & AFFO for IFRS (January 2022)
   - `docs/realpac_whitepaper_on_ffoaff-szb5kf.pdf`
 - REALPAC ACFO White Paper (January 2023)
   - `docs/REALPAC-ACFO-January-2023-wqvlhc.pdf`
