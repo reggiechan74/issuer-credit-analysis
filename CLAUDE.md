@@ -2,9 +2,50 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.11
+**Version:** 1.0.12
 **Last Updated:** 2025-10-20
-**Pipeline Version:** 1.0.11 (Sequential markdown-first + AFCF + Burn Rate + Dilution + REALPAC Jan 2022 + Phase 5 Complete + Comprehensive Phase 2 Extraction)
+**Pipeline Version:** 1.0.12 (Dual-Table Reporting: Issuer-Reported vs REALPAC-Calculated)
+
+## What's New in v1.0.12
+
+**Phase 5: Dual-Table Reporting - Issuer-Reported vs REALPAC-Calculated Metrics**
+
+Enhanced Phase 5 report generation with comprehensive dual-table reporting that separates issuer-disclosed values from standardized REALPAC calculations:
+
+**New Capabilities:**
+- ✅ **6 Helper Functions:** Calculate per-unit metrics, payout ratios, coverage ratios, distribution assessments (192 lines)
+- ✅ **55+ New Placeholders:** Organized across sections 2.2, 2.5, 2.6, 2.7 for dual-table reporting
+- ✅ **Variance Analysis:** Automatic comparison of reported vs calculated metrics with threshold validation
+- ✅ **Bridge Analysis:** FFO→AFFO reconciliation showing top adjustments
+- ✅ **Gap Analysis:** AFFO vs ACFO differences with implications
+- ✅ **Coverage Quality Assessment:** Strong/Adequate/Tight/Insufficient classifications
+- ✅ **Self-Funding Analysis:** AFCF capacity for financing obligations
+
+**What This Enables:**
+- Side-by-side comparison of issuer-reported and REALPAC-calculated metrics
+- Transparency on methodology differences and calculation variances
+- Enhanced credit analysis with validation flags for material variances
+- Complete FFO/AFFO/ACFO/AFCF coverage and payout analysis
+- Professional-grade reporting matching industry best practices
+
+**New Helper Functions (lines 486-678 in `generate_final_report.py`):**
+1. `calculate_per_unit()` - Safe per-unit calculations with None handling
+2. `calculate_payout_ratio()` - Payout % from per-unit metrics and distributions
+3. `calculate_coverage_ratio()` - Coverage ratios (inverse of payout)
+4. `assess_distribution_coverage()` - Quality assessment (Strong ≥1.3x, Adequate ≥1.1x, Tight ≥1.0x, Insufficient <1.0x)
+5. `assess_self_funding_capacity()` - AFCF self-funding capability assessment
+6. `generate_reported_adjustments_list()` - Top 3-5 FFO→AFFO adjustments formatted
+
+**Template Sections Enhanced:**
+- **Section 2.2.1:** Issuer-Reported Metrics (FFO/AFFO/ACFO totals, per-unit, payout ratios)
+- **Section 2.2.2:** REALPAC-Calculated Metrics (FFO/AFFO/ACFO/AFCF totals, per-unit, payout ratios)
+- **Section 2.5:** Coverage Ratios (FFO/AFFO/ACFO coverage with quality assessments)
+- **Section 2.6:** Bridge & Gap Analysis (FFO→AFFO adjustments, AFFO vs ACFO differences)
+- **Section 2.7:** AFCF Self-Funding Analysis (capacity assessment, financing reliance)
+
+**Implementation Details:** See `docs/PHASE5_REPORTED_VS_CALCULATED_IMPLEMENTATION.md` for complete specification
+
+---
 
 ## What's New in v1.0.11
 
@@ -202,8 +243,8 @@ Phase 3 calculations expect a **specific JSON schema** from Phase 2. Schema viol
 ```
 
 **Schema Files:**
-- `.claude/knowledge/phase2_extraction_schema.json` - JSON Schema specification
-- `.claude/knowledge/phase2_extraction_template.json` - Template with comments
+- `.claude/knowledge/phase2_extraction_schema.json` - JSON Schema specification (AUTHORITATIVE)
+- `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md` - Detailed extraction guide with examples
 - `.claude/knowledge/SCHEMA_README.md` - Complete documentation with examples
 
 **Always validate Phase 2 output before Phase 3:**
@@ -597,8 +638,8 @@ All Phase 3 functions automatically calculate both basic and diluted per-unit me
 ```
 
 **Documentation:**
-- Schema: `.claude/knowledge/phase2_extraction_schema.json`
-- Template: `.claude/knowledge/phase2_extraction_template.json`
+- Schema: `.claude/knowledge/phase2_extraction_schema.json` (AUTHORITATIVE)
+- Extraction guide: `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
 - Complete guide: `.claude/knowledge/SCHEMA_README.md` (Dilution Tracking section, lines 190-307)
 - Phase 4 agent: `.claude/agents/domain_expert/issuer_due_diligence_expert_slim.md` (Dilution Analysis section)
 

@@ -41,9 +41,9 @@ def create_efficient_extraction_prompt(markdown_files, output_path, issuer_name)
         str: Compact prompt for Claude Code
     """
 
-    # Load schema template from single source of truth
-    template_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_template.json'
-    with open(template_path, 'r') as f:
+    # Load schema from single source of truth
+    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+    with open(schema_path, 'r') as f:
         schema_template = f.read()
 
     # Create file list with paths
@@ -248,9 +248,9 @@ def create_pdf_direct_extraction_prompt(pdf_files, output_path, issuer_name):
         str: Compact prompt for Claude Code
     """
 
-    # Load schema template from single source of truth
-    template_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_template.json'
-    with open(template_path, 'r') as f:
+    # Load schema from single source of truth
+    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+    with open(schema_path, 'r') as f:
         schema_template = f.read()
 
     # Create file list with paths

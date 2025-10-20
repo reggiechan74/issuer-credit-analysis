@@ -23,7 +23,7 @@ class TestPhase3SafetyRequirements:
 
     def test_module_has_no_financial_constants(self):
         """CRITICAL: Ensure no hardcoded financial data exists in module"""
-        import scripts.calculate_credit_metrics as calc_module
+        import calculate_credit_metrics as calc_module
 
         # Get module code
         import inspect
@@ -50,7 +50,7 @@ class TestPhase3SafetyRequirements:
 
     def test_calculate_leverage_requires_input(self):
         """CRITICAL: Functions must require input, no defaults"""
-        from scripts.calculate_credit_metrics import calculate_leverage_metrics
+        from calculate_credit_metrics import calculate_leverage_metrics
 
         # Should raise TypeError when called without arguments
         with pytest.raises(TypeError):
@@ -58,7 +58,7 @@ class TestPhase3SafetyRequirements:
 
     def test_calculate_leverage_fails_on_missing_fields(self):
         """CRITICAL: Functions must fail loudly when required fields missing"""
-        from scripts.calculate_credit_metrics import calculate_leverage_metrics
+        from calculate_credit_metrics import calculate_leverage_metrics
 
         # Empty dictionary should raise KeyError
         with pytest.raises(KeyError):
@@ -75,7 +75,7 @@ class TestPhase3SafetyRequirements:
 
     def test_calculate_leverage_fails_on_invalid_values(self):
         """CRITICAL: Functions must validate data reasonableness"""
-        from scripts.calculate_credit_metrics import calculate_leverage_metrics
+        from calculate_credit_metrics import calculate_leverage_metrics
 
         # Zero or negative assets should raise ValueError
         with pytest.raises(ValueError):
@@ -114,7 +114,7 @@ class TestPhase3CalculationAccuracy:
 
     def test_calculate_leverage_metrics(self, sample_data):
         """Test leverage metrics calculation accuracy"""
-        from scripts.calculate_credit_metrics import calculate_leverage_metrics
+        from calculate_credit_metrics import calculate_leverage_metrics
 
         result = calculate_leverage_metrics(sample_data)
 
@@ -131,7 +131,7 @@ class TestPhase3CalculationAccuracy:
 
     def test_calculate_reit_metrics(self, sample_data):
         """Test REIT-specific metrics calculation"""
-        from scripts.calculate_credit_metrics import calculate_reit_metrics
+        from calculate_credit_metrics import calculate_reit_metrics
 
         result = calculate_reit_metrics(sample_data)
 
@@ -143,7 +143,7 @@ class TestPhase3CalculationAccuracy:
 
     def test_calculate_coverage_ratios(self, sample_data):
         """Test interest coverage and EBITDA calculations"""
-        from scripts.calculate_credit_metrics import calculate_coverage_ratios
+        from calculate_credit_metrics import calculate_coverage_ratios
 
         result = calculate_coverage_ratios(sample_data)
 
@@ -180,7 +180,7 @@ class TestPhase3OutputFormat:
 
     def test_output_includes_issuer_identification(self, sample_data):
         """Test that calculations preserve issuer identification"""
-        from scripts.calculate_credit_metrics import calculate_all_metrics
+        from calculate_credit_metrics import calculate_all_metrics
 
         result = calculate_all_metrics(sample_data)
 
@@ -192,7 +192,7 @@ class TestPhase3OutputFormat:
 
     def test_output_structure(self, sample_data):
         """Test that output has expected structure"""
-        from scripts.calculate_credit_metrics import calculate_all_metrics
+        from calculate_credit_metrics import calculate_all_metrics
 
         result = calculate_all_metrics(sample_data)
 

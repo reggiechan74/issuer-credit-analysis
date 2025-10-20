@@ -7,11 +7,11 @@
 # ============================================================================
 phase1_extraction:
   # Method options:
-  #   - "enhanced": PyMuPDF4LLM + Camelot hybrid (recommended for best table quality)
-  #   - "skip": Skip Phase 1 if using agent-based extraction
+  #   - "markitdown": PyMuPDF4LLM + Camelot hybrid (recommended for best table quality)
+  #   - "claude_code": Use Claude Code for PDF extraction (alternative)
   #
-  # Recommendation: "enhanced" provides best table extraction quality
-  method: "enhanced"
+  # Recommendation: "markitdown" provides best table extraction quality
+  method: "markitdown"
 
   # Output directory for markdown files
   markdown_output_dir: "temp/phase1_markdown"
@@ -26,26 +26,21 @@ phase1_extraction:
 # ============================================================================
 phase2_extraction:
   # Method options:
-  #   - "manual": Claude Code reads markdown files (RECOMMENDED - v1.0.x)
+  #   - "markdown_to_json": Claude Code reads markdown files (RECOMMENDED - v1.0.x)
   #     ✅ Efficient: Uses file references (~1K tokens vs ~136K for direct PDF reading)
   #     ✅ Reliable: Pre-processed markdown with clean tables
   #     ✅ Context-efficient: Leaves room for extraction logic
   #     ✅ Free (uses built-in Claude Code reading)
   #     ⚠️  Requires Phase 1 to complete first (10-15s preprocessing)
   #
-  #   - "pdf_direct": Claude Code reads PDFs directly (DEPRECATED - causes context exhaustion)
+  #   - "pdf_to_json": Claude Code reads PDFs directly (DEPRECATED - causes context exhaustion)
   #     ❌ Token inefficient: ~136K tokens just to read PDFs
   #     ❌ Context exhaustion: Leaves no room for extraction
   #     ❌ Unreliable: Fails with large financial statements
-  #     ⚠️  Not recommended - use "manual" instead
+  #     ⚠️  Not recommended - use "markdown_to_json" instead
   #
-  #   - "agent": Use financial_data_extractor agent (alternative)
-  #     ✅ Handles large files (>25K tokens) without chunking
-  #     ✅ Built-in validation and error handling
-  #     💰 Cost: ~$0.30 per extraction
-  #
-  # Recommendation: "manual" (proven approach - efficient and reliable)
-  method: "manual"
+  # Recommendation: "markdown_to_json" (proven approach - efficient and reliable)
+  method: "markdown_to_json"
 
   # Agent-specific settings (when method: "agent")
   agent:

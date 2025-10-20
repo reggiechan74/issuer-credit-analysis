@@ -359,7 +359,7 @@ class TestPhase5Performance:
 
     def test_no_llm_usage(self):
         """Test that Phase 5 uses 0 LLM tokens (pure templating)"""
-        from scripts.generate_final_report import generate_final_report
+        from generate_final_report import generate_final_report
 
         # This should be a pure Python function with no API calls
         import inspect

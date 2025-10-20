@@ -112,7 +112,7 @@ def test_dir_acfo_reconciliation():
     reconciliation = generate_acfo_reconciliation(financial_data)
 
     assert reconciliation is not None
-    assert reconciliation['starting_point']['description'] == 'IFRS Cash Flow from Operations'
+    assert reconciliation['starting_point']['description'] == 'Cash Flow from Operations (IFRS)'
     assert reconciliation['starting_point']['amount'] == 165000
     assert len(reconciliation['acfo_adjustments']) > 0
 
@@ -120,7 +120,7 @@ def test_dir_acfo_reconciliation():
     markdown = format_acfo_reconciliation_table(reconciliation)
 
     assert '## ACFO Reconciliation Table' in markdown
-    assert 'IFRS Cash Flow from Operations' in markdown
+    assert 'Cash Flow from Operations (IFRS)' in markdown
     assert 'Adjusted Cash Flow from Operations (ACFO)' in markdown
     assert '**ACFO Adjustments (1-17):**' in markdown
     assert '**Consistency Checks (vs AFFO):**' in markdown
@@ -164,7 +164,8 @@ def test_dir_complete_metrics_with_acfo():
 
     # ACFO validation should be present
     assert 'acfo_validation' in reit
-    assert 'Issuer did not report ACFO' in reit['acfo_validation']['validation_summary']
+    assert len(reit['acfo_validation']['validation_notes']) > 0
+    assert 'missing' in reit['acfo_validation']['validation_notes'][0].lower()
 
     print(f"\n✅ Complete metrics calculated with ACFO:")
     print(f"   Issuer: {result['issuer_name']}")

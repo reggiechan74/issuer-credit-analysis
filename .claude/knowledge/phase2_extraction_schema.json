@@ -9,7 +9,14 @@
     "currency",
     "balance_sheet",
     "income_statement",
-    "ffo_affo"
+    "ffo_affo",
+    "portfolio",
+    "ffo_affo_components",
+    "acfo_components",
+    "cash_flow_investing",
+    "cash_flow_financing",
+    "liquidity",
+    "dilution_detail"
   ],
   "properties": {
     "issuer_name": {
@@ -111,7 +118,7 @@
     },
     "dilution_detail": {
       "type": "object",
-      "description": "Optional detailed breakdown of share dilution (extract when issuer discloses calculation in MD&A)",
+      "description": "REQUIRED: Always include this section. Extract detailed breakdown if disclosed in MD&A. If not disclosed, use basic_units from balance sheet and set all dilutive_instruments to 0.",
       "properties": {
         "basic_units": {
           "type": "number",
@@ -243,6 +250,14 @@
           "type": "number",
           "description": "AFFO per unit - diluted (most recent period, if disclosed)"
         },
+        "acfo": {
+          "type": "number",
+          "description": "Optional: Adjusted Cash Flow from Operations as reported by issuer (most recent period). Many issuers do not report ACFO - extract only if explicitly disclosed in MD&A. If not reported, leave blank (will be calculated in Phase 3)."
+        },
+        "acfo_per_unit": {
+          "type": "number",
+          "description": "Optional: ACFO per unit as reported by issuer (most recent period). Extract only if disclosed."
+        },
         "distributions_per_unit": {
           "type": "number",
           "description": "REQUIRED: Distributions per unit (most recent period)"
@@ -284,7 +299,7 @@
     },
     "ffo_affo_components": {
       "type": "object",
-      "description": "Optional FFO/AFFO calculation components per REALPAC methodology. Include when issuer doesn't report FFO/AFFO or to enable validation.",
+      "description": "REQUIRED: Always include for validation and reconciliation tables. Extract all 26 REALPAC adjustments (A-Z) from MD&A FFO/AFFO reconciliation tables. Use 0 for adjustments not disclosed. Per REALPAC methodology (Jan 2022).",
       "properties": {
         "net_income_ifrs": {
           "type": "number",
@@ -416,11 +431,12 @@
     },
     "acfo_components": {
       "type": "object",
-      "description": "Optional ACFO calculation components per REALPAC ACFO White Paper (January 2023). Include when issuer doesn't report ACFO or to enable validation.",
+      "description": "REQUIRED: ACFO calculation components per REALPAC ACFO White Paper (January 2023). MUST extract cash_flow_from_operations from cash flow statement. Use 0 for adjustments not disclosed.",
+      "required": ["cash_flow_from_operations"],
       "properties": {
         "cash_flow_from_operations": {
           "type": "number",
-          "description": "IFRS Cash Flow from Operations (starting point for ACFO calculation)"
+          "description": "REQUIRED: IFRS Cash Flow from Operations (starting point for ACFO calculation) - MUST extract from cash flow statement"
         },
         "change_in_working_capital": {
           "type": "number",
@@ -549,7 +565,7 @@
     },
     "cash_flow_investing": {
       "type": "object",
-      "description": "Optional cash flow from investing activities (required for AFCF calculation). Extract from IFRS Cash Flow Statement investing section.",
+      "description": "REQUIRED: Essential for AFCF calculation. Always extract from IFRS Cash Flow Statement - Investing Activities section. Use negative numbers for outflows, positive for inflows. Use 0 for items not disclosed.",
       "properties": {
         "development_capex": {
           "type": "number",
@@ -591,7 +607,7 @@
     },
     "cash_flow_financing": {
       "type": "object",
-      "description": "Optional cash flow from financing activities (required for AFCF coverage analysis). Extract from IFRS Cash Flow Statement financing section.",
+      "description": "REQUIRED: Essential for AFCF coverage and debt service calculations. Always extract from IFRS Cash Flow Statement - Financing Activities section. Use negative numbers for outflows, positive for inflows. Use 0 for items not disclosed.",
       "properties": {
         "debt_principal_repayments": {
           "type": "number",
@@ -641,7 +657,7 @@
     },
     "liquidity": {
       "type": "object",
-      "description": "Optional liquidity position data (required for burn rate and cash runway analysis). Extract from balance sheet and note disclosures.",
+      "description": "REQUIRED: Critical for burn rate and cash runway analysis. Always extract from balance sheet and credit facility note disclosures. Use 0 for items not disclosed.",
       "properties": {
         "cash_and_equivalents": {
           "type": "number",

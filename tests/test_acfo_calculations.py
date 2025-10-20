@@ -215,7 +215,7 @@ def test_validate_acfo_within_threshold():
     assert result['acfo_variance_amount'] == 2000
     assert result['acfo_variance_percent'] == 2.04
     assert result['acfo_within_threshold'] is True
-    assert 'validated' in result['validation_summary'].lower()
+    assert result['validation_notes'] == []  # No issues when within threshold
 
 
 def test_validate_acfo_exceeds_threshold():
@@ -229,7 +229,8 @@ def test_validate_acfo_exceeds_threshold():
     assert result['acfo_variance_amount'] == 10000
     assert result['acfo_variance_percent'] == 11.11
     assert result['acfo_within_threshold'] is False
-    assert 'exceeds 5% threshold' in result['validation_summary']
+    assert len(result['validation_notes']) > 0
+    assert 'exceeds 5% threshold' in result['validation_notes'][0]
 
 
 def test_validate_acfo_no_reported_value():
@@ -243,7 +244,8 @@ def test_validate_acfo_no_reported_value():
     assert result['acfo_variance_amount'] is None
     assert result['acfo_variance_percent'] is None
     assert result['acfo_within_threshold'] is None
-    assert 'did not report ACFO' in result['validation_summary']
+    assert len(result['validation_notes']) > 0
+    assert 'missing' in result['validation_notes'][0].lower()
 
 
 def test_generate_acfo_reconciliation():
@@ -264,7 +266,7 @@ def test_generate_acfo_reconciliation():
     reconciliation = generate_acfo_reconciliation(financial_data)
 
     assert reconciliation is not None
-    assert reconciliation['starting_point']['description'] == 'IFRS Cash Flow from Operations'
+    assert reconciliation['starting_point']['description'] == 'Cash Flow from Operations (IFRS)'
     assert reconciliation['starting_point']['amount'] == 100000
     assert reconciliation['acfo_total']['description'] == 'Adjusted Cash Flow from Operations (ACFO)'
     assert len(reconciliation['acfo_adjustments']) > 0  # Should have adjustments
@@ -307,7 +309,7 @@ def test_format_acfo_reconciliation_table():
     markdown = format_acfo_reconciliation_table(reconciliation)
 
     assert '## ACFO Reconciliation Table' in markdown
-    assert 'IFRS Cash Flow from Operations' in markdown
+    assert 'Cash Flow from Operations (IFRS)' in markdown
     assert 'Adjusted Cash Flow from Operations (ACFO)' in markdown
     assert '**ACFO Adjustments (1-17):**' in markdown
     assert '**Data Quality:**' in markdown

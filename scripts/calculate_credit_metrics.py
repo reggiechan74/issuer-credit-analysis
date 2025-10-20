@@ -464,6 +464,62 @@ def validate_ffo_affo(calculated_ffo, calculated_affo, reported_ffo, reported_af
     return result
 
 
+def validate_acfo(calculated_acfo, reported_acfo):
+    """
+    Compare calculated vs. reported ACFO to validate calculation accuracy
+
+    Args:
+        calculated_acfo (float | None): Calculated ACFO value
+        reported_acfo (float | None): Issuer-reported ACFO (if disclosed)
+
+    Returns:
+        dict: {
+            'acfo_variance_amount': float | None,
+            'acfo_variance_percent': float | None,
+            'acfo_within_threshold': bool | None,
+            'validation_notes': str
+        }
+    """
+
+    result = {
+        'acfo_variance_amount': None,
+        'acfo_variance_percent': None,
+        'acfo_within_threshold': None,
+        'validation_notes': []
+    }
+
+    # Validate ACFO (if issuer reports it)
+    if calculated_acfo is not None and reported_acfo is not None and reported_acfo != 0:
+        acfo_variance_amount = calculated_acfo - reported_acfo
+        acfo_variance_percent = (acfo_variance_amount / abs(reported_acfo)) * 100
+
+        result['acfo_variance_amount'] = round(acfo_variance_amount, 0)
+        result['acfo_variance_percent'] = round(acfo_variance_percent, 2)
+        result['acfo_within_threshold'] = abs(acfo_variance_percent) <= 5.0
+
+        if not result['acfo_within_threshold']:
+            result['validation_notes'].append(
+                f'ACFO variance ({acfo_variance_percent:.1f}%) exceeds 5% threshold. '
+                f'Review methodology differences (adjustment treatments).'
+            )
+        else:
+            result['validation_notes'].append(
+                f'ACFO calculation validated: {acfo_variance_percent:.1f}% variance (within 5% threshold).'
+            )
+    elif calculated_acfo is not None and reported_acfo is None:
+        result['validation_notes'].append(
+            'Issuer did not report ACFO - calculated value used (common for most REITs).'
+        )
+    elif calculated_acfo is None:
+        result['validation_notes'].append(
+            'ACFO calculation not available - missing cash flow from operations data.'
+        )
+
+    result['validation_summary'] = ' '.join(result['validation_notes'])
+
+    return result
+
+
 def calculate_reit_metrics(financial_data):
     """
     Calculate REIT-specific metrics (FFO, AFFO, ACFO, payout ratios)

@@ -142,16 +142,13 @@ class TestPhase2OutputFormat:
         """Test that extraction script exists and has proper interface"""
         from pathlib import Path
 
-        # Check that the v2 enhanced extraction script exists
-        script_path = Path(__file__).parent.parent / 'scripts' / 'extract_key_metrics_v2.py'
+        # Check that the production extraction script exists (v1 - markdown-first with file references)
+        script_path = Path(__file__).parent.parent / 'scripts' / 'extract_key_metrics_efficient.py'
         assert script_path.exists(), f"Extraction script not found at {script_path}"
 
-        # Also check supporting modules
-        indexer_path = Path(__file__).parent.parent / 'scripts' / 'extraction_indexer.py'
-        assert indexer_path.exists(), f"Indexer module not found at {indexer_path}"
-
-        extractor_path = Path(__file__).parent.parent / 'scripts' / 'section_extractor.py'
-        assert extractor_path.exists(), f"Extractor module not found at {extractor_path}"
+        # V2 experimental script should exist in experimental folder
+        v2_script_path = Path(__file__).parent.parent / 'scripts' / 'experimental' / 'extract_key_metrics_v2.py'
+        assert v2_script_path.exists(), f"Experimental v2 script not found at {v2_script_path}"
 
     def test_extraction_output_structure(self):
         """Test validation of a properly structured output"""
