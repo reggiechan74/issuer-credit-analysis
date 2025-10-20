@@ -92,6 +92,53 @@ Real estate issuer credit analysis pipeline that generates professional Moody's-
 - ✅ Pre-processed data: PyMuPDF4LLM+Camelot creates clean, structured tables
 - ✅ Reliable: Proven architecture that doesn't exhaust context window
 
+## Development Workflow
+
+**GitHub Issue Management:**
+
+When working on GitHub issues, follow this workflow:
+
+1. **Create issue** with detailed problem description, root cause analysis, implementation plan, and acceptance criteria
+2. **Work on issue** - implement fixes, create functions, update placeholders
+3. **Test thoroughly** - regenerate reports and verify all acceptance criteria are met
+4. **Close issue** with summary of changes made and verification results
+5. **ALWAYS commit after closing an issue** - this ensures all fixes are saved and tracked
+
+**Commit message format after closing issues:**
+```bash
+git add .
+git commit -m "fix: [brief description of what was fixed]
+
+Resolves #[issue-number]
+
+- Change 1
+- Change 2
+- Change 3
+
+Verified with [test case]"
+```
+
+**Example:**
+```bash
+git add scripts/generate_final_report.py templates/credit_opinion_template.md
+git commit -m "fix: populate AFFO/ACFO variance placeholders in Section 2.6.3
+
+Resolves #12
+
+- Added AFFO_VARIANCE placeholder with amount and percentage format
+- Added ACFO_VARIANCE placeholder with N/A handling for unreported values
+- Both placeholders read from Phase 3 validation data
+
+Verified with Artis REIT - variances display correctly in Section 2.6.3"
+```
+
+**Why commit after closing issues:**
+- Preserves work immediately after verification
+- Links commits to GitHub issues for traceability
+- Prevents accidental loss of fixes
+- Creates clear project history
+- Enables rollback if needed
+
 ## Commands
 
 ### Running Credit Analysis

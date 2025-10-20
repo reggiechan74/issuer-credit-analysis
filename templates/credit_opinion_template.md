@@ -270,7 +270,7 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 
 | Metric | Amount ({{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Payout Ratio | Variance from Reported (%) |
 |--------|---------------------------|------------------------|--------------|---------------------------|
-| **IFRS Net Income** | {{NET_INCOME}} | N/A | N/A | N/A |
+| **IFRS Net Income** | {{NET_INCOME}} | {{NET_INCOME_PER_UNIT_CALCULATED}} | N/A | N/A |
 | **FFO** | {{FFO_CALCULATED}} | {{FFO_PER_UNIT_CALCULATED}} | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_VARIANCE_PERCENT}}% |
 | **AFFO** | {{AFFO_CALCULATED}} | {{AFFO_PER_UNIT_CALCULATED}} | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_VARIANCE_PERCENT}}% |
 | **IFRS Cash Flow from Operations** | {{CASH_FLOW_FROM_OPERATIONS}} | N/A | N/A | N/A |
@@ -288,9 +288,19 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 
 #### 2.3 FFO/AFFO Reconciliation
 
-This reconciliation demonstrates the adjustment process from IFRS Net Income to FFO to AFFO per REALPAC methodology (January 2022). The table shows both issuer-reported adjustments (if disclosed) and our calculated adjustments using REALPAC guidelines.
+This reconciliation demonstrates the adjustment process from IFRS Net Income to FFO to AFFO per REALPAC methodology (January 2022). This section presents both issuer-reported values (if disclosed) and our calculated values using standardized REALPAC guidelines for comparability.
 
-{{FFO_AFFO_RECONCILIATION_TABLE}}
+**2.3.1 Issuer-Reported FFO/AFFO Reconciliation**
+
+*As disclosed in issuer's MD&A (if available)*
+
+{{FFO_AFFO_RECONCILIATION_TABLE_REPORTED}}
+
+**2.3.2 REALPAC-Calculated FFO/AFFO Reconciliation**
+
+*Calculated using standardized REALPAC methodology for cross-issuer comparability*
+
+{{FFO_AFFO_RECONCILIATION_TABLE_CALCULATED}}
 
 **Key Observations:**
 {{FFO_AFFO_OBSERVATIONS}}
@@ -308,9 +318,19 @@ This reconciliation demonstrates the adjustment process from IFRS Net Income to 
 
 #### 2.4 ACFO Reconciliation
 
-This reconciliation demonstrates the adjustment process from IFRS Cash Flow from Operations to ACFO per REALPAC ACFO White Paper (January 2023). The table shows both issuer-reported adjustments (if disclosed - rare) and our calculated adjustments using REALPAC guidelines.
+This reconciliation demonstrates the adjustment process from IFRS Cash Flow from Operations to ACFO per REALPAC ACFO White Paper (January 2023). This section presents both issuer-reported values (if disclosed - rare) and our calculated values using standardized REALPAC guidelines.
 
-{{ACFO_RECONCILIATION_TABLE}}
+**2.4.1 Issuer-Reported ACFO Reconciliation**
+
+*As disclosed in issuer's MD&A (if available - most issuers do not report ACFO)*
+
+{{ACFO_RECONCILIATION_TABLE_REPORTED}}
+
+**2.4.2 REALPAC-Calculated ACFO Reconciliation**
+
+*Calculated using standardized REALPAC methodology for cross-issuer comparability*
+
+{{ACFO_RECONCILIATION_TABLE_CALCULATED}}
 
 **Key Observations:**
 {{ACFO_OBSERVATIONS}}
