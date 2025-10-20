@@ -401,6 +401,87 @@ When writing your assessment, reference metrics like this:
 ❌ **Poor:** "The REIT has good occupancy"
 ✅ **Good:** "Portfolio occupancy of 89.0% (including commitments) compares favorably to the NAREIT index average of 91.2%"
 
+## Dilution Analysis (When Available)
+
+When `dilution_analysis` is present in the calculated metrics, incorporate it into your credit assessment:
+
+### Key Metrics to Reference:
+
+```json
+{
+  "dilution_analysis": {
+    "dilution_percentage": 2.01,
+    "dilution_materiality": "low",
+    "material_instruments": [
+      {"instrument": "restricted_units", "dilution_pct": 1.51}
+    ],
+    "convertible_debt_risk": "none",
+    "governance_score": "enhanced",
+    "credit_assessment": "✓ Low dilution risk..."
+  }
+}
+```
+
+### Integration Guidelines:
+
+**1. Factor 4 (Capital Structure):**
+- Reference dilution % when discussing equity structure
+- Flag material convertible debt (>5% dilution) as credit concern
+- Example: "Share dilution of 2.01% is minimal, primarily from equity compensation (RSUs/DSUs), with no convertible debt overhang"
+
+**2. Credit Strengths (if low dilution):**
+- "Minimal equity dilution (2.01%) demonstrates disciplined compensation practices and absence of convertible debt overhang"
+
+**3. Credit Challenges (if high dilution):**
+- "Material share dilution of 8.5% including 6.2% from convertible debentures creates potential equity overhang and could constrain debt capacity"
+
+**4. Governance Assessment:**
+- Enhanced disclosure (detailed breakdown) → Positive governance signal
+- Standard disclosure (basic vs diluted only) → Neutral
+
+### Materiality Thresholds:
+
+| Dilution % | Materiality | Credit Impact |
+|------------|-------------|---------------|
+| <1% | Minimal | No material credit impact |
+| 1-3% | Low | Standard for REITs, positive if no convertibles |
+| 3-7% | Moderate | Monitor; assess if from convertibles vs compensation |
+| >7% | High | Material concern; deep dive on conversion terms |
+
+### Convertible Debt Analysis:
+
+If `convertible_debt_risk` is "moderate" or "high":
+1. **Identify conversion terms** (if disclosed in MD&A)
+2. **Assess forced conversion scenarios** (when unit price triggers conversion)
+3. **Factor into debt capacity** (potential equity issuance reduces need for new debt)
+4. **Note in Downgrade Factors** if material (>5% dilution)
+
+### Example Assessments:
+
+**Low Dilution (Positive):**
+```
+Share dilution of 2.01% from equity compensation (restricted and deferred units)
+is minimal and typical for the REIT sector. The absence of convertible debt
+eliminates potential forced conversion scenarios. Enhanced dilution disclosure
+(MD&A page 21 detailed breakdown) reflects strong governance practices.
+```
+
+**Moderate Dilution with Convertibles (Neutral/Watch):**
+```
+Share dilution of 5.8% includes 4.2% from convertible debentures maturing in 2027.
+While manageable, the conversion feature provides financing flexibility but creates
+potential equity overhang if unit price triggers conversion ($12.50 strike vs
+$11.20 current). Monitor for forced conversion risk as deleveraging progresses.
+```
+
+**High Dilution (Negative):**
+```
+Material share dilution of 9.5% driven primarily by convertible debentures (7.8%)
+represents a significant equity overhang. The large convertible position constrains
+debt capacity and creates uncertainty around future capital structure. This is a
+key credit weakness requiring close monitoring of conversion triggers.
+```
+
 ## Output Format
 
 Generate a markdown document with clear sections, quantified assessments, and professional caveats.
