@@ -101,7 +101,11 @@
         },
         "common_units_outstanding": {
           "type": "number",
-          "description": "Number of common units/shares outstanding"
+          "description": "Number of common units/shares outstanding (basic)"
+        },
+        "diluted_units_outstanding": {
+          "type": "number",
+          "description": "Number of diluted units/shares outstanding (includes convertible securities, options, warrants)"
         }
       }
     },
@@ -165,11 +169,19 @@
         },
         "ffo_per_unit": {
           "type": "number",
-          "description": "REQUIRED: FFO per unit (most recent period)"
+          "description": "REQUIRED: FFO per unit - basic (most recent period)"
+        },
+        "ffo_per_unit_diluted": {
+          "type": "number",
+          "description": "FFO per unit - diluted (most recent period, if disclosed)"
         },
         "affo_per_unit": {
           "type": "number",
-          "description": "REQUIRED: AFFO per unit (most recent period)"
+          "description": "REQUIRED: AFFO per unit - basic (most recent period)"
+        },
+        "affo_per_unit_diluted": {
+          "type": "number",
+          "description": "AFFO per unit - diluted (most recent period, if disclosed)"
         },
         "distributions_per_unit": {
           "type": "number",

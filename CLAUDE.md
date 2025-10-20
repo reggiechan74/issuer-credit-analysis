@@ -291,6 +291,7 @@ AFCF / (Debt Service + Distributions - New Financing)
 {
   "afcf_metrics": {
     "afcf": 22000,
+    "afcf_per_unit": 0.2185,              // Per-unit calculated automatically
     "acfo_starting_point": 50000,
     "net_cfi": -28000,
     "cfi_breakdown": {
@@ -314,6 +315,12 @@ AFCF / (Debt Service + Distributions - New Financing)
   }
 }
 ```
+
+**Note:** All Phase 3 calculations automatically compute per-unit amounts (FFO, AFFO, ACFO, AFCF) on both **basic** and **diluted** share bases:
+- **Basic per-unit**: Calculated when `common_units_outstanding` is available in balance sheet
+- **Diluted per-unit**: Calculated when `diluted_units_outstanding` is available in balance sheet
+  - Accounts for convertible securities, options, warrants, and other dilutive instruments
+  - Provides more conservative per-unit metrics for credit analysis
 
 ### Credit Analysis Use Cases
 
@@ -344,9 +351,18 @@ AFCF = $22M, Distributions = $19M → Coverage = 1.16x
 ### Functions
 
 **Phase 3 Functions (automatic if CFI/CFF data present):**
-- `calculate_afcf()` - Main AFCF calculation
+- `calculate_afcf()` - Main AFCF calculation (includes afcf_per_unit if shares outstanding available)
 - `calculate_afcf_coverage_ratios()` - Coverage metrics
 - `validate_afcf_reconciliation()` - Validation checks
+
+**Per-Unit Calculations:**
+All calculation functions automatically compute per-unit metrics when share data is available:
+- `calculate_ffo_from_components()` → includes `ffo_per_unit` (basic) and `ffo_per_unit_diluted`
+- `calculate_affo_from_ffo()` → includes `affo_per_unit` (basic) and `affo_per_unit_diluted`
+- `calculate_acfo_from_components()` → includes `acfo_per_unit` (basic) and `acfo_per_unit_diluted`
+- `calculate_afcf()` → includes `afcf_per_unit` (basic) and `afcf_per_unit_diluted`
+
+**Note:** Basic per-unit uses `common_units_outstanding`. Diluted per-unit uses `diluted_units_outstanding` (if available in Phase 2 extraction). Diluted calculations account for convertible securities, options, and warrants.
 
 **See:** `docs/AFCF_Research_Proposal.md` for complete methodology
 

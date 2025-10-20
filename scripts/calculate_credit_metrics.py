@@ -145,6 +145,8 @@ def calculate_ffo_from_components(financial_data):
     Returns:
         dict: {
             'ffo_calculated': float,
+            'ffo_per_unit': float | None,  # Basic - calculated if common_units_outstanding available
+            'ffo_per_unit_diluted': float | None,  # Diluted - calculated if diluted_units_outstanding available
             'net_income_ifrs': float,
             'total_adjustments': float,
             'adjustments_detail': dict,  # A-U breakdown
@@ -228,7 +230,24 @@ def calculate_ffo_from_components(financial_data):
     else:
         data_quality = 'limited'
 
-    return {
+    # Calculate per-unit FFO if shares outstanding available
+    ffo_per_unit = None
+    ffo_per_unit_diluted = None
+
+    if 'balance_sheet' in financial_data:
+        # Basic per-unit
+        if 'common_units_outstanding' in financial_data['balance_sheet']:
+            units = financial_data['balance_sheet']['common_units_outstanding']
+            if units and units > 0:
+                ffo_per_unit = round(ffo_calculated / units, 4)
+
+        # Diluted per-unit
+        if 'diluted_units_outstanding' in financial_data['balance_sheet']:
+            units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
+            if units_diluted and units_diluted > 0:
+                ffo_per_unit_diluted = round(ffo_calculated / units_diluted, 4)
+
+    result = {
         'ffo_calculated': round(ffo_calculated, 0),
         'net_income_ifrs': net_income,
         'total_adjustments': round(total_adjustments, 0),
@@ -238,6 +257,14 @@ def calculate_ffo_from_components(financial_data):
         'total_adjustments_count': len(adjustment_fields),
         'data_quality': data_quality
     }
+
+    # Add per-unit if calculated
+    if ffo_per_unit is not None:
+        result['ffo_per_unit'] = ffo_per_unit
+    if ffo_per_unit_diluted is not None:
+        result['ffo_per_unit_diluted'] = ffo_per_unit_diluted
+
+    return result
 
 
 def calculate_affo_from_ffo(financial_data, ffo):
@@ -254,6 +281,8 @@ def calculate_affo_from_ffo(financial_data, ffo):
     Returns:
         dict: {
             'affo_calculated': float,
+            'affo_per_unit': float | None,  # Basic - calculated if common_units_outstanding available
+            'affo_per_unit_diluted': float | None,  # Diluted - calculated if diluted_units_outstanding available
             'ffo_starting_point': float,
             'total_adjustments': float,
             'adjustments_detail': dict,  # V-Z breakdown
@@ -311,7 +340,24 @@ def calculate_affo_from_ffo(financial_data, ffo):
     else:
         data_quality = 'limited'
 
-    return {
+    # Calculate per-unit AFFO if shares outstanding available
+    affo_per_unit = None
+    affo_per_unit_diluted = None
+
+    if 'balance_sheet' in financial_data:
+        # Basic per-unit
+        if 'common_units_outstanding' in financial_data['balance_sheet']:
+            units = financial_data['balance_sheet']['common_units_outstanding']
+            if units and units > 0:
+                affo_per_unit = round(affo_calculated / units, 4)
+
+        # Diluted per-unit
+        if 'diluted_units_outstanding' in financial_data['balance_sheet']:
+            units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
+            if units_diluted and units_diluted > 0:
+                affo_per_unit_diluted = round(affo_calculated / units_diluted, 4)
+
+    result = {
         'affo_calculated': round(affo_calculated, 0),
         'ffo_starting_point': ffo,
         'total_adjustments': round(total_adjustments, 0),
@@ -323,6 +369,14 @@ def calculate_affo_from_ffo(financial_data, ffo):
         'reserve_methodology': components.get('reserve_methodology'),
         'data_quality': data_quality
     }
+
+    # Add per-unit if calculated
+    if affo_per_unit is not None:
+        result['affo_per_unit'] = affo_per_unit
+    if affo_per_unit_diluted is not None:
+        result['affo_per_unit_diluted'] = affo_per_unit_diluted
+
+    return result
 
 
 def validate_ffo_affo(calculated_ffo, calculated_affo, reported_ffo, reported_affo):
@@ -500,19 +554,23 @@ def calculate_reit_metrics(financial_data):
                 result['affo'] = affo_calc_result['affo_calculated']
                 result['source'] = 'calculated_from_components'
 
-                # Calculate per-unit metrics if shares outstanding available
-                if 'balance_sheet' in financial_data and 'common_units_outstanding' in financial_data['balance_sheet']:
-                    units = financial_data['balance_sheet']['common_units_outstanding']
-                    if units > 0:
-                        result['ffo_per_unit'] = round(result['ffo'] / units, 4)
-                        result['affo_per_unit'] = round(result['affo'] / units, 4)
+                # Use per-unit metrics from calculation functions if available
+                if 'ffo_per_unit' in ffo_calc_result:
+                    result['ffo_per_unit'] = ffo_calc_result['ffo_per_unit']
+                if 'ffo_per_unit_diluted' in ffo_calc_result:
+                    result['ffo_per_unit_diluted'] = ffo_calc_result['ffo_per_unit_diluted']
+                if 'affo_per_unit' in affo_calc_result:
+                    result['affo_per_unit'] = affo_calc_result['affo_per_unit']
+                if 'affo_per_unit_diluted' in affo_calc_result:
+                    result['affo_per_unit_diluted'] = affo_calc_result['affo_per_unit_diluted']
 
-                        # Calculate payout ratios if distributions available
-                        if 'ffo_affo' in financial_data and 'distributions_per_unit' in financial_data['ffo_affo']:
-                            dist = financial_data['ffo_affo']['distributions_per_unit']
-                            result['distributions_per_unit'] = dist
-                            result['ffo_payout_ratio'] = round((dist / result['ffo_per_unit']) * 100, 1)
-                            result['affo_payout_ratio'] = round((dist / result['affo_per_unit']) * 100, 1)
+                # Calculate payout ratios if distributions and per-unit values available
+                if 'ffo_per_unit' in result and 'affo_per_unit' in result:
+                    if 'ffo_affo' in financial_data and 'distributions_per_unit' in financial_data['ffo_affo']:
+                        dist = financial_data['ffo_affo']['distributions_per_unit']
+                        result['distributions_per_unit'] = dist
+                        result['ffo_payout_ratio'] = round((dist / result['ffo_per_unit']) * 100, 1)
+                        result['affo_payout_ratio'] = round((dist / result['affo_per_unit']) * 100, 1)
 
     # Calculate ACFO from components if available
     if has_acfo_components:
@@ -539,15 +597,15 @@ def calculate_reit_metrics(financial_data):
             if reported_acfo is None:
                 result['acfo'] = acfo_calc_result['acfo_calculated']
 
-                # Calculate per-unit ACFO if shares outstanding available
-                if 'balance_sheet' in financial_data and 'common_units_outstanding' in financial_data['balance_sheet']:
-                    units = financial_data['balance_sheet']['common_units_outstanding']
-                    if units > 0:
-                        result['acfo_per_unit'] = round(result['acfo'] / units, 4)
+                # Use per-unit ACFO from calculation function if available
+                if 'acfo_per_unit' in acfo_calc_result:
+                    result['acfo_per_unit'] = acfo_calc_result['acfo_per_unit']
+                if 'acfo_per_unit_diluted' in acfo_calc_result:
+                    result['acfo_per_unit_diluted'] = acfo_calc_result['acfo_per_unit_diluted']
 
-                        # Calculate ACFO payout ratio if distributions available
-                        if 'distributions_per_unit' in result:
-                            result['acfo_payout_ratio'] = round((result['distributions_per_unit'] / result['acfo_per_unit']) * 100, 1)
+                # Calculate ACFO payout ratio if distributions available
+                if 'acfo_per_unit' in result and 'distributions_per_unit' in result:
+                    result['acfo_payout_ratio'] = round((result['distributions_per_unit'] / result['acfo_per_unit']) * 100, 1)
             else:
                 result['acfo'] = reported_acfo
 
@@ -577,6 +635,8 @@ def calculate_acfo_from_components(financial_data):
     Returns:
         dict: {
             'acfo_calculated': float,
+            'acfo_per_unit': float | None,  # Basic - calculated if common_units_outstanding available
+            'acfo_per_unit_diluted': float | None,  # Diluted - calculated if diluted_units_outstanding available
             'cash_flow_from_operations': float,
             'total_adjustments': float,
             'adjustments_detail': dict,  # All 17 adjustments breakdown
@@ -704,7 +764,24 @@ def calculate_acfo_from_components(financial_data):
     else:
         data_quality = 'limited'
 
-    return {
+    # Calculate per-unit ACFO if shares outstanding available
+    acfo_per_unit = None
+    acfo_per_unit_diluted = None
+
+    if 'balance_sheet' in financial_data:
+        # Basic per-unit
+        if 'common_units_outstanding' in financial_data['balance_sheet']:
+            units = financial_data['balance_sheet']['common_units_outstanding']
+            if units and units > 0:
+                acfo_per_unit = round(acfo_calculated / units, 4)
+
+        # Diluted per-unit
+        if 'diluted_units_outstanding' in financial_data['balance_sheet']:
+            units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
+            if units_diluted and units_diluted > 0:
+                acfo_per_unit_diluted = round(acfo_calculated / units_diluted, 4)
+
+    result = {
         'acfo_calculated': round(acfo_calculated, 0),
         'cash_flow_from_operations': cfo,
         'total_adjustments': round(total_adjustments, 0),
@@ -718,6 +795,14 @@ def calculate_acfo_from_components(financial_data):
         'consistency_checks': consistency_checks,
         'data_quality': data_quality
     }
+
+    # Add per-unit if calculated
+    if acfo_per_unit is not None:
+        result['acfo_per_unit'] = acfo_per_unit
+    if acfo_per_unit_diluted is not None:
+        result['acfo_per_unit_diluted'] = acfo_per_unit_diluted
+
+    return result
 
 
 def validate_acfo(calculated_acfo, reported_acfo):
@@ -889,6 +974,8 @@ def calculate_afcf(financial_data):
     Returns:
         dict: {
             'afcf': float,
+            'afcf_per_unit': float | None,  # Basic - calculated if common_units_outstanding available
+            'afcf_per_unit_diluted': float | None,  # Diluted - calculated if diluted_units_outstanding available
             'acfo_starting_point': float,
             'net_cfi': float,
             'cfi_breakdown': dict,  # Individual CFI components
@@ -981,7 +1068,24 @@ def calculate_afcf(financial_data):
     else:  # < 3 components
         data_quality = 'limited'
 
-    return {
+    # Calculate per-unit AFCF if shares outstanding available
+    afcf_per_unit = None
+    afcf_per_unit_diluted = None
+
+    if 'balance_sheet' in financial_data:
+        # Basic per-unit
+        if 'common_units_outstanding' in financial_data['balance_sheet']:
+            units = financial_data['balance_sheet']['common_units_outstanding']
+            if units and units > 0:
+                afcf_per_unit = round(afcf / units, 4)
+
+        # Diluted per-unit
+        if 'diluted_units_outstanding' in financial_data['balance_sheet']:
+            units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
+            if units_diluted and units_diluted > 0:
+                afcf_per_unit_diluted = round(afcf / units_diluted, 4)
+
+    result = {
         'afcf': round(afcf, 0),
         'acfo_starting_point': acfo,
         'net_cfi': round(net_cfi, 0),
@@ -993,6 +1097,14 @@ def calculate_afcf(financial_data):
         'has_cfi_data': True,
         'reconciliation_check': reconciliation_check
     }
+
+    # Add per-unit if calculated
+    if afcf_per_unit is not None:
+        result['afcf_per_unit'] = afcf_per_unit
+    if afcf_per_unit_diluted is not None:
+        result['afcf_per_unit_diluted'] = afcf_per_unit_diluted
+
+    return result
 
 
 def calculate_afcf_coverage_ratios(financial_data, afcf):
