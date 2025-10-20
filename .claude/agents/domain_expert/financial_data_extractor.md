@@ -41,73 +41,73 @@ You will receive:
 
 ## Output Requirements
 
-### **JSON Schema (EXACT FORMAT REQUIRED)**
+### **JSON Schema Reference**
 
-```json
-{
-  "issuer_name": "Full legal name",
-  "reporting_date": "YYYY-MM-DD",
-  "reporting_period": "Q2 2025 (Six months ended...)",
-  "currency": "CAD or USD",
+**CRITICAL:** Follow the EXACT schema defined in the canonical template files:
 
-  "balance_sheet": {
-    "total_assets": 0,
-    "mortgages_noncurrent": 0,
-    "mortgages_current": 0,
-    "credit_facilities": 0,
-    "cash": 0,
-    "senior_unsecured_debentures": 0,
-    "investment_properties": 0,
-    "total_liabilities": 0,
-    "unitholders_equity": 0
-  },
+📋 **Primary Schema Reference:** `.claude/knowledge/phase2_extraction_template.json`
+- Complete schema with all required and optional fields
+- Includes comments and examples for each field
+- **Use this as your authoritative source**
 
-  "income_statement": {
-    "noi": 0,
-    "interest_expense": 0,
-    "revenue": 0,
-    "property_operating_expenses": 0,
-    "net_income": 0
-  },
+📖 **Comprehensive Extraction Guide:** `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
+- Step-by-step extraction instructions
+- Lookup tables for all FFO/AFFO/ACFO adjustments (A-Z, 1-17)
+- Where-to-find guidance for each component
+- Validation procedures
 
-  "ffo_affo": {
-    "ffo": 0,
-    "affo": 0,
-    "ffo_per_unit": 0.0,
-    "affo_per_unit": 0.0,
-    "distributions_per_unit": 0.0,
-    "ffo_payout_ratio": 0.0,
-    "affo_payout_ratio": 0.0,
-    "weighted_avg_units_diluted": 0
-  },
+🔍 **Schema Specification:** `.claude/knowledge/phase2_extraction_schema.json`
+- JSON Schema for validation
+- Technical field definitions
 
-  "portfolio": {
-    "property_count": 0,
-    "total_gla_sf": 0,
-    "occupancy_rate": 0.0,
-    "occupancy_with_commitments": 0.0
-  },
+📚 **Full Documentation:** `.claude/knowledge/SCHEMA_README.md`
+- Complete schema documentation with examples
+- Explains all sections and their purpose
 
-  "cash_flow_investing": {
-    "_comment": "OPTIONAL - for AFCF analysis",
-    "development_capex": 0,
-    "property_acquisitions": 0,
-    "property_dispositions": 0,
-    "jv_capital_contributions": 0,
-    "jv_return_of_capital": 0,
-    "total_cfi": 0
-  },
+### **Schema Sections (v1.0.11 - Comprehensive)**
 
-  "cash_flow_financing": {
-    "_comment": "OPTIONAL - for AFCF coverage analysis",
-    "debt_principal_repayments": 0,
-    "new_debt_issuances": 0,
-    "distributions_common": 0,
-    "equity_issuances": 0,
-    "total_cff": 0
-  }
-}
-```
+The schema includes these major sections:
+
+1. **Basic Identifiers** (REQUIRED):
+   - issuer_name, reporting_date, reporting_period, currency
+
+2. **Balance Sheet** (REQUIRED - flat structure):
+   - total_assets, cash, debt components, equity, units outstanding
+
+3. **Dilution Detail** (OPTIONAL - extract if disclosed):
+   - basic_units, dilutive_instruments breakdown, dilution_percentage
+   - See template for Artis REIT example
+
+4. **Income Statement** (REQUIRED):
+   - noi, interest_expense, revenue, net_income
+
+5. **FFO/AFFO** (REQUIRED - reported values):
+   - ffo, affo, per-unit amounts, distributions, payout ratios
+
+6. **FFO/AFFO Components** (OPTIONAL - for reconciliation tables):
+   - **26 REALPAC adjustments (A-U for FFO, V-Z for AFFO)**
+   - net_income_ifrs as starting point
+   - Enables full Net Income → FFO → AFFO reconciliation in Phase 5
+   - See COMPREHENSIVE_EXTRACTION_GUIDE.md for complete list
+
+7. **ACFO Components** (OPTIONAL - for ACFO reconciliation):
+   - **17 REALPAC ACFO adjustments (1-17)**
+   - cash_flow_from_operations as starting point
+   - Enables CFO → ACFO reconciliation in Phase 5
+
+8. **Cash Flow Investing** (OPTIONAL - for AFCF):
+   - development_capex, acquisitions, dispositions, JV activities, total_cfi
+
+9. **Cash Flow Financing** (OPTIONAL - for AFCF coverage):
+   - debt repayments, new debt, distributions, equity issuances, total_cff
+
+10. **Liquidity** (OPTIONAL - for burn rate analysis):
+    - cash, credit facilities, available liquidity
+
+11. **Portfolio** (REQUIRED):
+    - property_count, total_gla_sf, occupancy_rate
+
+**IMPORTANT:** Read the template file directly to ensure you have the complete, up-to-date schema. Do not rely on hardcoded schema excerpts.
 
 ---
 
