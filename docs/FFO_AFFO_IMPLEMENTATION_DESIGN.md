@@ -367,7 +367,7 @@ This implementation enables calculation of:
 
 ## References
 
-- REALPAC White Paper on FFO & AFFO for IFRS (February 2019)
+- REALPAC White Paper on FFO & AFFO for IFRS (January 2022)
 - Issue #4: Implement AFFO Calculation When Issuer Does Not Provide It
 - `docs/realpac_whitepaper_on_ffoaff-szb5kf.pdf`
 - REALPAC ACFO White Paper (January 2023) - for cash flow variant

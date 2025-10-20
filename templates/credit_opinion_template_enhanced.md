@@ -229,7 +229,7 @@
 This section analyzes the issuer's recurring economic earnings (FFO/AFFO) and sustainable cash flow (ACFO) metrics, providing both earnings-based and cash flow-based perspectives on distribution sustainability.
 
 **Metric Definitions:**
-- **FFO (Funds From Operations)**: Earnings metric starting from IFRS Net Income, adjusted for non-cash items per REALPAC (February 2019)
+- **FFO (Funds From Operations)**: Earnings metric starting from IFRS Net Income, adjusted for non-cash items per REALPAC (January 2022)
 - **AFFO (Adjusted Funds From Operations)**: FFO adjusted for sustaining capital requirements (earnings-based recurring income)
 - **ACFO (Adjusted Cash Flow from Operations)**: Cash flow metric starting from IFRS CFO, adjusted per REALPAC (January 2023)
 
@@ -570,7 +570,7 @@ Annualized Interest = Quarterly Interest Expense × 4
 **FFO (Funds From Operations):**
 ```
 FFO = IFRS Net Income
-    + Adjustments A-U per REALPAC White Paper (February 2019)
+    + Adjustments A-U per REALPAC White Paper (January 2022)
 
 Key Adjustments:
   A. Unrealized fair value changes (investment properties)
@@ -698,7 +698,7 @@ ACFO Coverage = ACFO / Total Distributions
 
 ### F.1 FFO/AFFO Reconciliation Table
 
-This reconciliation demonstrates the adjustment process from IFRS Net Income to FFO to AFFO per REALPAC White Paper (February 2019):
+This reconciliation demonstrates the adjustment process from IFRS Net Income to FFO to AFFO per REALPAC White Paper (January 2022):
 
 {{FFO_AFFO_RECONCILIATION_TABLE_DETAILED}}
 
@@ -768,7 +768,7 @@ This reconciliation shows adjustments from IFRS Cash Flow from Operations to ACF
    - {{DISTRIBUTION_SUSTAINABILITY_CONCLUSION}}
 
 **Methodology References:**
-- FFO/AFFO: REALPAC White Paper on FFO & AFFO for IFRS (February 2019)
+- FFO/AFFO: REALPAC White Paper on FFO & AFFO for IFRS (January 2022)
 - ACFO: REALPAC ACFO White Paper for IFRS (January 2023)
 
 ---
