@@ -111,6 +111,28 @@
 
 ---
 
+## Reporting Period Context
+
+**Report Date:** {{REPORTING_PERIOD}}
+**Reporting Currency:** {{CURRENCY}}
+
+**Metric Period Basis:**
+
+All financial metrics in this report are presented on the following period basis unless otherwise noted:
+
+- **FFO/AFFO/ACFO/AFCF totals and per-unit values:** Year-to-date (YTD) for the reporting period
+- **Distributions:** YTD total and per-unit amounts
+- **Coverage ratios:** YTD operating metrics vs. annualized debt service obligations
+- **Interest coverage:** YTD Net Operating Income (NOI) vs. annualized interest expense
+- **Debt service:** Annualized interest expense + principal repayments during YTD period
+- **Burn rate:** Monthly average (calculated from YTD cash flow data)
+- **Cash runway:** Months of available liquidity at current monthly burn rate
+- **Balance sheet metrics:** Point-in-time as of {{REPORT_DATE}}
+
+**Note:** Payout and coverage ratios use YTD per-unit metrics to ensure period consistency. For full-year projections, annualize YTD metrics by multiplying by the appropriate factor (e.g., YTD Q2 × 2 for semi-annual periods).
+
+---
+
 ## Factors That Could Lead to an Upgrade
 
 {{UPGRADE_FACTORS}}
@@ -253,7 +275,7 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 
 *As disclosed in issuer's MD&A financial statements*
 
-| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Per-Unit Payout Ratio |
+| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit YTD ({{CURRENCY}}) | Per-Unit Payout Ratio (YTD) |
 |--------|---------------------------|------------------------|--------------|
 | **IFRS Net Income** | {{NET_INCOME}} | N/A | N/A |
 | **FFO** | {{FFO_REPORTED}} | {{FFO_PER_UNIT_REPORTED}} | {{FFO_PAYOUT_REPORTED}}% |
@@ -266,7 +288,7 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 
 *Calculated using standardized REALPAC methodology for cross-issuer comparability*
 
-| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Per-Unit Payout Ratio | Variance from Reported (%) |
+| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit YTD ({{CURRENCY}}) | Per-Unit Payout Ratio (YTD) | Variance from Reported (%) |
 |--------|---------------------------|------------------------|--------------|---------------------------|
 | **IFRS Net Income** | {{NET_INCOME}} | {{NET_INCOME_PER_UNIT_CALCULATED}} | N/A | N/A |
 | **FFO** | {{FFO_CALCULATED}} | {{FFO_PER_UNIT_CALCULATED}} | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_VARIANCE_PERCENT}}% |
@@ -350,7 +372,7 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 *Based on issuer-reported FFO/AFFO/ACFO values*
 
-| Coverage Measure | Metric ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Distributions ({{REPORTING_PERIOD_FORMATTED}}) | Per-Unit Coverage Ratio | Per-Unit Payout Ratio | Assessment |
+| Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio (YTD) | Payout Ratio (YTD) | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
 | **FFO Coverage** | {{FFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_REPORTED}}x | {{FFO_PAYOUT_REPORTED}}% | {{FFO_COVERAGE_ASSESSMENT_REPORTED}} |
 | **AFFO Coverage** | {{AFFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_REPORTED}}x | {{AFFO_PAYOUT_REPORTED}}% | {{AFFO_COVERAGE_ASSESSMENT_REPORTED}} |
@@ -360,7 +382,7 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 *Based on REALPAC-standardized calculated values for consistency*
 
-| Coverage Measure | Metric ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Distributions ({{REPORTING_PERIOD_FORMATTED}}) | Per-Unit Coverage Ratio | Per-Unit Payout Ratio | Assessment |
+| Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio (YTD) | Payout Ratio (YTD) | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
 | **FFO Coverage** | {{FFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_CALCULATED}}x | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_COVERAGE_ASSESSMENT}} |
 | **AFFO Coverage** | {{AFFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_CALCULATED}}x | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_COVERAGE_ASSESSMENT}} |
@@ -453,13 +475,13 @@ AFCF extends the analysis beyond ACFO to measure cash available for financing ob
 
 *Based on calculated AFCF for consistency*
 
-| Coverage Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Coverage Ratio | Assessment |
+| Coverage Metric | Amount YTD ({{CURRENCY}} 000s) | Coverage Ratio (YTD vs. Annualized) | Assessment |
 |-----------------|---------------------------|----------------|------------|
-| **AFCF** | {{AFCF_CALCULATED}} | - | - |
-| **Total Debt Service** | {{TOTAL_DEBT_SERVICE}} | {{AFCF_DEBT_SERVICE_COVERAGE}}x | {{AFCF_DEBT_SERVICE_ASSESSMENT}} |
-| **Total Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_DISTRIBUTION_COVERAGE}}x | {{AFCF_DISTRIBUTION_ASSESSMENT}} |
-| **Total Debt Service & Distributions** | {{TOTAL_OBLIGATIONS}} | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SELF_FUNDING_ASSESSMENT}} |
-| **Surplus/(Shortfall)** | {{AFCF_SURPLUS_SHORTFALL}} | - | - |
+| **AFCF (YTD)** | {{AFCF_CALCULATED}} | - | - |
+| **Total Debt Service (Annualized)** | {{TOTAL_DEBT_SERVICE}} | {{AFCF_DEBT_SERVICE_COVERAGE}}x | {{AFCF_DEBT_SERVICE_ASSESSMENT}} |
+| **Total Distributions (YTD)** | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_DISTRIBUTION_COVERAGE}}x | {{AFCF_DISTRIBUTION_ASSESSMENT}} |
+| **Total Obligations (YTD)** | {{TOTAL_OBLIGATIONS}} | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SELF_FUNDING_ASSESSMENT}} |
+| **Surplus/(Shortfall) (YTD)** | {{AFCF_SURPLUS_SHORTFALL}} | - | - |
 
 **Data Source:** {{AFCF_DATA_SOURCE}}
 **Data Quality:** {{AFCF_DATA_QUALITY}}
@@ -685,25 +707,25 @@ Monthly Burn Rate = Period Deficit / Number of Months in Period
 
 **Coverage Analysis:**
 
-*Per-Unit Basis (Distribution Coverage):*
-- ACFO per unit: {{ACFO_PER_UNIT_CALC}} / Distributions per unit: {{DISTRIBUTIONS_PER_UNIT}} = {{ACFO_COVERAGE}} coverage
-- AFCF per unit: {{AFCF_PER_UNIT_CALC}} / Distributions per unit: {{DISTRIBUTIONS_PER_UNIT}} = {{AFCF_COVERAGE}}x coverage
+*Per-Unit Basis (YTD Distribution Coverage):*
+- ACFO per unit (YTD): {{ACFO_PER_UNIT_CALC}} / Distributions per unit (YTD): {{DISTRIBUTIONS_PER_UNIT}} = {{ACFO_COVERAGE}} coverage
+- AFCF per unit (YTD): {{AFCF_PER_UNIT_CALC}} / Distributions per unit (YTD): {{DISTRIBUTIONS_PER_UNIT}} = {{AFCF_COVERAGE}}x coverage
 
-*Total Basis (Comprehensive Coverage):*
-- **Distribution Coverage:**
-  - ACFO ({{ACFO}} thousands) / Total distributions ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{ACFO_DIST_COV_TOTAL}}** {{ACFO_DIST_COV_TOTAL_ASSESSMENT}}
-  - AFCF ({{AFCF}} thousands) / Total distributions ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{AFCF_DIST_COV_TOTAL}}** {{AFCF_DIST_COV_TOTAL_ASSESSMENT}}
+*Total Basis (YTD Metrics vs. Annualized Obligations):*
+- **Distribution Coverage (YTD basis):**
+  - ACFO YTD ({{ACFO}} thousands) / Total distributions YTD ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{ACFO_DIST_COV_TOTAL}}** {{ACFO_DIST_COV_TOTAL_ASSESSMENT}}
+  - AFCF YTD ({{AFCF}} thousands) / Total distributions YTD ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{AFCF_DIST_COV_TOTAL}}** {{AFCF_DIST_COV_TOTAL_ASSESSMENT}}
 
-- **Debt Service Coverage:**
-  - AFCF / Total debt service ({{TOTAL_DEBT_SERVICE}} thousands) = **{{AFCF_DEBT_SERVICE_COV}}**
+- **Debt Service Coverage (YTD AFCF vs. Annualized):**
+  - AFCF YTD ({{AFCF}} thousands) / Annualized debt service ({{TOTAL_DEBT_SERVICE}} thousands) = **{{AFCF_DEBT_SERVICE_COV}}**
 
-- **Self-Funding Capacity:**
-  - Self-funding ratio: **{{AFCF_SELF_FUNDING_RATIO}}** (AFCF / Total obligations)
-  - Financing gap: **{{AFCF_SELF_FUNDING_CAPACITY}}** {{CURRENCY}} thousands (negative = requires external financing)
+- **Self-Funding Capacity (YTD basis):**
+  - Self-funding ratio: **{{AFCF_SELF_FUNDING_RATIO}}** (AFCF YTD / Total obligations YTD)
+  - Financing gap (YTD): **{{AFCF_SELF_FUNDING_CAPACITY}}** {{CURRENCY}} thousands (negative = requires external financing)
 
-*Residual Cash Flows After Distributions:*
-- ACFO residual: {{RESIDUAL_ACFO}} {{CURRENCY}} thousands
-- AFCF residual: {{RESIDUAL_AFCF}} {{CURRENCY}} thousands (negative = shortfall)
+*Residual Cash Flows After Distributions (YTD):*
+- ACFO residual (YTD): {{RESIDUAL_ACFO}} {{CURRENCY}} thousands
+- AFCF residual (YTD): {{RESIDUAL_AFCF}} {{CURRENCY}} thousands (negative = shortfall)
 
 *Interest Coverage:*
 - {{COVERAGE_ANALYSIS}}

@@ -1781,6 +1781,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
 
         # Burn Rate Analysis (v1.0.7+) - Section 4.3
         'REPORTING_PERIOD': metrics.get('reporting_period', 'Unknown'),
+        'REPORT_DATE': metrics.get('reporting_date', 'Unknown'),  # Issue #34: Period indicators
         'BURN_RATE_APPLICABLE': 'Yes' if burn_rate_analysis.get('applicable') else 'No',
         'MONTHLY_BURN_RATE': f"{burn_rate_analysis.get('monthly_burn_rate', 0):,.0f}" if burn_rate_analysis.get('monthly_burn_rate') else 'N/A',
         'MONTHLY_BURN_RATE_ABS': f"{abs(burn_rate_analysis.get('monthly_burn_rate', 0)):,.0f}" if burn_rate_analysis.get('monthly_burn_rate') else 'N/A',
