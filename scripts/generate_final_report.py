@@ -1182,6 +1182,13 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
 
     # Calculate coverage ratios using per-unit values
     ffo_cov_rep = calculate_coverage_ratio(ffo_per_unit_rep, distributions)
+
+    # Format variance percentages with None handling
+    ffo_var_pct = reit_metrics.get('validation', {}).get('ffo_variance_percent')
+    ffo_var_formatted = f"{ffo_var_pct:.1f}%" if ffo_var_pct is not None else "N/A (not reported)"
+
+    affo_var_pct = reit_metrics.get('validation', {}).get('affo_variance_percent')
+    affo_var_formatted = f"{affo_var_pct:.1f}%" if affo_var_pct is not None else "N/A (not reported)"
     affo_cov_rep = calculate_coverage_ratio(affo_per_unit_rep, distributions)
     acfo_cov_rep = calculate_coverage_ratio(acfo_per_unit_rep, distributions) if acfo_per_unit_rep else None
 
@@ -1680,7 +1687,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'FFO_ADJUSTMENTS_AVAILABLE': str(reit_metrics.get('ffo_calculation_detail', {}).get('available_adjustments', 0)),
         'AFFO_ADJUSTMENTS_AVAILABLE': str(reit_metrics.get('affo_calculation_detail', {}).get('available_adjustments', 0)),
         'FFO_AFFO_DATA_QUALITY': reit_metrics.get('ffo_calculation_detail', {}).get('data_quality', 'Unknown').upper(),
-        'FFO_AFFO_OBSERVATIONS': f"FFO variance: {reit_metrics.get('validation', {}).get('ffo_variance_percent', 0):.1f}%. AFFO variance: {reit_metrics.get('validation', {}).get('affo_variance_percent') if reit_metrics.get('validation', {}).get('affo_variance_percent') is not None else 'N/A (not reported)'}.",
+        'FFO_AFFO_OBSERVATIONS': f"FFO variance: {ffo_var_formatted}. AFFO variance: {affo_var_formatted}.",
 
         # Distribution Coverage Placeholders
         'FFO_COVERAGE': f"{(1 / (ffo_payout / 100) if ffo_payout > 0 else 0):.2f}",

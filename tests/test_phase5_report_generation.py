@@ -404,5 +404,195 @@ class TestPhase5Performance:
                 assert elapsed < 5.0, f"Phase 5 should execute in <5 seconds (took {elapsed:.2f}s)"
 
 
+class TestPhase5NoneHandling:
+    """Test that report generation handles None/missing values gracefully
+
+    This addresses the issue where REITs don't always report all metrics:
+    - FFO: Usually reported
+    - AFFO: Optional (e.g., Dream Industrial doesn't report)
+    - ACFO: Often calculated, rarely reported
+    - Variances: None when comparison impossible
+    """
+
+    def test_affo_variance_none_handling(self):
+        """Test that None AFFO variance doesn't crash formatting"""
+        from generate_final_report import generate_final_report
+
+        # Create minimal metrics with None affo_variance_percent
+        metrics = {
+            'issuer_name': 'Test REIT',
+            'reporting_date': '2025-06-30',
+            'reporting_period': 'Q2 2025',
+            'currency': 'CAD',
+            'reit_metrics': {
+                'ffo': 100000,
+                'affo': 0,  # Not reported
+                'ffo_per_unit': 0.50,
+                'affo_per_unit': 0,
+                'validation': {
+                    'ffo_variance_percent': -5.0,
+                    'affo_variance_percent': None,  # Key test case
+                    'affo_variance_amount': None
+                }
+            },
+            'leverage_metrics': {'debt_to_assets_percent': 30.0},
+            'coverage_ratios': {'noi_interest_coverage': 3.5}
+        }
+
+        analysis_sections = {
+            'EXECUTIVE_SUMMARY': 'Test summary',
+            'CREDIT_STRENGTHS': '- Test strength',
+            'CREDIT_CHALLENGES': '- Test challenge'
+        }
+
+        template = "# Report\n\n{{FFO_AFFO_OBSERVATIONS}}\n\n{{AFFO_VARIANCE_PERCENT}}"
+
+        # Should not raise TypeError
+        try:
+            report = generate_final_report(metrics, analysis_sections, template, None)
+            assert 'N/A' in report or 'not reported' in report.lower()
+        except TypeError as e:
+            if 'NoneType' in str(e) and 'format' in str(e):
+                pytest.fail(f"None value not handled: {e}")
+
+    def test_ffo_variance_none_handling(self):
+        """Test that None FFO variance doesn't crash (rare but possible)"""
+        from generate_final_report import generate_final_report
+
+        metrics = {
+            'issuer_name': 'Test REIT',
+            'reporting_date': '2025-06-30',
+            'reporting_period': 'Q2 2025',
+            'currency': 'CAD',
+            'reit_metrics': {
+                'ffo': 0,  # Not reported
+                'validation': {
+                    'ffo_variance_percent': None,  # No variance if not reported
+                    'ffo_variance_amount': None
+                }
+            },
+            'leverage_metrics': {'debt_to_assets_percent': 30.0},
+            'coverage_ratios': {'noi_interest_coverage': 3.5}
+        }
+
+        analysis_sections = {'EXECUTIVE_SUMMARY': 'Test'}
+        template = "{{FFO_VARIANCE_PERCENT}}"
+
+        # Should not raise TypeError
+        try:
+            report = generate_final_report(metrics, analysis_sections, template, None)
+            assert 'N/A' in report
+        except TypeError as e:
+            if 'NoneType' in str(e):
+                pytest.fail(f"None FFO variance not handled: {e}")
+
+    def test_unreported_affo_display(self):
+        """Test that unreported AFFO shows meaningful message, not $0"""
+        from generate_final_report import generate_final_report
+
+        metrics = {
+            'issuer_name': 'Dream Industrial REIT',
+            'reporting_date': '2025-06-30',
+            'reporting_period': 'Q2 2025',
+            'currency': 'CAD',
+            'reit_metrics': {
+                'ffo': 149437,
+                'affo': 0,  # Not reported (not same as zero!)
+                'ffo_per_unit': 0.51,
+                'affo_per_unit': 0
+            },
+            'leverage_metrics': {'debt_to_assets_percent': 26.8},
+            'coverage_ratios': {'noi_interest_coverage': 4.77}
+        }
+
+        analysis_sections = {'EXECUTIVE_SUMMARY': 'Test'}
+        template = "{{AFFO_REPORTED_STATUS}}"
+
+        report = generate_final_report(metrics, analysis_sections, template, None)
+
+        # Should show "not reported", not "$0"
+        assert 'not reported' in report.lower() or 'n/a' in report.lower()
+        # Should NOT show misleading $0 figure
+        assert '$0' not in report or 'not reported' in report.lower()
+
+    def test_acfo_variance_none_handling(self):
+        """Test that None ACFO variance is handled (most REITs don't report ACFO)"""
+        from generate_final_report import generate_final_report
+
+        metrics = {
+            'issuer_name': 'Test REIT',
+            'reporting_date': '2025-06-30',
+            'reporting_period': 'Q2 2025',
+            'currency': 'CAD',
+            'reit_metrics': {
+                'ffo': 100000,
+                'acfo': 0,  # Calculated but not reported
+                'validation': {
+                    'ffo_variance_percent': -5.0
+                },
+                'acfo_validation': {
+                    'acfo_variance_percent': None,  # No reported value to compare
+                    'acfo_variance_amount': None
+                }
+            },
+            'leverage_metrics': {'debt_to_assets_percent': 30.0},
+            'coverage_ratios': {'noi_interest_coverage': 3.5}
+        }
+
+        analysis_sections = {'EXECUTIVE_SUMMARY': 'Test'}
+        template = "{{ACFO_VARIANCE_PERCENT}}"
+
+        # Should not crash
+        try:
+            report = generate_final_report(metrics, analysis_sections, template, None)
+            assert 'N/A' in report or len(report) > 0
+        except TypeError as e:
+            if 'NoneType' in str(e):
+                pytest.fail(f"None ACFO variance not handled: {e}")
+
+    def test_all_variance_fields_none(self):
+        """Test handling when all variance fields are None (extreme case)"""
+        from generate_final_report import generate_final_report
+
+        metrics = {
+            'issuer_name': 'Test REIT',
+            'reporting_date': '2025-06-30',
+            'reporting_period': 'Q2 2025',
+            'currency': 'CAD',
+            'reit_metrics': {
+                'ffo': 0,
+                'affo': 0,
+                'validation': {
+                    'ffo_variance_percent': None,
+                    'ffo_variance_amount': None,
+                    'affo_variance_percent': None,
+                    'affo_variance_amount': None
+                },
+                'acfo_validation': {
+                    'acfo_variance_percent': None,
+                    'acfo_variance_amount': None
+                }
+            },
+            'leverage_metrics': {'debt_to_assets_percent': 30.0},
+            'coverage_ratios': {'noi_interest_coverage': 3.5}
+        }
+
+        analysis_sections = {'EXECUTIVE_SUMMARY': 'Test'}
+        template = """
+{{FFO_VARIANCE_PERCENT}}
+{{AFFO_VARIANCE_PERCENT}}
+{{ACFO_VARIANCE_PERCENT}}
+{{FFO_AFFO_OBSERVATIONS}}
+"""
+
+        # Should handle all None values without crashing
+        try:
+            report = generate_final_report(metrics, analysis_sections, template, None)
+            # Should have N/A or similar placeholder
+            assert report.count('N/A') >= 3 or 'not reported' in report.lower()
+        except TypeError as e:
+            pytest.fail(f"Failed to handle all-None scenario: {e}")
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
