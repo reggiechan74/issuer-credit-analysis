@@ -57,8 +57,6 @@
     - [Appendix B: Moody's-Adjusted EBITDA Reconciliation](#appendix-b-moodys-adjusted-ebitda-reconciliation)
     - [Appendix C: Calculation Methodologies](#appendix-c-calculation-methodologies)
     - [Appendix D: Rating Category Thresholds](#appendix-d-rating-category-thresholds)
-    - [Appendix E: Data Reconciliation](#appendix-e-data-reconciliation)
-    - [Appendix F: FFO/AFFO/ACFO/AFCF Detailed Reconciliations](#appendix-f-ffoaffoacfoafcf-detailed-reconciliations)
 
 ---
 
@@ -883,6 +881,75 @@ NOI / Interest Coverage = Net Operating Income / Interest Expense
 Annualized Interest = Quarterly Interest Expense × 4
 ```
 
+**Total Debt Service:**
+```
+Total Debt Service = Annualized Interest Expense + Principal Repayments
+
+Where:
+  Annualized Interest = Interest expense for the reporting period (annualized)
+  Principal Repayments = Scheduled principal payments for the reporting period
+
+Note: Period amounts should be consistent (e.g., all quarterly or all annual)
+```
+
+**NOI / Debt Service Coverage:**
+```
+NOI / Debt Service Coverage = Net Operating Income / Total Debt Service
+
+Where:
+  Total Debt Service = Annualized Interest + Principal Repayments
+
+Assessment Thresholds:
+  ≥ 2.0x = Strong debt service coverage
+  ≥ 1.5x = Adequate debt service coverage
+  ≥ 1.25x = Tight debt service coverage
+  < 1.25x = Insufficient debt service coverage
+```
+
+**EBITDA / Debt Service Coverage:**
+```
+EBITDA / Debt Service Coverage = EBITDA / Total Debt Service
+
+Where:
+  EBITDA = NOI (for REITs, NOI approximates EBITDA)
+  Total Debt Service = Annualized Interest + Principal Repayments
+
+Note: For REITs, NOI/Debt Service and EBITDA/Debt Service are equivalent
+```
+
+**FFO / Debt Service Coverage:**
+```
+FFO / Debt Service Coverage = FFO / Total Debt Service
+
+Assessment Thresholds:
+  ≥ 2.5x = Strong coverage
+  ≥ 2.0x = Adequate coverage
+  ≥ 1.5x = Moderate coverage
+  < 1.5x = Weak coverage
+```
+
+**AFFO / Debt Service Coverage:**
+```
+AFFO / Debt Service Coverage = AFFO / Total Debt Service
+
+Assessment Thresholds:
+  ≥ 2.0x = Strong coverage (significant cushion after sustaining capex)
+  ≥ 1.5x = Adequate coverage
+  ≥ 1.25x = Tight coverage
+  < 1.25x = Insufficient coverage
+```
+
+**ACFO / Debt Service Coverage:**
+```
+ACFO / Debt Service Coverage = ACFO / Total Debt Service
+
+Assessment Thresholds:
+  ≥ 1.5x = Strong coverage (cash flow based)
+  ≥ 1.25x = Adequate coverage
+  ≥ 1.0x = Tight coverage
+  < 1.0x = Insufficient coverage (cannot cover debt service from operating cash)
+```
+
 ### REIT Metrics
 
 **FFO (Funds From Operations):**
@@ -953,6 +1020,178 @@ ACFO Payout Ratio = (Distributions per Unit / ACFO per Unit) × 100
 ACFO Coverage = ACFO / Total Distributions
 ```
 
+**AFCF (Adjusted Free Cash Flow):**
+```
+AFCF = ACFO + Net Cash Flow from Investing Activities
+
+Where:
+  ACFO = Adjusted Cash Flow from Operations (per REALPAC 2023)
+  Net CFI = Cash Flow from Investing Activities (IFRS statement)
+            Including: Development CAPEX, acquisitions/dispositions,
+                      JV capital contributions/returns
+
+IMPORTANT - Double-Counting Prevention:
+  ACFO already deducts:
+    - Sustaining CAPEX (Adjustment 4)
+    - Sustaining TI (Adjustment 6)
+    - External leasing costs (Adjustment 5)
+
+  CFI should ONLY include:
+    - Development/growth CAPEX (NOT sustaining)
+    - Property acquisitions and dispositions
+    - JV capital contributions/returns (NOT distributions)
+    - Business combinations
+```
+
+**AFCF Per Unit:**
+```
+AFCF per Unit (Basic) = AFCF / Common Units Outstanding (weighted average)
+
+AFCF per Unit (Diluted) = AFCF / Diluted Units Outstanding (weighted average)
+
+Where:
+  Diluted Units = Basic Units + Dilutive Instruments
+  Dilutive Instruments = RSUs + DSUs + Options + Convertible Debt + Warrants
+```
+
+### AFCF Coverage Metrics
+
+**AFCF Debt Service Coverage:**
+```
+AFCF Debt Service Coverage = AFCF / Total Debt Service
+
+Where:
+  Total Debt Service = Annualized Interest Expense + Principal Repayments
+
+Assessment Thresholds:
+  ≥ 1.0x = Self-funding (can cover debt service from free cash flow)
+  < 1.0x = Reliant on capital markets for debt service
+```
+
+**AFCF Payout Ratio:**
+```
+AFCF Payout Ratio = (Total Distributions / AFCF) × 100
+
+Assessment Thresholds:
+  < 100% = Distributions sustainable from free cash flow
+  ≥ 100% = Distributions exceed free cash flow
+```
+
+**AFCF Self-Funding Ratio:**
+```
+AFCF Self-Funding Ratio = AFCF / (Total Debt Service + Total Distributions)
+
+Where:
+  Total Obligations = Debt Service + Distributions (per reporting period)
+
+Assessment Thresholds:
+  ≥ 1.0x = Self-funding (no capital markets reliance)
+  0.8-1.0x = Low reliance on external financing
+  0.5-0.8x = Moderate reliance on capital markets
+  < 0.5x = High reliance on capital markets
+
+Note: Does NOT subtract new financing - measures inherent cash generation capacity
+```
+
+**AFCF Self-Funding Capacity:**
+```
+AFCF Self-Funding Capacity = AFCF - (Total Debt Service + Total Distributions)
+
+Interpretation:
+  Positive = Surplus cash after all financing obligations
+  Negative = Deficit requiring external financing
+```
+
+### Burn Rate and Cash Runway Metrics
+
+**Burn Rate Applicability:**
+```
+Burn Rate applies when: AFCF < Total Financing Obligations
+
+Where:
+  Total Financing Obligations = Debt Service + Distributions
+
+Note: A REIT can have positive AFCF but still burn cash if free cash flow
+      is insufficient to cover mandatory obligations.
+```
+
+**Monthly Burn Rate:**
+```
+Period Deficit = AFCF - Mandatory Obligations (when AFCF < Obligations)
+Monthly Burn Rate = Period Deficit / Number of Months in Period
+
+Where:
+  Mandatory Obligations = Total Debt Service + Total Distributions
+  New financing is NOT subtracted (assumes no future capital raises)
+```
+
+**Self-Funding Ratio (Burn Rate Context):**
+```
+Self-Funding Ratio = AFCF / Mandatory Obligations
+
+Interpretation:
+  ≥ 1.0x = Self-funding (no burn rate - generates surplus)
+  0.8-1.0x = Low burn rate (nearly self-funding)
+  0.5-0.8x = Moderate burn rate (moderate capital markets reliance)
+  < 0.5x = High burn rate (high capital markets reliance)
+```
+
+**Cash Runway:**
+```
+Available Cash = Cash + Marketable Securities - Restricted Cash
+
+Cash Runway (months) = Available Cash / |Monthly Burn Rate|
+
+Extended Runway = (Available Cash + Undrawn Facilities) / |Monthly Burn Rate|
+
+Where:
+  Undrawn Facilities = Remaining credit facility capacity
+  |Monthly Burn Rate| = Absolute value of monthly burn rate
+```
+
+**Liquidity Risk Assessment:**
+```
+Risk Level based on Cash Runway:
+  < 6 months    = CRITICAL (Score 4) - Immediate financing required
+  6-12 months   = HIGH (Score 3) - Near-term capital raise needed
+  12-24 months  = MODERATE (Score 2) - Plan financing within 12 months
+  > 24 months   = LOW (Score 1) - Adequate liquidity runway
+```
+
+**Sustainable Burn Rate:**
+```
+Target Runway = 24 months (default)
+Sustainable Monthly Burn = Available Cash / Target Runway
+
+Excess Burn = Actual Monthly Burn - Sustainable Monthly Burn
+
+Status:
+  Excess Burn < 0 = Below sustainable (cash cushion)
+  Excess Burn > 0 = Above sustainable (corrective action needed)
+```
+
+### Coverage Quality Assessment
+
+**Distribution Coverage Assessment:**
+```
+Coverage Quality (applies to FFO/AFFO/ACFO/AFCF coverage):
+
+  ≥ 1.3x = Strong coverage (30%+ cushion)
+  ≥ 1.1x = Adequate coverage (10%+ cushion)
+  ≥ 1.0x = Tight coverage (< 10% cushion)
+  < 1.0x = Insufficient coverage (distributions exceed metric)
+```
+
+**Payout Ratio Assessment:**
+```
+Payout Ratio Quality (inverse of coverage):
+
+  ≤ 77% = Strong (< 77% payout = 1.3x+ coverage)
+  ≤ 91% = Adequate (< 91% payout = 1.1x+ coverage)
+  < 100% = Tight (< 100% payout = 1.0x+ coverage)
+  ≥ 100% = Insufficient (payout exceeds metric)
+```
+
 ---
 
 ## Appendix D: Rating Category Thresholds
@@ -986,108 +1225,6 @@ ACFO Coverage = ACFO / Total Distributions
 | Baa | $5B - $10B |
 | Ba | $2B - $5B |
 | B | < $2B |
-
----
-
-## Appendix E: Data Reconciliation
-
-### Phase 3 Metrics (Calculated)
-
-**Source:** `phase3_calculated_metrics.json`
-
-- Leverage Metrics: Calculated from Phase 2 extracted data
-- REIT Metrics: Calculated from Phase 2 extracted data
-- Coverage Ratios: Calculated from Phase 2 extracted data
-- Portfolio Metrics: Extracted from financial statements in Phase 2
-
-### Phase 4 Analysis (Qualitative)
-
-**Source:** `phase4_credit_analysis.md`
-
-- Executive Summary
-- Credit Strengths and Challenges
-- Rating Outlook
-- 5-Factor Scorecard
-- Key Observations
-
----
-
-## Appendix F: FFO/AFFO/ACFO Detailed Reconciliations
-
-### F.1 FFO/AFFO Reconciliation Table
-
-This reconciliation demonstrates the adjustment process from IFRS Net Income to FFO to AFFO per REALPAC White Paper (January 2022):
-
-{{FFO_AFFO_RECONCILIATION_TABLE_DETAILED}}
-
-**FFO Validation:**
-- Issuer Reported FFO: {{FFO_REPORTED}}
-- Calculated FFO: {{FFO_CALCULATED}}
-- Variance: {{FFO_VARIANCE_AMOUNT}} ({{FFO_VARIANCE_PERCENT}}%)
-- Status: {{FFO_VALIDATION_STATUS}}
-
-**AFFO Status:**
-{{AFFO_REPORTED_STATUS}}
-
-**Data Quality:**
-- FFO Adjustments Available: {{FFO_ADJUSTMENTS_AVAILABLE}}/21
-- AFFO Adjustments Available: {{AFFO_ADJUSTMENTS_AVAILABLE}}/5
-- Overall Data Quality: {{FFO_AFFO_DATA_QUALITY}}
-
-### F.2 ACFO Reconciliation Table
-
-This reconciliation shows adjustments from IFRS Cash Flow from Operations to ACFO per REALPAC ACFO White Paper (January 2023):
-
-{{ACFO_RECONCILIATION_TABLE_DETAILED}}
-
-**ACFO Validation:**
-- Issuer Reported ACFO: {{ACFO_REPORTED}}
-- Calculated ACFO: {{ACFO_CALCULATED}}
-- Variance: {{ACFO_VARIANCE_AMOUNT}} ({{ACFO_VARIANCE_PERCENT}}%)
-- Status: {{ACFO_VALIDATION_STATUS}}
-
-**Consistency Checks (ACFO vs AFFO):**
-- CAPEX (Sustaining): {{CAPEX_CONSISTENCY_STATUS}}
-- Tenant Improvements: {{TI_CONSISTENCY_STATUS}}
-- Leasing Costs: {{LEASING_CONSISTENCY_STATUS}}
-
-**Data Quality:**
-- ACFO Adjustments Available: {{ACFO_ADJUSTMENTS_AVAILABLE}}/17
-- Calculation Method: {{ACFO_CALCULATION_METHOD}}
-- JV Treatment Method: {{ACFO_JV_TREATMENT}}
-- Overall Data Quality: {{ACFO_DATA_QUALITY}}
-
-### F.3 FFO/AFFO/ACFO Comparison Summary
-
-| Metric | Value ({{CURRENCY}} 000s) | Per Unit | Payout Ratio | Coverage |
-|--------|--------------------------|----------|--------------|----------|
-| **IFRS Net Income** | {{NET_INCOME}} | N/A | N/A | N/A |
-| **FFO** | {{FFO}} | {{FFO_PER_UNIT}} | {{FFO_PAYOUT}}% | {{FFO_COVERAGE}}x |
-| **AFFO** | {{AFFO}} | {{AFFO_PER_UNIT}} | {{AFFO_PAYOUT}}% | {{AFFO_COVERAGE}}x |
-| **IFRS CFO** | {{CASH_FLOW_FROM_OPERATIONS}} | N/A | N/A | N/A |
-| **ACFO** | {{ACFO}} | {{ACFO_PER_UNIT}} | {{ACFO_PAYOUT}}% | {{ACFO_COVERAGE}}x |
-| **Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DISTRIBUTIONS_PER_UNIT}} | N/A | N/A |
-
-**Key Insights:**
-
-1. **FFO → AFFO Reduction**: {{FFO_TO_AFFO_REDUCTION}} ({{FFO_TO_AFFO_PERCENT}}% of FFO)
-   - Reflects sustaining capital requirements and non-cash adjustments
-   - {{FFO_AFFO_REDUCTION_ASSESSMENT}}
-
-2. **CFO → ACFO Reduction**: {{CFO_TO_ACFO_REDUCTION}} ({{CFO_TO_ACFO_PERCENT}}% of CFO)
-   - Reflects adjustments to arrive at sustainable cash flow
-   - {{CFO_ACFO_REDUCTION_ASSESSMENT}}
-
-3. **AFFO vs ACFO Gap**: {{AFFO_ACFO_GAP}} ({{AFFO_ACFO_GAP_PERCENT}}%)
-   - {{AFFO_ACFO_GAP_INTERPRETATION}}
-
-4. **Distribution Coverage Analysis**:
-   - All three metrics (FFO, AFFO, ACFO) provide {{DISTRIBUTION_COVERAGE_OVERALL}} coverage
-   - {{DISTRIBUTION_SUSTAINABILITY_CONCLUSION}}
-
-**Methodology References:**
-- FFO/AFFO: REALPAC White Paper on FFO & AFFO for IFRS (January 2022)
-- ACFO: REALPAC ACFO White Paper for IFRS (January 2023)
 
 ---
 
