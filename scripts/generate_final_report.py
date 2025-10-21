@@ -1330,6 +1330,14 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     # Calculate total distributions for coverage ratios
     distributions_total = distributions * common_units if distributions and common_units else 0
 
+    # Calculate residual cash flows after distributions (Issue #31)
+    # Use total_distributions from afcf_coverage (YTD total) not distributions_total (quarterly × units)
+    acfo_amount = acfo_metrics.get('acfo', 0) if acfo_metrics else 0
+    afcf_amount = afcf_metrics.get('afcf', 0) if afcf_metrics else 0
+    total_distributions_ytd = afcf_coverage.get('total_distributions', 0)
+    residual_acfo = acfo_amount - total_distributions_ytd if acfo_amount and total_distributions_ytd else None
+    residual_afcf = afcf_amount - total_distributions_ytd if afcf_amount and total_distributions_ytd else None
+
     # Calculate reported coverage ratios (per-unit basis)
     ffo_rep = ffo_affo_reported.get('ffo', ffo)
     affo_rep = ffo_affo_reported.get('affo', affo)
@@ -1944,8 +1952,8 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
 
         # Additional placeholders
         'SELF_FUNDING_PERCENT': 'Not available',
-        'RESIDUAL_ACFO': 'Not available',
-        'RESIDUAL_AFCF': 'Not available',
+        'RESIDUAL_ACFO': f"{residual_acfo:,.0f}" if residual_acfo is not None else 'Not available',
+        'RESIDUAL_AFCF': f"{residual_afcf:,.0f}" if residual_afcf is not None else 'Not available',
 
         # Additional Financial Data Placeholders
         # NET_INCOME: Priority Phase 3 (calculated) → Phase 2 (extracted) → 0
