@@ -2,9 +2,53 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.12
-**Last Updated:** 2025-10-20
-**Pipeline Version:** 1.0.12 (Dual-Table Reporting: Issuer-Reported vs REALPAC-Calculated)
+**Version:** 1.0.13
+**Last Updated:** 2025-10-21
+**Pipeline Version:** 1.0.13 (Structural Considerations Content Extraction)
+
+## What's New in v1.0.13
+
+**Phase 5: Structural Considerations Content Extraction (Issue #32)**
+
+Enhanced Phase 5 report generation to populate Structural Considerations section by extracting content from Phase 4 analysis:
+
+**New Capabilities:**
+- ✅ **3 Parsing Functions:** Extract debt structure, security/collateral, and perpetual securities from Phase 4 content
+- ✅ **Debt Structure Extraction:** Credit facilities, covenant compliance, debt profile metrics from Liquidity section
+- ✅ **Security/Collateral Extraction:** Unencumbered assets, LTV ratios, recovery estimates from scattered Phase 4 content
+- ✅ **Perpetual Securities Detection:** Checks Phase 2, Phase 3, and Phase 4 for perpetual securities
+- ✅ **Graceful Degradation:** Returns "Not available" when content not found, "Not applicable" for perpetual securities
+- ✅ **Multi-Issuer Testing:** Verified with RioCan, Artis, and Dream Industrial REITs
+
+**What This Fixes:**
+- Structural Considerations section no longer shows "Not available" when Phase 4 contains relevant content
+- Debt structure information (credit facilities, covenants) now extracted from Liquidity section
+- Security analysis (unencumbered assets, recovery estimates) now consolidated from multiple Phase 4 mentions
+- Perpetual securities properly detected or marked "Not applicable"
+
+**New Parsing Functions (lines 1007-1246 in `generate_final_report.py`):**
+1. `parse_debt_structure()` - Extracts credit facilities, covenant analysis, debt profile from Phase 4 + Phase 3
+2. `parse_security_collateral()` - Extracts unencumbered assets, LTV, recovery estimates from Phase 4
+3. `check_perpetual_securities()` - Checks Phase 2/3/4 for perpetual securities, defaults to "Not applicable"
+
+**Example Output (RioCan REIT):**
+```markdown
+### Debt Structure
+**Credit Facilities:** $1.93B limit with $771.6M drawn = $1.16B available (60% undrawn)
+**Covenant Compliance:** Debt/Assets: 48.3% vs 60-65% (cushion), Interest Coverage: 1.32x vs 1.50x (tight)
+**Debt Profile:** Total debt: $7.4B, Debt/Assets: 48.3%, Net Debt/EBITDA: 8.88x
+
+### Security and Collateral
+**Unencumbered Asset Pool:** $9.0B, 58% of gross assets
+**Security Analysis:** LTV: 48%, Recovery estimate: >80-90%
+
+### Perpetual Securities
+Not applicable - no perpetual securities in capital structure
+```
+
+**Implementation Details:** See GitHub Issue #32 for complete analysis and testing results
+
+---
 
 ## What's New in v1.0.12
 

@@ -1004,6 +1004,284 @@ def parse_esg_section(esg_text):
     return result
 
 
+def parse_debt_structure(phase4_content, phase2_data=None, phase3_data=None):
+    """
+    Parse debt structure information from Phase 4 content
+
+    Extracts credit facility details, covenant analysis, and debt profile
+    from the Liquidity and Leverage sections of Phase 4.
+
+    Args:
+        phase4_content (str): Full Phase 4 analysis content
+        phase2_data (dict): Phase 2 extraction data (optional)
+        phase3_data (dict): Phase 3 calculated metrics (optional)
+
+    Returns:
+        str: Synthesized debt structure summary or 'Not available'
+    """
+    if not phase4_content or phase4_content == 'Not available':
+        return 'Not available'
+
+    sections = []
+
+    # Extract credit facility information
+    # Pattern: "Credit facilities:" followed by capacity/drawn/available
+    credit_facility_match = re.search(
+        r'\*\*Credit facilities:\*\*\s*([^\n]*(?:\n(?!\*\*)[^\n]*)*)',
+        phase4_content,
+        re.IGNORECASE
+    )
+
+    if credit_facility_match:
+        facility_text = credit_facility_match.group(1).strip()
+        sections.append(f"**Credit Facilities:**\n{facility_text}")
+
+    # Extract covenant analysis
+    # Pattern: "Covenant Risk:" or "Covenant Compliance:" section
+    covenant_match = re.search(
+        r'\*\*Covenant (?:Risk|Compliance):\*\*\s*\n(.*?)(?=\n\*\*|\n###|\Z)',
+        phase4_content,
+        re.DOTALL | re.IGNORECASE
+    )
+
+    if covenant_match:
+        covenant_text = covenant_match.group(1).strip()
+        # Clean up and format
+        covenant_lines = [line.strip() for line in covenant_text.split('\n') if line.strip()]
+        sections.append(f"**Covenant Compliance:**\n" + '\n'.join(covenant_lines))
+
+    # Extract debt profile metrics from Phase 3 if available
+    if phase3_data:
+        leverage_metrics = phase3_data.get('leverage_metrics', {})
+        total_debt = leverage_metrics.get('total_debt', 0)
+        debt_to_assets = leverage_metrics.get('debt_to_assets', 0)
+        net_debt_to_ebitda = leverage_metrics.get('net_debt_to_ebitda', 0)
+
+        if total_debt or debt_to_assets or net_debt_to_ebitda:
+            debt_profile_lines = ["**Debt Profile:**"]
+            if total_debt:
+                # Convert from thousands to billions (divide by 1,000,000)
+                debt_profile_lines.append(f"- Total debt: ${total_debt/1_000_000:,.1f}B")
+            if debt_to_assets:
+                debt_profile_lines.append(f"- Debt/Assets: {debt_to_assets*100:.1f}%")
+            if net_debt_to_ebitda:
+                debt_profile_lines.append(f"- Net Debt/EBITDA: {net_debt_to_ebitda:.2f}x")
+
+            sections.append('\n'.join(debt_profile_lines))
+
+    # If we found content, combine it
+    if sections:
+        return '\n\n'.join(sections)
+
+    # Fallback: Try to find any debt-related summary
+    debt_summary_match = re.search(
+        r'(?:total debt|debt profile|capital structure).*?(?:\$[\d,]+[BM]|[\d.]+%)',
+        phase4_content,
+        re.IGNORECASE
+    )
+
+    if debt_summary_match:
+        return f"**Debt Profile:**\n{debt_summary_match.group(0)}"
+
+    return 'Not available'
+
+
+def parse_security_collateral(phase4_content, phase2_data=None, phase3_data=None):
+    """
+    Parse security and collateral information from Phase 4 content
+
+    Extracts unencumbered asset pool, LTV ratios, recovery estimates,
+    and security structure assessment from scattered Phase 4 content.
+
+    Args:
+        phase4_content (str): Full Phase 4 analysis content
+        phase2_data (dict): Phase 2 extraction data (optional)
+        phase3_data (dict): Phase 3 calculated metrics (optional)
+
+    Returns:
+        str: Synthesized security/collateral analysis or 'Not available'
+    """
+    if not phase4_content or phase4_content == 'Not available':
+        return 'Not available'
+
+    sections = []
+
+    # Extract unencumbered asset information
+    # Pattern: Look for dollar amounts and percentages associated with unencumbered assets
+    unencumbered_info = []
+
+    # Search for "Unencumbered assets: $X.XB" pattern
+    # Match both "$9.0 billion" and "$9.0B" formats
+    amount_match = re.search(
+        r'[Uu]nencumbered\s+asset(?:s|\s+pool)[^$]*\$(\d+\.?\d*)\s*([BM]|[Bb]illion|[Mm]illion)',
+        phase4_content
+    )
+    if amount_match:
+        value = amount_match.group(1)
+        unit = amount_match.group(2)
+        # Normalize to B/M format
+        if unit.lower().startswith('b'):
+            unencumbered_info.append(f"${value}B")
+        elif unit.lower().startswith('m'):
+            unencumbered_info.append(f"${value}M")
+
+    # Search for percentage of gross assets
+    pct_match = re.search(
+        r'(\d+%)\s+of\s+gross\s+assets',
+        phase4_content,
+        re.IGNORECASE
+    )
+    if pct_match:
+        unencumbered_info.append(f"{pct_match.group(1)} of gross assets")
+
+    # Search for "provides ... refinancing capacity" mentions
+    capacity_match = re.search(
+        r'(?:provides|providing)\s+(?:substantial|significant)\s+(?:financial\s+flexibility|refinancing\s+capacity)',
+        phase4_content,
+        re.IGNORECASE
+    )
+    if capacity_match:
+        unencumbered_info.append("Provides substantial refinancing capacity")
+
+    if unencumbered_info:
+        unencumbered_section = ["**Unencumbered Asset Pool:**"]
+        for info in unencumbered_info:
+            unencumbered_section.append(f"- {info}")
+        sections.append('\n'.join(unencumbered_section))
+
+    # Extract LTV and recovery analysis
+    # Pattern: "LTV", "recovery", "well-secured"
+    recovery_lines = []
+
+    ltv_match = re.search(r'LTV[:\s]+(\d+%)', phase4_content, re.IGNORECASE)
+    if ltv_match:
+        recovery_lines.append(f"LTV: {ltv_match.group(1)}")
+
+    # Look for recovery percentage estimates (e.g., ">80-90%", "80-90%")
+    # Prefer mentions with "substantial recovery" or "provides ... recovery"
+    recovery_match = re.search(
+        r'(?:substantial|provides)\s+recovery[^.]*?(>?\s*\d+(?:-\d+)?%)',
+        phase4_content,
+        re.IGNORECASE
+    )
+    if recovery_match:
+        recovery_lines.append(f"Recovery estimate: {recovery_match.group(1).strip()}")
+    else:
+        # Fallback: Look for "recovery >" pattern (high recovery rates)
+        recovery_match = re.search(
+            r'recovery\s+(>\s*\d+(?:-\d+)?%)',
+            phase4_content,
+            re.IGNORECASE
+        )
+        if recovery_match:
+            recovery_lines.append(f"Recovery estimate: {recovery_match.group(1).strip()}")
+
+    # Look for security assessment statements
+    security_assessment_patterns = [
+        r'(?:senior\s+)?unsecured\s+debt\s+(?:appears?\s+)?well-secured',
+        r'debt\s+holders?\s+well-secured',
+        r'substantial\s+(?:security|collateral)',
+    ]
+
+    for pattern in security_assessment_patterns:
+        assessment_match = re.search(pattern, phase4_content, re.IGNORECASE)
+        if assessment_match:
+            # Get surrounding context (up to 100 chars)
+            start = max(0, assessment_match.start() - 50)
+            end = min(len(phase4_content), assessment_match.end() + 100)
+            context = phase4_content[start:end].strip()
+            # Extract the sentence containing the match
+            sentence_match = re.search(r'[^.!?]*' + re.escape(assessment_match.group(0)) + r'[^.!?]*[.!?]', context)
+            if sentence_match:
+                recovery_lines.append(f"- Assessment: {sentence_match.group(0).strip()}")
+                break
+
+    if recovery_lines:
+        sections.append("**Security Analysis:**\n" + '\n'.join(recovery_lines))
+
+    # Extract asset quality mentions related to security
+    asset_quality_match = re.search(
+        r'(?:asset quality|portfolio quality)[^.]*(?:provides|support)[^.]*(?:recovery|security|refinancing)[^.]*\.',
+        phase4_content,
+        re.IGNORECASE
+    )
+
+    if asset_quality_match:
+        sections.append(f"**Asset Quality:**\n{asset_quality_match.group(0).strip()}")
+
+    # If we found content, combine it
+    if sections:
+        return '\n\n'.join(sections)
+
+    return 'Not available'
+
+
+def check_perpetual_securities(phase4_content, phase2_data=None, phase3_data=None):
+    """
+    Check for perpetual securities in capital structure
+
+    Searches Phase 2, Phase 3, and Phase 4 content for perpetual securities.
+    Returns analysis if found, otherwise indicates "Not applicable".
+
+    Args:
+        phase4_content (str): Full Phase 4 analysis content
+        phase2_data (dict): Phase 2 extraction data (optional)
+        phase3_data (dict): Phase 3 calculated metrics (optional)
+
+    Returns:
+        str: Perpetual securities analysis or 'Not applicable'
+    """
+    # Check Phase 4 for perpetual mentions
+    if phase4_content and phase4_content != 'Not available':
+        perpetual_match = re.search(
+            r'###\s+Perpetual\s+Securities[^\n]*\n(.*?)(?=###|\Z)',
+            phase4_content,
+            re.DOTALL | re.IGNORECASE
+        )
+
+        if perpetual_match:
+            content = perpetual_match.group(1).strip()
+            if content and len(content) > 50:  # Meaningful content
+                return content
+
+        # Look for perpetual securities mentions in other sections
+        perpetual_mentions = re.finditer(
+            r'perpetual\s+(?:securities|preferred|units)[^.]*\.',
+            phase4_content,
+            re.IGNORECASE
+        )
+
+        mentions = [match.group(0).strip() for match in perpetual_mentions]
+        if mentions:
+            return '\n'.join(mentions)
+
+    # Check Phase 2 debt structure for perpetuals
+    if phase2_data:
+        debt_structure = phase2_data.get('debt_structure', {})
+        perpetual_debt = debt_structure.get('perpetual_securities', 0)
+
+        if perpetual_debt and perpetual_debt > 0:
+            return f"Perpetual securities outstanding: ${perpetual_debt/1000:,.1f}M"
+
+        # Check for preferred units/shares
+        balance_sheet = phase2_data.get('balance_sheet', {})
+        preferred_equity = balance_sheet.get('preferred_equity', 0)
+
+        if preferred_equity and preferred_equity > 0:
+            return f"Preferred equity (perpetual): ${preferred_equity/1000:,.1f}M"
+
+    # Check Phase 3 for perpetual adjustments
+    if phase3_data:
+        leverage_metrics = phase3_data.get('leverage_metrics', {})
+        perpetual_adjustments = leverage_metrics.get('perpetual_securities_adjustment', 0)
+
+        if perpetual_adjustments and perpetual_adjustments > 0:
+            return f"Perpetual securities adjustment in leverage calculation: ${perpetual_adjustments/1000:,.1f}M"
+
+    # Default: No perpetual securities found
+    return 'Not applicable - no perpetual securities in capital structure'
+
+
 def generate_final_report(metrics, analysis_sections, template, phase2_data=None):
     """
     Generate final report by combining metrics and analysis with template
@@ -1302,9 +1580,14 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     # Parse scenario analysis into individual components (Issue #28)
     parsed_scenarios = parse_scenario_analysis(scenario_analysis)
 
-    debt_structure = get_section(analysis_sections, 'Debt Structure', 'Structural Considerations', 'STRUCTURAL CONSIDERATIONS')
-    collateral_analysis = get_section(analysis_sections, 'Security and Collateral', 'COLLATERAL')
-    perpetual_securities = get_section(analysis_sections, 'Perpetual Securities', 'PERPETUAL SECURITIES')
+    # Parse structural considerations from Phase 4 content (Issue #32)
+    # Reconstruct full Phase 4 content for parsing
+    phase4_full_content = '\n\n'.join([f"## {k}\n{v}" for k, v in analysis_sections.items()])
+
+    debt_structure = parse_debt_structure(phase4_full_content, phase2_data, metrics)
+    collateral_analysis = parse_security_collateral(phase4_full_content, phase2_data, metrics)
+    perpetual_securities = check_perpetual_securities(phase4_full_content, phase2_data, metrics)
+
     debt_reconciliation = get_section(analysis_sections, 'Moody\'s-Adjusted Debt Reconciliation', 'Debt Reconciliation', 'DEBT RECONCILIATION')
     ebitda_reconciliation = get_section(analysis_sections, 'Moody\'s-Adjusted EBITDA Reconciliation', 'EBITDA Reconciliation', 'EBITDA RECONCILIATION')
 
