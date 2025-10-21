@@ -1,0 +1,110 @@
+================================================================================
+DIVIDEND CUT ANALYSIS - SUMMARY REPORT
+================================================================================
+Generated: 2025-10-21 20:48:36
+REITs Analyzed: 8
+
+COLLECTION STATISTICS:
+  Total Dividend Records: 925
+  Total Cuts Detected: 13
+
+REIT-BY-REIT SUMMARY:
+
+AX-UN.TO (AX)
+  Sector: Office
+  Records: 120
+  Date Range: 2015-10-28 to 2025-09-29
+  Current Price: $6.02
+  Annual Dividend (TTM): $0.6000
+  Dividend Yield: 9.97%
+  Detected Cuts: 2
+  Cut Details:
+    - 2018-11: $0.0900 → $0.0450 (50.0% reduction)
+    - 2023-01: $0.1050 → $0.0500 (52.4% reduction)
+
+CAR-UN.TO (CAR)
+  Sector: Residential
+  Records: 121
+  Date Range: 2015-10-28 to 2025-09-29
+  Current Price: $39.30
+  Annual Dividend (TTM): $3.0234
+  Dividend Yield: 7.69%
+  Detected Cuts: 1
+  Cut Details:
+    - 2025-01: $0.8075 → $0.1250 (84.5% reduction)
+
+DIR-UN.TO (DIR)
+  Sector: Industrial
+  Records: 120
+  Date Range: 2015-10-28 to 2025-09-29
+  Current Price: $12.33
+  Annual Dividend (TTM): $0.7000
+  Dividend Yield: 5.68%
+  Detected Cuts: 0
+
+HR-UN.TO (HR)
+  Sector: Retail/Office
+  Records: 123
+  Date Range: 2015-11-12 to 2025-09-29
+  Current Price: $11.72
+  Annual Dividend (TTM): $0.7200
+  Dividend Yield: 6.14%
+  Detected Cuts: 5
+  Cut Details:
+    - 2020-05: $0.1150 → $0.0575 (50.0% reduction)
+    - 2022-01: $0.0575 → $0.0216 (62.3% reduction)
+    - 2023-01: $0.2229 → $0.0500 (77.6% reduction)
+    - 2024-01: $0.0750 → $0.0500 (33.3% reduction)
+    - 2025-01: $0.0850 → $0.0500 (41.2% reduction)
+
+REI-UN.TO (REI)
+  Sector: Retail
+  Records: 119
+  Date Range: 2015-10-28 to 2025-09-29
+  Current Price: $18.97
+  Annual Dividend (TTM): $1.1420
+  Dividend Yield: 6.02%
+  Detected Cuts: 1
+  Cut Details:
+    - 2021-01: $0.1200 → $0.0800 (33.3% reduction)
+
+SOT-UN.TO (SOT)
+  Sector: Office
+  Records: 97
+  Date Range: 2015-10-28 to 2023-10-30
+  Current Price: $0.41
+  Annual Dividend (TTM): $0.0000
+  Dividend Yield: 0.00%
+  Detected Cuts: 2
+  Cut Details:
+    - 2019-03: $0.0625 → $0.0333 (46.7% reduction)
+    - 2023-04: $0.0333 → $0.0100 (70.0% reduction)
+
+SRU-UN.TO (SRU)
+  Sector: Retail
+  Records: 119
+  Date Range: 2015-10-28 to 2025-09-29
+  Current Price: $26.78
+  Annual Dividend (TTM): $1.8500
+  Dividend Yield: 6.91%
+  Detected Cuts: 0
+
+TNT-UN.TO (TNT)
+  Sector: Office
+  Records: 106
+  Date Range: 2015-10-28 to 2025-09-29
+  Current Price: $9.23
+  Annual Dividend (TTM): $0.4600
+  Dividend Yield: 4.98%
+  Detected Cuts: 2
+  Cut Details:
+    - 2023-03: $0.0495 → $0.0248 (50.0% reduction)
+    - 2023-11: $0.0248 → $0.0000 (100.0% reduction)
+
+CUT vs NO CUT COMPARISON:
+
+  Average Yield (Cut REITs): 5.42%
+  Average Yield (No Cut REITs): 6.76%
+  Yield Spread: -1.34%
+
+================================================================================

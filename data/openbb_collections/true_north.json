@@ -1,0 +1,890 @@
+{
+  "ticker": "TNT-UN.TO",
+  "reit_name": "TNT",
+  "data_provider": "tmx",
+  "collection_date": "2025-10-21 20:45:38",
+  "current_metrics": {
+    "annual_dividend_ttm": 0.46,
+    "dividend_yield_ttm": 4.98,
+    "payment_count_ttm": 8,
+    "monthly_distribution": 0.0575,
+    "current_price": 9.23,
+    "calculation_date": "2025-10-21"
+  },
+  "dividend_history": {
+    "total_records": 106,
+    "date_range": {
+      "earliest": "2015-10-28",
+      "latest": "2025-09-29"
+    },
+    "records": [
+      {
+        "ex_dividend_date": "2025-09-29 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-09-30",
+        "payment_date": "2025-10-15",
+        "declaration_date": "2025-09-15"
+      },
+      {
+        "ex_dividend_date": "2025-08-29 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-08-31",
+        "payment_date": "2025-09-15",
+        "declaration_date": "2025-08-15"
+      },
+      {
+        "ex_dividend_date": "2025-07-31 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-07-31",
+        "payment_date": "2025-08-15",
+        "declaration_date": "2025-07-15"
+      },
+      {
+        "ex_dividend_date": "2025-06-30 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-06-30",
+        "payment_date": "2025-07-15",
+        "declaration_date": "2025-06-13"
+      },
+      {
+        "ex_dividend_date": "2025-05-30 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-05-30",
+        "payment_date": "2025-06-16",
+        "declaration_date": "2025-05-19"
+      },
+      {
+        "ex_dividend_date": "2025-04-30 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-04-30",
+        "payment_date": "2025-05-15",
+        "declaration_date": "2025-04-20"
+      },
+      {
+        "ex_dividend_date": "2025-03-31 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-03-31",
+        "payment_date": "2025-04-15",
+        "declaration_date": "2025-03-18"
+      },
+      {
+        "ex_dividend_date": "2025-03-31 00:00:00",
+        "amount": 0.0575,
+        "currency": "CAD",
+        "record_date": "2025-03-31",
+        "payment_date": "2025-04-15",
+        "declaration_date": "2025-03-27"
+      },
+      {
+        "ex_dividend_date": "2023-11-29 00:00:00",
+        "amount": 0.0,
+        "currency": "CAD",
+        "record_date": "2023-11-30",
+        "payment_date": "2023-12-15",
+        "declaration_date": "2023-11-13"
+      },
+      {
+        "ex_dividend_date": "2023-10-30 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-10-31",
+        "payment_date": "2023-11-15",
+        "declaration_date": "2023-10-16"
+      },
+      {
+        "ex_dividend_date": "2023-09-28 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-09-29",
+        "payment_date": "2023-10-16",
+        "declaration_date": "2023-09-15"
+      },
+      {
+        "ex_dividend_date": "2023-08-30 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-08-31",
+        "payment_date": "2023-09-15",
+        "declaration_date": "2023-08-15"
+      },
+      {
+        "ex_dividend_date": "2023-07-28 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-07-31",
+        "payment_date": "2023-08-15",
+        "declaration_date": "2023-07-17"
+      },
+      {
+        "ex_dividend_date": "2023-06-29 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-06-30",
+        "payment_date": "2023-07-17",
+        "declaration_date": "2023-06-15"
+      },
+      {
+        "ex_dividend_date": "2023-05-30 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-05-31",
+        "payment_date": "2023-06-15",
+        "declaration_date": "2023-05-15"
+      },
+      {
+        "ex_dividend_date": "2023-04-27 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-04-28",
+        "payment_date": "2023-05-15",
+        "declaration_date": "2023-04-17"
+      },
+      {
+        "ex_dividend_date": "2023-03-30 00:00:00",
+        "amount": 0.02475,
+        "currency": "CAD",
+        "record_date": "2023-03-31",
+        "payment_date": "2023-04-17",
+        "declaration_date": "2023-03-14"
+      },
+      {
+        "ex_dividend_date": "2023-02-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2023-02-28",
+        "payment_date": "2023-03-15",
+        "declaration_date": "2023-02-15"
+      },
+      {
+        "ex_dividend_date": "2023-01-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2023-01-31",
+        "payment_date": "2023-02-15",
+        "declaration_date": "2023-01-16"
+      },
+      {
+        "ex_dividend_date": "2022-12-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-12-30",
+        "payment_date": "2023-01-16",
+        "declaration_date": "2022-12-15"
+      },
+      {
+        "ex_dividend_date": "2022-11-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-11-30",
+        "payment_date": "2022-12-15",
+        "declaration_date": "2022-11-15"
+      },
+      {
+        "ex_dividend_date": "2022-10-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-10-31",
+        "payment_date": "2022-11-15",
+        "declaration_date": "2022-10-17"
+      },
+      {
+        "ex_dividend_date": "2022-09-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-09-30",
+        "payment_date": "2022-10-17",
+        "declaration_date": "2022-09-15"
+      },
+      {
+        "ex_dividend_date": "2022-08-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-08-31",
+        "payment_date": "2022-09-15",
+        "declaration_date": "2022-08-15"
+      },
+      {
+        "ex_dividend_date": "2022-07-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-07-29",
+        "payment_date": "2022-08-15",
+        "declaration_date": "2022-07-15"
+      },
+      {
+        "ex_dividend_date": "2022-06-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-06-30",
+        "payment_date": "2022-07-15",
+        "declaration_date": "2022-06-15"
+      },
+      {
+        "ex_dividend_date": "2022-05-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-05-31",
+        "payment_date": "2022-06-15",
+        "declaration_date": "2022-05-16"
+      },
+      {
+        "ex_dividend_date": "2022-04-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-04-29",
+        "payment_date": "2022-05-16",
+        "declaration_date": "2022-04-19"
+      },
+      {
+        "ex_dividend_date": "2022-03-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-03-31",
+        "payment_date": "2022-04-19",
+        "declaration_date": "2022-03-15"
+      },
+      {
+        "ex_dividend_date": "2022-02-25 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-02-28",
+        "payment_date": "2022-03-15",
+        "declaration_date": "2022-02-15"
+      },
+      {
+        "ex_dividend_date": "2022-01-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2022-01-31",
+        "payment_date": "2022-02-15",
+        "declaration_date": "2022-01-17"
+      },
+      {
+        "ex_dividend_date": "2021-12-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-12-31",
+        "payment_date": "2022-01-17",
+        "declaration_date": "2021-12-15"
+      },
+      {
+        "ex_dividend_date": "2021-11-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-11-30",
+        "payment_date": "2021-12-15",
+        "declaration_date": "2021-11-15"
+      },
+      {
+        "ex_dividend_date": "2021-10-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-10-29",
+        "payment_date": "2021-11-15",
+        "declaration_date": "2021-10-15"
+      },
+      {
+        "ex_dividend_date": "2021-09-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-09-30",
+        "payment_date": "2021-10-15",
+        "declaration_date": "2021-09-15"
+      },
+      {
+        "ex_dividend_date": "2021-08-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-08-31",
+        "payment_date": "2021-09-15",
+        "declaration_date": "2021-08-16"
+      },
+      {
+        "ex_dividend_date": "2021-07-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-07-30",
+        "payment_date": "2021-08-16",
+        "declaration_date": "2021-07-15"
+      },
+      {
+        "ex_dividend_date": "2021-06-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-06-30",
+        "payment_date": "2021-07-15",
+        "declaration_date": "2021-06-15"
+      },
+      {
+        "ex_dividend_date": "2021-05-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-05-31",
+        "payment_date": "2021-06-15",
+        "declaration_date": "2021-05-17"
+      },
+      {
+        "ex_dividend_date": "2021-04-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-04-30",
+        "payment_date": "2021-05-17",
+        "declaration_date": "2021-04-15"
+      },
+      {
+        "ex_dividend_date": "2021-03-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-03-31",
+        "payment_date": "2021-04-15",
+        "declaration_date": "2021-03-15"
+      },
+      {
+        "ex_dividend_date": "2021-02-25 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-02-26",
+        "payment_date": "2021-03-15",
+        "declaration_date": "2021-02-16"
+      },
+      {
+        "ex_dividend_date": "2021-01-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2021-01-29",
+        "payment_date": "2021-02-16",
+        "declaration_date": "2021-01-15"
+      },
+      {
+        "ex_dividend_date": "2020-12-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-12-31",
+        "payment_date": "2021-01-15",
+        "declaration_date": "2020-12-15"
+      },
+      {
+        "ex_dividend_date": "2020-11-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-11-30",
+        "payment_date": "2020-12-15",
+        "declaration_date": "2020-11-16"
+      },
+      {
+        "ex_dividend_date": "2020-10-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-10-30",
+        "payment_date": "2020-11-16",
+        "declaration_date": "2020-10-15"
+      },
+      {
+        "ex_dividend_date": "2020-09-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-09-30",
+        "payment_date": "2020-10-15",
+        "declaration_date": "2020-09-15"
+      },
+      {
+        "ex_dividend_date": "2020-08-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-08-31",
+        "payment_date": "2020-09-15",
+        "declaration_date": "2020-08-17"
+      },
+      {
+        "ex_dividend_date": "2020-07-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-07-31",
+        "payment_date": "2020-08-17",
+        "declaration_date": "2020-07-15"
+      },
+      {
+        "ex_dividend_date": "2020-06-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-06-30",
+        "payment_date": "2020-07-15",
+        "declaration_date": "2020-06-15"
+      },
+      {
+        "ex_dividend_date": "2020-05-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-05-29",
+        "payment_date": "2020-06-15",
+        "declaration_date": "2020-05-15"
+      },
+      {
+        "ex_dividend_date": "2020-04-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-04-30",
+        "payment_date": "2020-05-15",
+        "declaration_date": "2020-04-15"
+      },
+      {
+        "ex_dividend_date": "2020-03-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-03-31",
+        "payment_date": "2020-04-15",
+        "declaration_date": "2020-03-16"
+      },
+      {
+        "ex_dividend_date": "2020-02-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-02-28",
+        "payment_date": "2020-03-16",
+        "declaration_date": "2020-02-18"
+      },
+      {
+        "ex_dividend_date": "2020-01-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2020-01-31",
+        "payment_date": "2020-02-18",
+        "declaration_date": "2020-01-15"
+      },
+      {
+        "ex_dividend_date": "2019-12-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-12-31",
+        "payment_date": "2020-01-15",
+        "declaration_date": "2019-12-16"
+      },
+      {
+        "ex_dividend_date": "2019-11-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-11-29",
+        "payment_date": "2019-12-16",
+        "declaration_date": "2019-11-15"
+      },
+      {
+        "ex_dividend_date": "2019-10-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-10-31",
+        "payment_date": "2019-11-15",
+        "declaration_date": "2019-10-15"
+      },
+      {
+        "ex_dividend_date": "2019-09-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-09-30",
+        "payment_date": "2019-10-15",
+        "declaration_date": "2019-09-16"
+      },
+      {
+        "ex_dividend_date": "2019-08-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-08-30",
+        "payment_date": "2019-09-16",
+        "declaration_date": "2019-08-15"
+      },
+      {
+        "ex_dividend_date": "2019-07-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-07-31",
+        "payment_date": "2019-08-15",
+        "declaration_date": "2019-07-15"
+      },
+      {
+        "ex_dividend_date": "2019-06-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-06-28",
+        "payment_date": "2019-07-15",
+        "declaration_date": "2019-06-17"
+      },
+      {
+        "ex_dividend_date": "2019-05-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-05-31",
+        "payment_date": "2019-06-17",
+        "declaration_date": "2019-05-15"
+      },
+      {
+        "ex_dividend_date": "2019-04-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-04-30",
+        "payment_date": "2019-05-15",
+        "declaration_date": "2019-04-15"
+      },
+      {
+        "ex_dividend_date": "2019-03-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-03-29",
+        "payment_date": "2019-04-15",
+        "declaration_date": "2019-03-15"
+      },
+      {
+        "ex_dividend_date": "2019-02-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-02-28",
+        "payment_date": "2019-03-15",
+        "declaration_date": "2019-02-15"
+      },
+      {
+        "ex_dividend_date": "2019-01-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2019-01-31",
+        "payment_date": "2019-02-15",
+        "declaration_date": "2019-01-15"
+      },
+      {
+        "ex_dividend_date": "2018-12-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-12-31",
+        "payment_date": "2019-01-15",
+        "declaration_date": "2018-12-17"
+      },
+      {
+        "ex_dividend_date": "2018-11-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-11-30",
+        "payment_date": "2018-12-17",
+        "declaration_date": "2018-11-15"
+      },
+      {
+        "ex_dividend_date": "2018-10-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-10-31",
+        "payment_date": "2018-11-15",
+        "declaration_date": "2018-10-15"
+      },
+      {
+        "ex_dividend_date": "2018-09-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-09-28",
+        "payment_date": "2018-10-15",
+        "declaration_date": "2018-09-17"
+      },
+      {
+        "ex_dividend_date": "2018-08-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-08-31",
+        "payment_date": "2018-09-17",
+        "declaration_date": "2018-08-15"
+      },
+      {
+        "ex_dividend_date": "2018-07-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-07-31",
+        "payment_date": "2018-08-15",
+        "declaration_date": "2018-07-16"
+      },
+      {
+        "ex_dividend_date": "2018-06-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-06-29",
+        "payment_date": "2018-07-16",
+        "declaration_date": "2018-06-15"
+      },
+      {
+        "ex_dividend_date": "2018-05-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-05-31",
+        "payment_date": "2018-06-16",
+        "declaration_date": "2018-05-15"
+      },
+      {
+        "ex_dividend_date": "2018-04-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-04-30",
+        "payment_date": "2018-05-15",
+        "declaration_date": "2018-04-16"
+      },
+      {
+        "ex_dividend_date": "2018-03-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-03-30",
+        "payment_date": "2018-04-16",
+        "declaration_date": "2018-03-15"
+      },
+      {
+        "ex_dividend_date": "2018-02-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-02-28",
+        "payment_date": "2018-03-15",
+        "declaration_date": "2018-02-15"
+      },
+      {
+        "ex_dividend_date": "2018-01-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2018-01-31",
+        "payment_date": "2018-02-15",
+        "declaration_date": "2018-01-15"
+      },
+      {
+        "ex_dividend_date": "2017-12-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-12-29",
+        "payment_date": "2018-01-15",
+        "declaration_date": "2017-12-15"
+      },
+      {
+        "ex_dividend_date": "2017-11-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-11-30",
+        "payment_date": "2017-12-15",
+        "declaration_date": "2017-11-15"
+      },
+      {
+        "ex_dividend_date": "2017-10-30 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-10-31",
+        "payment_date": "2017-11-15",
+        "declaration_date": "2017-10-16"
+      },
+      {
+        "ex_dividend_date": "2017-09-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-09-29",
+        "payment_date": "2017-10-16",
+        "declaration_date": "2017-09-15"
+      },
+      {
+        "ex_dividend_date": "2017-08-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-08-31",
+        "payment_date": "2017-09-15",
+        "declaration_date": "2017-08-15"
+      },
+      {
+        "ex_dividend_date": "2017-07-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-07-31",
+        "payment_date": "2017-08-15",
+        "declaration_date": "2017-07-17"
+      },
+      {
+        "ex_dividend_date": "2017-06-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-06-30",
+        "payment_date": "2017-07-17",
+        "declaration_date": "2017-06-15"
+      },
+      {
+        "ex_dividend_date": "2017-05-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-05-31",
+        "payment_date": "2017-06-15",
+        "declaration_date": "2017-05-15"
+      },
+      {
+        "ex_dividend_date": "2017-04-26 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-04-28",
+        "payment_date": "2017-05-15",
+        "declaration_date": "2017-04-17"
+      },
+      {
+        "ex_dividend_date": "2017-03-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-03-31",
+        "payment_date": "2017-04-17",
+        "declaration_date": "2017-03-15"
+      },
+      {
+        "ex_dividend_date": "2017-02-24 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-02-28",
+        "payment_date": "2017-03-15",
+        "declaration_date": "2017-02-15"
+      },
+      {
+        "ex_dividend_date": "2017-01-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2017-01-31",
+        "payment_date": "2017-02-15",
+        "declaration_date": "2017-01-16"
+      },
+      {
+        "ex_dividend_date": "2016-12-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-12-30",
+        "payment_date": "2017-01-16",
+        "declaration_date": "2016-12-15"
+      },
+      {
+        "ex_dividend_date": "2016-11-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-11-30",
+        "payment_date": "2016-12-15",
+        "declaration_date": "2016-11-15"
+      },
+      {
+        "ex_dividend_date": "2016-10-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-10-31",
+        "payment_date": "2016-11-15",
+        "declaration_date": "2016-10-17"
+      },
+      {
+        "ex_dividend_date": "2016-09-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-09-30",
+        "payment_date": "2016-10-17",
+        "declaration_date": "2016-09-15"
+      },
+      {
+        "ex_dividend_date": "2016-08-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-08-31",
+        "payment_date": "2016-09-15",
+        "declaration_date": "2016-08-15"
+      },
+      {
+        "ex_dividend_date": "2016-07-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-07-29",
+        "payment_date": "2016-08-15",
+        "declaration_date": "2016-07-15"
+      },
+      {
+        "ex_dividend_date": "2016-06-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-06-30",
+        "payment_date": "2016-07-15",
+        "declaration_date": "2016-06-15"
+      },
+      {
+        "ex_dividend_date": "2016-05-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-05-31",
+        "payment_date": "2016-06-15",
+        "declaration_date": "2016-05-16"
+      },
+      {
+        "ex_dividend_date": "2016-04-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-04-29",
+        "payment_date": "2016-05-16",
+        "declaration_date": "2016-04-15"
+      },
+      {
+        "ex_dividend_date": "2016-03-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-03-31",
+        "payment_date": "2016-04-15",
+        "declaration_date": "2016-03-15"
+      },
+      {
+        "ex_dividend_date": "2016-02-25 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-02-29",
+        "payment_date": "2016-03-15",
+        "declaration_date": "2016-02-16"
+      },
+      {
+        "ex_dividend_date": "2016-01-27 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2016-01-29",
+        "payment_date": "2016-02-16",
+        "declaration_date": "2016-01-15"
+      },
+      {
+        "ex_dividend_date": "2015-12-29 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2015-12-31",
+        "payment_date": "2016-01-15",
+        "declaration_date": "2015-12-15"
+      },
+      {
+        "ex_dividend_date": "2015-11-26 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2015-11-30",
+        "payment_date": "2015-12-15",
+        "declaration_date": "2015-11-16"
+      },
+      {
+        "ex_dividend_date": "2015-10-28 00:00:00",
+        "amount": 0.0495,
+        "currency": "CAD",
+        "record_date": "2015-10-30",
+        "payment_date": "2015-11-16",
+        "declaration_date": "2015-10-15"
+      }
+    ]
+  },
+  "detected_cuts": [
+    {
+      "cut_date": "2023-03",
+      "previous_monthly": 0.0495,
+      "new_monthly": 0.0248,
+      "cut_percentage": 50.0,
+      "previous_annual": 0.59,
+      "new_annual": 0.3
+    },
+    {
+      "cut_date": "2023-11",
+      "previous_monthly": 0.0248,
+      "new_monthly": 0.0,
+      "cut_percentage": 100.0,
+      "previous_annual": 0.3,
+      "new_annual": 0.0
+    }
+  ],
+  "cut_count": 2
+}

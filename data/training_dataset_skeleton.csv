@@ -1,0 +1,10 @@
+ticker,cut_date,sector,target_cut_occurred,ttm_distribution_pre_cut,avg_monthly_distribution,dividend_payment_count_ttm,current_price,current_yield,affo_payout_ratio,interest_coverage,debt_to_ebitda,self_funding_ratio,cash_runway_months,debt_to_assets,liquidity_risk_score
+HR-UN.TO,2020-05,Retail/Office,1,1.38,0.115,12,11.72,6.14,,,,,,,
+SOT-UN.TO,2023-11,Office,1,0.2365,0.0197,12,0.41,0.0,,,,,,,
+REI-UN.TO,2020-12,Retail,1,1.44,0.12,12,18.97,6.02,,,,,,,
+TNT-UN.TO,2023-03,Office,1,0.594,0.0495,12,9.23,4.98,,,,,,,
+TNT-UN.TO,2023-11,Office,1,0.396,0.033,12,9.23,4.98,,,,,,,
+AX-UN.TO,2018-11,Office,1,1.08,0.09,12,6.02,9.97,,,,,,,
+CAR-UN.TO,2025-10,Residential,0,3.0234,0.2326,13,39.3,7.69,,,,,,,
+SRU-UN.TO,2025-10,Retail,0,1.85,0.1542,12,26.78,6.91,,,,,,,
+DIR-UN.TO,2025-10,Industrial,0,0.7,0.0583,12,12.33,5.68,,,,,,,
