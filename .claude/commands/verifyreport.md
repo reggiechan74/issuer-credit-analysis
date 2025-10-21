@@ -1,11 +1,11 @@
 ---
-description: Verify credit report accuracy by comparing final report against source PDFs and extracted data
-tags: [validation, quality-assurance, credit-analysis]
+description: Verify Phase 5 report accuracy by comparing against extracted data (Phase 2), calculated metrics (Phase 3), and credit analysis (Phase 4)
+tags: [validation, quality-assurance, phase-5, template-verification]
 ---
 
 # Verify Credit Report Accuracy
 
-You are a credit analysis quality assurance expert tasked with verifying the accuracy of a generated credit opinion report by comparing it against the original source documents.
+You are a credit analysis quality assurance expert tasked with verifying that the **Phase 5 final credit opinion report** correctly displays all data from the extraction, calculation, and analysis phases.
 
 ## Command Arguments
 
@@ -15,227 +15,452 @@ You are a credit analysis quality assurance expert tasked with verifying the acc
 **Example Usage:**
 ```bash
 /verifyreport "Artis REIT"
-/verifyreport "Artis REIT" "2025-10-17_125408_Credit_Opinion_Artis_Real_Estate_Investment_Trust.md"
+/verifyreport "Artis REIT" "2025-10-20_213350_Credit_Opinion_Artis_Real_Estate_Investment_Trust.md"
 ```
 
-## Your Task
+## Validation Scope
 
-Perform a comprehensive validation of the credit opinion report by comparing it against all source data files in the analysis pipeline.
+**Purpose:** Ensure Phase 5 report accurately reflects:
+1. ✅ **Phase 2 extracted data** - Issuer-reported metrics correctly displayed
+2. ✅ **Phase 3 calculated metrics** - Calculations correctly displayed
+3. ✅ **Phase 4 credit analysis** - Narrative correctly incorporated
+4. ✅ **Template substitution** - No unreplaced placeholders
 
-### Step 1: Locate Files
+**NOT validating:** PDF extraction accuracy (that's Phase 1/2 validation, separate concern)
+
+---
+
+## Step 1: Locate Files
 
 Based on the issuer name provided, locate the following files:
 
-1. **Source PDFs** (original financial statements):
-   - Search workspace root for PDFs matching issuer name
+**Note:** Sanitize issuer name for folder structure (replace spaces with underscores).
 
-2. **Phase 1 Markdown** (converted PDFs):
-   - `./Issuer_Reports/{Issuer_Name}/temp/phase1_markdown/*.md`
+### Required Files
 
-3. **Phase 2 Extracted Data** (structured JSON):
+1. **Phase 2 Extracted Data** (structured JSON):
    - `./Issuer_Reports/{Issuer_Name}/temp/phase2_extracted_data.json`
 
-4. **Phase 3 Calculated Metrics** (quantitative metrics):
+2. **Phase 3 Calculated Metrics** (quantitative metrics):
    - `./Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json`
 
-5. **Phase 4 Credit Analysis** (qualitative assessment):
+3. **Phase 4 Credit Analysis** (qualitative assessment):
    - `./Issuer_Reports/{Issuer_Name}/temp/phase4_credit_analysis.md`
 
-6. **Phase 5 Final Report** (completed credit opinion):
+4. **Phase 5 Final Report** (completed credit opinion):
    - `./Issuer_Reports/{Issuer_Name}/reports/{report_filename}` OR
    - Most recent file in `./Issuer_Reports/{Issuer_Name}/reports/`
 
-**Note:** Sanitize issuer name for folder structure (replace spaces with underscores).
+**Token Budget:** Reading these 4 files uses ~38K tokens (well within limits)
 
-### Step 2: Extract Key Metrics from Each Source
+---
 
-Read each file and extract the following key metrics:
+## Step 2: Extract Key Metrics from Each Phase
 
-#### From Phase 1 Markdown (Original Financial Statements):
+### From Phase 2 Extracted Data (JSON)
+
+**Balance Sheet:**
 - Total Assets
 - Total Liabilities
 - Unitholders' Equity
-- Total Debt (Mortgages + Credit Facilities)
-- Revenue (Q2 and 6-month)
-- NOI (Q2 and 6-month)
-- Interest Expense (Q2 and 6-month)
-- Cash position
+- Total Debt
+- Cash and Equivalents
+- Common Units Outstanding
+- Diluted Units Outstanding
 
-#### From Phase 2 Extracted Data (JSON):
-- All balance sheet items
-- All income statement items
-- FFO/AFFO metrics
-- Portfolio metrics (properties, occupancy, GLA)
-- Debt metrics
+**Income Statement:**
+- Revenue (reporting period)
+- NOI (reporting period)
+- Interest Expense (reporting period)
+- Net Income
+- Cash Flow from Operations
 
-#### From Phase 3 Calculated Metrics (JSON):
-- Leverage ratios (Debt/Assets, Net Debt Ratio)
-- Coverage ratios (NOI/Interest)
-- REIT metrics (FFO, AFFO, payout ratios)
+**FFO/AFFO (Issuer-Reported):**
+- FFO total and per-unit
+- AFFO total and per-unit
+- ACFO total and per-unit (if reported)
+- Distributions per unit
+- FFO payout ratio (reported)
+- AFFO payout ratio (reported)
 
-#### From Phase 4 Credit Analysis (Markdown):
-- Credit rating assessment
-- Five-factor scorecard scores
-- Key strengths and challenges
-- Rating outlook
+**Portfolio Metrics:**
+- Total properties
+- Total GLA (square feet)
+- Occupancy rate
+- Occupancy including commitments
 
-#### From Phase 5 Final Report (Markdown):
-- All financial metrics presented in the report
-- Credit assessment and rating
-- Key observations and conclusions
+### From Phase 3 Calculated Metrics (JSON)
 
-### Step 3: Perform Validation Checks
+**Leverage Ratios:**
+- Debt/Assets ratio (%)
+- Net Debt ratio (%)
+- Gross Assets
 
-Create a comprehensive validation report with the following sections:
+**Coverage Ratios:**
+- NOI/Interest coverage
+- FFO coverage (reported per-unit)
+- AFFO coverage (reported per-unit)
+- ACFO coverage (calculated per-unit)
+- AFCF coverage (calculated per-unit)
 
-#### A. BALANCE SHEET VALIDATION
-Compare Phase 1 (original PDF) → Phase 2 (extracted) → Phase 5 (final report)
+**REIT Metrics (Calculated):**
+- FFO calculated total and per-unit
+- AFFO calculated total and per-unit
+- ACFO total and per-unit
+- AFCF total and per-unit
+- All payout ratios (calculated)
 
-| Item | Original PDF | Phase 2 Extracted | Final Report | Status |
-|------|--------------|-------------------|--------------|--------|
-| Total Assets | ... | ... | ... | ✅/❌ |
-| Total Debt | ... | ... | ... | ✅/❌ |
-| Unitholders' Equity | ... | ... | ... | ✅/❌ |
-| ... | ... | ... | ... | ... |
+**Per-Unit Values (Both Basic & Diluted):**
+- FFO per unit (basic and diluted)
+- AFFO per unit (basic and diluted)
+- ACFO per unit (basic and diluted)
+- AFCF per unit (basic and diluted)
 
-**Validation Rule:** All values must match exactly (tolerance: ±$1K for rounding)
+### From Phase 4 Credit Analysis (Markdown)
 
-#### B. INCOME STATEMENT VALIDATION
-Compare Phase 1 (original) → Phase 2 (extracted) → Phase 5 (final report)
+**Credit Assessment:**
+- Credit rating (e.g., Baa2/BBB)
+- Five-factor scorecard scores (F1-F5)
+- Overall scorecard rating
+- Key credit drivers (3-5 bullets)
+- Credit strengths (3-5 bullets)
+- Credit challenges (3-5 bullets)
+- Rating outlook (Positive/Stable/Negative)
+- Upgrade factors
+- Downgrade factors
 
-| Item | Original PDF | Phase 2 Extracted | Final Report | Status |
-|------|--------------|-------------------|--------------|--------|
-| Revenue (Q2) | ... | ... | ... | ✅/❌ |
-| NOI (Q2) | ... | ... | ... | ✅/❌ |
-| Interest Expense | ... | ... | ... | ✅/❌ |
-| ... | ... | ... | ... | ... |
+### From Phase 5 Final Report (Markdown)
 
-#### C. CALCULATED METRICS VALIDATION
-Compare Phase 3 (calculated) → Phase 5 (final report)
+**All metrics displayed in:**
+- Section 2.2 FFO/AFFO/ACFO/AFCF Summary
+- Section 2.5 Coverage Analysis
+- Section 3.1 Balance Sheet
+- Section 3.2 Income Statement
+- Section 3.3 Portfolio Metrics
+- Executive Summary
+- Credit Scorecard
 
-| Metric | Phase 3 Calculated | Final Report | Calculation Check | Status |
-|--------|-------------------|--------------|-------------------|--------|
-| Debt/Assets | ... | ... | Manual: Total Debt / Assets | ✅/❌ |
-| NOI/Interest Coverage | ... | ... | Manual: NOI / Interest | ✅/❌ |
-| FFO Payout Ratio | ... | ... | Manual: Dist / FFO per unit | ✅/❌ |
-| ... | ... | ... | ... | ... |
+---
 
-**Validation Rule:** Calculated metrics must be mathematically correct
+## Step 3: Perform Validation Checks
 
-#### D. QUALITATIVE ASSESSMENT VALIDATION
-Compare Phase 4 (analysis) → Phase 5 (final report)
+### A. PHASE 2 → PHASE 5: EXTRACTED DATA VALIDATION
 
-| Element | Phase 4 Analysis | Final Report | Consistency Check |
-|---------|------------------|--------------|-------------------|
-| Credit Rating | ... | ... | ✅/❌ Match / ❌ Mismatch |
-| Five-Factor Scores | ... | ... | ✅/❌ |
-| Key Strengths | ... | ... | ✅/❌ |
-| Key Challenges | ... | ... | ✅/❌ |
-| Rating Outlook | ... | ... | ✅/❌ |
+**Purpose:** Verify issuer-reported metrics are correctly displayed in final report.
 
-**Validation Rule:** Qualitative assessments should be consistent and not contradictory
+| Metric | Phase 2 Extracted | Phase 5 Report | Tolerance | Status |
+|--------|-------------------|----------------|-----------|--------|
+| **Balance Sheet** |
+| Total Assets | ... | ... | ±$1K | ✅/❌ |
+| Total Liabilities | ... | ... | ±$1K | ✅/❌ |
+| Unitholders' Equity | ... | ... | ±$1K | ✅/❌ |
+| Total Debt | ... | ... | ±$1K | ✅/❌ |
+| Cash & Equivalents | ... | ... | ±$1K | ✅/❌ |
+| Common Units Outstanding | ... | ... | Exact | ✅/❌ |
+| **Income Statement** |
+| Revenue | ... | ... | ±$1K | ✅/❌ |
+| NOI | ... | ... | ±$1K | ✅/❌ |
+| Interest Expense | ... | ... | ±$1K | ✅/❌ |
+| Net Income | ... | ... | ±$1K | ✅/❌ |
+| **FFO/AFFO (Reported)** |
+| FFO total | ... | ... | ±$1K | ✅/❌ |
+| FFO per unit | ... | ... | ±$0.0001 | ✅/❌ |
+| AFFO total | ... | ... | ±$1K | ✅/❌ |
+| AFFO per unit | ... | ... | ±$0.0001 | ✅/❌ |
+| Distributions per unit | ... | ... | ±$0.0001 | ✅/❌ |
+| FFO payout ratio | ... | ... | ±0.1% | ✅/❌ |
+| AFFO payout ratio | ... | ... | ±0.1% | ✅/❌ |
+| **Portfolio** |
+| Total properties | ... | ... | Exact | ✅/❌ |
+| Total GLA (sq ft) | ... | ... | ±1,000 | ✅/❌ |
+| Occupancy rate | ... | ... | ±0.1% | ✅/❌ |
 
-#### E. DATA INTEGRITY CHECKS
+**Validation Rule:** All Phase 2 values must appear correctly in Phase 5 (within tolerance)
 
-1. **Balance Sheet Equation:**
-   - Check: Assets = Liabilities + Equity
-   - Original PDF: [result]
-   - Phase 2 Extracted: [result]
-   - Final Report: [result]
-   - Status: ✅/❌
+### B. PHASE 3 → PHASE 5: CALCULATED METRICS VALIDATION
 
-2. **NOI Calculation:**
-   - Check: Revenue - Operating Expenses - Realty Taxes = NOI
-   - Original PDF: [result]
-   - Phase 2 Extracted: [result]
-   - Final Report: [result]
-   - Status: ✅/❌
+**Purpose:** Verify calculated metrics are correctly displayed in final report.
 
-3. **Debt Aggregation:**
-   - Check: Mortgages (current + non-current) + Credit Facilities = Total Debt
-   - Original PDF: [result]
-   - Phase 3 Calculated: [result]
-   - Final Report: [result]
-   - Status: ✅/❌
+| Metric | Phase 3 Calculated | Phase 5 Report | Manual Verification | Status |
+|--------|-------------------|----------------|---------------------|--------|
+| **Leverage Ratios** |
+| Debt/Assets | ... | ... | Total Debt / Total Assets | ✅/❌ |
+| Net Debt Ratio | ... | ... | (Debt - Cash) / Assets | ✅/❌ |
+| **Coverage Ratios** |
+| NOI/Interest | ... | ... | NOI / Interest Expense | ✅/❌ |
+| FFO Coverage (reported) | ... | ... | FFO per unit / Dist per unit | ✅/❌ |
+| AFFO Coverage (reported) | ... | ... | AFFO per unit / Dist per unit | ✅/❌ |
+| ACFO Coverage (calculated) | ... | ... | ACFO per unit / Dist per unit | ✅/❌ |
+| AFCF Coverage (calculated) | ... | ... | AFCF per unit / Dist per unit | ✅/❌ |
+| **REIT Metrics (Calculated)** |
+| FFO calculated total | ... | ... | Check Phase 3 reconciliation | ✅/❌ |
+| FFO calculated per-unit | ... | ... | FFO / Common Units | ✅/❌ |
+| AFFO calculated total | ... | ... | Check Phase 3 reconciliation | ✅/❌ |
+| AFFO calculated per-unit | ... | ... | AFFO / Common Units | ✅/❌ |
+| ACFO total | ... | ... | Check Phase 3 calculation | ✅/❌ |
+| ACFO per-unit | ... | ... | ACFO / Common Units | ✅/❌ |
+| AFCF total | ... | ... | ACFO + Net CFI | ✅/❌ |
+| AFCF per-unit | ... | ... | AFCF / Common Units | ✅/❌ |
+| **Payout Ratios (Calculated)** |
+| FFO payout (calculated) | ... | ... | (Dist / FFO per unit) × 100 | ✅/❌ |
+| AFFO payout (calculated) | ... | ... | (Dist / AFFO per unit) × 100 | ✅/❌ |
+| ACFO payout (calculated) | ... | ... | (Dist / ACFO per unit) × 100 | ✅/❌ |
+| AFCF payout (calculated) | ... | ... | (Dist / AFCF per unit) × 100 | ✅/❌ |
 
-4. **Coverage Ratio:**
-   - Check: NOI / Interest Expense
-   - Phase 3 Calculated: [result]
-   - Manual Calculation: [result]
-   - Final Report: [result]
-   - Status: ✅/❌
+**Validation Rules:**
+1. All Phase 3 calculations must appear correctly in Phase 5
+2. Coverage ratios must use **per-unit basis** (metric per unit / distributions per unit)
+3. Payout ratios must use **per-unit basis** ((distributions per unit / metric per unit) × 100)
+4. Tolerance: ±0.01 for ratios, ±0.1% for percentages, ±$1K for totals
 
-### Step 4: Generate Validation Summary
+### C. PHASE 4 → PHASE 5: NARRATIVE CONSISTENCY VALIDATION
 
-Provide an executive summary with:
+**Purpose:** Verify Phase 4 credit analysis is correctly incorporated into Phase 5.
 
-#### Overall Validation Score
+| Element | Phase 4 Analysis | Phase 5 Report | Consistency Check |
+|---------|------------------|----------------|-------------------|
+| **Credit Assessment** |
+| Credit Rating | ... | ... | ✅ Match / ❌ Mismatch |
+| Five-Factor Scores | F1: ..., F2: ..., F3: ..., F4: ..., F5: ... | ... | ✅/❌ All scores match |
+| Overall Scorecard Rating | ... | ... | ✅/❌ |
+| **Key Drivers & Assessment** |
+| Key Credit Drivers | [list from Phase 4] | [list from Phase 5] | ✅/❌ Consistent |
+| Credit Strengths | [list from Phase 4] | [list from Phase 5] | ✅/❌ Consistent |
+| Credit Challenges | [list from Phase 4] | [list from Phase 5] | ✅/❌ Consistent |
+| Rating Outlook | Positive/Stable/Negative | ... | ✅/❌ |
+| Upgrade Factors | [list from Phase 4] | [list from Phase 5] | ✅/❌ |
+| Downgrade Factors | [list from Phase 4] | [list from Phase 5] | ✅/❌ |
+
+**Validation Rules:**
+1. Phase 4 narrative must be correctly incorporated (not contradictory)
+2. Credit rating and scores must match exactly
+3. Key drivers/strengths/challenges should be substantively similar (allow for formatting)
+4. Outlook must match
+
+### D. TEMPLATE PLACEHOLDER VALIDATION
+
+**Purpose:** Detect any unreplaced placeholders or template errors.
+
+**Search Phase 5 report for:**
+
+1. **Unreplaced Placeholders:**
+   - Pattern: `{{.*}}` (any text between double braces)
+   - Example errors: `{{FFO_CUSHION}}`, `{{PLACEHOLDER}}`, `{{TEST}}`
+
+2. **Data Availability Issues:**
+   - "Not available" where Phase 2/3 data exists
+   - Empty table cells where values should be present
+   - "N/A" used incorrectly
+
+3. **Formatting Errors:**
+   - "0.0%" instead of proper percentage
+   - "None" or "null" displayed literally
+   - Incorrect number formatting (e.g., "1234567" instead of "1,234,567")
+
+**Expected Result:** Zero unreplaced placeholders, all data properly displayed
+
+---
+
+## Step 4: Generate Validation Report
+
+Provide a comprehensive validation report with:
+
+### Validation Summary
+
+```markdown
+## Validation Summary
+
+✅ **PASSED:** XX/XX checks (XX.X%)
+❌ **FAILED:** X/XX checks
+⚠️  **WARNINGS:** X issues requiring attention
+
+**Overall Status:** PASS / FAIL / PASS WITH WARNINGS
 ```
-✅ PASSED: XX/XX checks (XX.X%)
-❌ FAILED: X/XX checks
-⚠️  WARNINGS: X issues requiring attention
+
+### Critical Errors (if any)
+
+List any errors that materially affect the credit opinion:
+
+```markdown
+## Critical Errors: X
+
+1. ❌ **[Error Type]:** [Description]
+   - **Phase 3:** [Value]
+   - **Phase 5:** [Value]
+   - **Location:** Section X.X, line XXX
+   - **Impact:** Material misstatement affecting [credit assessment/calculations]
+
+2. ❌ **Unreplaced Placeholder:** {{PLACEHOLDER_NAME}}
+   - **Location:** Section X.X, line XXX
+   - **Impact:** Template substitution failure
 ```
 
-#### Error Classification
-- **Critical Errors (❌):** Material misstatements affecting credit assessment
-- **Warnings (⚠️):** Minor discrepancies or missing context
-- **Pass (✅):** Accurate data extraction and reporting
+### Warnings (if any)
 
-#### Key Findings
-1. List any critical errors found (with line references)
-2. List any warnings or discrepancies
-3. Confirm accuracy of credit rating and key metrics
-4. Note any missing data or incomplete sections
+List minor discrepancies or areas requiring review:
 
-#### Recommendations
-- For any errors found, provide specific corrections
-- Suggest improvements to data extraction or reporting process
-- Flag any areas requiring manual review
+```markdown
+## Warnings: X
 
-### Step 5: Output Format
+1. ⚠️  **[Warning Type]:** [Description]
+   - **Phase 3:** [Value]
+   - **Phase 5:** [Value]
+   - **Location:** Section X.X, line XXX
+   - **Impact:** Minor rounding difference / Display formatting issue
 
-Generate a markdown report with:
+2. ⚠️  **Missing Data:** [Field] shows "Not available" but Phase 3 has value
+   - **Phase 3:** [Value]
+   - **Phase 5:** "Not available"
+   - **Location:** Section X.X
+```
+
+### Validated Items
+
+```markdown
+## Validated Items: XX
+
+### Phase 2 → Phase 5 Validation
+✅ Balance Sheet: X/X items correct
+✅ Income Statement: X/X items correct
+✅ FFO/AFFO (Reported): X/X items correct
+✅ Portfolio Metrics: X/X items correct
+
+### Phase 3 → Phase 5 Validation
+✅ Leverage Ratios: X/X items correct
+✅ Coverage Ratios: X/X items correct
+✅ REIT Metrics (Calculated): X/X items correct
+✅ Payout Ratios: X/X items correct
+
+### Phase 4 → Phase 5 Validation
+✅ Credit Rating: Matches
+✅ Five-Factor Scores: All match
+✅ Narrative Consistency: Consistent
+✅ Outlook: Matches
+
+### Template Validation
+✅ Placeholders: All replaced correctly
+✅ Data Availability: All populated
+✅ Formatting: Correct
+```
+
+---
+
+## Step 5: Detailed Validation Tables
+
+Include the complete comparison tables from Step 3 (A, B, C, D) with all values filled in.
+
+---
+
+## Step 6: Recommendations
+
+Based on validation results, provide specific recommendations:
+
+### If Errors Found:
+
+```markdown
+## Recommendations
+
+### Critical Errors - Immediate Action Required
+
+1. **Fix [Error Type]:**
+   - File: `scripts/generate_final_report.py`
+   - Line: [approximate location]
+   - Change: [specific fix]
+   - Reason: [explanation]
+
+2. **Remove Orphaned Placeholder:**
+   - File: `templates/credit_opinion_template.md`
+   - Line: [approximate location]
+   - Action: Remove `{{PLACEHOLDER_NAME}}`
+
+### Warnings - Review Recommended
+
+1. **Review Rounding Logic:**
+   - Minor rounding discrepancy in [metric]
+   - Consider adjusting precision in calculation
+
+2. **Populate Missing Field:**
+   - [Field] shows "Not available" but data exists in Phase 3
+   - Update placeholder population logic
+```
+
+### If All Passed:
+
+```markdown
+## Recommendations
+
+✅ **All validations passed** - Report is ready for delivery
+
+**Quality Checks Completed:**
+- [X] All Phase 2 extracted data correctly displayed
+- [X] All Phase 3 calculated metrics accurate
+- [X] Phase 4 narrative properly incorporated
+- [X] No template substitution errors
+
+**Next Steps:**
+- Report can be delivered to stakeholders
+- Consider archiving validation results with report
+```
+
+---
+
+## Output Format Template
 
 ```markdown
 # Credit Report Validation: {Issuer Name}
 
-**Report Date:** {date}
+**Report Validated:** {Phase 5 report filename}
+**Validation Date:** {current date}
 **Validator:** Claude Code /verifyreport command
-**Files Validated:** {count} source files
+**Files Analyzed:** 4 (Phase 2, 3, 4, 5)
 
 ---
 
 ## Validation Summary
 
-Overall Score: ✅ XX/XX checks passed (XX.X%)
+✅ **PASSED:** XX/XX checks (XX.X%)
+❌ **FAILED:** X/XX checks
+⚠️  **WARNINGS:** X issues
 
-### Critical Errors: X
-[List any critical errors]
+**Overall Status:** [PASS / FAIL / PASS WITH WARNINGS]
 
-### Warnings: X
-[List any warnings]
+---
 
-### Validated Items: XX
-[Summary of validated metrics]
+## Critical Errors: X
+
+[List errors with details and locations]
+
+---
+
+## Warnings: X
+
+[List warnings with details]
+
+---
+
+## Validated Items: XX
+
+[Summary of all validated metrics]
 
 ---
 
 ## Detailed Validation Results
 
-### Balance Sheet Validation
-[Comparison table]
+### A. Phase 2 → Phase 5: Extracted Data Validation
 
-### Income Statement Validation
-[Comparison table]
+[Complete comparison table]
 
-### Calculated Metrics Validation
-[Comparison table]
+### B. Phase 3 → Phase 5: Calculated Metrics Validation
 
-### Qualitative Assessment Validation
-[Comparison table]
+[Complete comparison table]
 
-### Data Integrity Checks
-[Detailed check results]
+### C. Phase 4 → Phase 5: Narrative Consistency Validation
+
+[Complete comparison table]
+
+### D. Template Placeholder Validation
+
+[List of checks performed]
 
 ---
 
@@ -245,34 +470,75 @@ Overall Score: ✅ XX/XX checks passed (XX.X%)
 
 ---
 
-**Validation Complete**
+**Validation Complete** ✓
 ```
-
-## Important Guidelines
-
-1. **Precision:** Compare numerical values with appropriate tolerance (±$1K for thousands)
-2. **Thoroughness:** Check ALL key metrics, not just a sample
-3. **Evidence-Based:** Reference specific line numbers and file locations for discrepancies
-4. **Actionable:** Provide clear next steps for any errors found
-5. **Professional:** Use credit analysis terminology and formatting standards
-
-## Success Criteria
-
-A successful validation report should:
-- ✅ Validate 100% accuracy of balance sheet data
-- ✅ Confirm all calculations are mathematically correct
-- ✅ Verify consistency between Phase 4 analysis and Phase 5 final report
-- ✅ Identify any material misstatements or omissions
-- ✅ Provide confidence in the credit opinion's reliability
-
-## Error Handling
-
-If any files are missing or inaccessible:
-1. List the missing file and its expected location
-2. Note which validations cannot be performed
-3. Provide a partial validation with available data
-4. Flag the incomplete validation in the summary
 
 ---
 
-**Note:** This validation is essential for quality assurance before presenting credit analysis to stakeholders.
+## Important Guidelines
+
+1. **Precision:**
+   - Thousands (000s): ±$1K tolerance
+   - Per-unit values: ±$0.0001 tolerance
+   - Percentages: ±0.1% tolerance
+   - Ratios: ±0.01 tolerance
+   - Counts (properties, units): Exact match required
+
+2. **Thoroughness:**
+   - Check ALL metrics in sections 2.2, 2.5, 3.1, 3.2, 3.3
+   - Don't skip any Phase 3 calculated values
+   - Verify both reported AND calculated metrics
+
+3. **Evidence-Based:**
+   - Cite specific section and line numbers for errors
+   - Show both Phase 3 and Phase 5 values
+   - Calculate manual verification for ratios
+
+4. **Actionable:**
+   - Provide file names and approximate line numbers for fixes
+   - Suggest specific code changes if errors found
+   - Prioritize critical errors vs. warnings
+
+5. **Professional:**
+   - Use credit analysis terminology
+   - Format numbers consistently (thousands separator, decimals)
+   - Clear pass/fail status for each check
+
+---
+
+## Success Criteria
+
+A successful validation should:
+
+- ✅ Validate 100% of Phase 2 extracted data matches Phase 5 display
+- ✅ Confirm all Phase 3 calculations are correctly displayed
+- ✅ Verify Phase 4 narrative consistency with Phase 5 report
+- ✅ Detect any unreplaced placeholders or template errors
+- ✅ Identify any material misstatements
+- ✅ Provide actionable recommendations for any issues found
+- ✅ Give confidence that the report is ready for stakeholder delivery
+
+---
+
+## Error Handling
+
+**If files are missing:**
+1. Report which file is missing and expected location
+2. Note which validations cannot be performed
+3. Provide partial validation with available files
+4. Mark validation as **INCOMPLETE** in summary
+
+**If Phase 3/4 data is incomplete:**
+1. Note which metrics are missing in source data
+2. Mark those checks as **SKIPPED** (not FAILED)
+3. Validate what data is available
+4. Flag incomplete analysis in summary
+
+**If Phase 5 report has obvious errors:**
+1. Stop after finding 10+ critical errors (likely systemic issue)
+2. Report pattern of errors found
+3. Recommend regenerating report before full validation
+
+---
+
+**Note:** This validation ensures Phase 5 template substitution accuracy and is essential for quality assurance before delivering credit reports to stakeholders.
