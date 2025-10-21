@@ -1182,6 +1182,13 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
 
     # Calculate coverage ratios using per-unit values
     ffo_cov_rep = calculate_coverage_ratio(ffo_per_unit_rep, distributions)
+
+    # Format variance percentages with None handling
+    ffo_var_pct = reit_metrics.get('validation', {}).get('ffo_variance_percent')
+    ffo_var_formatted = f"{ffo_var_pct:.1f}%" if ffo_var_pct is not None else "N/A (not reported)"
+
+    affo_var_pct = reit_metrics.get('validation', {}).get('affo_variance_percent')
+    affo_var_formatted = f"{affo_var_pct:.1f}%" if affo_var_pct is not None else "N/A (not reported)"
     affo_cov_rep = calculate_coverage_ratio(affo_per_unit_rep, distributions)
     acfo_cov_rep = calculate_coverage_ratio(acfo_per_unit_rep, distributions) if acfo_per_unit_rep else None
 
@@ -1669,18 +1676,18 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'DILUTION_ANALYSIS': dilution_analysis.get('credit_assessment', 'Dilution detail not extracted in Phase 2. Enable comprehensive extraction for detailed dilution analysis.') if dilution_analysis else 'Dilution detail not extracted in Phase 2.',
 
         # FFO/AFFO Validation Placeholders
-        'FFO_REPORTED': f"{reit_metrics.get('ffo', 0):,.0f}",
+        'FFO_REPORTED': f"{reit_metrics.get('ffo', 0):,.0f}" if reit_metrics.get('ffo') else 'Not reported',
         'FFO_CALCULATED': f"{reit_metrics.get('ffo_calculated', 0):,.0f}",
-        'FFO_VARIANCE_AMOUNT': f"{reit_metrics.get('validation', {}).get('ffo_variance_amount', 0):,.0f}",
-        'FFO_VARIANCE_PERCENT': f"{reit_metrics.get('validation', {}).get('ffo_variance_percent', 0):.1f}",
+        'FFO_VARIANCE_AMOUNT': f"{reit_metrics.get('validation', {}).get('ffo_variance_amount', 0):,.0f}" if reit_metrics.get('validation', {}).get('ffo_variance_amount') is not None else 'N/A',
+        'FFO_VARIANCE_PERCENT': f"{reit_metrics.get('validation', {}).get('ffo_variance_percent', 0):.1f}" if reit_metrics.get('validation', {}).get('ffo_variance_percent') is not None else 'N/A',
         'FFO_VALIDATION_STATUS': '✓ Within threshold' if reit_metrics.get('validation', {}).get('ffo_within_threshold') else '⚠️ Exceeds threshold - review methodology',
         'FFO_VALIDATION_SUMMARY': reit_metrics.get('validation', {}).get('validation_summary', 'Validation not available'),
-        'AFFO_REPORTED_STATUS': f"Issuer reported AFFO: {reit_metrics.get('affo', 0):,.0f} (${reit_metrics.get('affo_per_unit', 0):.2f}/unit)",
-        'AFFO_STATUS': f"Calculated AFFO: {reit_metrics.get('affo_calculated', 0):,.0f} vs. Reported: {reit_metrics.get('affo', 0):,.0f}",
+        'AFFO_REPORTED_STATUS': f"Issuer reported AFFO: {reit_metrics.get('affo', 0):,.0f} (${reit_metrics.get('affo_per_unit', 0):.2f}/unit)" if reit_metrics.get('affo') else 'AFFO not reported by issuer',
+        'AFFO_STATUS': f"Calculated AFFO: {reit_metrics.get('affo_calculated', 0):,.0f} vs. Reported: {'Not reported' if not reit_metrics.get('affo') else f'{reit_metrics.get('affo', 0):,.0f}'}",
         'FFO_ADJUSTMENTS_AVAILABLE': str(reit_metrics.get('ffo_calculation_detail', {}).get('available_adjustments', 0)),
         'AFFO_ADJUSTMENTS_AVAILABLE': str(reit_metrics.get('affo_calculation_detail', {}).get('available_adjustments', 0)),
         'FFO_AFFO_DATA_QUALITY': reit_metrics.get('ffo_calculation_detail', {}).get('data_quality', 'Unknown').upper(),
-        'FFO_AFFO_OBSERVATIONS': f"FFO variance: {reit_metrics.get('validation', {}).get('ffo_variance_percent', 0):.1f}%. AFFO variance: {reit_metrics.get('validation', {}).get('affo_variance_percent', 0):.1f}%.",
+        'FFO_AFFO_OBSERVATIONS': f"FFO variance: {ffo_var_formatted}. AFFO variance: {affo_var_formatted}.",
 
         # Distribution Coverage Placeholders
         'FFO_COVERAGE': f"{(1 / (ffo_payout / 100) if ffo_payout > 0 else 0):.2f}",
@@ -1704,7 +1711,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'CFO_TO_ACFO_PERCENT': 'Not available',
         'CFO_TO_ACFO_ADJUSTMENTS': 'Not available - requires ACFO components extraction',
         'CFO_ACFO_REDUCTION_ASSESSMENT': 'Not calculated',
-        'FFO_AFFO_REDUCTION_ASSESSMENT': f"{'High' if (ffo - affo) / ffo > 0.3 else 'Moderate'} reduction from FFO to AFFO",
+        'FFO_AFFO_REDUCTION_ASSESSMENT': f"{'High' if ffo != 0 and (ffo - affo) / ffo > 0.3 else 'Moderate' if ffo != 0 else 'Not available'} reduction from FFO to AFFO" if ffo != 0 else 'Not available - FFO not reported',
         'AFFO_ACFO_GAP': 'Not available',
         'AFFO_ACFO_GAP_PERCENT': 'Not available',
         # 'AFFO_ACFO_GAP_ANALYSIS' is set earlier at line 1315 with calculated value - don't override here
