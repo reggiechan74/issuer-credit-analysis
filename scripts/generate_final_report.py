@@ -1711,7 +1711,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'CFO_TO_ACFO_PERCENT': 'Not available',
         'CFO_TO_ACFO_ADJUSTMENTS': 'Not available - requires ACFO components extraction',
         'CFO_ACFO_REDUCTION_ASSESSMENT': 'Not calculated',
-        'FFO_AFFO_REDUCTION_ASSESSMENT': f"{'High' if (ffo - affo) / ffo > 0.3 else 'Moderate'} reduction from FFO to AFFO",
+        'FFO_AFFO_REDUCTION_ASSESSMENT': f"{'High' if ffo != 0 and (ffo - affo) / ffo > 0.3 else 'Moderate' if ffo != 0 else 'Not available'} reduction from FFO to AFFO" if ffo != 0 else 'Not available - FFO not reported',
         'AFFO_ACFO_GAP': 'Not available',
         'AFFO_ACFO_GAP_PERCENT': 'Not available',
         # 'AFFO_ACFO_GAP_ANALYSIS' is set earlier at line 1315 with calculated value - don't override here
