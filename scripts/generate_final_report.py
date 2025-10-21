@@ -877,6 +877,99 @@ def generate_top_adjustments_list(adjustments_dict, top_n=5, clean_names=True):
     return '\n'.join(lines)
 
 
+def parse_scenario_analysis(scenario_text):
+    """
+    Parse scenario analysis section to extract individual scenarios
+
+    Args:
+        scenario_text (str): Full scenario analysis section from Phase 4
+
+    Returns:
+        dict: Parsed scenarios with keys for each placeholder
+
+    Example structure:
+        {
+            'BASE_ASSUMPTIONS': '...',
+            'BASE_METRICS': '...',
+            'BASE_RATING_IMPACT': '...',
+            'BASE_LIKELIHOOD': '...',
+            ...
+            'DOWNGRADE_TRIGGERS': '...'
+        }
+    """
+    if not scenario_text or scenario_text == 'Not available':
+        return {
+            'BASE_ASSUMPTIONS': 'Not available',
+            'BASE_METRICS': 'Not available',
+            'BASE_RATING_IMPACT': 'Not available',
+            'BASE_LIKELIHOOD': 'Not available',
+            'UPSIDE_ASSUMPTIONS': 'Not available',
+            'UPSIDE_METRICS': 'Not available',
+            'UPSIDE_RATING_IMPACT': 'Not available',
+            'UPSIDE_LIKELIHOOD': 'Not available',
+            'DOWNSIDE_ASSUMPTIONS': 'Not available',
+            'DOWNSIDE_METRICS': 'Not available',
+            'DOWNSIDE_RATING_IMPACT': 'Not available',
+            'DOWNSIDE_LIKELIHOOD': 'Not available',
+            'STRESS_ASSUMPTIONS': 'Not available',
+            'STRESS_METRICS': 'Not available',
+            'STRESS_RATING_IMPACT': 'Not available',
+            'STRESS_LIKELIHOOD': 'Not available',
+            'DOWNGRADE_TRIGGERS': 'Not available',
+        }
+
+    result = {}
+
+    # Define scenario patterns to search for
+    scenarios = [
+        ('BASE', r'###\s+Base Case[^\n]*\n(.*?)(?=###|\Z)'),
+        ('UPSIDE', r'###\s+Upside[^\n]*\n(.*?)(?=###|\Z)'),
+        ('DOWNSIDE', r'###\s+Downside[^\n]*\n(.*?)(?=###|\Z)'),
+        ('STRESS', r'###\s+(?:Stress|Severe Stress)[^\n]*\n(.*?)(?=###|\Z)'),
+    ]
+
+    for prefix, pattern in scenarios:
+        match = re.search(pattern, scenario_text, re.DOTALL | re.IGNORECASE)
+        if match:
+            full_match = match.group(0)  # Full match including header
+            scenario_content = match.group(1)  # Just the content
+
+            # Extract Assumptions
+            assumptions_match = re.search(r'\*\*Assumptions:\*\*\s*\n(.*?)(?=\*\*Pro Forma|\*\*Rating|\Z)', scenario_content, re.DOTALL)
+            result[f'{prefix}_ASSUMPTIONS'] = assumptions_match.group(1).strip() if assumptions_match else 'Not available'
+
+            # Extract Pro Forma Metrics
+            metrics_match = re.search(r'\*\*Pro Forma Metrics[^\n]*:\*\*\s*\n(.*?)(?=\*\*Rating Impact|\*\*Key Monitoring|\*\*Upgrade|\*\*Downgrade|\*\*Mitigation|\*\*Crisis|\*\*Downward|\*\*Recovery|\*\*Probability|\Z)', scenario_content, re.DOTALL)
+            result[f'{prefix}_METRICS'] = metrics_match.group(1).strip() if metrics_match else 'Not available'
+
+            # Extract Rating Impact
+            rating_match = re.search(r'\*\*Rating Impact:\*\*\s*([^\n]+)', scenario_content)
+            result[f'{prefix}_RATING_IMPACT'] = rating_match.group(1).strip() if rating_match else 'Not available'
+
+            # Extract Likelihood/Probability
+            likelihood_match = re.search(r'\*\*Probability Assessment:\*\*\s*([^\n]+)', scenario_content)
+            if likelihood_match:
+                result[f'{prefix}_LIKELIHOOD'] = likelihood_match.group(1).strip()
+            else:
+                # Try to extract from header (e.g., "### Base Case (50-60% probability)")
+                header_match = re.search(r'###[^\(]*\((\d+[-%]\d*%?)\s+probability\)', full_match, re.IGNORECASE)
+                result[f'{prefix}_LIKELIHOOD'] = header_match.group(1) if header_match else 'Not available'
+        else:
+            result[f'{prefix}_ASSUMPTIONS'] = 'Not available'
+            result[f'{prefix}_METRICS'] = 'Not available'
+            result[f'{prefix}_RATING_IMPACT'] = 'Not available'
+            result[f'{prefix}_LIKELIHOOD'] = 'Not available'
+
+    # Extract Downgrade Triggers table (more robust pattern)
+    triggers_match = re.search(r'###\s+Downgrade Trigger Summary\s*\n+(.*?)(?:\n###|\n---|\n\n##|\Z)', scenario_text, re.DOTALL | re.IGNORECASE)
+    if triggers_match:
+        result['DOWNGRADE_TRIGGERS'] = triggers_match.group(1).strip()
+    else:
+        result['DOWNGRADE_TRIGGERS'] = 'Not available'
+
+    return result
+
+
 def generate_final_report(metrics, analysis_sections, template, phase2_data=None):
     """
     Generate final report by combining metrics and analysis with template
@@ -1158,6 +1251,10 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     social_analysis = get_section(analysis_sections, 'Social Factors', 'SOCIAL')
     governance_analysis = get_section(analysis_sections, 'Governance Factors', 'GOVERNANCE')
     scenario_analysis = get_section(analysis_sections, 'Scenario Analysis and Stress Testing', 'SCENARIO ANALYSIS', 'Stress Testing')
+
+    # Parse scenario analysis into individual components (Issue #28)
+    parsed_scenarios = parse_scenario_analysis(scenario_analysis)
+
     debt_structure = get_section(analysis_sections, 'Debt Structure', 'Structural Considerations', 'STRUCTURAL CONSIDERATIONS')
     collateral_analysis = get_section(analysis_sections, 'Security and Collateral', 'COLLATERAL')
     perpetual_securities = get_section(analysis_sections, 'Perpetual Securities', 'PERPETUAL SECURITIES')
@@ -1553,24 +1650,24 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'G_CREDIT_IMPACT': 'Neutral',
         'ESG_OVERALL': 'ESG factors are assessed as having neutral-to-low credit impact.',
 
-        # Scenario analysis placeholders
-        'BASE_ASSUMPTIONS': 'Not available',
-        'BASE_METRICS': 'Not available',
-        'BASE_RATING_IMPACT': 'Not available',
-        'BASE_LIKELIHOOD': 'Not available',
-        'UPSIDE_ASSUMPTIONS': 'Not available',
-        'UPSIDE_METRICS': 'Not available',
-        'UPSIDE_RATING_IMPACT': 'Not available',
-        'UPSIDE_LIKELIHOOD': 'Not available',
-        'DOWNSIDE_ASSUMPTIONS': 'Not available',
-        'DOWNSIDE_METRICS': 'Not available',
-        'DOWNSIDE_RATING_IMPACT': 'Not available',
-        'DOWNSIDE_LIKELIHOOD': 'Not available',
-        'STRESS_ASSUMPTIONS': 'Not available',
-        'STRESS_METRICS': 'Not available',
-        'STRESS_RATING_IMPACT': 'Not available',
-        'STRESS_LIKELIHOOD': 'Not available',
-        'DOWNGRADE_TRIGGERS': 'Not available',
+        # Scenario analysis placeholders (Issue #28 - parsed from Phase 4)
+        'BASE_ASSUMPTIONS': parsed_scenarios.get('BASE_ASSUMPTIONS', 'Not available'),
+        'BASE_METRICS': parsed_scenarios.get('BASE_METRICS', 'Not available'),
+        'BASE_RATING_IMPACT': parsed_scenarios.get('BASE_RATING_IMPACT', 'Not available'),
+        'BASE_LIKELIHOOD': parsed_scenarios.get('BASE_LIKELIHOOD', 'Not available'),
+        'UPSIDE_ASSUMPTIONS': parsed_scenarios.get('UPSIDE_ASSUMPTIONS', 'Not available'),
+        'UPSIDE_METRICS': parsed_scenarios.get('UPSIDE_METRICS', 'Not available'),
+        'UPSIDE_RATING_IMPACT': parsed_scenarios.get('UPSIDE_RATING_IMPACT', 'Not available'),
+        'UPSIDE_LIKELIHOOD': parsed_scenarios.get('UPSIDE_LIKELIHOOD', 'Not available'),
+        'DOWNSIDE_ASSUMPTIONS': parsed_scenarios.get('DOWNSIDE_ASSUMPTIONS', 'Not available'),
+        'DOWNSIDE_METRICS': parsed_scenarios.get('DOWNSIDE_METRICS', 'Not available'),
+        'DOWNSIDE_RATING_IMPACT': parsed_scenarios.get('DOWNSIDE_RATING_IMPACT', 'Not available'),
+        'DOWNSIDE_LIKELIHOOD': parsed_scenarios.get('DOWNSIDE_LIKELIHOOD', 'Not available'),
+        'STRESS_ASSUMPTIONS': parsed_scenarios.get('STRESS_ASSUMPTIONS', 'Not available'),
+        'STRESS_METRICS': parsed_scenarios.get('STRESS_METRICS', 'Not available'),
+        'STRESS_RATING_IMPACT': parsed_scenarios.get('STRESS_RATING_IMPACT', 'Not available'),
+        'STRESS_LIKELIHOOD': parsed_scenarios.get('STRESS_LIKELIHOOD', 'Not available'),
+        'DOWNGRADE_TRIGGERS': parsed_scenarios.get('DOWNGRADE_TRIGGERS', 'Not available'),
         'DELEVERAGING_SCENARIOS': 'Not available',
 
         # AFCF Metrics (v1.0.6) - Section 2.7
