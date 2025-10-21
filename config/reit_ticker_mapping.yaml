@@ -1,0 +1,283 @@
+# Canadian REIT Ticker Mapping
+# Maps issuer names to TSX ticker symbols for OpenBB data collection
+#
+# Usage:
+#   import yaml
+#   with open('config/reit_ticker_mapping.yaml') as f:
+#       tickers = yaml.safe_load(f)
+#
+# Version: 1.0.0
+# Last Updated: 2025-10-21
+
+# REITs with Documented Distribution Cuts (2015-2025)
+distribution_cuts:
+  # 2017-2018 Oil Crisis Period
+  - issuer_name: "Cominar REIT"
+    ticker: "CUF-UN.TO"
+    cut_date: "2017-08"
+    cut_percentage: 22
+    sector: "Diversified"
+    status: "Privatized 2019"
+
+  - issuer_name: "Boardwalk REIT"
+    ticker: "BEI-UN.TO"
+    cut_date: "2017-11"
+    cut_percentage: 56
+    sector: "Residential"
+    status: "Active"
+
+  - issuer_name: "Artis REIT"
+    ticker: "AX-UN.TO"
+    cut_date: "2018-11"
+    cut_percentage: 50
+    sector: "Office"
+    status: "Active"
+    note: "Additional cuts in 2020+"
+
+  # 2020-2021 COVID-19 Pandemic Period
+  - issuer_name: "Pro REIT"
+    ticker: "PRV-UN.TO"
+    cut_date: "2020-04"
+    cut_percentage: 29
+    sector: "Retail"
+    status: "Active"
+
+  - issuer_name: "H&R REIT"
+    ticker: "HR-UN.TO"
+    cut_date: "2020-05"
+    cut_percentage: 50
+    sector: "Retail/Office"
+    status: "Active"
+    data_quality: 5  # Excellent pre-cut data
+
+  - issuer_name: "BTB REIT"
+    ticker: "BTB-UN.TO"
+    cut_date: "2020-05"
+    cut_percentage: 29
+    sector: "Diversified"
+    status: "Active"
+
+  - issuer_name: "RioCan REIT"
+    ticker: "REI-UN.TO"
+    cut_date: "2020-12"
+    cut_percentage: 33
+    sector: "Retail"
+    status: "Active"
+    data_quality: 4  # Good pre-cut data
+
+  - issuer_name: "Morguard REIT"
+    ticker: "MRT-UN.TO"
+    cut_date: "2021-02"
+    cut_percentage: 50
+    sector: "Retail/Office"
+    status: "Active"
+
+  - issuer_name: "First Capital REIT"
+    ticker: "FCR-UN.TO"
+    cut_date: "2021-01"
+    cut_percentage: 50
+    sector: "Retail"
+    status: "Active"
+    note: "Distribution restored in 2024"
+
+  # 2023-2024 Office Sector Crisis Period
+  - issuer_name: "True North Commercial REIT"
+    ticker: "TNT-UN.TO"
+    cut_date: "2023-03"  # First cut
+    cut_percentage: 50
+    sector: "Office"
+    status: "Active"
+    data_quality: 4  # Two-stage cuts (March + November 2023)
+    note: "Second 100% cut in Nov 2023"
+
+  - issuer_name: "Slate Office REIT"
+    ticker: "SOT-UN.TO"
+    cut_date: "2023-11"
+    cut_percentage: 100
+    sector: "Office"
+    status: "Active"
+    data_quality: 5  # Excellent LTV and occupancy data
+
+  - issuer_name: "Dream Office REIT"
+    ticker: "D-UN.TO"
+    cut_date: "2024-02"
+    cut_percentage: 50
+    sector: "Office"
+    status: "Active"
+    note: "Share consolidation context"
+
+# Control Group: REITs WITHOUT Cuts (Resilience Comparison)
+no_cuts_control:
+  - issuer_name: "CAPREIT"
+    ticker: "CAR-UN.TO"
+    sector: "Residential"
+    status: "Active"
+    note: "26 years, no cuts"
+
+  - issuer_name: "SmartCentres REIT"
+    ticker: "SRU-UN.TO"
+    sector: "Retail"
+    status: "Active"
+    note: "Maintained distributions through COVID"
+
+  - issuer_name: "Dream Industrial REIT"
+    ticker: "DIR-UN.TO"
+    sector: "Industrial"
+    status: "Active"
+    note: "Industrial sector resilience"
+
+  - issuer_name: "Granite REIT"
+    ticker: "GRT-UN.TO"
+    sector: "Industrial"
+    status: "Active"
+
+  - issuer_name: "InterRent REIT"
+    ticker: "IIP-UN.TO"
+    sector: "Residential"
+    status: "Active"
+
+  - issuer_name: "Killam Apartment REIT"
+    ticker: "KMP-UN.TO"
+    sector: "Residential"
+    status: "Active"
+
+# Additional Peer REITs (For Comparison)
+peers:
+  - issuer_name: "Allied Properties REIT"
+    ticker: "AP-UN.TO"
+    sector: "Office"
+    status: "Active"
+
+  - issuer_name: "Primaris REIT"
+    ticker: "PMZ-UN.TO"
+    sector: "Retail"
+    status: "Active"
+
+  - issuer_name: "Summit Industrial REIT"
+    ticker: "SMU-UN.TO"
+    sector: "Industrial"
+    status: "Active"
+
+  - issuer_name: "Minto Apartment REIT"
+    ticker: "MI-UN.TO"
+    sector: "Residential"
+    status: "Active"
+
+  - issuer_name: "Chartwell Retirement Residences"
+    ticker: "CSH-UN.TO"
+    sector: "Seniors Housing"
+    status: "Active"
+
+  - issuer_name: "NorthWest Healthcare Properties REIT"
+    ticker: "NWH-UN.TO"
+    sector: "Healthcare"
+    status: "Active"
+
+# Sector Groupings
+sectors:
+  office:
+    - "AX-UN.TO"    # Artis
+    - "SOT-UN.TO"   # Slate Office
+    - "D-UN.TO"     # Dream Office
+    - "TNT-UN.TO"   # True North
+    - "AP-UN.TO"    # Allied Properties
+    - "HR-UN.TO"    # H&R (partial)
+
+  retail:
+    - "REI-UN.TO"   # RioCan
+    - "FCR-UN.TO"   # First Capital
+    - "PRV-UN.TO"   # Pro REIT
+    - "SRU-UN.TO"   # SmartCentres
+    - "PMZ-UN.TO"   # Primaris
+
+  industrial:
+    - "DIR-UN.TO"   # Dream Industrial
+    - "GRT-UN.TO"   # Granite
+    - "SMU-UN.TO"   # Summit
+
+  residential:
+    - "CAR-UN.TO"   # CAPREIT
+    - "IIP-UN.TO"   # InterRent
+    - "KMP-UN.TO"   # Killam
+    - "MI-UN.TO"    # Minto
+    - "BEI-UN.TO"   # Boardwalk
+
+  diversified:
+    - "BTB-UN.TO"   # BTB
+    - "MRT-UN.TO"   # Morguard
+
+  healthcare:
+    - "NWH-UN.TO"   # NorthWest
+
+  seniors:
+    - "CSH-UN.TO"   # Chartwell
+
+# Training Dataset Configuration
+training_dataset:
+  target_reits:
+    # Best data quality for model training
+    primary:
+      - ticker: "HR-UN.TO"
+        reason: "Excellent Q1 2020 data, 50% cut"
+      - ticker: "SOT-UN.TO"
+        reason: "Complete LTV/occupancy data, 100% suspension"
+      - ticker: "REI-UN.TO"
+        reason: "Good Q3 2020 data, 33% cut"
+      - ticker: "TNT-UN.TO"
+        reason: "Two-stage deterioration (50% then 100%)"
+      - ticker: "AX-UN.TO"
+        reason: "Good Q3 2018 data, 50% cut, multiple events"
+
+    # Secondary (use if primary insufficient)
+    secondary:
+      - ticker: "FCR-UN.TO"
+        reason: "50% cut, restored later (recovery case)"
+      - ticker: "D-UN.TO"
+        reason: "Recent 2024 cut, good data availability"
+      - ticker: "BEI-UN.TO"
+        reason: "Largest cut 56%, oil crisis context"
+      - ticker: "MRT-UN.TO"
+        reason: "Second pandemic cut (February 2021)"
+
+  control_group:
+    # No-cut comparisons
+    - ticker: "CAR-UN.TO"
+      reason: "26 years stability, residential strength"
+    - ticker: "SRU-UN.TO"
+      reason: "COVID resilience, retail sector"
+    - ticker: "DIR-UN.TO"
+      reason: "Industrial strength, no cuts"
+    - ticker: "GRT-UN.TO"
+      reason: "Industrial strength, logistics focus"
+
+# Data Collection Commands
+# Run these to collect historical data for model training:
+collection_commands: |
+  # Primary cuts for training
+  python scripts/openbb_data_collector.py --ticker HR-UN.TO --export-csv
+  python scripts/openbb_data_collector.py --ticker SOT-UN.TO --export-csv
+  python scripts/openbb_data_collector.py --ticker REI-UN.TO --export-csv
+  python scripts/openbb_data_collector.py --ticker TNT-UN.TO --export-csv
+  python scripts/openbb_data_collector.py --ticker AX-UN.TO --export-csv
+
+  # Control group (no cuts)
+  python scripts/openbb_data_collector.py --ticker CAR-UN.TO --export-csv
+  python scripts/openbb_data_collector.py --ticker SRU-UN.TO --export-csv
+  python scripts/openbb_data_collector.py --ticker DIR-UN.TO --export-csv
+
+  # Peer comparison example
+  python scripts/openbb_data_collector.py \
+    --ticker REI-UN.TO \
+    --peers DIR-UN.TO,AX-UN.TO,SRU-UN.TO,FCR-UN.TO \
+    --export-csv
+
+# Notes
+notes: |
+  - Cominar (CUF-UN.TO) privatized in 2019, limited recent data
+  - Northview Apartment REIT privatized, no longer trading
+  - Some REITs changed tickers over time (verify historical symbol)
+  - TMX provider recommended for Canadian REITs
+  - Data quality ratings: 1 (poor) to 5 (excellent) based on pre-cut data availability
+
+version: "1.0.0"
+last_updated: "2025-10-21"
