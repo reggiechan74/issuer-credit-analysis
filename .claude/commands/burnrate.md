@@ -16,9 +16,11 @@ Generate a comprehensive cash burn rate and liquidity runway analysis report for
 
 ## What This Command Does
 
+**NOTE:** This command creates a **standalone burn rate analysis report**. It can be run anytime after Phase 2 extraction is complete. It does NOT require the main credit opinion report to be generated first - it performs its own calculations independently.
+
 1. **Loads Financial Data**: Reads Phase 2 extracted data (must include cash_flow_investing, cash_flow_financing, and liquidity sections)
 
-2. **Calculates Metrics**:
+2. **Calculates Metrics** (performs own Phase 3-style calculations):
    - ACFO (Adjusted Cash Flow from Operations)
    - AFCF (Adjusted Free Cash Flow)
    - Mandatory Obligations (Debt Service + Distributions, NO new financing)
@@ -478,8 +480,19 @@ Many secured facilities have BOTH:
 
 ## Notes
 
-- This command requires Phase 2 data with complete cash flow information
+**When to Run:**
+- ✅ Can run **anytime after Phase 2 extraction** is complete
+- ✅ Does **NOT** require Phase 3 or Phase 5 (main report) to be generated first
+- ✅ Performs its own ACFO/AFCF/burn rate calculations independently
+- ✅ Creates a **standalone** burn rate analysis report
+- ℹ️ Typically run as a follow-up to the main credit report for deep-dive liquidity analysis
+
+**Requirements:**
+- Phase 2 data with complete cash flow information (CFI, CFF, liquidity)
 - For best results, ensure liquidity data is extracted from the issuer's MD&A
+
+**Methodology:**
 - Burn rate is a forward-looking stress test that assumes NO future capital markets access
 - New financing is NOT subtracted - we measure mandatory obligations only (debt service + distributions)
+- Self-funding ratio = AFCF / (Debt Service + Distributions) - does NOT subtract new financing
 - A REIT can have positive AFCF but still burn cash if mandatory obligations exceed free cash flow
