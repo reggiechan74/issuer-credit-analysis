@@ -602,29 +602,107 @@ def calculate_payout_ratio(metric_per_unit, distributions_per_unit):
     return round((distributions_per_unit / metric_per_unit) * 100, 1)
 
 
-def calculate_coverage_ratio(metric, distributions):
+def calculate_coverage_ratio(metric_per_unit, dist_per_unit):
     """
-    Calculate coverage ratio (inverse of payout ratio)
+    Calculate per-unit coverage ratio (inverse of payout ratio)
 
     Args:
-        metric (float): FFO/AFFO/ACFO/AFCF amount (000s)
-        distributions (float): Total distributions amount (000s)
+        metric_per_unit (float): FFO/AFFO/ACFO/AFCF per unit
+        dist_per_unit (float): Distributions per unit
 
     Returns:
         float: Coverage ratio (x.xx), or None if invalid
 
     Formula:
-        coverage_ratio = metric / distributions
+        coverage_ratio = metric_per_unit / dist_per_unit
 
     Examples:
-        >>> calculate_coverage_ratio(34500, 30000)
-        1.15
-        >>> calculate_coverage_ratio(0, 30000)
+        >>> calculate_coverage_ratio(0.34, 0.30)
+        1.13
+        >>> calculate_coverage_ratio(0.17, 0.30)
+        0.57
+        >>> calculate_coverage_ratio(0, 0.30)
         None
     """
-    if metric is None or metric == 0 or distributions is None or distributions == 0:
+    if metric_per_unit is None or metric_per_unit == 0 or dist_per_unit is None or dist_per_unit == 0:
         return None
-    return round(metric / distributions, 2)
+    return round(metric_per_unit / dist_per_unit, 2)
+
+
+def format_reporting_period(report_period):
+    """
+    Format reporting period for display in table headers
+
+    Args:
+        report_period (str): Raw period (e.g., "Q2 2025", "Annual 2024", "H1 2025")
+
+    Returns:
+        str: Formatted period for headers (e.g., "YTD Q2-2025", "Annual 2024")
+
+    Examples:
+        >>> format_reporting_period("Q2 2025")
+        'YTD Q2-2025'
+        >>> format_reporting_period("Annual 2024")
+        'Annual 2024'
+        >>> format_reporting_period("H1 2025")
+        'Semi Annual H1-2025'
+    """
+    if not report_period:
+        return ""
+
+    # Quarterly reports: "Q2 2025" → "YTD Q2-2025"
+    if "Q" in report_period and "YTD" not in report_period:
+        parts = report_period.split()
+        if len(parts) >= 2:
+            return f"YTD {parts[0]}-{parts[1]}"
+
+    # Half-year reports: "H1 2025" → "Semi Annual H1-2025"
+    if "H" in report_period and "Semi" not in report_period:
+        parts = report_period.split()
+        if len(parts) >= 2:
+            return f"Semi Annual {parts[0]}-{parts[1]}"
+
+    # Annual or already formatted - return as is
+    return report_period
+
+
+def format_metric_with_per_unit(total, per_unit, currency="CAD"):
+    """
+    Format metric with per-unit display: "34,491 ($0.34/unit)"
+
+    Args:
+        total (float): Total amount in thousands
+        per_unit (float): Per-unit amount in dollars
+        currency (str): Currency code (default: CAD)
+
+    Returns:
+        str: Formatted string with total and per-unit
+
+    Examples:
+        >>> format_metric_with_per_unit(34491, 0.34)
+        '34,491 ($0.34/unit)'
+        >>> format_metric_with_per_unit(3956, 0.0396)
+        '3,956 ($0.0396/unit)'
+        >>> format_metric_with_per_unit(34491, None)
+        '34,491'
+    """
+    if total is None:
+        return "Not available"
+
+    formatted_total = f"{total:,.0f}"
+
+    if per_unit is None:
+        return formatted_total
+
+    # Format per-unit with appropriate decimal places
+    if abs(per_unit) >= 1:
+        per_unit_str = f"${per_unit:.2f}"
+    elif abs(per_unit) >= 0.01:
+        per_unit_str = f"${per_unit:.4f}"
+    else:
+        per_unit_str = f"${per_unit:.6f}"
+
+    return f"{formatted_total} ({per_unit_str}/unit)"
 
 
 def assess_distribution_coverage(coverage_ratio):
@@ -1092,21 +1170,43 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     # Calculate total distributions for coverage ratios
     distributions_total = distributions * common_units if distributions and common_units else 0
 
-    # Calculate reported coverage ratios
+    # Calculate reported coverage ratios (per-unit basis)
     ffo_rep = ffo_affo_reported.get('ffo', ffo)
     affo_rep = ffo_affo_reported.get('affo', affo)
     acfo_rep = ffo_affo_reported.get('acfo', 0)
 
-    ffo_cov_rep = calculate_coverage_ratio(ffo_rep, distributions_total)
-    affo_cov_rep = calculate_coverage_ratio(affo_rep, distributions_total)
-    acfo_cov_rep = calculate_coverage_ratio(acfo_rep, distributions_total) if acfo_rep else None
+    # Convert reported totals to per-unit for coverage calculations
+    ffo_per_unit_rep = ffo_affo_reported.get('ffo_per_unit', calculate_per_unit(ffo_rep, common_units))
+    affo_per_unit_rep = ffo_affo_reported.get('affo_per_unit', calculate_per_unit(affo_rep, common_units))
+    acfo_per_unit_rep = ffo_affo_reported.get('acfo_per_unit', calculate_per_unit(acfo_rep, common_units)) if acfo_rep else None
 
-    # Get calculated coverage ratios from Phase 3
+    # Calculate coverage ratios using per-unit values
+    ffo_cov_rep = calculate_coverage_ratio(ffo_per_unit_rep, distributions)
+    affo_cov_rep = calculate_coverage_ratio(affo_per_unit_rep, distributions)
+    acfo_cov_rep = calculate_coverage_ratio(acfo_per_unit_rep, distributions) if acfo_per_unit_rep else None
+
+    # Get calculated coverage ratios from Phase 3 (per-unit basis)
     coverage_ratios_detail = reit_metrics.get('coverage_ratios', {})
-    ffo_cov_calc = coverage_ratios_detail.get('ffo_coverage', calculate_coverage_ratio(reit_metrics.get('ffo_calculated', ffo), distributions_total))
-    affo_cov_calc = coverage_ratios_detail.get('affo_coverage', calculate_coverage_ratio(reit_metrics.get('affo_calculated', affo), distributions_total))
-    acfo_cov_calc = coverage_ratios_detail.get('acfo_coverage', calculate_coverage_ratio(acfo_metrics.get('acfo', 0), distributions_total)) if acfo_metrics.get('acfo') else None
-    afcf_cov_calc = calculate_coverage_ratio(afcf_metrics.get('afcf', 0), distributions_total) if afcf_metrics.get('afcf') else None
+
+    # Calculate per-unit values for calculated metrics (from *_calculation_detail objects)
+    ffo_calc = reit_metrics.get('ffo_calculated', ffo)
+    ffo_calc_detail = reit_metrics.get('ffo_calculation_detail', {})
+    ffo_per_unit_calc = ffo_calc_detail.get('ffo_per_unit', calculate_per_unit(ffo_calc, common_units))
+
+    affo_calc = reit_metrics.get('affo_calculated', affo)
+    affo_calc_detail = reit_metrics.get('affo_calculation_detail', {})
+    affo_per_unit_calc = affo_calc_detail.get('affo_per_unit', calculate_per_unit(affo_calc, common_units))
+
+    acfo_calc_detail = acfo_metrics.get('acfo_calculation_detail', {}) if acfo_metrics else {}
+    acfo_per_unit_calc = acfo_calc_detail.get('acfo_per_unit', calculate_per_unit(acfo_metrics.get('acfo', 0), common_units)) if acfo_metrics.get('acfo') else None
+
+    afcf_per_unit_calc = afcf_metrics.get('afcf_per_unit', calculate_per_unit(afcf_metrics.get('afcf', 0), common_units)) if afcf_metrics.get('afcf') else None
+
+    # Calculate coverage ratios using per-unit values
+    ffo_cov_calc = coverage_ratios_detail.get('ffo_coverage', calculate_coverage_ratio(ffo_per_unit_calc, distributions))
+    affo_cov_calc = coverage_ratios_detail.get('affo_coverage', calculate_coverage_ratio(affo_per_unit_calc, distributions))
+    acfo_cov_calc = coverage_ratios_detail.get('acfo_coverage', calculate_coverage_ratio(acfo_per_unit_calc, distributions)) if acfo_per_unit_calc else None
+    afcf_cov_calc = calculate_coverage_ratio(afcf_per_unit_calc, distributions) if afcf_per_unit_calc else None
 
     # FFO to AFFO bridge (reported)
     ffo_to_affo_reduction_rep = ffo_rep - affo_rep if ffo_rep and affo_rep else 0
@@ -1143,6 +1243,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'ISSUER_NAME': issuer_name,
         'REPORT_DATE': datetime.now().strftime('%B %d, %Y'),
         'REPORT_PERIOD': report_period,
+        'REPORTING_PERIOD_FORMATTED': format_reporting_period(report_period),
         'REPORTING_DATE': reporting_date,
         'CURRENCY': currency,
 

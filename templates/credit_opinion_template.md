@@ -253,7 +253,7 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 
 *As disclosed in issuer's MD&A financial statements*
 
-| Metric | Amount ({{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Payout Ratio |
+| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Per-Unit Payout Ratio |
 |--------|---------------------------|------------------------|--------------|
 | **IFRS Net Income** | {{NET_INCOME}} | N/A | N/A |
 | **FFO** | {{FFO_REPORTED}} | {{FFO_PER_UNIT_REPORTED}} | {{FFO_PAYOUT_REPORTED}}% |
@@ -266,7 +266,7 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 
 *Calculated using standardized REALPAC methodology for cross-issuer comparability*
 
-| Metric | Amount ({{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Payout Ratio | Variance from Reported (%) |
+| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) | Per-Unit Payout Ratio | Variance from Reported (%) |
 |--------|---------------------------|------------------------|--------------|---------------------------|
 | **IFRS Net Income** | {{NET_INCOME}} | {{NET_INCOME_PER_UNIT_CALCULATED}} | N/A | N/A |
 | **FFO** | {{FFO_CALCULATED}} | {{FFO_PER_UNIT_CALCULATED}} | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_VARIANCE_PERCENT}}% |
@@ -350,7 +350,7 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 *Based on issuer-reported FFO/AFFO/ACFO values*
 
-| Coverage Measure | Metric ({{CURRENCY}} 000s) | Distributions | Coverage Ratio | Payout Ratio | Assessment |
+| Coverage Measure | Metric ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Distributions ({{REPORTING_PERIOD_FORMATTED}}) | Per-Unit Coverage Ratio | Per-Unit Payout Ratio | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
 | **FFO Coverage** | {{FFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_REPORTED}}x | {{FFO_PAYOUT_REPORTED}}% | {{FFO_COVERAGE_ASSESSMENT_REPORTED}} |
 | **AFFO Coverage** | {{AFFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_REPORTED}}x | {{AFFO_PAYOUT_REPORTED}}% | {{AFFO_COVERAGE_ASSESSMENT_REPORTED}} |
@@ -360,7 +360,7 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 *Based on REALPAC-standardized calculated values for consistency*
 
-| Coverage Measure | Metric ({{CURRENCY}} 000s) | Distributions | Coverage Ratio | Payout Ratio | Assessment | Cushion |
+| Coverage Measure | Metric ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Distributions ({{REPORTING_PERIOD_FORMATTED}}) | Per-Unit Coverage Ratio | Per-Unit Payout Ratio | Assessment | Cushion |
 |------------------|---------------------------|---------------|----------------|--------------|------------|---------|
 | **FFO Coverage** | {{FFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_CALCULATED}}x | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_COVERAGE_ASSESSMENT}} | {{FFO_CUSHION}}% |
 | **AFFO Coverage** | {{AFFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_CALCULATED}}x | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_COVERAGE_ASSESSMENT}} | {{AFFO_CUSHION}}% |
@@ -409,7 +409,7 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 *Comparison of two sustainable cash flow measures (Calculated Values)*
 
-| Comparison | Reported | Calculated | Variance |
+| Comparison | Reported ({{REPORTING_PERIOD_FORMATTED}}) | Calculated ({{REPORTING_PERIOD_FORMATTED}}) | Variance |
 |------------|----------|------------|----------|
 | **AFFO** | {{AFFO_REPORTED}} | {{AFFO_CALCULATED}} | {{AFFO_VARIANCE}} |
 | **ACFO** | {{ACFO_REPORTED}} | {{ACFO_CALCULATED}} | {{ACFO_VARIANCE}} |
@@ -433,7 +433,7 @@ AFCF extends the analysis beyond ACFO to measure cash available for financing ob
 
 *When issuer reports ACFO (rare)*
 
-| Component | Amount ({{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) |
+| Component | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) |
 |-----------|---------------------------|------------------------|
 | **ACFO (Reported)** | {{ACFO_REPORTED}} | {{ACFO_PER_UNIT_REPORTED}} |
 | **Net Cash Flow from Investing** | {{NET_CFI}} | N/A |
@@ -443,7 +443,7 @@ AFCF extends the analysis beyond ACFO to measure cash available for financing ob
 
 *Standard calculation for consistency and comparability*
 
-| Component | Amount ({{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) |
+| Component | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) |
 |-----------|---------------------------|------------------------|
 | **ACFO (REALPAC-Calculated)** | {{ACFO_CALCULATED}} | {{ACFO_PER_UNIT_CALCULATED}} |
 | **Net Cash Flow from Investing** | {{NET_CFI}} | N/A |
@@ -453,7 +453,7 @@ AFCF extends the analysis beyond ACFO to measure cash available for financing ob
 
 *Based on calculated AFCF for consistency*
 
-| Coverage Metric | Amount ({{CURRENCY}} 000s) | Coverage Ratio | Assessment |
+| Coverage Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Coverage Ratio | Assessment |
 |-----------------|---------------------------|----------------|------------|
 | **AFCF** | {{AFCF_CALCULATED}} | - | - |
 | **Total Debt Service** | {{TOTAL_DEBT_SERVICE}} | {{AFCF_DEBT_SERVICE_COVERAGE}}x | {{AFCF_DEBT_SERVICE_ASSESSMENT}} |
