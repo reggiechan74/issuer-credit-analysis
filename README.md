@@ -29,7 +29,7 @@ This system performs comprehensive credit analysis on real estate issuers (REITs
 
 - **5-Phase Sequential Pipeline**: Proven architecture (PDF→Markdown→JSON→Metrics→Analysis→Report)
 - **99.2% Token Reduction**: File reference patterns reduce Phase 2 from ~140K to ~1K tokens
-- **PyMuPDF4LLM + Camelot Hybrid**: Enhanced PDF extraction with superior table quality (Issue #1 solution)
+- **Dual PDF Conversion Methods**: Choose between speed (PyMuPDF4LLM+Camelot, ~30s) or quality (Docling, ~20min)
 - **Context-Efficient Phase 2**: File references preserve ~199K tokens for extraction logic
 - **Absolute Path Implementation**: Reliable execution from any working directory
 - **Organized Output**: Issuer-specific folders with separate temp and reports directories
@@ -39,27 +39,55 @@ This system performs comprehensive credit analysis on real estate issuers (REITs
 - **Production Ready**: Generates professional credit opinion reports with 5-factor scorecard analysis
 - **100% Success Rate**: Sequential markdown-first approach prevents context window exhaustion
 
-## Architecture (v1.0.4 - Sequential Markdown-First)
+## Architecture (v1.0.13 - Sequential Markdown-First)
 
 ```
 Phase 1 (PDF→MD)  →  Phase 2 (MD→JSON)  →  Phase 3 (Calc)  →  Phase 4 (Agent)  →  Phase 5 (Report)
-PyMuPDF4LLM+Camelot  File refs (~1K tok)    Pure Python        Slim Agent (12K)    Template (0 tok)
-0 tokens, 10-15s     Context-efficient      0 tokens           Credit analysis     Final report
+PyMuPDF/Docling      File refs (~1K tok)    Pure Python        Slim Agent (12K)    Template (0 tok)
+0 tokens, 30s-20min  Context-efficient      0 tokens           Credit analysis     Final report
 ```
+
+### Two PDF Conversion Methods (Phase 1)
+
+**Method 1: PyMuPDF4LLM + Camelot (Default - Fast)**
+- **Command:** `/analyzeREissuer @statements.pdf @mda.pdf "Issuer Name"`
+- **Speed:** ~30 seconds for 2 PDFs (75 pages total)
+- **Table Format:** Enhanced 14-column tables with metadata
+- **Use Case:** Interactive analysis, fast iteration, production workloads
+- **Extraction:** 113 tables from 75 pages, superior to pure PyMuPDF4LLM
+- **Output:** 545KB markdown with rich table formatting
+
+**Method 2: Docling (Alternative - Cleaner)**
+- **Command:** `/analyzeREissuer-docling @statements.pdf @mda.pdf "Issuer Name"`
+- **Speed:** ~20 minutes for 2 PDFs (Docling FAST mode)
+- **Table Format:** Compact 4-column tables, cleaner structure
+- **Use Case:** Overnight batch processing, cleaner extraction testing
+- **Extraction:** Same table coverage, more compact markdown
+- **Output:** More concise markdown, easier to parse manually
+
+### PDF Conversion Comparison
+
+| Method | Phase 1 Time | Table Format | Output Size | Best For |
+|--------|--------------|--------------|-------------|----------|
+| **PyMuPDF4LLM + Camelot** | ~30s | Enhanced (14 cols) | 545KB | Interactive, production |
+| **Docling FAST** | ~20min | Compact (4 cols) | Smaller | Batch, testing |
+
+**Both methods produce identical Phase 2-5 outputs** - the choice only affects Phase 1 processing time and markdown structure.
 
 ### Why Sequential Markdown-First?
 
 | Approach | Phase 2 Token Cost | Context Available | Result |
 |----------|-------------------|-------------------|---------|
 | **Direct PDF Reading** | ~136K tokens | ~64K remaining | ❌ Context exhausted |
-| **Markdown-First (v1.0.4)** | ~1K tokens (file refs) | ~199K remaining | ✅ Reliable extraction |
+| **Markdown-First (v1.0.4+)** | ~1K tokens (file refs) | ~199K remaining | ✅ Reliable extraction |
 
 **Key Benefits:**
 - ✅ **99.2% token reduction**: File references (~1K) vs embedding content (~140K tokens)
-- ✅ **Enhanced table extraction**: PyMuPDF4LLM + Camelot hybrid captures 113 tables from 75 pages
+- ✅ **Enhanced table extraction**: Both methods capture 113 tables from 75 pages
 - ✅ **Context preservation**: Leaves ~199K tokens for extraction logic and validation
+- ✅ **Flexible conversion**: Choose speed (PyMuPDF+Camelot) or quality (Docling) per use case
 - ✅ **Absolute paths**: Reliable execution from any working directory using `Path.cwd()`
-- ✅ **Proven reliability**: 100% success rate on production workloads (545KB markdown files)
+- ✅ **Proven reliability**: 100% success rate on production workloads
 
 ### Output Structure
 
@@ -158,9 +186,9 @@ phase2_extraction:
 
 ### Using Slash Commands (Recommended)
 
-**Complete Credit Analysis:** `/analyzeREissuer`
+**Method 1: Fast Analysis (Default)** - `/analyzeREissuer`
 
-The simplest way to run the complete pipeline:
+Best for interactive analysis and production workloads:
 
 ```bash
 # With Claude Code open in this directory:
@@ -175,6 +203,26 @@ The simplest way to run the complete pipeline:
 
 # Total time: ~60 seconds | Total cost: ~$0.30
 ```
+
+**Method 2: Cleaner Extraction** - `/analyzeREissuer-docling`
+
+Alternative for batch processing with cleaner markdown output:
+
+```bash
+# Same usage, different PDF conversion method:
+/analyzeREissuer-docling @statements.pdf @mda.pdf "Artis REIT"
+
+# Uses Docling for Phase 1 (slower but more compact markdown)
+# Phases 2-5 are identical to Method 1
+
+# Total time: ~20 minutes | Total cost: ~$0.30
+# Best for: Overnight batch jobs, testing cleaner extraction
+```
+
+**When to use Docling:**
+- Overnight/batch processing (time not critical)
+- Testing if cleaner markdown improves extraction quality
+- Fallback if PyMuPDF4LLM has issues with specific PDFs
 
 **Burn Rate Analysis:** `/burnrate` (New in v1.0.7)
 
@@ -204,13 +252,20 @@ If you prefer to run phases individually:
 
 **Phase 1: PDF → Markdown (MUST run first)**
 
+Choose your PDF conversion method:
+
 ```bash
-# Convert PDFs to clean markdown (PyMuPDF4LLM + Camelot)
+# Method 1: PyMuPDF4LLM + Camelot (Fast - 30 seconds)
 python scripts/preprocess_pdfs_enhanced.py \
   --issuer-name "Artis REIT" \
   statements.pdf mda.pdf
 
-# Creates: Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
+# Method 2: Docling (Cleaner - 20 minutes)
+python scripts/preprocess_pdfs_docling.py \
+  --issuer-name "Artis REIT" \
+  statements.pdf mda.pdf
+
+# Both create: Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
 ```
 
 **Phase 2: Markdown → JSON (after Phase 1 completes)**
