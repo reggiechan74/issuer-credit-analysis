@@ -1828,6 +1828,10 @@ def calculate_all_metrics(financial_data):
         'reporting_date': financial_data['reporting_date'],
         'reporting_period': financial_data.get('reporting_period', 'Unknown'),
         'currency': financial_data.get('currency', 'Unknown'),
+        'balance_sheet': {
+            'common_units_outstanding': financial_data.get('balance_sheet', {}).get('common_units_outstanding'),
+            'diluted_units_outstanding': financial_data.get('balance_sheet', {}).get('diluted_units_outstanding')
+        },
         'leverage_metrics': leverage_metrics,
         'reit_metrics': reit_metrics,
         'coverage_ratios': coverage_ratios,

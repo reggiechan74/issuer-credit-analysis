@@ -1172,8 +1172,24 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     distributions_per_unit_reported = ffo_affo_reported.get('distributions_per_unit', distributions)
 
     # Get unit counts for per-unit calculations
-    common_units = reit_metrics.get('common_units_outstanding', 100000)
-    diluted_units = reit_metrics.get('diluted_units_outstanding', common_units)
+    # Priority: Phase 3 balance_sheet → Phase 2 balance_sheet → fallback to 100,000
+    balance_sheet = metrics.get('balance_sheet', {})
+    common_units = balance_sheet.get('common_units_outstanding')
+
+    # Fallback to Phase 2 if Phase 3 doesn't have it
+    if not common_units and phase2_data:
+        common_units = phase2_data.get('balance_sheet', {}).get('common_units_outstanding')
+
+    # Final fallback (should rarely happen with proper extraction)
+    if not common_units:
+        common_units = 100000
+
+    # Get diluted units with same fallback chain
+    diluted_units = balance_sheet.get('diluted_units_outstanding')
+    if not diluted_units and phase2_data:
+        diluted_units = phase2_data.get('balance_sheet', {}).get('diluted_units_outstanding')
+    if not diluted_units:
+        diluted_units = common_units
 
     # Calculate total distributions for coverage ratios
     distributions_total = distributions * common_units if distributions and common_units else 0
