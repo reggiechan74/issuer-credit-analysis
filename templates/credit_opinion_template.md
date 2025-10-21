@@ -269,35 +269,32 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 - **ACFO (Adjusted Cash Flow from Operations)**: Cash flow metric starting from IFRS CFO, adjusted per REALPAC (January 2023)
 - **AFCF (Adjusted Free Cash Flow)**: ACFO + Net Cash Flow from Investing Activities (most conservative free cash flow measure)
 
-#### 2.2 FFO/AFFO/ACFO/AFCF Summary
+#### 2.2 FFO/AFFO/ACFO/AFCF Summary: Reported vs. Calculated
 
-**2.2.1 Issuer-Reported Metrics**
+*Comparing issuer-reported metrics (MD&A disclosure) with standardized REALPAC-calculated values for validation and cross-issuer comparability*
 
-*As disclosed in issuer's MD&A financial statements*
+| Metric | Issuer-Reported<br>({{CURRENCY}} 000s) | Issuer-Reported<br>Per Unit | REALPAC-Calculated<br>({{CURRENCY}} 000s) | REALPAC-Calculated<br>Per Unit | Variance | Flag |
+|--------|-------------------------|---------------------|--------------------------|------------------------|----------|------|
+| **IFRS Net Income** | {{NET_INCOME}} | N/A | {{NET_INCOME}} | {{NET_INCOME_PER_UNIT_CALCULATED}} | N/A | - |
+| **FFO** | {{FFO_REPORTED}} | {{FFO_PER_UNIT_REPORTED}} | {{FFO_CALCULATED}} | {{FFO_PER_UNIT_CALCULATED}} | {{FFO_VARIANCE_PERCENT}} | {{FFO_VARIANCE_FLAG}} |
+| **AFFO** | {{AFFO_REPORTED}} | {{AFFO_PER_UNIT_REPORTED}} | {{AFFO_CALCULATED}} | {{AFFO_PER_UNIT_CALCULATED}} | {{AFFO_VARIANCE_PERCENT}} | {{AFFO_VARIANCE_FLAG}} |
+| **IFRS CFO** | {{CASH_FLOW_FROM_OPERATIONS}} | N/A | {{CASH_FLOW_FROM_OPERATIONS}} | N/A | N/A | - |
+| **ACFO** | {{ACFO_REPORTED}} | {{ACFO_PER_UNIT_REPORTED}} | {{ACFO_CALCULATED}} | {{ACFO_PER_UNIT_CALCULATED}} | {{ACFO_VARIANCE_PERCENT}} | {{ACFO_VARIANCE_FLAG}} |
+| **Net CFI** | N/A | N/A | {{NET_CFI}} | N/A | N/A | - |
+| **AFCF** | {{AFCF_REPORTED}} | {{AFCF_PER_UNIT_REPORTED}} | {{AFCF_CALCULATED}} | {{AFCF_PER_UNIT_CALCULATED}} | {{AFCF_VARIANCE_PERCENT}} | {{AFCF_VARIANCE_FLAG}} |
+| **Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DISTRIBUTIONS_PER_UNIT}} | {{DISTRIBUTIONS_TOTAL}} | {{DISTRIBUTIONS_PER_UNIT}} | N/A | - |
 
-| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit YTD ({{CURRENCY}}) | Per-Unit Payout Ratio (YTD) |
-|--------|---------------------------|------------------------|--------------|
-| **IFRS Net Income** | {{NET_INCOME}} | N/A | N/A |
-| **FFO** | {{FFO_REPORTED}} | {{FFO_PER_UNIT_REPORTED}} | {{FFO_PAYOUT_REPORTED}}% |
-| **AFFO** | {{AFFO_REPORTED}} | {{AFFO_PER_UNIT_REPORTED}} | {{AFFO_PAYOUT_REPORTED}}% |
-| **IFRS Cash Flow from Operations** | {{CASH_FLOW_FROM_OPERATIONS}} | N/A | N/A |
-| **ACFO** | {{ACFO_REPORTED}} | {{ACFO_PER_UNIT_REPORTED}} | {{ACFO_PAYOUT_REPORTED}}% |
-| **Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DISTRIBUTIONS_PER_UNIT}} | N/A |
+**Payout Ratios (YTD):**
+| Metric | Issuer-Reported Payout | REALPAC-Calculated Payout |
+|--------|------------------------|---------------------------|
+| **FFO Payout Ratio** | {{FFO_PAYOUT_REPORTED}}% | {{FFO_PAYOUT_CALCULATED}}% |
+| **AFFO Payout Ratio** | {{AFFO_PAYOUT_REPORTED}}% | {{AFFO_PAYOUT_CALCULATED}}% |
+| **ACFO Payout Ratio** | {{ACFO_PAYOUT_REPORTED}}% | {{ACFO_PAYOUT_CALCULATED}}% |
+| **AFCF Payout Ratio** | {{AFCF_PAYOUT_REPORTED}}% | {{AFCF_PAYOUT_CALCULATED}}% |
 
-**2.2.2 REALPAC-Calculated Metrics**
-
-*Calculated using standardized REALPAC methodology for cross-issuer comparability*
-
-| Metric | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit YTD ({{CURRENCY}}) | Per-Unit Payout Ratio (YTD) | Variance from Reported (%) |
-|--------|---------------------------|------------------------|--------------|---------------------------|
-| **IFRS Net Income** | {{NET_INCOME}} | {{NET_INCOME_PER_UNIT_CALCULATED}} | N/A | N/A |
-| **FFO** | {{FFO_CALCULATED}} | {{FFO_PER_UNIT_CALCULATED}} | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_VARIANCE_PERCENT}}% |
-| **AFFO** | {{AFFO_CALCULATED}} | {{AFFO_PER_UNIT_CALCULATED}} | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_VARIANCE_PERCENT}}% |
-| **IFRS Cash Flow from Operations** | {{CASH_FLOW_FROM_OPERATIONS}} | N/A | N/A | N/A |
-| **ACFO** | {{ACFO_CALCULATED}} | {{ACFO_PER_UNIT_CALCULATED}} | {{ACFO_PAYOUT_CALCULATED}}% | {{ACFO_VARIANCE_PERCENT}}% |
-| **Net Cash Flow from Investing** | {{NET_CFI}} | N/A | N/A | N/A |
-| **AFCF** | {{AFCF_CALCULATED}} | {{AFCF_PER_UNIT_CALCULATED}} | {{AFCF_PAYOUT_CALCULATED}}% | N/A (not reported) |
-| **Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{DISTRIBUTIONS_PER_UNIT}} | N/A | N/A |
+**Variance Flags:**
+- ✓ = Variance ≤5% (within acceptable threshold)
+- ⚠️ = Variance >5% (requires investigation - see Section 2.6 for methodology differences)
 
 **Data Source:** {{FFO_AFFO_ACFO_AFCF_SOURCE}}
 
@@ -305,6 +302,8 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 - FFO: {{FFO_VALIDATION_STATUS}}
 - AFFO: {{AFFO_VALIDATION_STATUS}}
 - ACFO: {{ACFO_VALIDATION_STATUS}}
+
+*For detailed reconciliation and adjustment methodology, see Sections 2.3-2.4. For variance analysis and methodology differences, see Section 2.6.*
 
 #### 2.3 FFO/AFFO Reconciliation
 
@@ -366,72 +365,52 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 - Calculated values: Per REALPAC ACFO White Paper (January 2023) - 17 standardized adjustments
 - ACFO vs AFFO: Both measure sustainable cash flow but from different starting points (CFO vs Net Income)
 
-#### 2.5 Distribution Coverage Analysis
+#### 2.5 Distribution Coverage Ratios (Summary)
 
-**2.5.1 Reported Metrics - Distribution Coverage**
+**2.5.1 Issuer-Reported Coverage Ratios**
 
-*Based on issuer-reported FFO/AFFO/ACFO values*
-
-| Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio (YTD) | Payout Ratio (YTD) | Assessment |
+| Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio | Payout Ratio | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
 | **FFO Coverage** | {{FFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_REPORTED}}x | {{FFO_PAYOUT_REPORTED}}% | {{FFO_COVERAGE_ASSESSMENT_REPORTED}} |
 | **AFFO Coverage** | {{AFFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_REPORTED}}x | {{AFFO_PAYOUT_REPORTED}}% | {{AFFO_COVERAGE_ASSESSMENT_REPORTED}} |
 | **ACFO Coverage** | {{ACFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_REPORTED}}x | {{ACFO_PAYOUT_REPORTED}}% | {{ACFO_COVERAGE_ASSESSMENT_REPORTED}} |
 
-**2.5.2 REALPAC-Calculated Metrics - Distribution Coverage**
+**2.5.2 REALPAC-Calculated Coverage Ratios**
 
-*Based on REALPAC-standardized calculated values for consistency*
-
-| Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio (YTD) | Payout Ratio (YTD) | Assessment |
+| Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio | Payout Ratio | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
 | **FFO Coverage** | {{FFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_CALCULATED}}x | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_COVERAGE_ASSESSMENT}} |
 | **AFFO Coverage** | {{AFFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_CALCULATED}}x | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_COVERAGE_ASSESSMENT}} |
 | **ACFO Coverage** | {{ACFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_CALCULATED}}x | {{ACFO_PAYOUT_CALCULATED}}% | {{ACFO_COVERAGE_ASSESSMENT}} |
 | **AFCF Coverage** | {{AFCF_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_COVERAGE}}x | {{AFCF_PAYOUT_CALCULATED}}% | {{AFCF_COVERAGE_ASSESSMENT}} |
 
-**Note:** Credit assessment based on REALPAC-calculated metrics to ensure methodology consistency across issuers.
+**Distribution Sustainability:** {{DISTRIBUTION_SUSTAINABILITY}}
 
-**Credit Assessment:**
+*For detailed calculation methodology, per-unit analysis, and credit implications, see Section 4.4 (Liquidity and Distribution Coverage Assessment).*
 
-{{DISTRIBUTION_COVERAGE_ANALYSIS}}
+#### 2.6 FFO → AFFO → ACFO Bridge and Gap Analysis (Summary)
 
-**Distribution Sustainability Conclusion:**
+**2.6.1 FFO to AFFO Bridge**
 
-{{DISTRIBUTION_SUSTAINABILITY}}
+| Metric | Issuer-Reported | REALPAC-Calculated |
+|--------|-----------------|-------------------|
+| **FFO** | {{FFO_REPORTED}} | {{FFO_CALCULATED}} |
+| **FFO to AFFO Reduction** | {{FFO_TO_AFFO_REDUCTION_REPORTED}} | {{FFO_TO_AFFO_REDUCTION_CALCULATED}} |
+| **Reduction %** | {{FFO_TO_AFFO_PERCENT_REPORTED}}% | {{FFO_TO_AFFO_PERCENT_CALCULATED}}% |
+| **AFFO** | {{AFFO_REPORTED}} | {{AFFO_CALCULATED}} |
 
-#### 2.6 FFO → AFFO → ACFO Bridge Analysis
+**2.6.2 CFO to ACFO Bridge**
 
-**2.6.1 Reported Values - Bridge Analysis**
+| Metric | Issuer-Reported | REALPAC-Calculated |
+|--------|-----------------|-------------------|
+| **CFO** | {{CASH_FLOW_FROM_OPERATIONS}} | {{CASH_FLOW_FROM_OPERATIONS}} |
+| **CFO to ACFO Reduction** | {{CFO_TO_ACFO_REDUCTION_REPORTED}} | {{CFO_TO_ACFO_REDUCTION_CALCULATED}} |
+| **Reduction %** | {{CFO_TO_ACFO_PERCENT_REPORTED}}% | {{CFO_TO_ACFO_PERCENT_CALCULATED}}% |
+| **ACFO** | {{ACFO_REPORTED}} | {{ACFO_CALCULATED}} |
 
-*Based on issuer-reported metrics (if available)*
+**2.6.3 AFFO vs ACFO Gap**
 
-**FFO to AFFO Reduction (Reported):** {{FFO_TO_AFFO_REDUCTION_REPORTED}} ({{FFO_TO_AFFO_PERCENT_REPORTED}}% of FFO)
-
-**Primary Adjustments (as reported by issuer):**
-{{FFO_TO_AFFO_ADJUSTMENTS_REPORTED}}
-
-**CFO to ACFO (Reported):** {{CFO_TO_ACFO_REDUCTION_REPORTED}} ({{CFO_TO_ACFO_PERCENT_REPORTED}}% of CFO)
-*Note: Most issuers do not report ACFO - this section may be N/A*
-
-**2.6.2 REALPAC-Calculated Values - Bridge Analysis**
-
-*Calculated using standardized REALPAC methodology*
-
-**FFO to AFFO Reduction (Calculated):** {{FFO_TO_AFFO_REDUCTION_CALCULATED}} ({{FFO_TO_AFFO_PERCENT_CALCULATED}}% of FFO)
-
-**Primary Adjustments (Calculated using REALPAC methodology):**
-{{FFO_TO_AFFO_ADJUSTMENTS_CALCULATED}}
-
-**CFO to ACFO Reduction (Calculated):** {{CFO_TO_ACFO_REDUCTION_CALCULATED}} ({{CFO_TO_ACFO_PERCENT_CALCULATED}}% of CFO)
-
-**Primary Adjustments (Calculated using REALPAC methodology):**
-{{CFO_TO_ACFO_ADJUSTMENTS_CALCULATED}}
-
-**2.6.3 AFFO vs ACFO Gap Analysis**
-
-*Comparison of two sustainable cash flow measures (Calculated Values)*
-
-| Comparison | Reported ({{REPORTING_PERIOD_FORMATTED}}) | Calculated ({{REPORTING_PERIOD_FORMATTED}}) | Variance |
+| Comparison | Reported | Calculated | Variance |
 |------------|----------|------------|----------|
 | **AFFO** | {{AFFO_REPORTED}} | {{AFFO_CALCULATED}} | {{AFFO_VARIANCE}} |
 | **ACFO** | {{ACFO_REPORTED}} | {{ACFO_CALCULATED}} | {{ACFO_VARIANCE}} |
@@ -440,78 +419,34 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 **Interpretation:** {{AFFO_ACFO_GAP_ANALYSIS}}
 
-**Note:** Bridge analysis uses REALPAC-calculated values for cross-issuer comparability.
+*For detailed FFO/AFFO adjustment breakdown and reconciliation methodology, see Sections 2.3-2.4.*
 
-#### 2.7 AFCF (Adjusted Free Cash Flow) Analysis
+#### 2.7 AFCF (Adjusted Free Cash Flow) Analysis (Summary)
 
-**What is AFCF:**
-AFCF extends the analysis beyond ACFO to measure cash available for financing obligations after ALL investing activities (acquisitions, development, JV investments). It provides the most conservative view of true free cash flow generation.
+**Definition:** AFCF = ACFO + Net Cash Flow from Investing Activities
 
-**Formula:** AFCF = ACFO + Net Cash Flow from Investing Activities
+AFCF measures cash available for financing obligations after ALL investing activities (acquisitions, development, JV investments), providing the most conservative view of free cash flow generation.
 
-**Note:** AFCF is always a calculated metric - issuers do not report this standard. Our calculation uses REALPAC-compliant ACFO.
+**2.7.1 AFCF Calculation**
 
-**2.7.1 AFCF Calculation - Starting from Reported ACFO**
-
-*When issuer reports ACFO (rare)*
-
-| Component | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) |
-|-----------|---------------------------|------------------------|
-| **ACFO (Reported)** | {{ACFO_REPORTED}} | {{ACFO_PER_UNIT_REPORTED}} |
-| **Net Cash Flow from Investing** | {{NET_CFI}} | N/A |
-| **AFCF (Reported-Based)** | {{AFCF_REPORTED_BASED}} | {{AFCF_PER_UNIT_REPORTED_BASED}} |
-
-**2.7.2 AFCF Calculation - Using REALPAC-Calculated ACFO**
-
-*Standard calculation for consistency and comparability*
-
-| Component | Amount ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Per Unit ({{CURRENCY}}) |
-|-----------|---------------------------|------------------------|
+| Component | Amount ({{CURRENCY}} 000s) | Per Unit |
+|-----------|---------------------------|----------|
 | **ACFO (REALPAC-Calculated)** | {{ACFO_CALCULATED}} | {{ACFO_PER_UNIT_CALCULATED}} |
 | **Net Cash Flow from Investing** | {{NET_CFI}} | N/A |
 | **AFCF (Calculated)** | {{AFCF_CALCULATED}} | {{AFCF_PER_UNIT_CALCULATED}} |
 
-**2.7.3 AFCF Coverage Analysis**
+**2.7.2 AFCF Coverage Ratios**
 
-*Based on calculated AFCF for consistency*
-
-| Coverage Metric | Amount YTD ({{CURRENCY}} 000s) | Coverage Ratio (YTD vs. Annualized) | Assessment |
+| Coverage Metric | Amount YTD ({{CURRENCY}} 000s) | Coverage Ratio | Assessment |
 |-----------------|---------------------------|----------------|------------|
-| **AFCF (YTD)** | {{AFCF_CALCULATED}} | - | - |
+| **AFCF** | {{AFCF_CALCULATED}} | - | - |
 | **Total Debt Service (Annualized)** | {{TOTAL_DEBT_SERVICE}} | {{AFCF_DEBT_SERVICE_COVERAGE}}x | {{AFCF_DEBT_SERVICE_ASSESSMENT}} |
-| **Total Distributions (YTD)** | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_DISTRIBUTION_COVERAGE}}x | {{AFCF_DISTRIBUTION_ASSESSMENT}} |
-| **Total Obligations (YTD)** | {{TOTAL_OBLIGATIONS}} | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SELF_FUNDING_ASSESSMENT}} |
-| **Surplus/(Shortfall) (YTD)** | {{AFCF_SURPLUS_SHORTFALL}} | - | - |
+| **Total Distributions** | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_DISTRIBUTION_COVERAGE}}x | {{AFCF_DISTRIBUTION_ASSESSMENT}} |
+| **Total Obligations** | {{TOTAL_OBLIGATIONS}} | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SELF_FUNDING_ASSESSMENT}} |
 
-**Data Source:** {{AFCF_DATA_SOURCE}}
-**Data Quality:** {{AFCF_DATA_QUALITY}}
+**Self-Funding Capacity:** {{AFCF_SURPLUS_SHORTFALL}} (Surplus/(Shortfall))
 
-**Investing Activities Breakdown:**
-
-{{AFCF_CFI_BREAKDOWN_TABLE}}
-
-**AFCF Coverage Ratios:**
-
-| Coverage Metric | Ratio | Assessment | Benchmark |
-|-----------------|-------|------------|-----------|
-| **AFCF Debt Service Coverage** | {{AFCF_DEBT_SERVICE_COVERAGE}}x | {{AFCF_DS_ASSESSMENT}} | > 1.0x = Self-funding |
-| **AFCF Payout Ratio** | {{AFCF_PAYOUT_RATIO}}% | {{AFCF_PAYOUT_ASSESSMENT}} | < 100% = Sustainable |
-| **AFCF Self-Funding Ratio** | {{AFCF_SELF_FUNDING_RATIO}}x | {{AFCF_SF_ASSESSMENT}} | > 1.0x = No capital markets reliance |
-
-**Key Observations:**
-
-{{AFCF_KEY_OBSERVATIONS}}
-
-**Credit Assessment:**
-
-{{AFCF_CREDIT_ASSESSMENT}}
-
-**AFCF Reconciliation:**
-
-{{AFCF_RECONCILIATION_TABLE}}
-
-**Validation Notes:**
-{{AFCF_VALIDATION_NOTES}}
+*For detailed investing activities breakdown, reconciliation, and credit implications, see Section 4.4.*
 
 #### 2.8 Dilution Analysis
 
@@ -701,34 +636,60 @@ Monthly Burn Rate = Period Deficit / Number of Months in Period
 **Credit Implications:**
 {{BURN_RATE_CREDIT_IMPLICATIONS}}
 
-#### 4.4 Liquidity Assessment
+#### 4.4 Liquidity and Distribution Coverage Assessment (Detailed Analysis)
+
+*This section expands on the summary coverage metrics presented in Section 2.5 (Distribution Coverage Ratios) and Section 2.7 (AFCF Analysis) with detailed calculation methodology, per-unit analysis, and credit implications.*
 
 {{LIQUIDITY_ASSESSMENT}}
 
-**Coverage Analysis:**
+**Detailed Coverage Analysis:**
 
-*Per-Unit Basis (YTD Distribution Coverage):*
-- ACFO per unit (YTD): {{ACFO_PER_UNIT_CALC}} / Distributions per unit (YTD): {{DISTRIBUTIONS_PER_UNIT}} = {{ACFO_COVERAGE}} coverage
-- AFCF per unit (YTD): {{AFCF_PER_UNIT_CALC}} / Distributions per unit (YTD): {{DISTRIBUTIONS_PER_UNIT}} = {{AFCF_COVERAGE}}x coverage
+*Per-Unit Basis - Distribution Coverage Calculation:*
 
-*Total Basis (YTD Metrics vs. Annualized Obligations):*
-- **Distribution Coverage (YTD basis):**
-  - ACFO YTD ({{ACFO}} thousands) / Total distributions YTD ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{ACFO_DIST_COV_TOTAL}}** {{ACFO_DIST_COV_TOTAL_ASSESSMENT}}
-  - AFCF YTD ({{AFCF}} thousands) / Total distributions YTD ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{AFCF_DIST_COV_TOTAL}}** {{AFCF_DIST_COV_TOTAL_ASSESSMENT}}
+The per-unit coverage analysis shows how many times distributions are covered by operating and free cash flow on a per-unit basis:
 
-- **Debt Service Coverage (YTD AFCF vs. Annualized):**
-  - AFCF YTD ({{AFCF}} thousands) / Annualized debt service ({{TOTAL_DEBT_SERVICE}} thousands) = **{{AFCF_DEBT_SERVICE_COV}}**
+- **ACFO per unit:** {{ACFO_PER_UNIT_CALC}} / **Distributions per unit:** {{DISTRIBUTIONS_PER_UNIT}} = **{{ACFO_COVERAGE}} coverage**
+  - Interpretation: Every dollar of distributions is covered {{ACFO_COVERAGE}} times by sustainable operating cash flow
+  - Credit Implication: {{ACFO_DIST_COV_TOTAL_ASSESSMENT}}
 
-- **Self-Funding Capacity (YTD basis):**
-  - Self-funding ratio: **{{AFCF_SELF_FUNDING_RATIO}}** (AFCF YTD / Total obligations YTD)
-  - Financing gap (YTD): **{{AFCF_SELF_FUNDING_CAPACITY}}** {{CURRENCY}} thousands (negative = requires external financing)
+- **AFCF per unit:** {{AFCF_PER_UNIT_CALC}} / **Distributions per unit:** {{DISTRIBUTIONS_PER_UNIT}} = **{{AFCF_COVERAGE}}x coverage**
+  - Interpretation: Every dollar of distributions is covered {{AFCF_COVERAGE}} times by free cash flow after all investments
+  - Credit Implication: {{AFCF_DIST_COV_TOTAL_ASSESSMENT}}
 
-*Residual Cash Flows After Distributions (YTD):*
-- ACFO residual (YTD): {{RESIDUAL_ACFO}} {{CURRENCY}} thousands
-- AFCF residual (YTD): {{RESIDUAL_AFCF}} {{CURRENCY}} thousands (negative = shortfall)
+*Total-Level Coverage - YTD Metrics vs. Annualized Obligations:*
+
+This analysis measures the REIT's ability to service all financing obligations from available cash flow:
+
+- **Distribution Coverage (YTD):**
+  - ACFO: {{ACFO}} thousands / Total distributions: {{TOTAL_DISTRIBUTIONS_YTD}} thousands = **{{ACFO_DIST_COV_TOTAL}}** ({{ACFO_DIST_COV_TOTAL_ASSESSMENT}})
+  - AFCF: {{AFCF}} thousands / Total distributions: {{TOTAL_DISTRIBUTIONS_YTD}} thousands = **{{AFCF_DIST_COV_TOTAL}}** ({{AFCF_DIST_COV_TOTAL_ASSESSMENT}})
+
+- **Debt Service Coverage (AFCF vs. Annualized):**
+  - AFCF YTD: {{AFCF}} thousands / Annualized debt service: {{TOTAL_DEBT_SERVICE}} thousands = **{{AFCF_DEBT_SERVICE_COV}}**
+  - Benchmark: >1.0x = Self-funding debt service from free cash flow
+  - Assessment: Coverage of {{AFCF_DEBT_SERVICE_COV}} indicates REIT's ability to service debt from operating cash flow
+
+- **Self-Funding Capacity:**
+  - Self-funding ratio: **{{AFCF_SELF_FUNDING_RATIO}}** (AFCF / Total obligations)
+  - Financing gap: **{{AFCF_SELF_FUNDING_CAPACITY}}** {{CURRENCY}} thousands
+  - Assessment: Ratio indicates degree of capital markets reliance (>1.0x = self-funding, 0.5-1.0x = moderate reliance, <0.5x = high reliance)
+
+*Residual Cash Flows After Distributions:*
+
+- ACFO residual: **{{RESIDUAL_ACFO}}** {{CURRENCY}} thousands (operating cash flow remaining after distributions)
+- AFCF residual: **{{RESIDUAL_AFCF}}** {{CURRENCY}} thousands (free cash flow remaining after distributions and investments)
 
 *Interest Coverage:*
 - {{COVERAGE_ANALYSIS}}
+- Benchmark: >2.0x = Strong, 1.5-2.0x = Adequate, 1.2-1.5x = Tight, <1.2x = Insufficient
+
+**Credit Impact Summary:**
+
+1. **Distribution Sustainability:** {{DISTRIBUTION_SUSTAINABILITY}}
+2. **Financing Flexibility:** Self-funding ratio of {{AFCF_SELF_FUNDING_RATIO}} indicates degree of capital markets reliance
+3. **Growth Capacity:** Residual AFCF of {{RESIDUAL_AFCF}} thousands shows internal capital availability for growth investments
+
+*For summary coverage ratios, see Section 2.5. For AFCF calculation methodology, see Section 2.7.*
 
 ### 5. Growth Strategy and Capital Allocation
 

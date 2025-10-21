@@ -1524,6 +1524,10 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
 
         # FFO Variance
         'FFO_VARIANCE_PERCENT': f"{validation.get('ffo_variance_percent', 0):.1f}" if validation.get('ffo_variance_percent') is not None else 'N/A',
+        'FFO_VARIANCE_FLAG': (
+            "✓" if validation.get('ffo_within_threshold')
+            else "⚠️"
+        ) if validation.get('ffo_variance_percent') is not None else '-',
         'FFO_VALIDATION_STATUS': (
             f"✓ Validated: {validation.get('ffo_variance_percent', 0):.1f}% variance"
             if validation.get('ffo_within_threshold')
@@ -1532,6 +1536,10 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
 
         # AFFO Variance
         'AFFO_VARIANCE_PERCENT': f"{validation.get('affo_variance_percent', 0):.1f}" if validation.get('affo_variance_percent') is not None else 'N/A',
+        'AFFO_VARIANCE_FLAG': (
+            "✓" if validation.get('affo_within_threshold')
+            else "⚠️"
+        ) if validation.get('affo_variance_percent') is not None else '-',
         'AFFO_VARIANCE': (
             f"{validation.get('affo_variance_amount', 0):,.0f} ({validation.get('affo_variance_percent', 0):+.1f}%)"
             if validation.get('affo_variance_amount') is not None and validation.get('affo_variance_percent') is not None
@@ -1545,6 +1553,10 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
 
         # ACFO Variance
         'ACFO_VARIANCE_PERCENT': f"{acfo_validation.get('acfo_variance_percent', 0):.1f}" if acfo_validation.get('acfo_variance_percent') is not None else 'N/A',
+        'ACFO_VARIANCE_FLAG': (
+            "✓" if acfo_validation.get('acfo_within_threshold')
+            else "⚠️"
+        ) if acfo_validation.get('acfo_variance_percent') is not None else '-',
         'ACFO_VARIANCE': (
             f"{acfo_validation.get('acfo_variance_amount', 0):,.0f} ({acfo_validation.get('acfo_variance_percent', 0):+.1f}%)"
             if acfo_validation.get('acfo_variance_amount') is not None and acfo_validation.get('acfo_variance_percent') is not None
@@ -1555,6 +1567,15 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
             if acfo_validation.get('acfo_within_threshold')
             else f"⚠️ Exceeds threshold: {acfo_validation.get('acfo_variance_percent', 0):.1f}% variance"
         ) if acfo_validation.get('acfo_variance_percent') is not None else 'Not available - issuer does not report ACFO',
+
+        # AFCF Reported (issuers typically don't report AFCF as a standard metric)
+        'AFCF_REPORTED': 'Not available',
+        'AFCF_PER_UNIT_REPORTED': 'N/A',
+        'AFCF_PAYOUT_REPORTED': 'N/A',
+
+        # AFCF Variance (issuers typically don't report AFCF)
+        'AFCF_VARIANCE_PERCENT': 'N/A (not reported)',
+        'AFCF_VARIANCE_FLAG': '-',
 
         # ========================================
         # Section 2.5.1: Distribution Coverage (Reported)
