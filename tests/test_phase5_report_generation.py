@@ -594,5 +594,251 @@ class TestPhase5NoneHandling:
             pytest.fail(f"Failed to handle all-None scenario: {e}")
 
 
+class TestStructuralConsiderationsParsing:
+    """Test structural considerations parsing functions (v1.0.13 - Issue #32)
+
+    Tests the three new parsing functions that extract debt structure,
+    security/collateral, and perpetual securities information from Phase 4 content.
+    """
+
+    def test_parse_debt_structure_with_full_content(self):
+        """Test debt structure extraction with complete Phase 4 content"""
+        from generate_final_report import parse_debt_structure
+
+        # Sample Phase 4 content with debt structure information
+        phase4_content = """
+## Liquidity Analysis
+
+**Credit facilities:** $1.93B limit with $771.6M drawn = $1.16B available (60% undrawn)
+- **Unencumbered assets:** $9.0B provides substantial refinancing capacity
+- **Asset sale pipeline:** $1.45B remaining in capital recycling program
+
+**Covenant Compliance:**
+- While specific covenants not disclosed, typical REIT facility covenants include:
+- Maximum Debt/Assets: 60-65% (RioCan at 48.3% has cushion)
+- Minimum interest coverage: 1.50x (RioCan at 1.32x may be tight)
+- Minimum unencumbered assets: Typically 1.5x unsecured debt
+"""
+
+        phase3_data = {
+            'leverage_metrics': {
+                'total_debt': 7435740,  # In thousands
+                'debt_to_assets': 0.483,
+                'net_debt_to_ebitda': 8.88
+            }
+        }
+
+        result = parse_debt_structure(phase4_content, None, phase3_data)
+
+        # Should extract credit facilities
+        assert '$1.93B' in result or '1.93B' in result
+
+        # Should extract covenant information
+        assert 'Covenant' in result or 'covenant' in result
+
+        # Should include debt profile from Phase 3
+        assert '$7.4B' in result or '7.4B' in result  # Converted from thousands to billions
+
+    def test_parse_debt_structure_with_no_content(self):
+        """Test debt structure extraction when Phase 4 has no debt info"""
+        from generate_final_report import parse_debt_structure
+
+        phase4_content = "## Portfolio Analysis\n\nJust some portfolio info, no debt structure."
+
+        result = parse_debt_structure(phase4_content, None, None)
+
+        # Should gracefully return "Not available"
+        assert result == 'Not available'
+
+    def test_parse_security_collateral_with_full_content(self):
+        """Test security/collateral extraction with complete information"""
+        from generate_final_report import parse_security_collateral
+
+        phase4_content = """
+## Executive Summary
+
+- **Unencumbered asset pool of $9.0 billion** (up from $8.2B at Q4 2024) provides significant financial flexibility
+- 58% of gross assets provides substantial refinancing capacity
+
+## Recovery Analysis
+
+- **Debt holders well-secured:** 48% LTV even at distressed pricing provides substantial recovery (>80-90%)
+- Senior unsecured debt appears well-secured (48% LTV, $9B unencumbered assets)
+"""
+
+        result = parse_security_collateral(phase4_content, None, None)
+
+        # Should extract unencumbered assets amount
+        assert '$9.0B' in result or '9.0B' in result
+
+        # Should extract percentage of gross assets
+        assert '58%' in result
+
+        # Should extract recovery estimate
+        assert '>80-90%' in result or '80-90%' in result
+
+        # Should have some security analysis content (LTV pattern may vary)
+        assert 'Security Analysis' in result or len(result) > 100
+
+    def test_parse_security_collateral_with_no_content(self):
+        """Test security/collateral extraction when no info available"""
+        from generate_final_report import parse_security_collateral
+
+        phase4_content = "## Business Strategy\n\nNo security information here."
+
+        result = parse_security_collateral(phase4_content, None, None)
+
+        # Should gracefully return "Not available"
+        assert result == 'Not available'
+
+    def test_check_perpetual_securities_not_applicable(self):
+        """Test perpetual securities check when none exist"""
+        from generate_final_report import check_perpetual_securities
+
+        phase4_content = "## Capital Structure\n\nStandard debt and equity structure with no hybrid instruments."
+        phase2_data = {
+            'debt_structure': {},
+            'balance_sheet': {}
+        }
+
+        result = check_perpetual_securities(phase4_content, phase2_data, None)
+
+        # Should return "Not applicable"
+        assert 'Not applicable' in result or 'not applicable' in result.lower()
+
+    def test_check_perpetual_securities_from_phase2(self):
+        """Test perpetual securities detection from Phase 2 data"""
+        from generate_final_report import check_perpetual_securities
+
+        phase4_content = "## Capital Structure\n\nSome content."
+        phase2_data = {
+            'balance_sheet': {
+                'preferred_equity': 50000  # In thousands
+            }
+        }
+
+        result = check_perpetual_securities(phase4_content, phase2_data, None)
+
+        # Should detect and report perpetual preferred equity
+        assert 'Preferred equity' in result or 'perpetual' in result.lower()
+        assert '50' in result or '$50' in result  # Should show the amount
+
+    def test_check_perpetual_securities_from_phase4(self):
+        """Test perpetual securities extraction from Phase 4 content"""
+        from generate_final_report import check_perpetual_securities
+
+        phase4_content = """
+## Capital Structure
+
+### Perpetual Securities
+
+The issuer has $100M in perpetual preferred units outstanding with a 5.5% distribution rate.
+These securities are subordinate to senior debt but rank ahead of common units.
+"""
+
+        result = check_perpetual_securities(phase4_content, None, None)
+
+        # Should extract perpetual securities section
+        assert '$100M' in result or 'perpetual' in result.lower()
+        assert len(result) > 50  # Should have meaningful content
+
+    def test_parse_debt_structure_debt_calculation_fix(self):
+        """Test that debt is correctly converted from thousands to billions"""
+        from generate_final_report import parse_debt_structure
+
+        phase3_data = {
+            'leverage_metrics': {
+                'total_debt': 7435740,  # $7,435,740 thousands
+                'debt_to_assets': 0.483,
+                'net_debt_to_ebitda': 8.88
+            }
+        }
+
+        result = parse_debt_structure("## Some content", None, phase3_data)
+
+        # Should show $7.4B, NOT $7,435.7B (which was the bug)
+        assert '$7.4B' in result
+        assert '$7,435' not in result  # Should NOT have the incorrect format
+
+    def test_parse_security_collateral_unencumbered_amount_format(self):
+        """Test that unencumbered assets are correctly extracted in billions"""
+        from generate_final_report import parse_security_collateral
+
+        phase4_content = "Unencumbered asset pool of $9.0 billion provides refinancing capacity"
+
+        result = parse_security_collateral(phase4_content, None, None)
+
+        # Should extract and format correctly
+        assert '$9.0B' in result
+        assert 'billion' not in result.lower()  # Should convert to 'B' notation
+
+    def test_parse_security_collateral_recovery_estimate_precedence(self):
+        """Test that recovery estimates prioritize debt holder recovery over liquidation discounts"""
+        from generate_final_report import parse_security_collateral
+
+        # Content that has both liquidation discount (30%) and recovery estimate (>80-90%)
+        phase4_content = """
+**Liquidation value:** Assuming fire-sale at 30% discount to book
+- **Debt holders well-secured:** provides substantial recovery (>80-90%)
+"""
+
+        result = parse_security_collateral(phase4_content, None, None)
+
+        # Should extract the recovery estimate (>80-90%), NOT the 30% discount
+        assert '>80-90%' in result or '80-90%' in result
+        # Should NOT extract the liquidation discount as recovery
+        assert 'Recovery estimate: 30%' not in result
+
+    def test_structural_considerations_integration(self):
+        """Test that all three parsing functions work together in report generation"""
+        from generate_final_report import (
+            parse_debt_structure,
+            parse_security_collateral,
+            check_perpetual_securities
+        )
+
+        # Sample comprehensive Phase 4 content
+        phase4_content = """
+## Liquidity Analysis
+**Credit facilities:** $2.0B limit with $500M drawn
+**Covenant Compliance:**
+- Debt/Assets: 40% vs covenant 60% (compliant)
+
+## Asset Quality
+- **Unencumbered asset pool of $5.0 billion** (50% of gross assets)
+- LTV: 35%
+- Recovery estimate: >75%
+"""
+
+        phase3_data = {
+            'leverage_metrics': {
+                'total_debt': 3000000,  # $3B in thousands
+                'debt_to_assets': 0.40
+            }
+        }
+
+        phase2_data = {
+            'balance_sheet': {},
+            'debt_structure': {}
+        }
+
+        # All three functions should work without errors
+        debt_structure = parse_debt_structure(phase4_content, phase2_data, phase3_data)
+        security_collateral = parse_security_collateral(phase4_content, phase2_data, phase3_data)
+        perpetual_securities = check_perpetual_securities(phase4_content, phase2_data, phase3_data)
+
+        # Debt structure should have content
+        assert '$2.0B' in debt_structure or '$3.0B' in debt_structure
+        assert 'Not available' not in debt_structure
+
+        # Security should have content
+        assert '$5.0B' in security_collateral
+        assert '50%' in security_collateral
+        assert 'Not available' not in security_collateral
+
+        # Perpetual securities should be "Not applicable"
+        assert 'Not applicable' in perpetual_securities or 'not applicable' in perpetual_securities.lower()
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
