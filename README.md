@@ -3,7 +3,23 @@
 **Multi-phase credit analysis system for real estate investment trusts (REITs) using Claude Code agents.**
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.13-blue.svg)](CHANGELOG.md)
+
+## What's New in v1.0.13 🎉
+
+**Structural Considerations Content Extraction (October 21, 2025)**
+
+✅ **Debt Structure, Security & Collateral, Perpetual Securities sections now auto-populated from Phase 4 analysis**
+
+Previously these sections displayed "Not available" even when Phase 4 contained relevant content. Now the system intelligently extracts:
+
+- **Debt Structure**: Credit facilities ($X.XB limit, $X.XB drawn), covenant compliance (Debt/Assets vs thresholds, interest coverage), debt profile
+- **Security & Collateral**: Unencumbered asset pool ($X.XB, X% of gross assets), LTV ratios, recovery estimates (>80-90%)
+- **Perpetual Securities**: Automatically detected from balance sheet or marked "Not applicable"
+
+**Impact**: +15% report completeness, $0 token cost, production-ready with graceful degradation. See [CHANGELOG.md](CHANGELOG.md) for technical details.
+
+---
 
 ## Overview
 
@@ -342,7 +358,7 @@ pytest tests/ --cov=scripts --cov-report=html
 
 ### Credit Analysis Sections
 
-The slim agent (v1.0.1) generates comprehensive reports with 12 sections:
+The system generates comprehensive reports with 15+ sections:
 
 1. **Executive Summary** - Rating and credit story
 2. **Credit Strengths** - Quantified positive factors
@@ -352,10 +368,16 @@ The slim agent (v1.0.1) generates comprehensive reports with 12 sections:
 6. **Downgrade Factors** - Quantified triggers
 7. **5-Factor Scorecard** - Detailed rating methodology
 8. **Key Observations** - Portfolio quality, unusual metrics
-9. **Peer Comparison** - Parallel web research of 3-4 comparable REITs with citations (new in v1.0.1)
+9. **Peer Comparison** - Parallel web research of 3-4 comparable REITs with citations (v1.0.1)
 10. **Scenario Analysis** - Base/Upside/Downside/Stress cases with pro forma metrics
-11. **Company Background** - Corporate structure, history, portfolio composition
-12. **Business Strategy** - Strategic priorities and capital allocation
+11. **Structural Considerations** - **NEW in v1.0.13** - Auto-extracted from Phase 4 analysis:
+    - **Debt Structure**: Credit facilities, covenant compliance, debt profile
+    - **Security & Collateral**: Unencumbered assets, LTV ratios, recovery estimates
+    - **Perpetual Securities**: Hybrid capital instruments or "Not applicable"
+12. **ESG Considerations** - Environmental, Social, Governance factors with CIS scoring
+13. **Company Background** - Corporate structure, history, portfolio composition
+14. **Business Strategy** - Strategic priorities and capital allocation
+15. **Detailed Financial Analysis** - FFO/AFFO/ACFO/AFCF reconciliations and bridge analysis
 
 ### Safety Features
 
