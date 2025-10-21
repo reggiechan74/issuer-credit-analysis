@@ -1131,7 +1131,15 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # Remove just the first line with the rating
         exec_summary = re.sub(r'\*\*Scorecard-Indicated Rating:\s*[^\n]+\*\*\n\n', '', exec_summary)
 
-    # Extract outlook (remove duplicate header if present)
+    # Extract outlook value from Phase 4 analysis
+    outlook = 'Stable'  # default fallback
+    if rating_outlook:
+        # Search for "**Outlook: NEGATIVE**" or "Outlook: STABLE", etc.
+        outlook_match = re.search(r'\*\*Outlook:\s+(\w+)\*\*', rating_outlook)
+        if outlook_match:
+            outlook = outlook_match.group(1)  # Extract: NEGATIVE, STABLE, POSITIVE, etc.
+
+    # Remove duplicate header if present (after extracting the value)
     if rating_outlook and rating_outlook.startswith('**Outlook:'):
         # Remove the duplicate "Outlook: STABLE" header that's already in the narrative
         rating_outlook = re.sub(r'^\*\*Outlook:\s+\w+\*\*\n\n', '', rating_outlook)
@@ -1512,7 +1520,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'DRIVER_2': drivers[1] if len(drivers) > 1 else '',
         'DRIVER_3': drivers[2] if len(drivers) > 2 else '',
         'DRIVER_4': drivers[3] if len(drivers) > 3 else '',
-        'OUTLOOK': 'Stable',
+        'OUTLOOK': outlook,  # Extracted from Phase 4 analysis (was hardcoded 'Stable')
         'OUTLOOK_RATIONALE': rating_outlook,
         'OUTLOOK_SCENARIOS': '',
         'STABILIZATION_CRITERIA': 'Not specified',
