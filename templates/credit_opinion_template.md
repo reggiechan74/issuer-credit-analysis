@@ -360,12 +360,12 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 *Based on REALPAC-standardized calculated values for consistency*
 
-| Coverage Measure | Metric ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Distributions ({{REPORTING_PERIOD_FORMATTED}}) | Per-Unit Coverage Ratio | Per-Unit Payout Ratio | Assessment | Cushion |
-|------------------|---------------------------|---------------|----------------|--------------|------------|---------|
-| **FFO Coverage** | {{FFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_CALCULATED}}x | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_COVERAGE_ASSESSMENT}} | {{FFO_CUSHION}}% |
-| **AFFO Coverage** | {{AFFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_CALCULATED}}x | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_COVERAGE_ASSESSMENT}} | {{AFFO_CUSHION}}% |
-| **ACFO Coverage** | {{ACFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_CALCULATED}}x | {{ACFO_PAYOUT_CALCULATED}}% | {{ACFO_COVERAGE_ASSESSMENT}} | {{ACFO_CUSHION}}% |
-| **AFCF Coverage** | {{AFCF_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_COVERAGE}}x | {{AFCF_PAYOUT_CALCULATED}}% | {{AFCF_COVERAGE_ASSESSMENT}} | {{AFCF_CUSHION}}% |
+| Coverage Measure | Metric ({{REPORTING_PERIOD_FORMATTED}}, {{CURRENCY}} 000s) | Distributions ({{REPORTING_PERIOD_FORMATTED}}) | Per-Unit Coverage Ratio | Per-Unit Payout Ratio | Assessment |
+|------------------|---------------------------|---------------|----------------|--------------|------------|
+| **FFO Coverage** | {{FFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_CALCULATED}}x | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_COVERAGE_ASSESSMENT}} |
+| **AFFO Coverage** | {{AFFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_CALCULATED}}x | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_COVERAGE_ASSESSMENT}} |
+| **ACFO Coverage** | {{ACFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_CALCULATED}}x | {{ACFO_PAYOUT_CALCULATED}}% | {{ACFO_COVERAGE_ASSESSMENT}} |
+| **AFCF Coverage** | {{AFCF_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_COVERAGE}}x | {{AFCF_PAYOUT_CALCULATED}}% | {{AFCF_COVERAGE_ASSESSMENT}} |
 
 **Note:** Credit assessment based on REALPAC-calculated metrics to ensure methodology consistency across issuers.
 
