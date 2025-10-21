@@ -92,11 +92,12 @@ Execute the full 5-phase credit analysis pipeline using **Docling** for PDF conv
 7. **Phase 5: Generate final report**
    ```bash
    python scripts/generate_final_report.py \
-     --template credit_opinion_template_enhanced.md \
+     --template credit_opinion_template.md \
      Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json \
      Issuer_Reports/{Issuer_Name}/temp/phase4_credit_analysis.md
    ```
    - Creates timestamped report in `Issuer_Reports/{Issuer_Name}/reports/`
+   - **New in v1.0.13:** Structural Considerations section now auto-populated from Phase 4 content
 
 ## Expected Output
 
