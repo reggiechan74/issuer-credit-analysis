@@ -970,6 +970,40 @@ def parse_scenario_analysis(scenario_text):
     return result
 
 
+def parse_esg_section(esg_text):
+    """
+    Parse ESG section to extract Environmental, Social, and Governance components
+
+    Args:
+        esg_text (str): Full ESG section from Phase 4
+
+    Returns:
+        dict: Parsed ESG components with individual sections
+    """
+    if not esg_text or esg_text == 'Not available':
+        return {
+            'ENVIRONMENTAL_ANALYSIS': 'Not available',
+            'SOCIAL_ANALYSIS': 'Not available',
+            'GOVERNANCE_ANALYSIS': 'Not available',
+        }
+
+    result = {}
+
+    # Extract Environmental Factors
+    env_match = re.search(r'###\s+Environmental Factors\s*\n(.*?)(?=###|$)', esg_text, re.DOTALL | re.IGNORECASE)
+    result['ENVIRONMENTAL_ANALYSIS'] = env_match.group(1).strip() if env_match else 'Not available'
+
+    # Extract Social Factors
+    social_match = re.search(r'###\s+Social Factors\s*\n(.*?)(?=###|\*\*ESG Rating|$)', esg_text, re.DOTALL | re.IGNORECASE)
+    result['SOCIAL_ANALYSIS'] = social_match.group(1).strip() if social_match else 'Not available'
+
+    # Extract Governance Factors
+    gov_match = re.search(r'###\s+Governance Factors\s*\n(.*?)(?=\*\*Credit Impact|\*\*ESG Rating|###|$)', esg_text, re.DOTALL | re.IGNORECASE)
+    result['GOVERNANCE_ANALYSIS'] = gov_match.group(1).strip() if gov_match else 'Not available'
+
+    return result
+
+
 def generate_final_report(metrics, analysis_sections, template, phase2_data=None):
     """
     Generate final report by combining metrics and analysis with template
@@ -1247,9 +1281,14 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     leverage_coverage_detail = get_section(analysis_sections, 'Leverage and Coverage Analysis', 'LEVERAGE AND COVERAGE ANALYSIS')
     growth_strategy = get_section(analysis_sections, 'Growth Strategy and Capital Allocation', 'GROWTH STRATEGY', 'Capital Allocation')
     operating_track_record = get_section(analysis_sections, 'Operating Track Record and Portfolio Quality', 'OPERATING TRACK RECORD', 'Portfolio Quality')
-    environmental_analysis = get_section(analysis_sections, 'Environmental Factors', 'ENVIRONMENTAL', 'ESG Considerations')
-    social_analysis = get_section(analysis_sections, 'Social Factors', 'SOCIAL')
-    governance_analysis = get_section(analysis_sections, 'Governance Factors', 'GOVERNANCE')
+
+    # Get full ESG section and parse into components (Issue #29)
+    esg_section = get_section(analysis_sections, 'ESG Considerations', 'ESG', 'Environmental', 'Social', 'Governance')
+    parsed_esg = parse_esg_section(esg_section)
+    environmental_analysis = parsed_esg.get('ENVIRONMENTAL_ANALYSIS', 'Not available')
+    social_analysis = parsed_esg.get('SOCIAL_ANALYSIS', 'Not available')
+    governance_analysis = parsed_esg.get('GOVERNANCE_ANALYSIS', 'Not available')
+
     scenario_analysis = get_section(analysis_sections, 'Scenario Analysis and Stress Testing', 'SCENARIO ANALYSIS', 'Stress Testing')
 
     # Parse scenario analysis into individual components (Issue #28)
