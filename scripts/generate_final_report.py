@@ -1057,13 +1057,21 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     debt_to_assets = leverage_metrics.get('debt_to_assets_percent', 0)
     net_debt_ratio = leverage_metrics.get('net_debt_ratio', 0)
 
+    # Extract issuer-reported metrics (quarterly from Phase 2/3)
     ffo = reit_metrics.get('ffo', 0)
     affo = reit_metrics.get('affo', 0)
     ffo_per_unit = reit_metrics.get('ffo_per_unit', 0)
     affo_per_unit = reit_metrics.get('affo_per_unit', 0)
-    distributions = reit_metrics.get('distributions_per_unit', 0)
     ffo_payout = reit_metrics.get('ffo_payout_ratio', 0)
     affo_payout = reit_metrics.get('affo_payout_ratio', 0)
+
+    # Get YTD distributions per unit (for consistency with YTD ACFO/AFCF totals)
+    # Phase 2 has ytd_2025.distributions_per_unit which matches the YTD period
+    distributions = reit_metrics.get('distributions_per_unit', 0)  # Default to quarterly
+    if phase2_data:
+        ytd_distributions = phase2_data.get('ffo_affo', {}).get('ytd_2025', {}).get('distributions_per_unit')
+        if ytd_distributions:
+            distributions = ytd_distributions  # Use YTD if available
 
     noi_coverage = coverage_ratios.get('noi_interest_coverage', 0)
     annualized_interest = coverage_ratios.get('annualized_interest_expense', 0)
@@ -1304,7 +1312,17 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     # Pre-calculate values for reported vs calculated sections (v1.0.12)
     # ========================================
     # Extract reported metrics from Phase 2
+    # Prefer YTD values for consistency with YTD ACFO/AFCF totals (Issue #33 period mismatch fix)
     ffo_affo_reported = phase2_data.get('ffo_affo', {}) if phase2_data else {}
+
+    # Override with YTD values if available (for multi-quarter reports)
+    if phase2_data:
+        ytd_section = phase2_data.get('ffo_affo', {}).get('ytd_2025', {})
+        if ytd_section:
+            # Merge YTD values over quarterly values for consistency
+            ffo_affo_reported = {**ffo_affo_reported, **ytd_section}
+
+    # Get distributions per unit (now YTD if available)
     distributions_per_unit_reported = ffo_affo_reported.get('distributions_per_unit', distributions)
 
     # Get unit counts for per-unit calculations
@@ -1337,6 +1355,17 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     total_distributions_ytd = afcf_coverage.get('total_distributions', 0)
     residual_acfo = acfo_amount - total_distributions_ytd if acfo_amount and total_distributions_ytd else None
     residual_afcf = afcf_amount - total_distributions_ytd if afcf_amount and total_distributions_ytd else None
+
+    # Extract total-level coverage metrics from Phase 3 (Issue #33)
+    # These are comprehensive metrics from afcf_coverage section
+    afcf_debt_service_cov = afcf_coverage.get('afcf_debt_service_coverage')
+    afcf_dist_cov_total = afcf_coverage.get('afcf_distribution_coverage')
+    afcf_self_funding = afcf_coverage.get('afcf_self_funding_ratio')
+    total_debt_service = afcf_coverage.get('total_debt_service', 0)
+    afcf_self_funding_capacity = afcf_coverage.get('afcf_self_funding_capacity', 0)
+
+    # Calculate total-level ACFO distribution coverage (ACFO doesn't have a coverage section in Phase 3)
+    acfo_dist_cov_total = (acfo_amount / total_distributions_ytd) if acfo_amount and total_distributions_ytd else None
 
     # Calculate reported coverage ratios (per-unit basis)
     ffo_rep = ffo_affo_reported.get('ffo', ffo)
@@ -1843,8 +1872,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'DILUTED_UNITS_TOTAL': f"{dilution_analysis.get('detail', {}).get('diluted_units_reported', 0):,.0f}" if dilution_analysis.get('detail', {}).get('diluted_units_reported') else 'Not available',
         'DILUTION_ANALYSIS': dilution_analysis.get('credit_assessment', 'Dilution detail not extracted in Phase 2. Enable comprehensive extraction for detailed dilution analysis.') if dilution_analysis else 'Dilution detail not extracted in Phase 2.',
 
-        # FFO/AFFO Validation Placeholders
-        'FFO_REPORTED': f"{reit_metrics.get('ffo', 0):,.0f}" if reit_metrics.get('ffo') else 'Not reported',
+        # FFO/AFFO Validation Placeholders (duplicate FFO_REPORTED removed - Issue #33)
         'FFO_CALCULATED': f"{reit_metrics.get('ffo_calculated', 0):,.0f}",
         'FFO_VARIANCE_AMOUNT': f"{reit_metrics.get('validation', {}).get('ffo_variance_amount', 0):,.0f}" if reit_metrics.get('validation', {}).get('ffo_variance_amount') is not None else 'N/A',
         'FFO_VARIANCE_PERCENT': f"{reit_metrics.get('validation', {}).get('ffo_variance_percent', 0):.1f}" if reit_metrics.get('validation', {}).get('ffo_variance_percent') is not None else 'N/A',
@@ -1857,11 +1885,11 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'FFO_AFFO_DATA_QUALITY': reit_metrics.get('ffo_calculation_detail', {}).get('data_quality', 'Unknown').upper(),
         'FFO_AFFO_OBSERVATIONS': f"FFO variance: {ffo_var_formatted}. AFFO variance: {affo_var_formatted}.",
 
-        # Distribution Coverage Placeholders
+        # Distribution Coverage Placeholders (Per-Unit Basis)
         'FFO_COVERAGE': f"{(1 / (ffo_payout / 100) if ffo_payout > 0 else 0):.2f}",
         'AFFO_COVERAGE': f"{(1 / (affo_payout / 100) if affo_payout > 0 else 0):.2f}",
-        'ACFO_COVERAGE': f"{acfo_cov_calc:.2f}x" if acfo_cov_calc else 'Not available',
-        'AFCF_COVERAGE': f"{afcf_cov_calc:.2f}" if afcf_cov_calc else 'Not available',
+        'ACFO_COVERAGE': f"{acfo_cov_calc:.2f}x" if acfo_cov_calc else 'Not available',  # Per-unit
+        'AFCF_COVERAGE': f"{afcf_cov_calc:.2f}" if afcf_cov_calc else 'Not available',  # Per-unit
         'FFO_COVERAGE_ASSESSMENT': 'Adequate' if ffo_payout < 90 else 'Tight coverage',
         'AFFO_COVERAGE_ASSESSMENT': 'Unsustainable' if affo_payout > 100 else 'Adequate',
         'ACFO_COVERAGE_ASSESSMENT': assess_distribution_coverage(acfo_cov_calc) if acfo_cov_calc else 'Not available',
@@ -1870,6 +1898,20 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'DISTRIBUTION_SUSTAINABILITY': 'Unsustainable' if affo_payout > 100 else 'Sustainable',
         'DISTRIBUTION_SUSTAINABILITY_CONCLUSION': f"Distributions {'exceed' if affo_payout > 100 else 'within'} sustainable cash flow (AFFO payout: {affo_payout:.1f}%)",
         'DISTRIBUTION_COVERAGE_OVERALL': 'mixed' if ffo_payout < 100 and affo_payout > 100 else 'adequate',
+
+        # Total-Level Coverage Metrics (Issue #33 - Option 3)
+        'ACFO_DIST_COV_TOTAL': f"{acfo_dist_cov_total:.2f}x" if acfo_dist_cov_total else 'Not available',
+        'ACFO_DIST_COV_TOTAL_ASSESSMENT': assess_distribution_coverage(acfo_dist_cov_total) if acfo_dist_cov_total else 'Not available',
+        'AFCF_DIST_COV_TOTAL': f"{afcf_dist_cov_total:.2f}x" if afcf_dist_cov_total else 'Not available',
+        'AFCF_DIST_COV_TOTAL_ASSESSMENT': assess_distribution_coverage(afcf_dist_cov_total) if afcf_dist_cov_total else 'Not available',
+        'AFCF_DEBT_SERVICE_COV': f"{afcf_debt_service_cov:.2f}x" if afcf_debt_service_cov else 'Not available',
+        'AFCF_SELF_FUNDING_RATIO': f"{afcf_self_funding:.2f}x" if afcf_self_funding else 'Not available',
+        'TOTAL_DEBT_SERVICE': f"{total_debt_service:,.0f}" if total_debt_service else 'Not available',
+        'TOTAL_DISTRIBUTIONS_YTD': f"{total_distributions_ytd:,.0f}" if total_distributions_ytd else 'Not available',
+        'AFCF_SELF_FUNDING_CAPACITY': f"{afcf_self_funding_capacity:,.0f}" if afcf_self_funding_capacity else 'Not available',
+        'ACFO_PER_UNIT_CALC': f"{acfo_per_unit_calc:.4f}" if acfo_per_unit_calc else 'Not available',
+        'AFCF_PER_UNIT_CALC': f"{afcf_per_unit_calc:.4f}" if afcf_per_unit_calc else 'Not available',
+        'DISTRIBUTIONS_PER_UNIT': f"{distributions:.4f}" if distributions else 'Not available',
 
         # Bridge Analysis Placeholders
         'FFO_TO_AFFO_REDUCTION': f"{(ffo - affo):,.0f}",
@@ -1906,21 +1948,15 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'TI_CONSISTENCY_STATUS': '✅ Consistent' if acfo_metrics.get('acfo_reconciliation', {}).get('ti_consistent') else 'Not verified',
         'LEASING_CONSISTENCY_STATUS': '✅ Consistent' if acfo_metrics.get('acfo_reconciliation', {}).get('leasing_consistent') else 'Not verified',
 
-        # AFCF Placeholders (Not available without ACFO)
-        'AFCF': 'Not available',
-        'AFCF_PER_UNIT': 'Not available',
+        # AFCF Placeholders (unique ones - duplicates removed, Issue #33)
         'AFCF_ANNUALIZED': 'Not available',
         'AFCF_PERIOD': report_period,
-        'AFCF_DATA_SOURCE': 'not calculated',
-        'AFCF_DATA_QUALITY': 'Not available',
-        'NET_CFI': f"{phase2_data.get('cash_flow_investing', {}).get('total_cfi', 0):,.0f}" if phase2_data else 'Not available',
+        'AFCF_DATA_SOURCE': 'calculated' if afcf_metrics.get('afcf') else 'not calculated',
+        'AFCF_DATA_QUALITY': afcf_metrics.get('data_quality', 'Not available') if afcf_metrics.get('afcf') else 'Not available',
         'AFCF_KEY_OBSERVATIONS': f"AFCF of ${afcf_metrics.get('afcf', 0):,.0f} represents free cash flow after all investing activities" if afcf_metrics.get('afcf') else 'AFCF not calculated - requires ACFO as starting point',
         'AFCF_CREDIT_ASSESSMENT': f"AFCF debt service coverage of {afcf_coverage.get('afcf_debt_service_coverage', 0):.2f}x indicates {assess_afcf_coverage(afcf_coverage.get('afcf_debt_service_coverage', 0)).lower()}" if afcf_coverage.get('afcf_debt_service_coverage') else 'Not available without AFCF calculation',
         'AFCF_VALIDATION_NOTES': f"AFCF calculated from ACFO (${acfo_metrics.get('acfo', 0):,.0f}) + Net CFI (${afcf_metrics.get('net_cfi', 0):,.0f})" if afcf_metrics.get('afcf') else 'AFCF calculation requires ACFO (CFO + adjustments)',
-        'AFCF_DEBT_SERVICE_COVERAGE': f"{afcf_coverage.get('afcf_debt_service_coverage', 0):.2f}" if afcf_coverage.get('afcf_debt_service_coverage') else 'Not available',
-        'AFCF_PAYOUT_RATIO': f"{afcf_coverage.get('afcf_payout_ratio', 0):.1f}" if afcf_coverage.get('afcf_payout_ratio') else 'Not available',
         'AFCF_PAYOUT_ASSESSMENT': assess_distribution_coverage(afcf_cov_calc) if afcf_cov_calc else 'Not calculated - requires AFCF',
-        'AFCF_SELF_FUNDING_RATIO': f"{afcf_coverage.get('afcf_self_funding_ratio', 0):.2f}" if afcf_coverage.get('afcf_self_funding_ratio') is not None else 'Not available',
         'AFCF_DS_ASSESSMENT': assess_afcf_coverage(afcf_coverage.get('afcf_debt_service_coverage', 0)) if afcf_coverage.get('afcf_debt_service_coverage') is not None else 'Not calculated',
         'AFCF_SF_ASSESSMENT': assess_self_funding_ratio(afcf_coverage.get('afcf_self_funding_ratio', 0)) if afcf_coverage.get('afcf_self_funding_ratio') is not None else 'Not calculated',
         'AFCF_DISTRIBUTION_COVERAGE': f"{afcf_coverage.get('afcf_distribution_coverage', 0):.2f}" if afcf_coverage.get('afcf_distribution_coverage') else 'Not available',

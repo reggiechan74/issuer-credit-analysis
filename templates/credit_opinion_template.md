@@ -683,12 +683,30 @@ Monthly Burn Rate = Period Deficit / Number of Months in Period
 
 {{LIQUIDITY_ASSESSMENT}}
 
-**ACFO/AFCF Coverage of Cash Needs:**
-- ACFO provides {{ACFO_COVERAGE}}x coverage of distributions
-- AFCF provides {{AFCF_COVERAGE}}x coverage of total financing needs
-- After distributions, residual ACFO available: {{RESIDUAL_ACFO}} {{CURRENCY}} thousands
-- After all financing, residual AFCF available: {{RESIDUAL_AFCF}} {{CURRENCY}} thousands
-- Sufficient to cover: {{COVERAGE_ANALYSIS}}
+**Coverage Analysis:**
+
+*Per-Unit Basis (Distribution Coverage):*
+- ACFO per unit: {{ACFO_PER_UNIT_CALC}} / Distributions per unit: {{DISTRIBUTIONS_PER_UNIT}} = {{ACFO_COVERAGE}} coverage
+- AFCF per unit: {{AFCF_PER_UNIT_CALC}} / Distributions per unit: {{DISTRIBUTIONS_PER_UNIT}} = {{AFCF_COVERAGE}}x coverage
+
+*Total Basis (Comprehensive Coverage):*
+- **Distribution Coverage:**
+  - ACFO ({{ACFO}} thousands) / Total distributions ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{ACFO_DIST_COV_TOTAL}}** {{ACFO_DIST_COV_TOTAL_ASSESSMENT}}
+  - AFCF ({{AFCF}} thousands) / Total distributions ({{TOTAL_DISTRIBUTIONS_YTD}} thousands) = **{{AFCF_DIST_COV_TOTAL}}** {{AFCF_DIST_COV_TOTAL_ASSESSMENT}}
+
+- **Debt Service Coverage:**
+  - AFCF / Total debt service ({{TOTAL_DEBT_SERVICE}} thousands) = **{{AFCF_DEBT_SERVICE_COV}}**
+
+- **Self-Funding Capacity:**
+  - Self-funding ratio: **{{AFCF_SELF_FUNDING_RATIO}}** (AFCF / Total obligations)
+  - Financing gap: **{{AFCF_SELF_FUNDING_CAPACITY}}** {{CURRENCY}} thousands (negative = requires external financing)
+
+*Residual Cash Flows After Distributions:*
+- ACFO residual: {{RESIDUAL_ACFO}} {{CURRENCY}} thousands
+- AFCF residual: {{RESIDUAL_AFCF}} {{CURRENCY}} thousands (negative = shortfall)
+
+*Interest Coverage:*
+- {{COVERAGE_ANALYSIS}}
 
 ### 5. Growth Strategy and Capital Allocation
 
