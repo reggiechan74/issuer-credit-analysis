@@ -1812,8 +1812,9 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'RESIDUAL_AFCF': 'Not available',
 
         # Additional Financial Data Placeholders
-        'NET_INCOME': f"{phase2_data.get('income_statement', {}).get('net_income', 0):,.0f}" if phase2_data else 'Not available',
-        'NET_INCOME_PER_UNIT_CALCULATED': f"{calculate_per_unit(phase2_data.get('income_statement', {}).get('net_income', 0), common_units) or 0:.4f}" if phase2_data and phase2_data.get('income_statement', {}).get('net_income') is not None else 'N/A',
+        # NET_INCOME: Priority Phase 3 (calculated) → Phase 2 (extracted) → 0
+        'NET_INCOME': f"{reit_metrics.get('ffo_calculation_detail', {}).get('net_income_ifrs') or (phase2_data.get('income_statement', {}).get('net_income') if phase2_data else None) or 0:,.0f}",
+        'NET_INCOME_PER_UNIT_CALCULATED': f"{calculate_per_unit(reit_metrics.get('ffo_calculation_detail', {}).get('net_income_ifrs') or (phase2_data.get('income_statement', {}).get('net_income') if phase2_data else 0), common_units) or 0:.4f}",
         'SUSTAINING_CAPEX': f"{abs(reit_metrics.get('affo_calculation_detail', {}).get('adjustments_detail', {}).get('adjustment_V_capex_sustaining', 0)):,.0f}",
 
         # Assessment & Analysis Placeholders
