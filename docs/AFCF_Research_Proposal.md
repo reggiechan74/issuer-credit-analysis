@@ -161,12 +161,14 @@ AFCF / Total Distributions
 - Modified payout ratio based on true free cash flow
 - More conservative than AFFO payout ratio
 
-**3. AFCF to Net Financing Outflows**
+**3. AFCF Self-Funding Ratio**
 ```
-AFCF / (Debt Service + Distributions - New Financing)
+AFCF / (Total Debt Service + Total Distributions)
 ```
-- Measures self-sustainability
-- <1.0x = reliant on external financing
+- Measures ability to cover all financing obligations from free cash flow
+- <1.0x = reliant on external financing (cannot self-fund)
+- ≥1.0x = self-funding (can cover obligations without new financing)
+- NOTE: Does NOT subtract new financing (aligns with burn rate methodology)
 
 ---
 
@@ -227,7 +229,7 @@ AFCF
 
 ## Implementation Considerations
 
-### 1. Double-Counting Prevention
+### 1. Double-Counting Prevention (CRITICAL)
 
 **Critical:** Ensure no double-counting between ACFO and AFCF:
 
@@ -244,6 +246,33 @@ AFCF
 | JV Capital Contributions | ❌ No | ✅ Yes | Investing outflow |
 | Transaction Costs (acquisitions) | ⚠️ Maybe (Adj 9) | ⚠️ Check | Verify ACFO treatment |
 
+**Why This Works (Standard IFRS Practice):**
+
+Under IFRS (IAS 7 Statement of Cash Flows), the classification is typically:
+
+**Cash Flow from Operations (CFO):**
+- Sustaining CAPEX (maintenance/routine capital expenditures)
+- Sustaining tenant improvements (normal tenant turnover)
+- External leasing costs (broker commissions for normal leasing)
+- Interest paid (operating activity)
+
+**Cash Flow from Investing (CFI):**
+- Development CAPEX (growth projects, redevelopment)
+- Property acquisitions (new investments)
+- Property dispositions (sale of investments)
+- JV capital contributions/returns
+- Business combinations
+
+**Therefore:**
+- ACFO deducts sustaining items from CFO → They do NOT appear in CFI
+- AFCF adds CFI to ACFO → No double-counting because sustaining items only in CFO
+- The formula AFCF = ACFO + CFI is correct by design
+
+**Verification Required:**
+- Always verify that `total_cfi` from cash flow statement does NOT include sustaining items
+- Check notes to financial statements for CAPEX classification methodology
+- If issuer uses non-standard classification, adjust accordingly
+
 ### 2. Development CAPEX Treatment
 
 **Issue:** ACFO Adjustment 4 includes:
@@ -256,7 +285,49 @@ AFCF
 net_cfi_capex = -capex_development_acfo  # Deduct development capex not in ACFO
 ```
 
-### 3. Joint Venture Treatment
+### 3. Alignment with Burn Rate Methodology
+
+**AFCF Self-Funding Ratio** is the foundation for burn rate analysis (v1.0.7).
+
+**Connection:**
+```
+If AFCF Self-Funding Ratio < 1.0x:
+  → Cannot cover obligations from free cash flow
+  → Burns cash to meet obligations
+  → Burn Rate = Total Obligations - AFCF
+  → Cash runway = Available Cash / Monthly Burn Rate
+
+If AFCF Self-Funding Ratio ≥ 1.0x:
+  → Self-funding (no burn rate)
+  → Generates surplus cash
+  → Can accumulate reserves or reduce debt
+```
+
+**Why NOT Subtract New Financing:**
+- Self-funding ratio measures **inherent cash generation capacity**
+- New financing is external/discretionary, not sustainable operations
+- Burn rate analysis focuses on **how long can survive WITHOUT new financing**
+- Consistent methodology: Both metrics measure self-sustainability
+
+**Example - Artis REIT (v1.0.7):**
+```
+AFCF = $50.2M
+Total Obligations = $98.4M (debt service + distributions)
+Self-Funding Ratio = 50.2 / 98.4 = 0.51x
+
+→ Can only cover 51% of obligations from free cash flow
+→ Must access $48.2M from external sources (burn)
+→ If no new financing: Burns $48.2M / 6 months = $8.0M/month
+→ Cash runway = Available cash / Monthly burn
+```
+
+**Credit Implications:**
+- <0.5x = HIGH reliance on capital markets
+- 0.5x-0.8x = MODERATE reliance
+- 0.8x-1.0x = LOW reliance (nearly self-funding)
+- ≥1.0x = Self-funding (no reliance)
+
+### 4. Joint Venture Treatment
 
 **ACFO includes** (Adj 3):
 - Distributions received from JVs (3a), OR
@@ -547,8 +618,11 @@ AFCF_Debt_Coverage = 22,000 / 55,000 = 0.40x  # ⚠️ Low coverage
 Total_Distributions = 18,000 + 1,000 = 19,000
 AFCF_Payout_Ratio = 19,000 / 22,000 = 86.4%
 
-Net_Financing_Needed = 55,000 (debt service) + 19,000 (dist) - 15,000 (new financing) = 59,000
-AFCF_Self_Funding_Ratio = 22,000 / 59,000 = 0.37x  # Needs external financing
+Total_Obligations = 55,000 (debt service) + 19,000 (dist) = 74,000
+AFCF_Self_Funding_Ratio = 22,000 / 74,000 = 0.30x  # Needs external financing
+
+Net_Financing_Received = 15,000 (new debt + equity)
+Financing_Gap = 74,000 - 22,000 = 52,000  # Must be covered by new financing
 
 # Step 3: Reconciliation
 CFO (IFRS) = ~50,000 (approximates ACFO)
@@ -565,7 +639,8 @@ Change in Cash = 50,000 - 28,000 - 19,000 = 3,000  ✅
 - AFCF = $22M (positive but constrained)
 - AFCF/Debt Service = 0.40x (⚠️ LOW - cannot cover debt + interest from free cash flow)
 - AFCF/Distributions = 115.8% (sustainable but tight)
-- Required external financing = $37M ($59M needs - $22M AFCF)
+- AFCF Self-Funding Ratio = 0.30x (can only cover 30% of total obligations)
+- Required external financing = $52M ($74M obligations - $22M AFCF)
 
 **Credit Implications:**
 - Issuer is growth-oriented (high investing outflows)

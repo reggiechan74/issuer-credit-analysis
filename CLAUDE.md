@@ -350,6 +350,12 @@ AFCF = ACFO + Net Cash Flow from Investing Activities
 - Business combinations
 - Other investing activities
 
+**Why This Works (IAS 7 Classification):**
+Under IFRS, sustaining items go in **Cash Flow from Operations (CFO)**, while growth/investing items go in **Cash Flow from Investing (CFI)**. Therefore:
+- ACFO deducts sustaining items from CFO (already removed)
+- AFCF adds CFI to ACFO (only growth items)
+- No double-counting by design
+
 ### Required Phase 2 Data
 
 Add to Phase 2 extraction for AFCF support:
@@ -394,11 +400,13 @@ AFCF / Total Distributions
 
 **3. AFCF Self-Funding Ratio**
 ```
-AFCF / (Debt Service + Distributions - New Financing)
+AFCF / (Total Debt Service + Total Distributions)
 ```
-- Measures true self-sustainability
-- < 1.0x = Reliant on capital markets for financing
-- Identifies growth vs. income-oriented REITs
+- Measures ability to cover ALL financing obligations from free cash flow
+- < 1.0x = Reliant on capital markets (cannot self-fund)
+- ≥ 1.0x = Self-funding (can cover obligations without new financing)
+- **Note:** Does NOT subtract new financing (aligns with burn rate methodology)
+- **Rationale:** Measures inherent cash generation capacity, not external financing decisions
 
 ### Example Output
 
@@ -419,9 +427,10 @@ AFCF / (Debt Service + Distributions - New Financing)
   "afcf_coverage": {
     "afcf_debt_service_coverage": 0.40,    // ⚠️ LOW - needs external financing
     "afcf_payout_ratio": 86.4,             // Distributions sustainable from FCF
-    "afcf_self_funding_ratio": 0.37,       // Reliant on capital markets
+    "afcf_self_funding_ratio": 0.30,       // Can only cover 30% of obligations
     "total_debt_service": 55000,
-    "net_financing_needs": 59000
+    "total_distributions": 19000,
+    "afcf_self_funding_capacity": -52000   // Needs $52k external financing
   },
   "afcf_reconciliation": {
     "afcf_calculation_valid": true,
@@ -461,6 +470,24 @@ AFCF = $22M (positive but constrained)
 AFCF = $22M, Distributions = $19M → Coverage = 1.16x
 ✓ Distributions covered by free cash flow
 → Sustainable payout even without new financing
+```
+
+**Self-Funding and Burn Rate Connection (v1.0.7):**
+```
+AFCF = $50M
+Total Obligations = $98M (debt service + distributions)
+Self-Funding Ratio = 50 / 98 = 0.51x
+
+→ Can only cover 51% of obligations from free cash flow
+→ Financing gap = $98M - $50M = $48M (must be funded externally)
+→ If no new financing: Burns $48M / 6 months = $8M/month
+→ Cash runway = Available cash / Monthly burn rate
+
+Credit Implication:
+- <0.5x = HIGH reliance on capital markets
+- 0.5-0.8x = MODERATE reliance
+- 0.8-1.0x = LOW reliance (nearly self-funding)
+- ≥1.0x = Self-funding (generates surplus)
 ```
 
 ### Functions
