@@ -107,7 +107,7 @@ def generate_ffo_affo_reconciliation(financial_data):
         if amount != 0.0:  # Only include non-zero adjustments
             reconciliation['affo_adjustments'].append({
                 'description': affo_adjustment_names.get(adj_key, adj_key),
-                'amount': -amount  # Negative because these are deductions from FFO
+                'amount': amount  # Already signed correctly (negative for deductions, per extraction guide)
             })
 
     return reconciliation
@@ -276,25 +276,95 @@ def generate_issuer_reported_ffo_affo_reconciliation(phase2_data):
 
     # Case 1: Issuer provides detailed reconciliation (rare)
     if has_components and ffo_affo.get('ffo') and ffo_affo.get('affo'):
+        ffo_adjustments = _build_issuer_adjustments(ffo_affo_components, 'ffo')
+        net_income = ffo_affo_components.get('net_income_ifrs', 0)
+        ffo_reported = ffo_affo.get('ffo', 0)
+        affo_reported = ffo_affo.get('affo', 0)
+
+        # Calculate FFO validation metrics
+        total_ffo_adjustments = sum(adj['amount'] for adj in ffo_adjustments)
+        expected_ffo = net_income + total_ffo_adjustments
+        ffo_missing_amount = ffo_reported - expected_ffo
+        ffo_variance_percent = abs(ffo_missing_amount / ffo_reported * 100) if ffo_reported != 0 else 0
+        ffo_reconciliation_complete = ffo_variance_percent < 2.0
+
+        # Check calculation method
+        calc_method = ffo_affo_components.get('calculation_method', 'unknown')
+        uses_reserves = calc_method in ['reserve', 'hybrid'] or 'reserve' in ffo_affo_components.get('reserve_methodology', '').lower()
+
+        # Check if issuer disclosed specific AFFO adjustments (reserve methodology)
+        issuer_affo_adjustments = ffo_affo_components.get('affo_adjustments_issuer_reported', [])
+
+        if issuer_affo_adjustments:
+            # Use issuer's disclosed AFFO components (reserve methodology)
+            affo_adjustments = []
+            for adj in issuer_affo_adjustments:
+                affo_adjustments.append({
+                    'description': adj.get('description', 'Unknown adjustment'),
+                    'amount': adj.get('amount', 0),
+                    'source_page': adj.get('source_page', ''),
+                    'note': adj.get('note', ''),
+                    'is_issuer_reported': True
+                })
+            total_affo_adjustments = ffo_affo_components.get('affo_total_adjustments_issuer', sum(adj['amount'] for adj in affo_adjustments))
+            expected_affo = ffo_reported + total_affo_adjustments
+            affo_missing_amount = affo_reported - expected_affo
+            affo_variance_percent = abs(affo_missing_amount / affo_reported * 100) if affo_reported != 0 else 0
+            affo_reconciliation_complete = affo_variance_percent < 2.0
+        else:
+            # Calculate AFFO validation metrics from REALPAC standard fields
+            affo_adjustments = _build_issuer_adjustments(ffo_affo_components, 'affo')
+            total_affo_adjustments = sum(adj['amount'] for adj in affo_adjustments)
+            expected_affo = ffo_reported + total_affo_adjustments
+            affo_missing_amount = affo_reported - expected_affo
+            affo_variance_percent = abs(affo_missing_amount / affo_reported * 100) if affo_reported != 0 else 0
+            affo_reconciliation_complete = affo_variance_percent < 2.0
+
+            # If AFFO doesn't reconcile (likely due to undisclosed reserves), show implied total instead
+            if not affo_reconciliation_complete and uses_reserves:
+                implied_affo_adjustment = affo_reported - ffo_reported
+                affo_adjustments = [{
+                    'description': f'AFFO adjustments ({calc_method} methodology - components not disclosed in detail)',
+                    'amount': implied_affo_adjustment,
+                    'is_implied': True
+                }]
+
         return {
             'reconciliation_type': 'detailed',
             'starting_point': {
                 'description': 'IFRS Net Income (as reported by issuer)',
-                'amount': ffo_affo_components.get('net_income_ifrs', 0)
+                'amount': net_income
             },
-            'ffo_adjustments': _build_issuer_adjustments(ffo_affo_components, 'ffo'),
+            'ffo_adjustments': ffo_adjustments,
             'ffo_total': {
                 'description': 'Funds From Operations (FFO) - Issuer Reported',
-                'amount': ffo_affo.get('ffo', 0)
+                'amount': ffo_reported
             },
-            'affo_adjustments': _build_issuer_adjustments(ffo_affo_components, 'affo'),
+            'affo_adjustments': affo_adjustments,
             'affo_total': {
                 'description': 'Adjusted Funds From Operations (AFFO) - Issuer Reported',
-                'amount': ffo_affo.get('affo', 0)
+                'amount': affo_reported
+            },
+            'validation': {
+                'total_ffo_adjustments_extracted': total_ffo_adjustments,
+                'expected_ffo': expected_ffo,
+                'ffo_reported': ffo_reported,
+                'ffo_missing_amount': ffo_missing_amount,
+                'ffo_variance_percent': ffo_variance_percent,
+                'ffo_reconciliation_complete': ffo_reconciliation_complete,
+                'total_affo_adjustments_extracted': total_affo_adjustments,
+                'expected_affo': expected_affo,
+                'affo_reported': affo_reported,
+                'affo_missing_amount': affo_missing_amount,
+                'affo_variance_percent': affo_variance_percent,
+                'affo_reconciliation_complete': affo_reconciliation_complete,
+                'uses_reserve_methodology': uses_reserves
             },
             'metadata': {
                 'disclosure_quality': 'detailed',
-                'source': 'MD&A FFO/AFFO reconciliation table'
+                'source': 'MD&A FFO/AFFO reconciliation table',
+                'num_realpac_adjustments': sum(1 for adj in ffo_adjustments if not adj.get('is_other', False)),
+                'num_other_adjustments': sum(1 for adj in ffo_adjustments if adj.get('is_other', False))
             }
         }
 
@@ -320,7 +390,7 @@ def generate_issuer_reported_ffo_affo_reconciliation(phase2_data):
 
 def _build_issuer_adjustments(components, metric_type):
     """
-    Helper: Build adjustment list from Phase 2 components
+    Helper: Build adjustment list from Phase 2 components (REALPAC A-Z + Other)
 
     Args:
         components (dict): ffo_affo_components from Phase 2
@@ -366,6 +436,7 @@ def _build_issuer_adjustments(components, metric_type):
             'non_controlling_interests_affo': 'Z. Non-controlling interests (AFFO adjustments)'
         }
 
+    # Add REALPAC standard adjustments
     for field, description in adj_map.items():
         amount = components.get(field, 0)
         if amount != 0:  # Only include non-zero adjustments
@@ -373,6 +444,27 @@ def _build_issuer_adjustments(components, metric_type):
                 'description': description,
                 'amount': amount
             })
+
+    # Add Other adjustments (issuer-specific, non-REALPAC)
+    # Note: Only include Other adjustments for FFO (they apply to FFO calculation, not separate AFFO step)
+    if metric_type == 'ffo':
+        other_adjustments = components.get('other_adjustments', [])
+        if other_adjustments:
+            for other_adj in other_adjustments:
+                description = other_adj.get('description', 'Unknown adjustment')
+                amount = other_adj.get('amount', 0)
+                source_page = other_adj.get('source_page', '')
+
+                # Format description with source page if available
+                full_description = f"{description}"
+                if source_page:
+                    full_description += f" [{source_page}]"
+
+                adjustments.append({
+                    'description': full_description,
+                    'amount': amount,
+                    'is_other': True  # Flag to identify Other adjustments in formatting
+                })
 
     return adjustments
 
@@ -424,12 +516,23 @@ def format_issuer_reported_ffo_affo_reconciliation(recon):
         # Starting point
         lines.append(f"| **{recon['starting_point']['description']}** | **{recon['starting_point']['amount']:,.0f}** |")
 
-        # FFO adjustments
+        # FFO adjustments - separate REALPAC and Other
         if recon['ffo_adjustments']:
-            lines.append("| **FFO Adjustments (as reported):** | |")
-            for adj in recon['ffo_adjustments']:
-                sign = "+" if adj['amount'] >= 0 else ""
-                lines.append(f"| {adj['description']} | {sign}{adj['amount']:,.0f} |")
+            # REALPAC adjustments
+            realpac_adjustments = [adj for adj in recon['ffo_adjustments'] if not adj.get('is_other', False)]
+            other_adjustments = [adj for adj in recon['ffo_adjustments'] if adj.get('is_other', False)]
+
+            if realpac_adjustments:
+                lines.append("| **FFO Adjustments (REALPAC A-U):** | |")
+                for adj in realpac_adjustments:
+                    sign = "+" if adj['amount'] >= 0 else ""
+                    lines.append(f"| {adj['description']} | {sign}{adj['amount']:,.0f} |")
+
+            if other_adjustments:
+                lines.append("| **Other Adjustments (Issuer-Specific):** | |")
+                for adj in other_adjustments:
+                    sign = "+" if adj['amount'] >= 0 else ""
+                    lines.append(f"| {adj['description']} | {sign}{adj['amount']:,.0f} |")
 
         # FFO total
         lines.append(f"| **{recon['ffo_total']['description']}** | **{recon['ffo_total']['amount']:,.0f}** |")
@@ -444,8 +547,37 @@ def format_issuer_reported_ffo_affo_reconciliation(recon):
         # AFFO total
         lines.append(f"| **{recon['affo_total']['description']}** | **{recon['affo_total']['amount']:,.0f}** |")
 
+        # Add validation status if available
+        if recon.get('validation'):
+            lines.append("| | |")
+            val = recon['validation']
+
+            # FFO reconciliation status
+            if val.get('ffo_reconciliation_complete'):
+                lines.append("| **✓ FFO Reconciliation** | **Complete** |")
+            else:
+                ffo_missing = val.get('ffo_missing_amount', 0)
+                lines.append(f"| **FFO Reconciliation Gap** | {ffo_missing:,.0f} ({val.get('ffo_variance_percent', 0):.1f}%) |")
+
+            # AFFO reconciliation status
+            if val.get('affo_reconciliation_complete'):
+                lines.append("| **✓ AFFO Reconciliation** | **Complete** |")
+            elif val.get('uses_reserve_methodology'):
+                lines.append("| **⚠️ AFFO Methodology** | **Reserve-based (components not disclosed)** |")
+                actual_vs_reserve = val.get('affo_missing_amount', 0)
+                lines.append(f"| Actual cash vs. Reserve | {actual_vs_reserve:,.0f} difference |")
+            else:
+                affo_missing = val.get('affo_missing_amount', 0)
+                lines.append(f"| **AFFO Reconciliation Gap** | {affo_missing:,.0f} ({val.get('affo_variance_percent', 0):.1f}%) |")
+
         lines.append("")
         lines.append(f"**Source:** {recon['metadata']['source']}")
+
+        # Add note about reserve methodology if applicable
+        if recon.get('validation', {}).get('uses_reserve_methodology'):
+            lines.append("")
+            lines.append("**Methodology Note:** Issuer uses reserve methodology for AFFO adjustments (not actual cash amounts). AFFO adjustments shown above represent the implied total needed to reconcile reported FFO to reported AFFO. See Section 2.3.2 for REALPAC calculation using actual cash amounts.")
+
         lines.append("")
         lines.append("*Note: This reconciliation reflects the issuer's disclosed methodology, which may differ from standardized REALPAC methodology. See Section 2.3.2 for REALPAC-calculated reconciliation for cross-issuer comparability.*")
 

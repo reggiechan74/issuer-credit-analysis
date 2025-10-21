@@ -129,7 +129,228 @@ Net income (loss)                           $12,345 thousand
 
 ---
 
-#### Step 4: Record Calculation Method
+#### Step 4: Extract "Other" Adjustments (Issuer-Specific, Non-REALPAC)
+
+**NEW in v1.0.13+:** Many issuers report adjustments that don't fit standard REALPAC A-Z categories.
+
+**When to use "Other" adjustments:**
+- Issuer uses **non-standard terminology** that doesn't clearly map to A-Z
+- **Company-specific items** (e.g., "Expected credit loss on preferred investments")
+- **Bundled categories** (issuer combines multiple REALPAC adjustments into one line)
+- Item is clearly an adjustment to FFO but doesn't match any A-Z category
+
+**Extraction Priority (CRITICAL):**
+
+1. **First:** Try to map each line item to REALPAC categories (A-Z)
+   - Use the lookup table above to find matches
+   - Even approximate matches should use REALPAC categories when possible
+
+2. **If no good match:** Extract as "Other" adjustment
+   - Copy the EXACT description from issuer's reconciliation table
+   - Assign sequential labels: `other_1`, `other_2`, `other_3`, etc.
+   - Record amount (positive or negative as shown in table)
+   - Note source page reference
+
+**Common "Other" Adjustments (Examples):**
+
+| Example Issuer Line Item | Why It's "Other" | How to Extract |
+|--------------------------|------------------|----------------|
+| "Expected credit loss on preferred investments" | Not a standard REALPAC item - company-specific | `other_1`: amount = $5,200 |
+| "Loss on redemption/modification of debt" | Debt-related, not property-related - unusual | `other_2`: amount = $8,100 |
+| "Transaction costs - property dispositions" | Could be Adjustment J, but issuer separates from acquisition costs | `other_3`: amount = $1,250 |
+| "Impairment - non-real estate assets" | Adjustment H only covers real estate impairment | `other_4`: amount = $2,300 |
+| "Unrealized FX on intercompany loans" | Differs from Adjustment K (excludes net investment hedges) | `other_5`: amount = -$450 |
+
+**JSON Structure:**
+
+```json
+{
+  "ffo_affo_components": {
+    "net_income_ifrs": -12065,
+
+    "unrealized_fv_changes": 862,
+    "amortization_tenant_allowances": 11321,
+    "deferred_taxes": 5128,
+    "foreign_exchange_gains_losses": -1252,
+    "fv_changes_hedges": 1340,
+    "puttable_instruments_effects": -300,
+    "equity_accounted_adjustments": -1000,
+
+    "other_adjustments": [
+      {
+        "label": "other_1",
+        "description": "Expected credit loss on preferred investments",
+        "amount": 5200,
+        "line_number": 15,
+        "source_page": "MD&A page 20"
+      },
+      {
+        "label": "other_2",
+        "description": "Loss on redemption/modification of debt",
+        "amount": 8100,
+        "line_number": 18,
+        "source_page": "MD&A page 20"
+      },
+      {
+        "label": "other_3",
+        "description": "Transaction costs - property dispositions",
+        "amount": 1250,
+        "source_page": "MD&A page 20"
+      }
+    ],
+
+    "total_adjustments_reported": 46556,
+    "total_adjustments_extracted": 46556,
+    "reconciliation_complete": true,
+    "missing_amount": 0
+  }
+}
+```
+
+**CRITICAL VALIDATION:**
+
+After extracting all adjustments (REALPAC A-Z + Other):
+
+1. **Sum all adjustments:**
+   ```
+   Total = Sum(A through U) + Sum(Other adjustments)
+   ```
+
+2. **Calculate expected FFO:**
+   ```
+   Expected FFO = Net Income + Total Adjustments
+   ```
+
+3. **Compare to issuer's reported FFO:**
+   ```
+   Missing Amount = Reported FFO - Expected FFO
+   Variance % = (Missing Amount / Reported FFO) × 100
+   ```
+
+4. **Set validation flags:**
+   - `total_adjustments_reported`: Reported FFO - Net Income
+   - `total_adjustments_extracted`: Sum of all extracted adjustments
+   - `reconciliation_complete`: `true` if variance < 2%, `false` otherwise
+   - `missing_amount`: Difference between reported and extracted
+
+**Example - Artis REIT Q2 2025:**
+
+```
+Net Income (IFRS):              -12,065
+REALPAC Adjustments (A,C,G,K,M,O,Q):  16,099  (7 adjustments)
+Other Adjustments:               30,457  (5 issuer-specific items)
+                                --------
+Expected FFO:                    34,491
+Reported FFO:                    34,491  ✓ Match!
+
+Reconciliation complete: true
+Missing amount: 0
+Variance: 0.0%
+```
+
+**⚠️ Warning Signs of Missing Adjustments:**
+
+- Variance > 5%: Review reconciliation table line-by-line
+- Variance > 10%: Likely missing entire categories of adjustments
+- Large negative variance: Check if you missed "Other" adjustments at bottom of table
+- Check for footnotes that reference additional adjustments
+
+**Good Mapping Examples:**
+
+| Issuer Line Item | Map To |
+|------------------|---------|
+| "Fair value changes in value of properties" | Adjustment A (clear match) |
+| "Amortization of TI" | Adjustment C (standard terminology) |
+| "Deferred tax expense" | Adjustment G (standard) |
+| "FX on operations" | Adjustment K (foreign exchange) |
+
+**Use "Other" for These:**
+
+| Issuer Line Item | Why "Other" |
+|------------------|-------------|
+| "Preferred investment credit losses" | No REALPAC category for this |
+| "Debt extinguishment costs" | Not transaction costs (J), not standard item |
+| "Provisions for legal settlements" | Non-operating, company-specific |
+| "Restructuring charges" | One-time, non-standard |
+
+---
+
+#### Step 4.5: CRITICAL - Source Priority for AFFO Adjustments V-Z
+
+**PROBLEM:** AFFO adjustments (V-Z: capex, leasing costs, TI, straight-line rent) can appear in multiple locations with different values:
+1. **FFO/AFFO Reconciliation Table** (MD&A) - Shows what issuer ACTUALLY USES for AFFO calculation (may be reserves)
+2. **Cash Flow Statement** - Shows actual cash amounts spent
+3. **Capital Expenditures section** (MD&A) - May show detailed breakdown
+
+**EXTRACTION PRIORITY (CRITICAL):**
+
+1. **FIRST: Check FFO/AFFO Reconciliation Table (MD&A)**
+   - Look for a table titled "FFO and AFFO Reconciliation" or similar
+   - This table shows the EXACT adjustments the issuer uses to calculate AFFO
+   - Extract these values EVEN IF they differ from cash flow statement
+   - If issuer uses reserve methodology, these will be reserve estimates, NOT actual cash
+
+2. **IF NOT IN RECONCILIATION TABLE: Check MD&A Capital Expenditures Section**
+   - Look for discussions of "sustaining capex", "leasing costs", "tenant improvements"
+   - May provide reserve methodology details
+
+3. **LAST RESORT: Cash Flow Statement**
+   - Only use if AFFO adjustments not disclosed in MD&A
+   - Note: These are actual cash amounts, may differ from what issuer reports for AFFO
+
+**Example - Artis REIT Q2 2025:**
+```
+MD&A Page 19 - FFO/AFFO Reconciliation Table shows:
+  - Amortization of recoverable capital expenditures: $(2,811)
+  - Non-recoverable property maintenance reserve: $(700)
+  - Leasing costs reserve: $(14,000)
+  - TOTAL AFFO adjustments: $(17,552)
+
+Cash Flow Statement shows:
+  - Capex additions: $(8,763)
+  - Leasing costs: $(4,327)
+  - Tenant improvements: $(17,008)
+  - TOTAL actual cash: $(29,975)
+
+✅ CORRECT: Extract $(17,552) from reconciliation table (what Artis USES for AFFO)
+❌ WRONG: Extract $(29,975) from cash flow statement (doesn't match reported AFFO)
+```
+
+**How to implement:**
+- Extract the FFO/AFFO reconciliation table values into the standard V-Z fields IF they map directly
+- If issuer uses different line items (like Artis), create `affo_adjustments_issuer_reported` array:
+
+```json
+{
+  "capex_sustaining": -8763,  // Actual cash for REALPAC calculation
+  "leasing_costs": -4327,
+  "tenant_improvements": -17008,
+  "straight_line_rent": 123,
+  "calculation_method": "reserve",
+  "affo_adjustments_issuer_reported": [  // What issuer ACTUALLY disclosed
+    {
+      "description": "Amortization of recoverable capital expenditures",
+      "amount": -2811,
+      "source_page": "MD&A page 19"
+    },
+    {
+      "description": "Leasing costs reserve",
+      "amount": -14000,
+      "source_page": "MD&A page 19"
+    }
+  ],
+  "affo_total_adjustments_issuer": -17552
+}
+```
+
+**Why this matters:**
+- Section 2.3.1 (Issuer-Reported) should show what issuer ACTUALLY uses (-17,552)
+- Section 2.3.2 (REALPAC-Calculated) can use actual cash amounts (-29,975)
+- Variance analysis explains methodology differences
+
+---
+
+#### Step 5: Record Calculation Method
 
 **Fields:**
 - `calculation_method`: Set to "actual", "reserve", or "hybrid"
@@ -157,7 +378,7 @@ Net income (loss)                           $12,345 thousand
 
 ---
 
-#### Step 5: Validate FFO/AFFO Calculation
+#### Step 6: Validate FFO/AFFO Calculation
 
 **Validation Steps:**
 

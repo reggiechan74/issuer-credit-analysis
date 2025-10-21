@@ -200,13 +200,13 @@ def calculate_affo_from_ffo(financial_data, ffo):
         if field in components and components[field] is not None:
             value = components[field]
             adjustments[f'adjustment_{letter}_{field}'] = value
-            total_adjustments += value  # All are subtractions, so add to get total deduction
+            total_adjustments += value  # Adjustments already have correct sign (negative for deductions)
         else:
             missing_components.append(f'adjustment_{letter}')
             adjustments[f'adjustment_{letter}_{field}'] = 0.0
 
-    # Calculate AFFO (subtract adjustments from FFO)
-    affo_calculated = ffo - total_adjustments
+    # Calculate AFFO (add adjustments to FFO - they're already signed correctly)
+    affo_calculated = ffo + total_adjustments
 
     # Get calculation method if provided
     calculation_method = components.get('calculation_method', 'unknown')

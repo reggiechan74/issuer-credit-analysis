@@ -887,15 +887,21 @@ No material adjustments disclosed
 
 *Calculated using standardized REALPAC methodology*
 
-**FFO to AFFO Reduction (Calculated):** 0 (0.0% of FFO)
+**FFO to AFFO Reduction (Calculated):** 17,552 (50.9% of FFO)
 
 **Primary Adjustments (Calculated using REALPAC methodology):**
-Calculated sustaining CAPEX, leasing costs, tenant improvements totaling $0k
+**Reserve Methodology Used:** Management uses reserve methodology for AFFO calculation: property maintenance reserve based on 2021-2024 actuals plus 2025 budget; leasing cost reserve reflects amortization over lease term. Approximately 60.5% of capex recoverable from tenants.
 
-**CFO to ACFO Reduction (Calculated):** -7,198 (-719800.0% of CFO)
+**Note:** Detailed component breakdown not disclosed by issuer. Total adjustment of $17,552k represents sustaining capital reserve.
+
+**CFO to ACFO Reduction (Calculated):** 3,164 (78.4% of CFO)
 
 **Primary Adjustments (Calculated using REALPAC methodology):**
-See ACFO reconciliation table for details
+- Tenant Improvements Acfo: $-21,335k
+- Dev Capex Development Acfo: $-9,346k
+- Change In Working Capital: +$6,920k
+- 3A Jv Distributions: +$3,511k
+- Realized Investment Gains Losses: $-1,192k
 
 **2.6.3 AFFO vs ACFO Gap Analysis**
 
@@ -905,8 +911,8 @@ See ACFO reconciliation table for details
 |------------|----------|------------|----------|
 | **AFFO** | 16,939 | 4,034 | -12,905 (-76.2%) |
 | **ACFO** | Not available | 7,198 | N/A (issuer did not report ACFO) |
-| **Gap (AFFO - ACFO)** | N/A | -3,164 | Not available |
-| **Gap %** | N/A% | -78.4% | - |
+| **Gap (AFFO - ACFO)** | N/A | 3,164 | Not available |
+| **Gap %** | N/A% | 78.4% | - |
 
 **Interpretation:** ACFO not calculated - requires cash flow statement data
 
@@ -1838,7 +1844,7 @@ This reconciliation shows adjustments from IFRS Cash Flow from Operations to ACF
 
 ---
 
-**Report Generated:** 2025-10-20 22:49:04
+**Report Generated:** 2025-10-20 23:04:49
 
 **Analysis Tool:** Multi-Phase Credit Analysis Pipeline (Phases 1-5)
 

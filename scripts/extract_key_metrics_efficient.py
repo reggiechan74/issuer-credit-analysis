@@ -118,6 +118,32 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - **Common Section:** "Reconciliation of Net Income to FFO" or "FFO Calculation"
 - **Note:** Extract actual amounts shown in reconciliation, not formulas
 
+**FFO/AFFO "Other" Adjustments (NEW - for complete reconciliation):**
+- **Purpose:** Capture issuer-specific adjustments that don't fit REALPAC A-Z categories
+- **When to use "Other" adjustments:**
+  - Issuer uses non-standard terminology (e.g., "Expected credit loss on preferred investments")
+  - Company-specific items (e.g., "Loss on redemption of debt", "Transaction costs")
+  - Bundled categories that combine multiple REALPAC adjustments
+  - Clearly an adjustment but doesn't match any A-Z category
+- **Extraction priority:**
+  1. **First:** Try to map to REALPAC categories (A-Z) - use exact matches when possible
+  2. **If no match:** Extract as "Other" adjustment with EXACT description from issuer's table
+- **How to extract Other adjustments:**
+  - Use sequential labels: `other_1`, `other_2`, `other_3`, etc.
+  - Copy the EXACT line item description from issuer's reconciliation table
+  - Record amount (positive or negative as shown)
+  - Note source page (e.g., "MD&A page 20")
+- **Example Other adjustments:**
+  - "Expected credit loss on preferred investments" → other_1
+  - "Loss on redemption/modification of debt" → other_2
+  - "Transaction costs - property dispositions" → other_3
+  - "Impairment charges - non-real estate assets" → other_4
+- **CRITICAL VALIDATION:**
+  - Sum ALL adjustments (REALPAC A-Z + Other)
+  - Compare to: Issuer-reported FFO minus Net Income = Total Adjustments
+  - Flag if variance > 2% → indicates missing adjustments
+  - Set `reconciliation_complete` = true if variance < 2%
+
 **ACFO Components (OPTIONAL - for REALPAC ACFO calculation):**
 - Enables calculating ACFO per REALPAC ACFO White Paper (January 2023)
 - Look for "Consolidated Statements of Cash Flows" for starting point
@@ -326,6 +352,32 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
   - **Adjustment Y (for AFFO):** Straight-line rent adjustment
 - **Common Section:** "Reconciliation of Net Income to FFO" or "FFO Calculation"
 - **Note:** Extract actual amounts shown in reconciliation, not formulas
+
+**FFO/AFFO "Other" Adjustments (NEW - for complete reconciliation):**
+- **Purpose:** Capture issuer-specific adjustments that don't fit REALPAC A-Z categories
+- **When to use "Other" adjustments:**
+  - Issuer uses non-standard terminology (e.g., "Expected credit loss on preferred investments")
+  - Company-specific items (e.g., "Loss on redemption of debt", "Transaction costs")
+  - Bundled categories that combine multiple REALPAC adjustments
+  - Clearly an adjustment but doesn't match any A-Z category
+- **Extraction priority:**
+  1. **First:** Try to map to REALPAC categories (A-Z) - use exact matches when possible
+  2. **If no match:** Extract as "Other" adjustment with EXACT description from issuer's table
+- **How to extract Other adjustments:**
+  - Use sequential labels: `other_1`, `other_2`, `other_3`, etc.
+  - Copy the EXACT line item description from issuer's reconciliation table
+  - Record amount (positive or negative as shown)
+  - Note source page (e.g., "MD&A page 20")
+- **Example Other adjustments:**
+  - "Expected credit loss on preferred investments" → other_1
+  - "Loss on redemption/modification of debt" → other_2
+  - "Transaction costs - property dispositions" → other_3
+  - "Impairment charges - non-real estate assets" → other_4
+- **CRITICAL VALIDATION:**
+  - Sum ALL adjustments (REALPAC A-Z + Other)
+  - Compare to: Issuer-reported FFO minus Net Income = Total Adjustments
+  - Flag if variance > 2% → indicates missing adjustments
+  - Set `reconciliation_complete` = true if variance < 2%
 
 **ACFO Components (OPTIONAL - for REALPAC ACFO calculation):**
 - Enables calculating ACFO per REALPAC ACFO White Paper (January 2023)

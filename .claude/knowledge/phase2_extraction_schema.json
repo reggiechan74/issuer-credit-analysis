@@ -413,6 +413,53 @@
           "type": "number",
           "description": "Adjustment Z: Non-controlling interests in respect of AFFO adjustments. Per REALPAC Jan 2022: Include NCI adjustment to deduct NCI for consolidated investments in entities that have puttable units classified as financial liabilities under IAS 32, where NCI has not been deducted as a result of being treated as a liability rather than equity."
         },
+        "other_adjustments": {
+          "type": "array",
+          "description": "Non-REALPAC adjustments reported by issuer that don't fit standard A-Z categories. Use when issuer reports adjustments with non-standard terminology, company-specific items, or bundled categories. Extract EXACT description from issuer's table.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "pattern": "^other_[0-9]+$",
+                "description": "Sequential label: other_1, other_2, other_3, etc."
+              },
+              "description": {
+                "type": "string",
+                "description": "EXACT description from issuer's reconciliation table"
+              },
+              "amount": {
+                "type": "number",
+                "description": "Amount of adjustment (can be positive or negative)"
+              },
+              "line_number": {
+                "type": "integer",
+                "description": "Line number in issuer's reconciliation table (optional)"
+              },
+              "source_page": {
+                "type": "string",
+                "description": "Source reference (e.g., 'MD&A page 20')"
+              }
+            },
+            "required": ["label", "description", "amount"]
+          }
+        },
+        "total_adjustments_reported": {
+          "type": "number",
+          "description": "Total of all adjustments as reported by issuer (for validation). Calculate from issuer's FFO total minus net income."
+        },
+        "total_adjustments_extracted": {
+          "type": "number",
+          "description": "Sum of all extracted adjustments (REALPAC A-Z + Other) for reconciliation validation. Should match total_adjustments_reported within 2%."
+        },
+        "reconciliation_complete": {
+          "type": "boolean",
+          "description": "True if extracted adjustments reconcile to issuer-reported totals within 2% variance threshold"
+        },
+        "missing_amount": {
+          "type": "number",
+          "description": "Difference between total_adjustments_reported and total_adjustments_extracted. Should be near 0 for complete extraction."
+        },
         "calculation_method": {
           "type": "string",
           "enum": ["actual", "reserve", "hybrid"],
@@ -426,6 +473,40 @@
           "type": "array",
           "items": {"type": "string"},
           "description": "List of adjustments that couldn't be extracted"
+        },
+        "affo_adjustments_issuer_reported": {
+          "type": "array",
+          "description": "OPTIONAL: Issuer's disclosed AFFO adjustments when using reserve methodology or non-standard line items. Extract from FFO/AFFO reconciliation table in MD&A. Use this when issuer's disclosed AFFO adjustments differ from actual cash amounts in cash flow statement. See COMPREHENSIVE_EXTRACTION_GUIDE.md Step 4.5 for source priority guidance.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "EXACT description from issuer's FFO/AFFO reconciliation table (e.g., 'Leasing costs reserve', 'Amortization of recoverable capital expenditures')"
+              },
+              "amount": {
+                "type": "number",
+                "description": "Amount as disclosed by issuer (can be positive or negative)"
+              },
+              "source_page": {
+                "type": "string",
+                "description": "Source reference (e.g., 'MD&A page 19')"
+              },
+              "note": {
+                "type": "string",
+                "description": "Optional note explaining methodology (e.g., 'Reserve methodology - amortization over lease term')"
+              }
+            },
+            "required": ["description", "amount"]
+          }
+        },
+        "affo_total_adjustments_issuer": {
+          "type": "number",
+          "description": "OPTIONAL: Total of issuer's disclosed AFFO adjustments. Should equal reported_ffo - reported_affo. Only populate if affo_adjustments_issuer_reported is present."
+        },
+        "affo_reconciliation_check": {
+          "type": "string",
+          "description": "OPTIONAL: Human-readable validation of AFFO reconciliation (e.g., 'FFO $34,491 + AFFO adjustments $(17,552) = AFFO $16,939 ✓')"
         }
       }
     },

@@ -887,15 +887,21 @@ No material adjustments disclosed
 
 *Calculated using standardized REALPAC methodology*
 
-**FFO to AFFO Reduction (Calculated):** 0 (0.0% of FFO)
+**FFO to AFFO Reduction (Calculated):** 17,552 (50.9% of FFO)
 
 **Primary Adjustments (Calculated using REALPAC methodology):**
-Calculated sustaining CAPEX, leasing costs, tenant improvements totaling $0k
+**Reserve Methodology Used:** Management uses reserve methodology for AFFO calculation: property maintenance reserve based on 2021-2024 actuals plus 2025 budget; leasing cost reserve reflects amortization over lease term. Approximately 60.5% of capex recoverable from tenants.
 
-**CFO to ACFO Reduction (Calculated):** -7,198 (-719800.0% of CFO)
+**Note:** Detailed component breakdown not disclosed by issuer. Total adjustment of $17,552k represents sustaining capital reserve.
+
+**CFO to ACFO Reduction (Calculated):** 3,164 (78.4% of CFO)
 
 **Primary Adjustments (Calculated using REALPAC methodology):**
-See ACFO reconciliation table for details
+- Tenant Improvements Acfo: $-21,335k
+- Dev Capex Development Acfo: $-9,346k
+- Change In Working Capital: +$6,920k
+- 3A Jv Distributions: +$3,511k
+- Realized Investment Gains Losses: $-1,192k
 
 **2.6.3 AFFO vs ACFO Gap Analysis**
 
@@ -905,8 +911,8 @@ See ACFO reconciliation table for details
 |------------|----------|------------|----------|
 | **AFFO** | 16,939 | 4,034 | -12,905 (-76.2%) |
 | **ACFO** | Not available | 7,198 | N/A (issuer did not report ACFO) |
-| **Gap (AFFO - ACFO)** | N/A | -3,164 | Not available |
-| **Gap %** | N/A% | -78.4% | - |
+| **Gap (AFFO - ACFO)** | N/A | 3,164 | Not available |
+| **Gap %** | N/A% | 78.4% | - |
 
 **Interpretation:** ACFO not calculated - requires cash flow statement data
 
@@ -1072,23 +1078,23 @@ Not available
 
 | Source | Amount (CAD 000s) | Notes |
 |--------|---------------------------|-------|
-| **Cash and Equivalents** | Not available | Q2 2025 balance sheet + note 10 (credit facilities). Credit facility limit of $275M disclosed in subsequent events; actual drawn amount at June 30 was $437.6M suggesting facility was overdrawn or limit calculation differs. Conservative estimate: available liquidity = cash only. |
-| **Marketable Securities** | Not available | Short-term investments |
-| **Less: Restricted Cash** | (Not available) | Unavailable for operations |
-| **Available Cash** | Not available | Cash + Securities - Restricted |
-| **Undrawn Credit Facilities** | 0 | 275,000 limit |
-| **Total Available Liquidity** | 16,639 | Available + Undrawn |
+| **Cash and Equivalents** | 16,639 | Q2 2025 MD&A page 36. Revolving facility $350M, $271.6M drawn, $78.4M available. Non-revolving facility $170M drawn (assumed fully drawn). Total facility limit: $520M ($350M + $170M). |
+| **Marketable Securities** | 0 | Short-term investments |
+| **Less: Restricted Cash** | (0) | Unavailable for operations |
+| **Available Cash** | 16,639 | Cash + Securities - Restricted |
+| **Undrawn Credit Facilities** | 78,400 | 520,000 limit |
+| **Total Available Liquidity** | 95,039 | Available + Undrawn |
 
-**Data Source:** Q2 2025 balance sheet + note 10 (credit facilities). Credit facility limit of $275M disclosed in subsequent events; actual drawn amount at June 30 was $437.6M suggesting facility was overdrawn or limit calculation differs. Conservative estimate: available liquidity = cash only.
+**Data Source:** Q2 2025 MD&A page 36. Revolving facility $350M, $271.6M drawn, $78.4M available. Non-revolving facility $170M drawn (assumed fully drawn). Total facility limit: $520M ($350M + $170M).
 
 #### 4.2 Sources and Uses
 
 **Sources:**
-- Cash on hand: Not available CAD thousands
+- Cash on hand: 16,639 CAD thousands
 - Operating cash flow: Based on NOI of Not provided separately (incorporated in coverage metrics) CAD thousands (quarterly)
 - ACFO (sustainable cash flow): 7,198 CAD thousands (Q2 2025)
 - AFCF (free cash flow): Not available CAD thousands (Q2 2025)
-- Available credit facilities: 0 CAD thousands
+- Available credit facilities: 78,400 CAD thousands
 
 **Uses:**
 - Interest expense: 0 CAD thousands (quarterly)
@@ -1099,45 +1105,64 @@ Not available
 
 #### 4.3 Burn Rate and Cash Runway Analysis
 
-**Applicability:** No
-
-{{#if BURN_RATE_APPLICABLE}}
+**Applicability:** Yes
 
 **What is Burn Rate:**
-Burn rate measures the speed at which a REIT depletes cash reserves when AFCF cannot cover financing obligations. A REIT can have *positive AFCF* but still burn cash if free cash flow is insufficient to cover debt service + distributions.
+Burn rate measures the forward-looking speed at which a REIT depletes cash reserves based on current run rate. This is a **liquidity stress test** assuming NO future access to capital markets. A REIT can have *positive AFCF* but still burn cash if free cash flow is insufficient to cover mandatory obligations (debt service + distributions).
 
-**Formula:** Burn Rate = Net Financing Needs - AFCF (when AFCF < Net Financing Needs)
+**Formula:**
+```
+Mandatory Obligations = Debt Service + Distributions (period amounts)
+Period Deficit = AFCF - Mandatory Obligations (when AFCF < Obligations)
+Monthly Burn Rate = Period Deficit / Number of Months in Period
+```
+
+**Note:** New financing is NOT subtracted - burn rate assumes no future capital raises.
 
 **Burn Rate Analysis:**
 
-| Metric | Amount (CAD 000s) | Period | Annualized |
-|--------|---------------------------|--------|------------|
-| **AFCF** | Not available | Q2 2025 | Not available |
-| **Total Debt Service** | 62,288 | Semi Annual Q2 | 62,288 |
-| **Total Distributions** | 36,144 | Q2 2025 | 59,540 |
-| **New Financing** | 268,574 | Q2 2025 | Not available |
-| **Net Financing Needs** | -170,178 | - | Not available |
-| **Self-Funding Ratio** | Not availablex | - | - |
-| **Monthly Burn Rate** | N/A | Monthly | - |
-| **Annualized Burn Rate** | N/A | Annual | - |
+| Metric | Amount (CAD 000s) | Reporting Period | Assessment |
+|--------|---------------------------|------------------|------------|
+| **AFCF (Period)** | 50,252 | Q2 2025 | Free cash flow |
+| **Mandatory Obligations:** | | | |
+| - Total Debt Service | 62,288 | Q2 2025 | Interest + Principal |
+| - Total Distributions | 36,144 | Q2 2025 | Common + Preferred |
+| **Total Obligations** | 98,432 | Q2 2025 | - |
+| **Period Deficit/(Surplus)** | -48,180 | Q2 2025 | AFCF - Obligations |
+| **Monthly Burn Rate** | -8,030 | Per month | 6-month period |
 
 **Self-Funding Analysis:**
-- **Self-Funding Ratio:** Not availablex (Not available%)
-- **Interpretation:** Not calculated without AFCF
-- **Capital Markets Reliance:** Unable to assess without AFCF self-funding ratio
+- **Self-Funding Ratio:** 0.51x (AFCF / Mandatory Obligations)
+- **Interpretation:** Moderate capital markets reliance
+- **Capital Markets Reliance:** Requires $48,180 external financing (49% of obligations)
 
-**Cash Runway:**
+**Liquidity Position:**
 
-| Runway Metric | Months | Years | Depletion Date | Risk Level |
-|---------------|--------|-------|----------------|------------|
-| **Available Cash Runway** | N/A | N/A | N/A | N/A |
-| **Extended Runway** (incl. facilities) | N/A | N/A | N/A | N/A |
+| Liquidity Source | Amount (CAD 000s) | Notes |
+|------------------|---------------------------|-------|
+| **Cash and Cash Equivalents** | 16,639 | End of period |
+| **Marketable Securities** | 0 | Liquid investments |
+| **Less: Restricted Cash** | (0) | Not available for operations |
+| **Available Cash** | 16,639 | Immediately available |
+| **Undrawn Credit Facilities** | 78,400 | Remaining capacity |
+| **Total Available Liquidity** | 95,039 | Cash + facilities |
+
+**Cash Runway Analysis:**
+
+| Scenario | Liquidity Base | Runway (Months) | Runway (Years) | Depletion Date | Risk Level |
+|----------|----------------|-----------------|----------------|----------------|------------|
+| **Cash Only** | 16,639 | 2.1 | 0.2 | 2025-08-31 | CRITICAL |
+| **Extended** (w/ facilities) | 95,039 | 11.8 | 1.0 | 2026-06-19 | CRITICAL |
+
+**Runway Calculation:**
+- **Cash Only:** Available Cash (16,639) ÷ Monthly Burn (8,030) = 2.1 months
+- **Extended:** Total Liquidity (95,039) ÷ Monthly Burn (8,030) = 11.8 months
 
 **Liquidity Risk Assessment:**
 
 | Risk Factor | Risk Level | Risk Score | Assessment |
 |-------------|------------|------------|------------|
-| **Cash Runway** | N/A | N/A/4 | Not available |
+| **Cash Runway** | CRITICAL | 4/4 | 🚨 Critical Risk - Immediate financing required (< 6 months) |
 
 **Risk Thresholds:**
 - 🚨 **CRITICAL** (Score 4): < 6 months runway - Immediate financing required
@@ -1146,27 +1171,29 @@ Burn rate measures the speed at which a REIT depletes cash reserves when AFCF ca
 - ✓ **LOW** (Score 1): > 24 months runway - Adequate liquidity runway
 
 **Warning Flags:**
-Monitor liquidity position
+None identified
 
 **Recommendations:**
-Monitor liquidity position quarterly
+- Suspend or reduce distributions immediately
+- Accelerate non-core asset sales
+- Pursue emergency financing (bridge loan, equity raise)
+- Defer all non-critical capital expenditures
+- Engage restructuring advisors
 
 **Sustainable Burn Rate Analysis:**
 
 | Metric | Amount (CAD 000s) | Assessment |
 |--------|---------------------------|------------|
 | **Target Runway** | 24 months | Management target |
-| **Sustainable Monthly Burn** | N/A | Maximum sustainable burn rate |
-| **Actual Monthly Burn** | N/A | Current burn rate |
-| **Excess/(Deficit) Burn** | N/A | Not calculated |
+| **Sustainable Monthly Burn** | 693 | Maximum sustainable burn rate |
+| **Actual Monthly Burn** | -8,030 | Current burn rate |
+| **Excess/(Deficit) Burn** | 7,337 | Above sustainable - Overspending by $7,337/month |
 
 **Burn Rate Interpretation:**
-Burn rate analysis requires AFCF calculation
+AFCF of $50,252 covers 51% of mandatory obligations ($98,432). Monthly cash deficit of $8,030 must be funded through capital markets or asset sales.
 
 **Credit Implications:**
-Not assessed without AFCF data
-
-{{/if}}
+⚠️ Moderate - Partial reliance on capital markets for financing obligations
 
 #### 4.4 Liquidity Assessment
 
@@ -1817,7 +1844,7 @@ This reconciliation shows adjustments from IFRS Cash Flow from Operations to ACF
 
 ---
 
-**Report Generated:** 2025-10-20 21:57:03
+**Report Generated:** 2025-10-20 23:05:55
 
 **Analysis Tool:** Multi-Phase Credit Analysis Pipeline (Phases 1-5)
 
