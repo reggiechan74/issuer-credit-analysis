@@ -1,0 +1,17 @@
+{
+  "issuer_name": "Dream Industrial Real Estate Investment Trust",
+  "reporting_date": "2025-06-30",
+  "reporting_period": "Q2 2025",
+  "currency": "CAD",
+  "affo_payout_ratio": 0.0,
+  "interest_coverage_ratio": null,
+  "debt_to_assets_pct": 26.78,
+  "debt_to_ebitda": null,
+  "occupancy_rate_pct": 94.1,
+  "sector": "Industrial",
+  "data_quality": {
+    "total_fields": 10,
+    "available_fields": 8,
+    "completeness_pct": 80.0
+  }
+}

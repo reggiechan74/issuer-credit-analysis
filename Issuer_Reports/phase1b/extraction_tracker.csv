@@ -1,0 +1,11 @@
+reit_name,ticker,cut_date,observation_quarter,status,pdf_downloaded,phase1_complete,phase2_complete,phase3_complete,fundamentals_extracted,notes
+European Residential REIT,ERE-UN.TO,2025-02,Q4 2024,pending,no,no,no,no,no,
+Canadian Apartment Properties REIT,CAR-UN.TO,2025-01,Q4 2024,pending,no,no,no,no,no,
+H&R REIT,HR-UN.TO,2025-01,Q4 2024,pending,no,no,no,no,no,
+Allied Properties REIT,AP-UN.TO,2024-01,Q4 2023,pending,no,no,no,no,no,
+H&R REIT,HR-UN.TO,2024-01,Q4 2023,pending,no,no,no,no,no,
+NorthWest Healthcare Properties REIT,NWH-UN.TO,2023-09,Q3 2023,pending,no,no,no,no,no,
+Dream Office REIT,D-UN.TO,2023-07,Q2 2023,pending,no,no,no,no,no,
+Slate Office REIT,SOT-UN.TO,2023-04,Q1 2023,pending,no,no,no,no,no,
+H&R REIT,HR-UN.TO,2023-01,Q4 2022,pending,no,no,no,no,no,
+Artis REIT,AX-UN.TO,2023-01,Q4 2022,pending,no,no,no,no,no,

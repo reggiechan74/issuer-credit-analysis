@@ -1,0 +1,11 @@
+reit_name,ticker,sector,observation_year,observation_quarter,observation_date_full,observation_date,cut_occurred,cut_date,cut_magnitude_pct,ticker_clean
+CT REIT,CRT-UN.TO,Retail,2022,3,2022-09-30,2022-07-02,0,,,CRT-UN
+Nexus Industrial REIT,NXR-UN.TO,Industrial,2022,3,2022-09-30,2022-07-02,0,,,NXR-UN
+Extendicare,EXE.TO,Healthcare,2023,3,2023-09-30,2023-07-02,0,,,EXE
+SmartCentres REIT,SRU-UN.TO,Retail,2023,3,2023-09-30,2023-07-02,0,,,SRU-UN
+Nexus Industrial REIT,NXR-UN.TO,Industrial,2023,2,2023-06-30,2023-04-01,0,,,NXR-UN
+InterRent REIT,IIP-UN.TO,Residential,2023,2,2023-06-30,2023-04-01,0,,,IIP-UN
+CT REIT,CRT-UN.TO,Retail,2023,1,2023-03-31,2022-12-31,0,,,CRT-UN
+CT REIT,CRT-UN.TO,Retail,2024,4,2024-12-31,2024-10-02,0,,,CRT-UN
+Plaza Retail REIT,PLZ-UN.TO,Retail,2024,3,2024-09-30,2024-07-02,0,,,PLZ-UN
+Extendicare,EXE.TO,Healthcare,2024,4,2024-12-31,2024-10-02,0,,,EXE

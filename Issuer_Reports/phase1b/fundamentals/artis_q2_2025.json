@@ -1,0 +1,17 @@
+{
+  "issuer_name": "Artis Real Estate Investment Trust",
+  "reporting_date": "2025-06-30",
+  "reporting_period": "Q2 2025",
+  "currency": "CAD",
+  "affo_payout_ratio": 176.5,
+  "interest_coverage_ratio": null,
+  "debt_to_assets_pct": 41.32,
+  "debt_to_ebitda": null,
+  "occupancy_rate_pct": 87.8,
+  "sector": null,
+  "data_quality": {
+    "total_fields": 10,
+    "available_fields": 7,
+    "completeness_pct": 70.0
+  }
+}
