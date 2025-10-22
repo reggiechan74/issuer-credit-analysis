@@ -1,0 +1,194 @@
+{
+  "issuer_name": "Dream Industrial Real Estate Investment Trust",
+  "reporting_date": "2024-12-31",
+  "reporting_period": "Year ended December 31, 2024",
+  "currency": "CAD",
+
+  "data_quality": {
+    "completeness": "moderate",
+    "source": "2024 Annual Report (markdown conversion had table formatting issues)",
+    "validation_notes": "Some metrics extracted from summary pages. Detailed reconciliation tables difficult to parse from markdown. Manual review of PDF recommended for FFO/AFFO components."
+  },
+
+  "balance_sheet": {
+    "reporting_date": "2024-12-31",
+    "total_assets": 7000000,
+    "investment_properties": 7000000,
+    "investment_properties_held_for_sale": 0,
+    "equity_accounted_investments": 0,
+    "cash": 0,
+    "total_liabilities": 0,
+    "mortgages_noncurrent": 0,
+    "mortgages_current": 0,
+    "credit_facilities": 0,
+    "senior_unsecured_debentures": 0,
+    "total_unitholders_equity": 0,
+    "common_units_outstanding": 0,
+    "diluted_units_outstanding": 0
+  },
+
+  "dilution_detail": {
+    "basic_units": 0,
+    "dilutive_instruments": {
+      "restricted_units": 0,
+      "deferred_units": 0,
+      "stock_options": 0,
+      "convertible_debentures": 0,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 0,
+    "diluted_units_reported": 0,
+    "dilution_percentage": 0,
+    "reconciliation_note": "Dilution detail not disclosed in summary pages - only reports basic vs diluted totals",
+    "disclosure_source": "Not available in accessible MD&A sections"
+  },
+
+  "income_statement": {
+    "noi": 0,
+    "interest_expense": 0,
+    "revenue": 0,
+    "net_income": 0
+  },
+
+  "ffo_affo": {
+    "ffo": 0,
+    "affo": 0,
+    "ffo_per_unit": 1.00,
+    "ffo_per_unit_diluted": 1.00,
+    "affo_per_unit": 0,
+    "affo_per_unit_diluted": 0,
+    "acfo": 0,
+    "acfo_per_unit": 0,
+    "distributions_per_unit": 0.60
+  },
+
+  "portfolio": {
+    "total_properties": 335,
+    "total_gla_sf": 71800000,
+    "occupancy_rate": 0.958,
+    "occupancy_with_commitments": 0,
+    "same_property_noi_growth_6m": 0.046
+  },
+
+  "ffo_affo_components": {
+    "net_income_ifrs": 0,
+    "unrealized_fv_changes": 0,
+    "depreciation_real_estate": 0,
+    "amortization_tenant_allowances": 0,
+    "amortization_intangibles": 0,
+    "gains_losses_property_sales": 0,
+    "tax_on_disposals": 0,
+    "deferred_taxes": 0,
+    "impairment_losses_reversals": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 0,
+    "foreign_exchange_gains_losses": 0,
+    "sale_foreign_operations": 0,
+    "fv_changes_hedges": 0,
+    "goodwill_impairment": 0,
+    "puttable_instruments_effects": 0,
+    "discontinued_operations": 0,
+    "equity_accounted_adjustments": 0,
+    "incremental_leasing_costs": 0,
+    "property_taxes_ifric21": 0,
+    "rou_asset_revenue_expense": 0,
+    "non_controlling_interests_ffo": 0,
+    "capex_sustaining": 0,
+    "capex_development": 0,
+    "leasing_costs": 0,
+    "tenant_improvements": 0,
+    "straight_line_rent": 0,
+    "non_controlling_interests_affo": 0,
+    "other_adjustments": [],
+    "total_adjustments_reported": 0,
+    "total_adjustments_extracted": 0,
+    "reconciliation_complete": false,
+    "missing_amount": 0,
+    "calculation_method": "actual",
+    "reserve_methodology": "",
+    "missing_adjustments": [
+      "FFO_AFFO_reconciliation_table_not_accessible_in_markdown"
+    ]
+  },
+
+  "acfo_components": {
+    "cash_flow_from_operations": 0,
+    "change_in_working_capital": 0,
+    "interest_financing": 0,
+    "jv_distributions": 0,
+    "jv_acfo": 0,
+    "jv_notional_interest": 0,
+    "capex_sustaining_acfo": 0,
+    "capex_development_acfo": 0,
+    "leasing_costs_external": 0,
+    "tenant_improvements_acfo": 0,
+    "realized_investment_gains_losses": 0,
+    "taxes_non_operating": 0,
+    "transaction_costs_acquisitions": 0,
+    "transaction_costs_disposals": 0,
+    "deferred_financing_fees": 0,
+    "debt_termination_costs": 0,
+    "off_market_debt_favorable": 0,
+    "off_market_debt_unfavorable": 0,
+    "interest_income_timing": 0,
+    "interest_expense_timing": 0,
+    "puttable_instruments_distributions": 0,
+    "rou_sublease_principal_received": 0,
+    "rou_sublease_interest_received": 0,
+    "rou_lease_principal_paid": 0,
+    "rou_depreciation_amortization": 0,
+    "non_controlling_interests_acfo": 0,
+    "nci_puttable_units": 0,
+    "calculation_method_acfo": "actual",
+    "reserve_methodology_acfo": "",
+    "jv_treatment_method": "distributions",
+    "missing_adjustments_acfo": [
+      "ACFO_not_reported_by_Dream_Industrial",
+      "Cash_flow_statement_tables_not_accessible_in_markdown"
+    ]
+  },
+
+  "cash_flow_investing": {
+    "development_capex": 0,
+    "property_acquisitions": 0,
+    "property_dispositions": 140000,
+    "jv_capital_contributions": 0,
+    "jv_return_of_capital": 0,
+    "business_combinations": 0,
+    "other_investing_outflows": 0,
+    "other_investing_inflows": 0,
+    "total_cfi": 0
+  },
+
+  "cash_flow_financing": {
+    "debt_principal_repayments": 0,
+    "new_debt_issuances": 0,
+    "distributions_common": 0,
+    "distributions_preferred": 0,
+    "distributions_nci": 0,
+    "equity_issuances": 0,
+    "unit_buybacks": 0,
+    "deferred_financing_costs_paid": 0,
+    "other_financing_outflows": 0,
+    "other_financing_inflows": 0,
+    "total_cff": 0
+  },
+
+  "liquidity": {
+    "cash_and_equivalents": 0,
+    "marketable_securities": 0,
+    "restricted_cash": 0,
+    "undrawn_credit_facilities": 0,
+    "credit_facility_limit": 750000,
+    "available_cash": 0,
+    "total_available_liquidity": 0,
+    "data_source": "Credit facility upsized to $750M in 2024 per MD&A page 13. Exact drawn/undrawn amounts not accessible in markdown."
+  },
+
+  "validation": {
+    "balance_sheet_balanced": false,
+    "noi_margin_reasonable": false,
+    "extraction_notes": "Dream Industrial REIT 2024 Annual Report had significant table formatting issues in markdown conversion. Key metrics extracted from summary pages (At a Glance section). Detailed financial statement tables (balance sheet, income statement, cash flow statement, FFO/AFFO reconciliation) were not successfully parsed from markdown. Manual review of original PDF recommended for complete extraction. Summary metrics: FFO per unit $1.00, NAV per unit $16.79, 335 properties, 71.8M SF, 95.8% occupancy, BBB (mid) DBRS rating, 36.1% net debt to assets ratio, 7.0x net debt to EBITDAFV, $750M revolving credit facility, $140M dispositions in 2024."
+  }
+}

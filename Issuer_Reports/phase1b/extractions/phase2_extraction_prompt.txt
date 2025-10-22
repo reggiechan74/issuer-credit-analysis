@@ -1,11 +1,11 @@
-# Phase 2: Extract Financial Data for H&R REIT
+# Phase 2: Extract Financial Data for Choice Properties Real Estate Investment Trust
 
 **Task:** Extract structured financial data from markdown files and save as JSON.
 
 **Input Files:**
-- `Issuer_Reports/HR_REIT/temp/phase1_markdown/Q4-2022-Dec-31-Complete-Report.md`
+- `Issuer_Reports/Choice_Properties_REIT/temp/phase1_markdown/choice properties Q30_7336_CP_AR_2024_ENG_March_17A_AODA.md`
 
-**Output File:** `Issuer_Reports/phase1b/extractions/obs1_HR_Q4_2022_extracted_data.json`
+**Output File:** `Issuer_Reports/phase1b/extractions/obs27_Choice_Properties_Q4_2024_extracted_data.json`
 
 ---
 
@@ -955,13 +955,13 @@ After extraction, check:
 
 ### Step 5: Save JSON
 
-Save to: `Issuer_Reports/phase1b/extractions/obs1_HR_Q4_2022_extracted_data.json`
+Save to: `Issuer_Reports/phase1b/extractions/obs27_Choice_Properties_Q4_2024_extracted_data.json`
 
 ### Step 6: Validate Schema
 
 Run validation:
 ```bash
-python scripts/validate_extraction_schema.py Issuer_Reports/phase1b/extractions/obs1_HR_Q4_2022_extracted_data.json
+python scripts/validate_extraction_schema.py Issuer_Reports/phase1b/extractions/obs27_Choice_Properties_Q4_2024_extracted_data.json
 ```
 
 Fix any errors before proceeding to Phase 3.
