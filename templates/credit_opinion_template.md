@@ -780,6 +780,31 @@ Monthly Burn Rate = Period Deficit / Number of Months in Period
 
 {{LIQUIDITY_ASSESSMENT}}
 
+**Historical Distribution Pattern:**
+
+This section provides context on distribution history, cuts, and recovery patterns to assess long-term sustainability.
+
+*Current Distribution:*
+- **Monthly distribution per unit:** {{DIST_CURRENT_MONTHLY}} {{CURRENCY}}
+- **Annual distribution per unit:** {{DIST_CURRENT_ANNUAL}} {{CURRENCY}}
+- **Current yield:** {{DIST_CURRENT_YIELD}}%
+
+*Distribution Cut History:*
+- **Total cuts detected (10-year history):** {{DIST_CUT_COUNT}}
+- **Most recent cut date:** {{DIST_LATEST_CUT_DATE}}
+- **Most recent cut magnitude:** {{DIST_LATEST_CUT_MAGNITUDE}}%
+- **Recovery status:** {{DIST_RECOVERY_STATUS}}
+- **Current distribution vs pre-cut level:** {{DIST_RECOVERY_LEVEL}}%
+
+*Recovery Analysis:*
+
+{{DIST_RECOVERY_NARRATIVE}}
+
+**Credit Implications:**
+- **Distribution stability:** History of {{DIST_CUT_COUNT}} cut(s) indicates {{DIST_STABILITY_ASSESSMENT}}
+- **Management credibility:** {{DIST_MGMT_ASSESSMENT}}
+- **Sustainability outlook:** {{DIST_SUSTAINABILITY_OUTLOOK}}
+
 **Detailed Coverage Analysis:**
 
 *Per-Unit Basis - Distribution Coverage Calculation:*
