@@ -1361,6 +1361,21 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     property_count = portfolio_metrics.get('total_properties', 0)
     gla = portfolio_metrics.get('gla_sf', 0) / 1_000_000  # Convert to millions
 
+    # Extract enriched data (Issue #40: market, macro, distribution history, prediction)
+    # Check if metrics contains enriched data structure (has 'phase3_metrics' key)
+    if 'phase3_metrics' in metrics:
+        # Enriched data from enrich_phase4_data.py
+        market_risk = metrics.get('market_risk', {})
+        macro_environment = metrics.get('macro_environment', {})
+        distribution_history = metrics.get('distribution_history', {})
+        distribution_prediction = metrics.get('distribution_cut_prediction', {})
+    else:
+        # No enriched data - use empty dictionaries (graceful degradation)
+        market_risk = {}
+        macro_environment = {}
+        distribution_history = {}
+        distribution_prediction = {}
+
     # Generate assessments
     leverage_level, leverage_rating, leverage_threshold = assess_leverage(debt_to_assets)
     coverage_level, coverage_rating, coverage_threshold = assess_coverage(noi_coverage)
@@ -2314,6 +2329,83 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'FFO_AFFO_ACFO_MONITORING': 'Monitor AFFO payout ratio and distribution sustainability quarterly',
         'FFO_AFFO_ACFO_COVENANT_PERFORMANCE': 'Covenant compliance analysis requires detailed debt documentation',
         'PEER_FFO_AFFO_ACFO_AFCF_COMPARISON': 'Peer comparison not available in this analysis',
+
+        # ========== Issue #40: Market Risk Placeholders (15) ==========
+        'MARKET_CURRENT_PRICE': f"{market_risk.get('price_stress', {}).get('current_price', 0):.2f}" if market_risk else 'N/A',
+        'MARKET_52W_HIGH': f"{market_risk.get('price_stress', {}).get('high_52w', 0):.2f}" if market_risk else 'N/A',
+        'MARKET_52W_LOW': f"{market_risk.get('price_stress', {}).get('low_52w', 0):.2f}" if market_risk else 'N/A',
+        'MARKET_DECLINE_FROM_PEAK': f"{market_risk.get('price_stress', {}).get('decline_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_STRESS_LEVEL': market_risk.get('price_stress', {}).get('stress_level', 'N/A') if market_risk else 'N/A',
+        'MARKET_VOLATILITY_30D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('30_day', {}).get('annualized_volatility_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_VOLATILITY_90D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('90_day', {}).get('annualized_volatility_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_VOLATILITY_252D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('252_day', {}).get('annualized_volatility_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_MOMENTUM_3M': f"{market_risk.get('momentum', {}).get('metrics', {}).get('3_month', {}).get('total_return_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_MOMENTUM_6M': f"{market_risk.get('momentum', {}).get('metrics', {}).get('6_month', {}).get('total_return_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_MOMENTUM_12M': f"{market_risk.get('momentum', {}).get('metrics', {}).get('12_month', {}).get('total_return_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_RISK_SCORE': f"{market_risk.get('risk_score', {}).get('total_score', 0):.0f}" if market_risk else 'N/A',
+        'MARKET_RISK_LEVEL': market_risk.get('risk_score', {}).get('risk_level', 'N/A') if market_risk else 'N/A',
+        'MARKET_RISK_NARRATIVE': market_risk.get('overall_assessment', 'Market risk assessment unavailable') if market_risk else 'Market risk assessment unavailable',
+        'MARKET_CREDIT_IMPLICATIONS': market_risk.get('credit_implications', 'Credit implications analysis unavailable') if market_risk else 'Credit implications analysis unavailable',
+
+        # ========== Issue #40: Macro Environment Placeholders (13) ==========
+        'MACRO_CA_RATE': f"{macro_environment.get('canada', {}).get('current_rate', 0):.2f}" if macro_environment else 'N/A',
+        'MACRO_CA_CHANGE_BPS': f"{macro_environment.get('canada', {}).get('change_12m_bps', 0):.0f}" if macro_environment else 'N/A',
+        'MACRO_CA_CYCLE': macro_environment.get('canada', {}).get('cycle', 'N/A') if macro_environment else 'N/A',
+        'MACRO_CA_PEAK_RATE': f"{macro_environment.get('canada', {}).get('max_rate', 0):.2f}" if macro_environment else 'N/A',
+        'MACRO_CA_CREDIT_ENVIRONMENT': macro_environment.get('credit_environment', 'N/A') if macro_environment else 'N/A',
+        'MACRO_CA_STRESS_SCORE': f"{macro_environment.get('credit_stress_score', 0):.0f}" if macro_environment else 'N/A',
+        'MACRO_US_RATE': f"{macro_environment.get('united_states', {}).get('current_rate', 0):.2f}" if macro_environment and macro_environment.get('united_states') else 'N/A',
+        'MACRO_US_CHANGE_BPS': f"{macro_environment.get('united_states', {}).get('change_12m_bps', 0):.0f}" if macro_environment and macro_environment.get('united_states') else 'N/A',
+        'MACRO_US_CYCLE': macro_environment.get('united_states', {}).get('cycle', 'N/A') if macro_environment and macro_environment.get('united_states') else 'N/A',
+        'MACRO_SPREAD_BPS': f"{macro_environment.get('spread_bps', 0):.0f}" if macro_environment and macro_environment.get('spread_bps') is not None else 'N/A',
+        'MACRO_SPREAD_TREND': macro_environment.get('spread_trend', 'N/A') if macro_environment else 'N/A',
+        'MACRO_RATE_NARRATIVE': macro_environment.get('overall_assessment', 'Macro environment assessment unavailable') if macro_environment else 'Macro environment assessment unavailable',
+        'MACRO_CREDIT_IMPLICATIONS': macro_environment.get('credit_implications', 'Credit implications analysis unavailable') if macro_environment else 'Credit implications analysis unavailable',
+
+        # ========== Issue #40: Distribution Cut Prediction Placeholders (32) ==========
+        'PRED_CUT_PROBABILITY': f"{distribution_prediction.get('cut_probability_pct', 0):.1f}" if distribution_prediction else 'N/A',
+        'PRED_RISK_LEVEL': distribution_prediction.get('risk_level', 'N/A') if distribution_prediction else 'N/A',
+        'PRED_RISK_BADGE': distribution_prediction.get('risk_badge', '❓') if distribution_prediction else '❓',
+        'PRED_CONFIDENCE': distribution_prediction.get('confidence', 'N/A') if distribution_prediction else 'N/A',
+        'PRED_DATE': distribution_prediction.get('prediction_date', 'N/A') if distribution_prediction else 'N/A',
+        # Top 5 risk drivers
+        'PRED_DRIVER_1_NAME': distribution_prediction.get('top_drivers', [{}])[0].get('feature', 'N/A') if distribution_prediction and distribution_prediction.get('top_drivers') else 'N/A',
+        'PRED_DRIVER_1_VALUE': f"{distribution_prediction.get('top_drivers', [{}])[0].get('value', 0):.4f}" if distribution_prediction and distribution_prediction.get('top_drivers') else 'N/A',
+        'PRED_DRIVER_1_DIRECTION': distribution_prediction.get('top_drivers', [{}])[0].get('direction', 'N/A') if distribution_prediction and distribution_prediction.get('top_drivers') else 'N/A',
+        'PRED_DRIVER_1_COEF': f"{distribution_prediction.get('top_drivers', [{}])[0].get('coefficient', 0):.4f}" if distribution_prediction and distribution_prediction.get('top_drivers') else 'N/A',
+        'PRED_DRIVER_2_NAME': distribution_prediction.get('top_drivers', [{}, {}])[1].get('feature', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 1 else 'N/A',
+        'PRED_DRIVER_2_VALUE': f"{distribution_prediction.get('top_drivers', [{}, {}])[1].get('value', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 1 else 'N/A',
+        'PRED_DRIVER_2_DIRECTION': distribution_prediction.get('top_drivers', [{}, {}])[1].get('direction', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 1 else 'N/A',
+        'PRED_DRIVER_2_COEF': f"{distribution_prediction.get('top_drivers', [{}, {}])[1].get('coefficient', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 1 else 'N/A',
+        'PRED_DRIVER_3_NAME': distribution_prediction.get('top_drivers', [{}, {}, {}])[2].get('feature', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 2 else 'N/A',
+        'PRED_DRIVER_3_VALUE': f"{distribution_prediction.get('top_drivers', [{}, {}, {}])[2].get('value', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 2 else 'N/A',
+        'PRED_DRIVER_3_DIRECTION': distribution_prediction.get('top_drivers', [{}, {}, {}])[2].get('direction', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 2 else 'N/A',
+        'PRED_DRIVER_3_COEF': f"{distribution_prediction.get('top_drivers', [{}, {}, {}])[2].get('coefficient', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 2 else 'N/A',
+        'PRED_DRIVER_4_NAME': distribution_prediction.get('top_drivers', [{}, {}, {}, {}])[3].get('feature', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 3 else 'N/A',
+        'PRED_DRIVER_4_VALUE': f"{distribution_prediction.get('top_drivers', [{}, {}, {}, {}])[3].get('value', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 3 else 'N/A',
+        'PRED_DRIVER_4_DIRECTION': distribution_prediction.get('top_drivers', [{}, {}, {}, {}])[3].get('direction', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 3 else 'N/A',
+        'PRED_DRIVER_4_COEF': f"{distribution_prediction.get('top_drivers', [{}, {}, {}, {}])[3].get('coefficient', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 3 else 'N/A',
+        'PRED_DRIVER_5_NAME': distribution_prediction.get('top_drivers', [{}, {}, {}, {}, {}])[4].get('feature', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 4 else 'N/A',
+        'PRED_DRIVER_5_VALUE': f"{distribution_prediction.get('top_drivers', [{}, {}, {}, {}, {}])[4].get('value', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 4 else 'N/A',
+        'PRED_DRIVER_5_DIRECTION': distribution_prediction.get('top_drivers', [{}, {}, {}, {}, {}])[4].get('direction', 'N/A') if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 4 else 'N/A',
+        'PRED_DRIVER_5_COEF': f"{distribution_prediction.get('top_drivers', [{}, {}, {}, {}, {}])[4].get('coefficient', 0):.4f}" if distribution_prediction and len(distribution_prediction.get('top_drivers', [])) > 4 else 'N/A',
+        # Model narrative and implications
+        'PRED_NARRATIVE': distribution_prediction.get('narrative', 'Prediction narrative unavailable') if distribution_prediction else 'Prediction narrative unavailable',
+        'PRED_CREDIT_IMPLICATIONS': distribution_prediction.get('credit_implications', 'Credit implications unavailable') if distribution_prediction else 'Credit implications unavailable',
+
+        # ========== Issue #40: Distribution History Placeholders (12) ==========
+        'DIST_CURRENT_MONTHLY': f"{distribution_history.get('current_monthly', 0):.4f}" if distribution_history else 'N/A',
+        'DIST_CURRENT_ANNUAL': f"{distribution_history.get('current_annual', 0):.4f}" if distribution_history else 'N/A',
+        'DIST_CURRENT_YIELD': f"{distribution_history.get('current_yield', 0):.2f}" if distribution_history and distribution_history.get('current_yield') else 'N/A',
+        'DIST_CUT_COUNT': f"{distribution_history.get('cuts_detected', 0)}" if distribution_history else 'N/A',
+        'DIST_LATEST_CUT_DATE': distribution_history.get('latest_cut_date', 'N/A') if distribution_history and distribution_history.get('latest_cut_date') else 'N/A',
+        'DIST_LATEST_CUT_MAGNITUDE': f"{distribution_history.get('latest_cut_magnitude_pct', 0):.1f}" if distribution_history and distribution_history.get('latest_cut_magnitude_pct') else 'N/A',
+        'DIST_RECOVERY_STATUS': distribution_history.get('recovery_status', 'N/A') if distribution_history else 'N/A',
+        'DIST_RECOVERY_LEVEL': f"{distribution_history.get('recovery_level_pct', 0):.1f}" if distribution_history and distribution_history.get('recovery_level_pct') else 'N/A',
+        'DIST_RECOVERY_NARRATIVE': distribution_history.get('recovery_narrative', 'Recovery analysis unavailable') if distribution_history else 'Recovery analysis unavailable',
+        'DIST_STABILITY_ASSESSMENT': f"{'Stable' if distribution_history.get('cuts_detected', 0) == 0 else 'Cut history requires monitoring'}" if distribution_history else 'N/A',
+        'DIST_MGMT_ASSESSMENT': f"{'Consistent distribution policy' if distribution_history.get('cuts_detected', 0) == 0 else 'Distribution cut history indicates financial stress'}" if distribution_history else 'N/A',
+        'DIST_SUSTAINABILITY_OUTLOOK': f"{'Positive' if distribution_history.get('cuts_detected', 0) == 0 else 'Monitor closely'}" if distribution_history else 'N/A',
 
         # Generation metadata
         'GENERATION_TIMESTAMP': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
