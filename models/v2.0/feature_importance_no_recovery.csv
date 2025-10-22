@@ -1,0 +1,11 @@
+feature,importance
+market_risk_level,0.6067474850013191
+market_risk_score,0.4137174696190088
+market_momentum_3m,0.36853225626636765
+macro_policy_rate,0.3641462451806437
+market_volatility_90d,0.34339572658423545
+market_price_stress_pct,0.02499037870845166
+macro_rate_change_12m,0.0
+macro_rate_cycle,0.0
+macro_credit_stress_score,0.0
+macro_credit_environment,0.0

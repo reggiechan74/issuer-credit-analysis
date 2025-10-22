@@ -1,0 +1,15 @@
+feature,importance
+recovery_status,4.598084925768514
+recovery_level_pct,0.6671966567901549
+recovery_months,0.07764493641719414
+market_risk_score,0.06891528197613259
+market_risk_level,0.061881898195068195
+market_volatility_90d,0.05802623102827792
+market_momentum_3m,0.04293229659889027
+market_price_stress_pct,0.029024140975755328
+macro_policy_rate,0.026328491823932026
+macro_rate_change_12m,0.020057020098564905
+macro_rate_cycle,0.013423763298302777
+macro_credit_stress_score,0.0002452985066440404
+full_recovery,0.00017053535213723176
+macro_credit_environment,0.0

@@ -1,0 +1,16 @@
+[
+  "market_price_stress_pct",
+  "market_risk_score",
+  "market_volatility_90d",
+  "market_momentum_3m",
+  "market_risk_level",
+  "macro_policy_rate",
+  "macro_rate_change_12m",
+  "macro_rate_cycle",
+  "macro_credit_stress_score",
+  "macro_credit_environment",
+  "recovery_level_pct",
+  "recovery_months",
+  "full_recovery",
+  "recovery_status"
+]
