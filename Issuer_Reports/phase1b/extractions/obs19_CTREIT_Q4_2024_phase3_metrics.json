@@ -153,9 +153,9 @@
     "acfo": 0
   },
   "coverage_ratios": {
-    "noi_interest_coverage": 0.0,
-    "annualized_interest_expense": 120000,
-    "period_interest_expense": 120000,
+    "noi_interest_coverage": 3.55,
+    "annualized_interest_expense": 121739,
+    "period_interest_expense": 121739,
     "annualization_factor": 1,
     "detected_period": "annual_q4"
   },
@@ -223,11 +223,11 @@
     "afcf_distribution_coverage": null,
     "afcf_payout_ratio": null,
     "afcf_self_funding_ratio": 0.0,
-    "total_debt_service": 120000,
+    "total_debt_service": 121739,
     "total_distributions": 0,
-    "net_financing_needs": 120000,
+    "net_financing_needs": 121739,
     "data_quality": "moderate",
-    "afcf_self_funding_capacity": -120000.0
+    "afcf_self_funding_capacity": -121739.0
   },
   "afcf_reconciliation": {
     "afcf_calculation_valid": true,
@@ -243,11 +243,11 @@
   },
   "burn_rate_analysis": {
     "applicable": true,
-    "monthly_burn_rate": -10000.0,
-    "period_burn_rate": -120000.0,
+    "monthly_burn_rate": -10144.92,
+    "period_burn_rate": -121739.0,
     "period_months": 12,
     "afcf": 0.0,
-    "mandatory_obligations": 120000,
+    "mandatory_obligations": 121739,
     "self_funding_ratio": 0.0,
     "reason": null,
     "data_quality": "strong"

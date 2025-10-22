@@ -6,7 +6,7 @@
   "data_quality": {
     "completeness": "moderate",
     "source": "Q4-2024-MDA-and-FS-SEDAR-English-AODA.md",
-    "validation_notes": "Some financial statement tables removed as confusing text-based tables. Extracted from quarterly summary tables and MD&A narrative. AFCF data limited due to missing detailed cash flow statement components."
+    "validation_notes": "Some financial statement tables removed as confusing text-based tables. Extracted from quarterly summary tables and MD&A narrative. AFCF data limited due to missing detailed cash flow statement components. Interest expense and NOI corrected with actual 2024 data: interest $121,739k, coverage 3.55x, NOI $432,173k."
   },
   "balance_sheet": {
     "reporting_date": "2024-12-31",
@@ -41,8 +41,8 @@
     "disclosure_source": "Q4 2024 MD&A quarterly table page 50"
   },
   "income_statement": {
-    "noi": 0,
-    "interest_expense": 120000,
+    "noi": 432173,
+    "interest_expense": 121739,
     "revenue": 569602,
     "net_income": 347126,
     "q4_2024": {
