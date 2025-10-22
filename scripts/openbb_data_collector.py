@@ -193,6 +193,113 @@ class OpenBBDataCollector:
 
         return cuts
 
+    def analyze_recovery(self, dividend_df: pd.DataFrame, cuts: List[Dict]) -> List[Dict]:
+        """
+        Analyze distribution recovery after detected cuts.
+
+        For each cut, tracks:
+        - Recovery timeline (months to restore pre-cut level)
+        - Recovery level (% of pre-cut distribution achieved)
+        - Full recovery status (yes/no)
+        - Current status (if cut is recent and ongoing)
+
+        Args:
+            dividend_df: DataFrame from get_dividend_history()
+            cuts: List of cuts from detect_dividend_cuts()
+
+        Returns:
+            List of recovery analysis dicts for each cut
+        """
+        if dividend_df.empty or not cuts:
+            return []
+
+        recovery_analysis = []
+        df = dividend_df.sort_values('ex_dividend_date', ascending=True).copy()
+        df['year_month'] = df['ex_dividend_date'].dt.to_period('M')
+        monthly_avg = df.groupby('year_month')['amount'].mean()
+
+        for cut in cuts:
+            cut_date = pd.Period(cut['cut_date'])
+            pre_cut_amount = cut['previous_monthly']
+            post_cut_amount = cut['new_monthly']
+
+            # Find recovery timeline
+            recovery_months = None
+            recovery_level_pct = 0
+            full_recovery = False
+            current_monthly = None
+
+            # Get all months after the cut
+            post_cut_data = monthly_avg[monthly_avg.index > cut_date]
+
+            if not post_cut_data.empty:
+                current_monthly = post_cut_data.iloc[-1]  # Most recent
+                recovery_level_pct = (current_monthly / pre_cut_amount) * 100 if pre_cut_amount > 0 else 0
+
+                # Check if distribution restored to 95%+ of pre-cut level
+                for months_elapsed, (period, amount) in enumerate(post_cut_data.items(), start=1):
+                    if amount >= pre_cut_amount * 0.95:  # 95% threshold for "recovery"
+                        recovery_months = months_elapsed
+                        full_recovery = True
+                        break
+
+            analysis = {
+                'cut_date': cut['cut_date'],
+                'pre_cut_monthly': round(pre_cut_amount, 4),
+                'post_cut_monthly': round(post_cut_amount, 4),
+                'cut_magnitude_pct': cut['cut_percentage'],
+                'current_monthly': round(current_monthly, 4) if current_monthly else None,
+                'recovery_level_pct': round(recovery_level_pct, 1),
+                'recovery_months': recovery_months,
+                'full_recovery': full_recovery,
+                'recovery_status': self._classify_recovery_status(
+                    recovery_level_pct, full_recovery, cut_date, monthly_avg
+                )
+            }
+
+            recovery_analysis.append(analysis)
+
+        return recovery_analysis
+
+    @staticmethod
+    def _classify_recovery_status(
+        recovery_level_pct: float,
+        full_recovery: bool,
+        cut_date: pd.Period,
+        monthly_avg: pd.Series
+    ) -> str:
+        """
+        Classify recovery status based on recovery level and timeline.
+
+        Args:
+            recovery_level_pct: Current recovery level (%)
+            full_recovery: Whether distribution fully restored (>95%)
+            cut_date: Date of the cut
+            monthly_avg: Monthly average dividend series
+
+        Returns:
+            Recovery status string
+        """
+        if full_recovery:
+            return "Fully Recovered"
+
+        # Check if cut is recent (within last 12 months)
+        latest_period = monthly_avg.index[-1]
+        months_since_cut = (latest_period.year - cut_date.year) * 12 + (latest_period.month - cut_date.month)
+
+        if months_since_cut <= 12:
+            status = "Recent Cut - Recovery in Progress"
+        elif recovery_level_pct >= 80:
+            status = "Partial Recovery (80%+)"
+        elif recovery_level_pct >= 50:
+            status = "Partial Recovery (50-80%)"
+        elif recovery_level_pct >= 25:
+            status = "Minimal Recovery (25-50%)"
+        else:
+            status = "No Significant Recovery (<25%)"
+
+        return status
+
     def compare_peers(self, peer_tickers: List[str]) -> pd.DataFrame:
         """
         Compare dividend yield and metrics across peer REITs.
@@ -298,6 +405,9 @@ class OpenBBDataCollector:
         # Detect historical cuts
         cuts = self.detect_dividend_cuts(div_df)
 
+        # Analyze recovery patterns
+        recovery = self.analyze_recovery(div_df, cuts)
+
         # Build dataset
         dataset = {
             'ticker': self.ticker,
@@ -314,7 +424,8 @@ class OpenBBDataCollector:
                 'records': div_df.to_dict(orient='records')
             },
             'detected_cuts': cuts,
-            'cut_count': len(cuts)
+            'cut_count': len(cuts),
+            'recovery_analysis': recovery
         }
 
         # Export to JSON
@@ -425,6 +536,21 @@ def main():
         print(f"Monthly Distribution:${metrics.get('monthly_distribution', 0):.4f}")
     print(f"Dividend Records:    {dataset['dividend_history']['total_records']}")
     print(f"Historical Cuts:     {dataset['cut_count']}")
+
+    # Recovery analysis summary
+    if dataset.get('recovery_analysis'):
+        fully_recovered = sum(1 for r in dataset['recovery_analysis'] if r['full_recovery'])
+        print(f"Fully Recovered:     {fully_recovered}/{len(dataset['recovery_analysis'])} cuts")
+
+        # Show most recent cut status
+        if dataset['recovery_analysis']:
+            recent = dataset['recovery_analysis'][-1]  # Most recent cut
+            print(f"\nMost Recent Cut:")
+            print(f"  Date:              {recent['cut_date']}")
+            print(f"  Magnitude:         -{recent['cut_magnitude_pct']:.1f}%")
+            print(f"  Recovery Level:    {recent['recovery_level_pct']:.1f}%")
+            print(f"  Status:            {recent['recovery_status']}")
+
     print(f"{'='*60}")
 
 

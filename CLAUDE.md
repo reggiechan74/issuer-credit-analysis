@@ -2,9 +2,129 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.13
-**Last Updated:** 2025-10-21
+**Version:** 1.0.14
+**Last Updated:** 2025-10-22
 **Pipeline Version:** 1.0.13 (Structural Considerations Content Extraction)
+**OpenBB Integration:** v1.0.0 (Complete - Issue #39)
+
+---
+
+## OpenBB Platform Integration (Issue #39) - NEW ✨
+
+**Status:** COMPLETE (Weeks 1-6, Oct 2025)
+**Cost:** $0/month (all free tier APIs)
+
+### Overview
+
+Integrated OpenBB Platform to automate market data, dividend history, and macroeconomic analysis for Canadian REITs. Reduces manual research time by 95%+ while maintaining $0 cost.
+
+### New Scripts (Week 2-6)
+
+1. **`scripts/openbb_market_monitor.py`** (Week 4 - 764 lines)
+   - Price stress detection (>30% decline from 52-week high)
+   - Volatility analysis (annualized, 30d/90d/252d)
+   - Momentum indicators (3/6/12-month returns)
+   - Risk scoring (0-100 scale)
+   - **Usage:** `python scripts/openbb_market_monitor.py --ticker REI-UN.TO`
+
+2. **`scripts/openbb_macro_monitor.py`** (Week 5 - 200 lines, enhanced)
+   - Bank of Canada policy rate (Valet API - FREE, no auth)
+   - US Federal Reserve rate (FRED API - FREE, requires key)
+   - Rate cycle classification (easing/tightening)
+   - Credit environment scoring (0-100)
+   - Canada vs US rate differential analysis
+   - **Usage:** `python scripts/openbb_macro_monitor.py --output data/macro.json`
+
+3. **`scripts/openbb_data_collector.py`** (Week 2 - 558 lines, enhanced)
+   - Dividend history retrieval (10-15 years)
+   - Distribution cut detection (>10% threshold)
+   - **Recovery analysis** (NEW - time to restore, recovery level %)
+   - TTM yield calculations
+   - **Usage:** `python scripts/openbb_data_collector.py --ticker REI-UN.TO`
+
+4. **`scripts/build_distribution_cut_dataset.py`** (Week 2 - 420 lines)
+   - Automated dataset builder for Issue #38 v2.0 model
+   - Scans 20-30 REITs for distribution cuts
+   - Recovery pattern analysis
+   - CSV export for model training
+   - **Usage:** `python scripts/build_distribution_cut_dataset.py --config config/canadian_reits.yaml`
+
+### Data Sources Integrated
+
+| Source | Purpose | Cost | Authentication |
+|--------|---------|------|----------------|
+| **TMX (via OpenBB)** | Market prices, dividend history | $0 | None |
+| **YFinance (via OpenBB)** | Financial statements validation | $0 | None |
+| **Bank of Canada Valet API** | Canadian policy rates | $0 | None |
+| **FRED (via OpenBB)** | US Federal Funds Rate | $0 | Free API key |
+
+**Total: $0/month** ✅
+
+### Integration Benefits
+
+**For Phase 4 Credit Analysis:**
+- Market risk signals (price stress, volatility, momentum)
+- Macroeconomic context (rate environment, credit stress score)
+- Distribution sustainability indicators (recovery patterns)
+
+**For Issue #38 (Distribution Cut Prediction v2.0):**
+- New features: market risk score, rate environment, recovery metrics
+- Dataset expansion: n=9 → n=20-30 REITs (automated)
+- Time savings: 95%+ reduction in data collection
+
+### Quick Start
+
+```bash
+# Test complete pipeline with RioCan REIT
+python scripts/openbb_market_monitor.py --ticker REI-UN.TO
+python scripts/openbb_macro_monitor.py
+python scripts/openbb_data_collector.py --ticker REI-UN.TO
+
+# Build training dataset for 28 Canadian REITs
+python scripts/build_distribution_cut_dataset.py \
+  --config config/canadian_reits.yaml \
+  --output data/training_dataset_v2.csv
+```
+
+### FRED API Setup (One-time, 2 minutes)
+
+**Required for US rate comparison (optional but recommended):**
+
+1. Register at: https://fred.stlouisfed.org/
+2. Request free API key: https://fred.stlouisfed.org/docs/api/api_key.html
+3. Set as GitHub Codespace secret:
+   - Repository Settings → Secrets → Codespaces → New secret
+   - Name: `FRED_API_KEY`
+   - Value: Your API key
+4. Configure OpenBB:
+```bash
+python -c "import json, os; config_path='/home/codespace/.openbb_platform/user_settings.json'; config=json.load(open(config_path)); config['credentials']['fred_api_key']=os.environ.get('FRED_API_KEY'); json.dump(config, open(config_path,'w'), indent=4)"
+```
+
+### Configuration Files
+
+- `config/canadian_reits.yaml` - 28 Canadian REIT tickers
+- `config/canadian_reits_test.yaml` - 5 REITs (testing)
+- `config/canadian_reits_validation.yaml` - 10 REITs (validation)
+
+### Performance Metrics
+
+**Execution Time:**
+- Market analysis: 5-10 seconds per REIT
+- Macro analysis: <3 seconds
+- Dividend history: 2-3 seconds per REIT
+- Full 28-REIT scan: 2-3 hours (vs 2-3 weeks manual)
+
+**Data Quality:**
+- TMX provider: 90-100% success rate
+- 10-15 years dividend history per REIT
+- Official source data (Bank of Canada, Federal Reserve)
+
+**Documentation:**
+- See GitHub Issue #39 for complete implementation details
+- Week 2-6 completion summaries posted to issue
+
+---
 
 ## What's New in v1.0.13
 

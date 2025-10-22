@@ -1,0 +1,12 @@
+# Test configuration - Small subset of Canadian REITs
+# Used for testing build_distribution_cut_dataset.py script
+
+reits:
+  # REITs with known cuts
+  RioCan REIT: REI-UN.TO
+  Artis REIT: AX-UN.TO
+  H&R REIT: HR-UN.TO
+
+  # Control REITs (stable distributions)
+  Dream Industrial REIT: DIR-UN.TO
+  Canadian Apartment Properties REIT: CAR-UN.TO

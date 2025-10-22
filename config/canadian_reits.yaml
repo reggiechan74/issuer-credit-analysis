@@ -1,0 +1,69 @@
+# Canadian REIT Ticker Mapping Configuration
+#
+# Format: REIT Name: TSX_TICKER
+#
+# Ticker Format: SYMBOL-UN.TO (hyphen + .TO suffix for TMX/YFinance compatibility)
+#
+# Usage:
+#   python scripts/build_distribution_cut_dataset.py --config config/canadian_reits.yaml
+#
+# Last Updated: 2025-10-22
+# Source: TSX listings, OpenBB validation (Week 1)
+
+reits:
+  # Retail REITs
+  RioCan REIT: REI-UN.TO
+  SmartCentres REIT: SRU-UN.TO
+  First Capital REIT: FCR-UN.TO
+  CT REIT: CRT-UN.TO
+  Choice Properties REIT: CHP-UN.TO
+
+  # Industrial REITs
+  Dream Industrial REIT: DIR-UN.TO
+  Granite REIT: GRT-UN.TO
+  Summit Industrial Income REIT: SMU-UN.TO
+  WPT Industrial REIT: WIR-U.TO
+
+  # Office REITs
+  Allied Properties REIT: AP-UN.TO
+  Dream Office REIT: D-UN.TO
+  Slate Office REIT: SOT-UN.TO
+
+  # Residential REITs
+  Canadian Apartment Properties REIT: CAR-UN.TO
+  InterRent REIT: IIP-UN.TO
+  Boardwalk REIT: BEI-UN.TO
+  Minto Apartment REIT: MI-UN.TO
+  Killam Apartment REIT: KMP-UN.TO
+
+  # Diversified REITs
+  H&R REIT: HR-UN.TO
+  Artis REIT: AX-UN.TO
+  Morguard North American Residential REIT: MRG-UN.TO
+
+  # Specialty REITs
+  BSR REIT: HOM-U.TO
+  European Residential REIT: ERE-UN.TO
+  Nexus Industrial REIT: NXR-UN.TO
+  Plaza Retail REIT: PLZ-UN.TO
+  Slate Grocery REIT: SGR-U.TO
+
+  # Healthcare/Seniors REITs
+  NorthWest Healthcare Properties REIT: NWH-UN.TO
+  Chartwell Retirement Residences: CSH-UN.TO
+  Extendicare: EXE.TO
+
+  # Note: Some REITs may have different ticker formats (e.g., WIR-U.TO vs WIR-UN.TO)
+  # Verify ticker format on TMX Money if scan fails
+
+# Historical REITs with known distribution cuts (for Issue #38 training data):
+# - RioCan REIT (REI-UN.TO): 2021 COVID-era cut (-38.89%)
+# - Artis REIT (AX-UN.TO): 2018 cut (-50%), 2023 cut (-52.4%)
+# - H&R REIT (HR-UN.TO): 2020 COVID-era cut (-50%)
+# - Dream Office REIT (D-UN.TO): Multiple cuts
+# - Slate Office REIT (SOT-UN.TO): 2023 cut (-55%)
+#
+# Control REITs (no cuts 2015-2025):
+# - Dream Industrial REIT (DIR-UN.TO): Stable dividend history
+# - Canadian Apartment Properties REIT (CAR-UN.TO): Stable with increases
+# - InterRent REIT (IIP-UN.TO): Stable with increases

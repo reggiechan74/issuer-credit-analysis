@@ -1,0 +1,23 @@
+# Validation configuration - 10 Canadian REITs
+# Mix of property types and cut histories
+
+reits:
+  # Retail REITs
+  RioCan REIT: REI-UN.TO
+  SmartCentres REIT: SRU-UN.TO
+  First Capital REIT: FCR-UN.TO
+
+  # Industrial REITs (mostly stable)
+  Dream Industrial REIT: DIR-UN.TO
+  Granite REIT: GRT-UN.TO
+
+  # Office REITs (many with cuts)
+  Allied Properties REIT: AP-UN.TO
+  Slate Office REIT: SOT-UN.TO
+
+  # Residential REITs (mostly stable)
+  Canadian Apartment Properties REIT: CAR-UN.TO
+  InterRent REIT: IIP-UN.TO
+
+  # Diversified REITs (many with cuts)
+  Artis REIT: AX-UN.TO
