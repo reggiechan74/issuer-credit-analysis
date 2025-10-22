@@ -226,3 +226,271 @@
 **Document Version:** 1.0
 **Last Updated:** 2025-10-21
 **Next Update:** After True North and Slate Office research
+
+## True North Commercial REIT - March 2023 Cut (50% reduction)
+
+**Cut Details:**
+- **Date:** March 2023
+- **Previous Distribution:** $0.0495/month ($0.594 annual)
+- **New Distribution:** $0.02475/month ($0.297 annual)
+- **Cut Magnitude:** 50.0%
+
+**Pre-Cut Metrics (Q4 2022):**
+
+### AFFO Metrics ⚠️ CRITICAL
+- **Q4 2022 AFFO per unit (diluted):** $0.14
+- **AFFO Payout Ratio:** 110% (UNSUSTAINABLE)
+- **AFFO Payout Ratio (ex-termination fees):** 127% (SEVERELY UNSUSTAINABLE)
+- **FFO per unit (diluted):** $0.13
+- **Status:** Distributions exceeding cash flow generation by 10-27%
+
+### Leverage Metrics (December 31, 2022)
+- **Debt to GBV (Gross Book Value):** 59.3%
+- **Debt to EBITDA:** 9.96x (EXTREMELY HIGH - calculated: $861.1M / $86.5M)
+- **Total Debt:** $861.1M
+- **Total Assets:** $1,450.3M
+- **Covenant Limit:** 75% Debt/GBV (cushion: 15.7 percentage points)
+
+### Interest Coverage
+- **Interest Coverage (Adjusted EBITDA / Interest):** 3.00x
+- **Interest Expense (Annual):** $28.9M
+- **Weighted Average Interest Rate:** 3.54%
+- **Refinancing Rate (New Mortgages):** 5.38% (52% increase from portfolio average)
+- **Status:** Coverage declining, refinancing risk significant
+
+### Liquidity Position (December 31, 2022)
+- **Cash and Equivalents:** $9.5M
+- **Undrawn Credit Facility:** $53.6M
+- **Total Available Liquidity:** $63.1M
+- **Annual Distribution Cost (pre-cut):** ~$50M
+- **Status:** Liquidity adequate but constrained given payout ratio
+
+### Operational Metrics
+- **Portfolio Occupancy:** 93% (declined from 96% in Q4 2021)
+- **NOI (Quarterly):** $20.6M
+- **NOI (Annual):** $86.5M
+- **Revenue (Quarterly):** $35.5M
+- **Government/Credit-Rated Tenant Revenue:** 80%
+
+### Management Rationale
+- "Capital strengthening and unitholder value strategy"
+- AFFO payout ratio of 110% (127% ex-termination fees) clearly unsustainable
+- Rising interest rates creating refinancing pressure (5.38% vs 3.54%)
+- Occupancy decline from 96% to 93%
+- Annual cash savings: $25M for debt reduction and unit buybacks
+
+### Post-Cut Assessment
+- **Revised Distribution:** $0.297 annual
+- **Pro Forma Payout Ratio:** ~55% (sustainable level)
+- **Outcome:** First cut FAILED - distribution suspended 8 months later (Nov 2023)
+
+---
+
+## True North Commercial REIT - November 2023 Suspension (100%, 2nd cut)
+
+**Cut Details:**
+- **Date:** November 14, 2023
+- **Previous Distribution:** $0.02475/month ($0.297 annual) - already 50% reduced
+- **New Distribution:** $0.00 (complete suspension)
+- **Cut Magnitude:** 100.0%
+- **Context:** Second cut in same year
+
+**Pre-Cut Metrics (Q3 2023):**
+
+### AFFO Metrics - Post First Cut
+- **Q3 2023 AFFO per unit:** $0.11
+- **Q3 2023 AFFO total:** $10.1M
+- **AFFO Payout Ratio:** 69% (post-50% cut, seemingly sustainable)
+- **AFFO Decline Q4 2022 → Q3 2023:** -21.4% ($0.14 → $0.11)
+- **FFO per unit:** $0.11
+- **FFO total:** $10.4M
+- **Status:** Despite 69% payout, operations continued deteriorating
+
+### Leverage Metrics (September 30, 2023)
+- **Debt to GBV:** 61.4% (increased from 59.3% in Q4 2022)
+- **Weighted Average Interest Rate:** 4.03% (up 49 bps from 3.54%)
+- **Weighted Average Debt Term:** 2.99 years
+- **New Mortgage Rate (Q3 2023):** 6.05% (vs 4.03% portfolio avg)
+- **Status:** Leverage increasing, refinancing at significantly higher rates
+
+### Interest Coverage - DETERIORATING
+- **Interest Coverage:** 2.43x (declined from 3.00x in Q4 2022)
+- **Decline:** -19.0% quarter-over-quarter
+- **Status:** Approaching distressed levels (<2.5x threshold)
+
+### Liquidity Position (September 30, 2023)
+- **Available Liquidity:** $48.3M
+- **Credit Facility Total:** $60M
+- **Credit Facility Drawn:** $18.1M
+- **Credit Facility Available:** $41.9M
+- **YTD Refinancing:** $67.6M at 5.65% average rate
+- **Status:** Adequate but declining from Q4 2022 ($63.1M)
+
+### Operational Metrics - WEAK
+- **Portfolio Occupancy:** 93% (flat vs Q4 2022, but down from 97% pre-pandemic)
+- **NOI (Quarterly):** $18.1M (down from $20.6M in Q4 2022)
+- **NOI (YTD):** $55.2M
+- **NOI Decline YoY:** -18%
+- **Revenue (Quarterly):** $32.8M
+- **Revenue (YTD):** $99.3M
+- **Revenue Decline YoY:** -11%
+- **NAV per Unit:** $4.97
+- **Unit Price:** $1.22 (75% discount to NAV)
+- **Major Lease Expiries:** 216K SF in Q1-Q2 2023 not backfilled
+
+### Why First Cut Failed
+1. **Continued AFFO Decline:** -21% despite distribution cut
+2. **Interest Coverage Compression:** 3.00x → 2.43x (approaching distress)
+3. **Rising Refinancing Costs:** 6.05% new debt vs 4.03% avg (50% increase)
+4. **Revenue/NOI Deterioration:** -11% revenue, -18% NOI year-over-year
+5. **Structural Office Weakness:** Remote work impact, occupancy 93% vs 97% pre-pandemic
+6. **Major Lease Rollovers:** 216K SF expired without replacement
+
+### Management Rationale
+- "Reallocate substantially all distributions to purchase Units under NCIB"
+- Units trading at $1.22 vs NAV $4.97 (75% discount) = buybacks "more accretive"
+- 5.75:1 unit consolidation announced to address "penny stock" perception
+- Suspension "approximately 6 months or earlier if appropriate"
+- **Reality:** Distribution cut alone couldn't address operational deterioration
+
+### Market Reaction
+- **Day of Announcement:** -15%
+- **Full Year 2023:** -80%
+
+---
+
+## Slate Office REIT - November 2023 Suspension (100%)
+
+**Cut Details:**
+- **Date:** November 14-15, 2023
+- **Previous Distribution:** $0.033/month ($0.396 annual)
+- **New Distribution:** $0.00 (complete suspension)
+- **Cut Magnitude:** 100.0%
+
+**Pre-Cut Metrics (Q3 2023):**
+
+### AFFO Metrics
+- **Q3 2023 AFFO total:** $5.2M (SEVERELY DISTRESSED)
+- **Q3 2023 AFFO per unit:** $0.06 (extremely low)
+- **Status:** AFFO collapsed to minimal levels
+
+### Leverage Metrics (September 30, 2023) ⚠️ COVENANT BREACH
+- **Loan-to-Value (LTV) Ratio:** 65.6% (EXCEEDED 65% debt ceiling)
+- **LTV Q3 2022:** 61.9%
+- **LTV Increase:** +370 basis points year-over-year
+- **Debt to Assets:** 65.3% (calculated: $1.19B / $1.822B)
+- **Total Debt:** $1.19B (up from $1.15B in 2022)
+- **Total Assets:** $1.822B (down from $1.869B)
+- **Covenant Status:** BREACH - required trust amendment to remove 65% debt cap
+- **Refinancing Completed:** $577.6M (47.8% of total debt)
+
+### Profitability - SEVERE DETERIORATION
+- **Net Loss (Q3 2023):** -$34.73M
+- **Net Income (Q3 2022):** +$18.36M profit
+- **Swing:** -$53.09M year-over-year
+- **Status:** From profitability to severe losses
+
+### Operational Metrics (September 30, 2023)
+- **Portfolio Occupancy:** 78.6% (down from 81.1% in Q3 2022)
+- **Occupancy Decline:** -250 basis points
+- **NOI (Quarterly):** $26M (down from $26.86M)
+- **Rental Revenue (Quarterly):** $51M (flat year-over-year)
+- **Total Leasing (9-month):** 277,599 SF
+- **WALT (Weighted Average Lease Term):** 5.0 years
+- **New Lease WALT:** 7.3 years
+- **Status:** Office sector stress - occupancy declining, values compressed
+
+### Liquidity Position
+- **Refinancing Completed (2023):** $577.6M (47.8% of debt)
+- **Purpose:** Liquidity preservation amid covenant breach
+- **Status:** Required massive refinancing to maintain operations
+
+### Portfolio Realignment Plan
+- **Asset Sales Planned:** ~40% of gross leasable area
+- **Debt Ceiling Amendment:** Required to remove 65% LTV cap
+- **Annual Cash Savings from Suspension:** C$10.2M
+- **Strategic Purpose:** Debt paydown, portfolio focus
+
+### Management Rationale
+- LTV exceeded 65% covenant ceiling at 65.6%
+- Occupancy declining in challenged office sector
+- Asset values compressed by rising interest rates
+- Portfolio realignment requiring 40% GLA sale
+- Suspension to preserve $10.2M annually for debt reduction
+- **Subsequent:** Debt defaults and complications followed
+
+### Market Reaction
+- **Day of Announcement:** -20%
+
+### Subsequent Developments
+- Debt defaults reported after suspension
+- Rebranded to Ravelin Properties REIT (RPR.UN) in December 2024
+- Ongoing restructuring complications
+
+---
+
+## Updated Summary Comparison Table (All 6 Cuts)
+
+| REIT | Cut Date | Pre-Cut AFFO Payout | Debt/Assets | Interest Cov | Occupancy | Key Warning Sign |
+|------|----------|-------------------|-------------|--------------|-----------|------------------|
+| **H&R** | May 2020 | ~99% | 48.1% | Not disclosed | Not disclosed | Payout near 100%, pandemic stress |
+| **RioCan** | Dec 2020 | ~100% | ~47% | 2.5x | ~96% | Payout at 100%, pandemic uncertainty |
+| **Artis** | Nov 2018 | 112.5% | 48.6% | 3.14x | Not disclosed | **Payout >100% (unsustainable)** |
+| **True North 1** | Mar 2023 | 110% (127% ex-fees) | 59.3% | 3.00x | 93% | **Payout 127%, Debt/EBITDA 9.96x** |
+| **True North 2** | Nov 2023 | 69% | 61.4% | 2.43x | 93% | **Despite 69% payout, AFFO -21%, Coverage 2.43x** |
+| **Slate Office** | Nov 2023 | N/A | 65.3% | Not disclosed | 78.6% | **LTV 65.6% (covenant breach), AFFO $0.06/unit** |
+
+---
+
+## Key Model Insights from All 6 Cuts
+
+### 1. AFFO Payout >95% = Critical Threshold (Confirmed)
+All initial cuts: H&R 99%, RioCan 100%, Artis 112.5%, True North 110-127%
+
+### 2. Post-Cut Sustainability ≠ Guaranteed
+True North case proves 69% payout INSUFFICIENT if operations deteriorating:
+- AFFO declined -21% despite first cut
+- Interest coverage fell to 2.43x
+- Required 100% suspension 8 months later
+
+### 3. Interest Coverage <2.5x = Distressed Territory
+- Artis: 3.14x → CUT
+- RioCan: 2.5x → CUT  
+- True North: 3.00x → CUT → 2.43x → SUSPENSION
+
+### 4. Debt/EBITDA >8x = Extreme Leverage
+- True North: 9.96x (vs normal Debt/Assets 59%)
+- Artis: 8.4x
+
+### 5. Covenant Breaches = Immediate Risk
+- Slate Office: LTV 65.6% vs 65% limit → immediate suspension
+
+### 6. Office Sector = Structural Weakness
+5 of 6 cuts were office REITs (83%)
+
+---
+
+## Training Dataset Status: ✅ COMPLETE
+
+**6 of 6 Cuts Fully Researched:**
+1. ✅ H&R REIT Q1 2020
+2. ✅ RioCan REIT Q3 2020
+3. ✅ Artis REIT Q3 2018
+4. ✅ True North Q4 2022
+5. ✅ True North Q3 2023
+6. ✅ Slate Office Q3 2023
+
+**9 Total Observations:**
+- 6 distribution cut events
+- 3 no-cut controls
+
+**Data Quality:** Excellent for 3 cases (Artis, True North×2), Good for 3 cases (H&R, RioCan, Slate Office)
+
+**Ready for Week 2:** Feature engineering, threshold analysis, model development
+
+---
+
+**Document Version:** 2.0
+**Last Updated:** 2025-10-21 (Evening)
+**Status:** Week 1 COMPLETE - All metrics extraction finished
+**Next Steps:** Feature engineering and model development (Week 2-3)
