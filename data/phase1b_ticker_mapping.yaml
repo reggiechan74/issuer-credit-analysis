@@ -1,0 +1,96 @@
+observations:
+  1:
+    cut_type: target
+    date: '2022-12-31'
+    issuer: H&R Real Estate Investment Trust
+    ticker: HR-UN.TO
+  2:
+    cut_type: target
+    date: '2022-12-31'
+    issuer: Artis Real Estate Investment Trust
+    ticker: AX-UN.TO
+  3:
+    cut_type: target
+    date: '2023-03-31'
+    issuer: Slate Office REIT
+    ticker: SOT-UN.TO
+  4:
+    cut_type: target
+    date: '2023-06-30'
+    issuer: Dream Office Real Estate Investment Trust
+    ticker: D-UN.TO
+  5:
+    cut_type: target
+    date: '2023-06-30'
+    issuer: NorthWest Healthcare Properties Real Estate Investment Trust
+    ticker: NWH-UN.TO
+  6:
+    cut_type: target
+    date: '2023-12-31'
+    issuer: Allied Properties Real Estate Investment Trust
+    ticker: AP-UN.TO
+  7:
+    cut_type: target
+    date: '2023-12-31'
+    issuer: H&R Real Estate Investment Trust
+    ticker: HR-UN.TO
+  8:
+    cut_type: target
+    date: '2024-12-31'
+    issuer: Canadian Apartment Properties Real Estate Investment Trust
+    ticker: CAR-UN.TO
+  9:
+    cut_type: target
+    date: '2024-12-31'
+    issuer: H&R Real Estate Investment Trust
+    ticker: HR-UN.TO
+  10:
+    cut_type: target
+    date: '2024-12-31'
+    issuer: European Residential Real Estate Investment Trust
+    ticker: ERE-UN.TO
+  11:
+    cut_type: control
+    date: '2022-09-30'
+    issuer: CT Real Estate Investment Trust
+    ticker: CRT-UN.TO
+  12:
+    cut_type: control
+    date: '2022-09-30'
+    issuer: Nexus Industrial REIT
+    ticker: NXR-UN.TO
+  13:
+    cut_type: control
+    date: '2023-03-31'
+    issuer: CT Real Estate Investment Trust
+    ticker: CRT-UN.TO
+  14:
+    cut_type: control
+    date: '2023-06-30'
+    issuer: Nexus Industrial REIT
+    ticker: NXR-UN.TO
+  15:
+    cut_type: control
+    date: '2023-09-30'
+    issuer: InterRent Real Estate Investment Trust
+    ticker: IIP-UN.TO
+  16:
+    cut_type: control
+    date: '2023-09-30'
+    issuer: Extendicare Inc.
+    ticker: EXE.TO
+  18:
+    cut_type: control
+    date: '2024-09-30'
+    issuer: Plaza Retail REIT
+    ticker: PLZ-UN.TO
+  19:
+    cut_type: control
+    date: '2024-12-31'
+    issuer: CT Real Estate Investment Trust
+    ticker: CRT-UN.TO
+  20:
+    cut_type: control
+    date: '2024-12-31'
+    issuer: Extendicare Inc.
+    ticker: EXE.TO

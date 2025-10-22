@@ -1,0 +1,35 @@
+{
+  "assessment_date": "2025-10-22 20:21:49",
+  "canada": {
+    "data_source": "Bank of Canada Valet API",
+    "policy_rate": {
+      "current_rate": 2.75,
+      "past_rate_12m": 4.5,
+      "change_12m_pct": -1.75,
+      "change_12m_bps": -175.0,
+      "cycle": "EASING",
+      "max_rate": 5.25,
+      "min_rate": 0.5,
+      "observations": 117
+    },
+    "credit_stress_score": 22,
+    "credit_environment": "ACCOMMODATIVE"
+  },
+  "united_states": {
+    "data_source": "FRED (Federal Reserve Economic Data)",
+    "policy_rate": {
+      "current_rate": 4.22,
+      "past_rate_12m": 5.13,
+      "change_12m_pct": -0.91,
+      "change_12m_bps": -91.0,
+      "cycle": "MILD EASING",
+      "max_rate": 5.33,
+      "min_rate": 0.05,
+      "observations": 118
+    }
+  },
+  "rate_differential": {
+    "ca_minus_us_bps": -147.0,
+    "note": "Negative = Canada below US (typical), Positive = Canada above US (unusual)"
+  }
+}

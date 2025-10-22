@@ -1,0 +1,39 @@
+Distribution Cut Dataset - Summary Report
+============================================================
+
+Scan Date: 2025-10-22 13:06:35
+Data Provider: tmx
+
+Overall Statistics:
+  REITs scanned:           28
+  REITs with data:         27
+  REITs with cuts:         14
+  Total cuts detected:     29
+  Errors encountered:      1
+
+Recovery Statistics:
+  Cuts with recovery data: 29
+  Fully recovered cuts:    12
+  Partial recovery:        17
+  Recovery rate:           41.4%
+
+Per-REIT Summary:
+REIT                            Cuts  Recovered Status              
+----------------------------------------------------------------------
+RioCan REIT                        1          0 Partial Recovery (80%+)
+First Capital REIT                 2          1 Fully Recovered     
+Summit Industrial Income REIT      3          1 Recent Cut - Recovery in Progress
+WPT Industrial REIT                1          0 Recent Cut - Recovery in Progress
+Allied Properties REIT             1          0 Minimal Recovery (25-50%)
+Dream Office REIT                  3          2 No Significant Recovery (<25%)
+Slate Office REIT                  2          0 Recent Cut - Recovery in Progress
+Canadian Apartment Properties REIT     1          0 Recent Cut - Recovery in Progress
+Boardwalk REIT                     2          0 Partial Recovery (50-80%)
+H&R REIT                           5          3 Recent Cut - Recovery in Progress
+Artis REIT                         2          1 Minimal Recovery (25-50%)
+BSR REIT                           1          0 Partial Recovery (50-80%)
+European Residential REIT          4          4 Fully Recovered     
+NorthWest Healthcare Properties REIT     1          0 Minimal Recovery (25-50%)
+
+Errors Encountered:
+  Granite REIT: No dividend data

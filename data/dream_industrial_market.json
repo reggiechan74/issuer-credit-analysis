@@ -1,0 +1,91 @@
+{
+  "ticker": "DIR-UN.TO",
+  "reit_name": "DIR",
+  "assessment_date": "2025-10-22 12:01:17",
+  "lookback_days": 365,
+  "data_points": 251,
+  "price_stress": {
+    "stress_detected": "False",
+    "current_price": 12.33,
+    "high_52w": 13.6,
+    "low_52w": 9.69,
+    "decline_from_peak_pct": 9.3,
+    "peak_date": "2024-10-23",
+    "days_since_peak": 364,
+    "stress_level": "MINIMAL (<10%)",
+    "price_range_52w": 3.91,
+    "distance_from_low_pct": 27.2
+  },
+  "volatility": {
+    "metrics": {
+      "30d": {
+        "volatility_annualized_pct": 13.72,
+        "std_dev_daily_pct": 0.86,
+        "coefficient_of_variation": 59.87,
+        "max_daily_return_pct": 1.71,
+        "min_daily_return_pct": -1.35
+      },
+      "90d": {
+        "volatility_annualized_pct": 16.06,
+        "std_dev_daily_pct": 1.01,
+        "coefficient_of_variation": 19.11,
+        "max_daily_return_pct": 2.26,
+        "min_daily_return_pct": -2.27
+      }
+    },
+    "classification": "LOW (10-20%)",
+    "assessment_date": "2025-10-22"
+  },
+  "momentum": {
+    "metrics": {
+      "3_month": {
+        "total_return_pct": 4.49,
+        "annualized_return_pct": 19.21,
+        "start_price": 11.8,
+        "end_price": 12.33,
+        "period_days": 63
+      },
+      "6_month": {
+        "total_return_pct": 20.65,
+        "annualized_return_pct": 45.55,
+        "start_price": 10.22,
+        "end_price": 12.33,
+        "period_days": 126
+      }
+    },
+    "trend": "NEUTRAL (-5% to 5%)",
+    "assessment_date": "2025-10-22"
+  },
+  "volume": {
+    "metrics": {
+      "30d": {
+        "avg_daily_volume": 561957,
+        "total_volume": 16858713,
+        "max_daily_volume": 986759,
+        "min_daily_volume": 260168,
+        "volume_std_dev": 174371
+      },
+      "90d": {
+        "avg_daily_volume": 554266,
+        "total_volume": 49883996,
+        "max_daily_volume": 2810484,
+        "min_daily_volume": 172425,
+        "volume_std_dev": 324950
+      }
+    },
+    "current_volume": 391455,
+    "volume_vs_30d_avg": 0.7,
+    "volume_trend": "LOW (0.5-0.75x average)"
+  },
+  "risk_score": {
+    "total_score": 10,
+    "max_score": 100,
+    "risk_level": "VERY LOW",
+    "components": {
+      "stress_points": 0,
+      "volatility_points": 5,
+      "momentum_points": 5
+    }
+  },
+  "overall_assessment": "Price within 9.3% of 52-week high (minimal stress). 90-day volatility: 16.1% annualized (LOW (10-20%)). Positive 3-month momentum: 4.5% (NEUTRAL (-5% to 5%)). Overall market risk: VERY LOW (score: 10/100)."
+}

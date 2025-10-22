@@ -1,0 +1,10 @@
+reit_name,ticker,scan_date,cut_date,cut_magnitude_pct,pre_cut_monthly,post_cut_monthly,pre_cut_annual,post_cut_annual,recovery_level_pct,recovery_months,full_recovery,recovery_status,current_monthly,current_price,current_yield,current_annual_dividend,total_records,data_range_start,data_range_end
+RioCan REIT,REI-UN.TO,2025-10-22,2021-01,33.3,0.12,0.08,1.44,0.96,80.4,,False,Partial Recovery (80%+),0.0965,18.97,6.02,1.142,119,2015-10-28,2025-09-29
+First Capital REIT,FCR-UN.TO,2025-10-22,2019-12,66.7,0.215,0.0717,2.58,0.86,34.5,,False,Minimal Recovery (25-50%),0.0742,19.33,4.57,0.8835,86,2015-12-28,2025-09-29
+First Capital REIT,FCR-UN.TO,2025-10-22,2021-01,49.8,0.0717,0.036,0.86,0.43,103.4,20,True,Fully Recovered,0.0742,19.33,4.57,0.8835,86,2015-12-28,2025-09-29
+Allied Properties REIT,AP-UN.TO,2025-10-22,2024-01,52.4,0.315,0.15,3.78,1.8,47.6,,False,Minimal Recovery (25-50%),0.15,18.45,9.76,1.8,121,2015-10-28,2025-09-29
+Slate Office REIT,SOT-UN.TO,2025-10-22,2019-03,46.7,0.0625,0.0333,0.75,0.4,16.0,,False,No Significant Recovery (<25%),0.01,0.41,0.0,0.0,97,2015-10-28,2023-10-30
+Slate Office REIT,SOT-UN.TO,2025-10-22,2023-04,70.0,0.0333,0.01,0.4,0.12,30.0,,False,Recent Cut - Recovery in Progress,0.01,0.41,0.0,0.0,97,2015-10-28,2023-10-30
+Canadian Apartment Properties REIT,CAR-UN.TO,2025-10-22,2025-01,84.5,0.8075,0.125,9.69,1.5,16.0,,False,Recent Cut - Recovery in Progress,0.1292,39.3,7.69,3.0234,121,2015-10-28,2025-09-29
+Artis REIT,AX-UN.TO,2025-10-22,2018-11,50.0,0.09,0.045,1.08,0.54,55.6,49,True,Fully Recovered,0.05,6.02,9.97,0.6,120,2015-10-28,2025-09-29
+Artis REIT,AX-UN.TO,2025-10-22,2023-01,52.4,0.105,0.05,1.26,0.6,47.6,,False,Minimal Recovery (25-50%),0.05,6.02,9.97,0.6,120,2015-10-28,2025-09-29

@@ -1,0 +1,10 @@
+reit_name,ticker,scan_date,cut_date,cut_magnitude_pct,pre_cut_monthly,post_cut_monthly,pre_cut_annual,post_cut_annual,recovery_level_pct,recovery_months,full_recovery,recovery_status,current_monthly,current_price,current_yield,current_annual_dividend,total_records,data_range_start,data_range_end
+RioCan REIT,REI-UN.TO,2025-10-22,2021-01,33.3,0.12,0.08,1.44,0.96,80.4,,False,Partial Recovery (80%+),0.0965,18.97,6.02,1.142,119,2015-10-28,2025-09-29
+Artis REIT,AX-UN.TO,2025-10-22,2018-11,50.0,0.09,0.045,1.08,0.54,55.6,49,True,Fully Recovered,0.05,6.02,9.97,0.6,120,2015-10-28,2025-09-29
+Artis REIT,AX-UN.TO,2025-10-22,2023-01,52.4,0.105,0.05,1.26,0.6,47.6,,False,Minimal Recovery (25-50%),0.05,6.02,9.97,0.6,120,2015-10-28,2025-09-29
+H&R REIT,HR-UN.TO,2025-10-22,2020-05,50.0,0.115,0.0575,1.38,0.69,43.5,31,True,Fully Recovered,0.05,11.72,6.14,0.72,123,2015-11-12,2025-09-29
+H&R REIT,HR-UN.TO,2025-10-22,2022-01,62.3,0.0575,0.0216,0.69,0.26,87.0,11,True,Fully Recovered,0.05,11.72,6.14,0.72,123,2015-11-12,2025-09-29
+H&R REIT,HR-UN.TO,2025-10-22,2023-01,77.6,0.2229,0.05,2.67,0.6,22.4,,False,No Significant Recovery (<25%),0.05,11.72,6.14,0.72,123,2015-11-12,2025-09-29
+H&R REIT,HR-UN.TO,2025-10-22,2024-01,33.3,0.075,0.05,0.9,0.6,66.7,11,True,Fully Recovered,0.05,11.72,6.14,0.72,123,2015-11-12,2025-09-29
+H&R REIT,HR-UN.TO,2025-10-22,2025-01,41.2,0.085,0.05,1.02,0.6,58.8,,False,Recent Cut - Recovery in Progress,0.05,11.72,6.14,0.72,123,2015-11-12,2025-09-29
+Canadian Apartment Properties REIT,CAR-UN.TO,2025-10-22,2025-01,84.5,0.8075,0.125,9.69,1.5,16.0,,False,Recent Cut - Recovery in Progress,0.1292,39.3,7.69,3.0234,121,2015-10-28,2025-09-29

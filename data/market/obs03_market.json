@@ -1,0 +1,105 @@
+{
+  "ticker": "SOT-UN.TO",
+  "reit_name": "SOT",
+  "assessment_date": "2025-10-22 20:18:13",
+  "lookback_days": 365,
+  "data_points": 252,
+  "price_stress": {
+    "stress_detected": "True",
+    "current_price": 0.44,
+    "high_52w": 0.69,
+    "low_52w": 0.35,
+    "decline_from_peak_pct": 36.2,
+    "peak_date": "2024-10-22",
+    "days_since_peak": 365,
+    "stress_level": "MODERATE (30-40%)",
+    "price_range_52w": 0.34,
+    "distance_from_low_pct": 25.7
+  },
+  "volatility": {
+    "metrics": {
+      "30d": {
+        "volatility_annualized_pct": 48.26,
+        "std_dev_daily_pct": 3.04,
+        "coefficient_of_variation": 8.38,
+        "max_daily_return_pct": 7.32,
+        "min_daily_return_pct": -4.65
+      },
+      "90d": {
+        "volatility_annualized_pct": 64.76,
+        "std_dev_daily_pct": 4.08,
+        "coefficient_of_variation": 19.07,
+        "max_daily_return_pct": 16.22,
+        "min_daily_return_pct": -7.14
+      },
+      "252d": {
+        "volatility_annualized_pct": 91.91,
+        "std_dev_daily_pct": 5.79,
+        "coefficient_of_variation": 192.08,
+        "max_daily_return_pct": 53.66,
+        "min_daily_return_pct": -16.92
+      }
+    },
+    "classification": "VERY HIGH (>40%)",
+    "assessment_date": "2025-10-22"
+  },
+  "momentum": {
+    "metrics": {
+      "3_month": {
+        "total_return_pct": 10.0,
+        "annualized_return_pct": 46.41,
+        "start_price": 0.4,
+        "end_price": 0.44,
+        "period_days": 63
+      },
+      "6_month": {
+        "total_return_pct": -9.28,
+        "annualized_return_pct": -17.7,
+        "start_price": 0.48,
+        "end_price": 0.44,
+        "period_days": 126
+      },
+      "12_month": {
+        "total_return_pct": -36.23,
+        "annualized_return_pct": -36.23,
+        "start_price": 0.69,
+        "end_price": 0.44,
+        "period_days": 252
+      }
+    },
+    "trend": "POSITIVE (10-20%)",
+    "assessment_date": "2025-10-22"
+  },
+  "volume": {
+    "metrics": {
+      "30d": {
+        "avg_daily_volume": 58540,
+        "total_volume": 1756227,
+        "max_daily_volume": 343046,
+        "min_daily_volume": 7501,
+        "volume_std_dev": 61413
+      },
+      "90d": {
+        "avg_daily_volume": 47208,
+        "total_volume": 4248742,
+        "max_daily_volume": 343046,
+        "min_daily_volume": 1001,
+        "volume_std_dev": 49799
+      }
+    },
+    "current_volume": 8317,
+    "volume_vs_30d_avg": 0.14,
+    "volume_trend": "VERY LOW (<0.5x average)"
+  },
+  "risk_score": {
+    "total_score": 60,
+    "max_score": 100,
+    "risk_level": "HIGH",
+    "components": {
+      "stress_points": 30,
+      "volatility_points": 30,
+      "momentum_points": 0
+    }
+  },
+  "overall_assessment": "\u26a0\ufe0f Price stress detected: 36.2% decline from 52-week high (MODERATE (30-40%)). 90-day volatility: 64.8% annualized (VERY HIGH (>40%)). Positive 3-month momentum: 10.0% (POSITIVE (10-20%)). Overall market risk: HIGH (score: 60/100)."
+}

@@ -1,0 +1,27 @@
+Distribution Cut Dataset - Summary Report
+============================================================
+
+Scan Date: 2025-10-22 11:53:32
+Data Provider: tmx
+
+Overall Statistics:
+  REITs scanned:           5
+  REITs with data:         5
+  REITs with cuts:         4
+  Total cuts detected:     9
+  Errors encountered:      0
+
+Recovery Statistics:
+  Cuts with recovery data: 9
+  Fully recovered cuts:    4
+  Partial recovery:        5
+  Recovery rate:           44.4%
+
+Per-REIT Summary:
+REIT                            Cuts  Recovered Status              
+----------------------------------------------------------------------
+RioCan REIT                        1          0 Partial Recovery (80%+)
+Artis REIT                         2          1 Minimal Recovery (25-50%)
+H&R REIT                           5          3 Recent Cut - Recovery in Progress
+Canadian Apartment Properties REIT     1          0 Recent Cut - Recovery in Progress
+

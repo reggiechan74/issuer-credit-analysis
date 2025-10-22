@@ -1,0 +1,17 @@
+{
+  "assessment_date": "2025-10-22 12:32:26",
+  "data_source": "Bank of Canada Valet API",
+  "policy_rate": {
+    "current_rate": 2.75,
+    "rate_change_pct": -1.75,
+    "rate_change_bps": -175.0,
+    "cycle_classification": "EASING",
+    "max_rate": 5.25,
+    "min_rate": 0.5,
+    "days_since_peak": 793
+  },
+  "credit_environment": {
+    "credit_stress_score": 22,
+    "credit_environment": "ACCOMMODATIVE"
+  }
+}
