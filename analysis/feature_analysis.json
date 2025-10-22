@@ -1,0 +1,238 @@
+{
+  "feature_importance": [
+    {
+      "feature": "debt_to_assets",
+      "importance": 41
+    },
+    {
+      "feature": "affo_payout_ratio",
+      "importance": 16
+    },
+    {
+      "feature": "leverage_liquidity_interaction",
+      "importance": 7
+    },
+    {
+      "feature": "is_office",
+      "importance": 3
+    },
+    {
+      "feature": "interest_coverage",
+      "importance": 3
+    },
+    {
+      "feature": "liquidity_risk_score",
+      "importance": 1
+    },
+    {
+      "feature": "debt_to_ebitda",
+      "importance": 1
+    },
+    {
+      "feature": "has_coverage_data",
+      "importance": 1
+    },
+    {
+      "feature": "is_retail",
+      "importance": 0
+    },
+    {
+      "feature": "payout_critical",
+      "importance": 0
+    },
+    {
+      "feature": "payout_high",
+      "importance": 0
+    },
+    {
+      "feature": "is_industrial",
+      "importance": 0
+    },
+    {
+      "feature": "is_residential",
+      "importance": 0
+    },
+    {
+      "feature": "coverage_critical",
+      "importance": 0
+    },
+    {
+      "feature": "payout_moderate",
+      "importance": 0
+    },
+    {
+      "feature": "coverage_high",
+      "importance": 0
+    },
+    {
+      "feature": "coverage_safe",
+      "importance": 0
+    },
+    {
+      "feature": "debt_assets_high",
+      "importance": 0
+    },
+    {
+      "feature": "debt_assets_moderate",
+      "importance": 0
+    },
+    {
+      "feature": "leverage_extreme",
+      "importance": 0
+    },
+    {
+      "feature": "leverage_high",
+      "importance": 0
+    },
+    {
+      "feature": "office_high_risk",
+      "importance": 0
+    },
+    {
+      "feature": "dual_stress",
+      "importance": 0
+    },
+    {
+      "feature": "payout_coverage_product",
+      "importance": 0
+    },
+    {
+      "feature": "affo_payout_x_office",
+      "importance": 0
+    },
+    {
+      "feature": "risk_score",
+      "importance": 0
+    },
+    {
+      "feature": "risk_score_scaled",
+      "importance": 0
+    },
+    {
+      "feature": "has_affo_data",
+      "importance": 0
+    },
+    {
+      "feature": "has_debt_ebitda_data",
+      "importance": 0
+    }
+  ],
+  "shap_importance": [
+    {
+      "feature": "debt_to_assets",
+      "mean_abs_shap": 4.16535819148068
+    },
+    {
+      "feature": "leverage_liquidity_interaction",
+      "mean_abs_shap": 0.7882660357215309
+    },
+    {
+      "feature": "is_office",
+      "mean_abs_shap": 0.15129961549848703
+    },
+    {
+      "feature": "affo_payout_ratio",
+      "mean_abs_shap": 0.07564980774924861
+    },
+    {
+      "feature": "liquidity_risk_score",
+      "mean_abs_shap": 3.317947768384973e-15
+    },
+    {
+      "feature": "interest_coverage",
+      "mean_abs_shap": 2.5712456855034007e-15
+    },
+    {
+      "feature": "debt_to_ebitda",
+      "mean_abs_shap": 4.689535796723968e-16
+    },
+    {
+      "feature": "has_coverage_data",
+      "mean_abs_shap": 4.394632805807911e-17
+    },
+    {
+      "feature": "is_retail",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "payout_critical",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "payout_high",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "is_industrial",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "is_residential",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "coverage_critical",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "payout_moderate",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "coverage_high",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "coverage_safe",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "debt_assets_high",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "debt_assets_moderate",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "leverage_extreme",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "leverage_high",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "office_high_risk",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "dual_stress",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "payout_coverage_product",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "affo_payout_x_office",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "risk_score",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "risk_score_scaled",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "has_affo_data",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "has_debt_ebitda_data",
+      "mean_abs_shap": 0.0
+    }
+  ]
+}

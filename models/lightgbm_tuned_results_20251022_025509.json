@@ -1,0 +1,40 @@
+{
+  "model_name": "LightGBM (Tuned - Targeted)",
+  "best_params": {
+    "num_leaves": 3,
+    "max_depth": 3,
+    "min_child_samples": 5,
+    "learning_rate": 0.05,
+    "n_estimators": 100,
+    "reg_alpha": 0.5,
+    "reg_lambda": 0.5,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8
+  },
+  "precision": 0.6666666666666666,
+  "recall": 1.0,
+  "f1_score": 0.8,
+  "roc_auc": 0.5,
+  "y_pred": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "y_proba": [
+    0.625,
+    0.625,
+    0.625,
+    0.625,
+    0.625,
+    0.625,
+    0.75,
+    0.75,
+    0.75
+  ]
+}
