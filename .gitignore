@@ -51,3 +51,6 @@ Thumbs.db
 *.log
 *.bak
 *.tmp
+
+# Phase 1B PDFs (large binary files, not committed)
+Issuer_Reports/phase1b/pdfs/**/*.pdf
