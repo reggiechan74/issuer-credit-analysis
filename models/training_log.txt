@@ -1,0 +1,113 @@
+/home/codespace/.local/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1706: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", result.shape[0])
+/home/codespace/.local/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1706: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", result.shape[0])
+/home/codespace/.local/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1706: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", result.shape[0])
+/workspaces/issuer-credit-analysis/scripts/train_distribution_cut_model.py:251: RuntimeWarning: invalid value encountered in scalar divide
+  bar_length = int(row['importance'] / feature_importance['importance'].max() * 40)
+======================================================================
+Loading Training Dataset
+======================================================================
+
+✓ Loaded 19 observations
+✓ Total columns: 59
+
+✓ Features: 54
+✓ Target: cut_type ({'target': 10, 'control': 9})
+
+📋 Encoding 9 categorical features:
+  • dilution_materiality
+  • sector
+  • mkt_price_stress_level
+  • mkt_volatility_classification
+  • mkt_momentum_trend
+  • mkt_risk_level
+  • macro_ca_rate_cycle
+  • macro_ca_credit_environment
+  • macro_us_rate_cycle
+
+⚠️  Missing values detected:
+  • available_cash: 3 (15.8%)
+  • total_available_liquidity: 3 (15.8%)
+  • monthly_burn_rate: 3 (15.8%)
+  • dilution_percentage: 6 (31.6%)
+
+✓ Filled missing values with median
+
+✓ Target encoding: {'control': np.int64(0), 'target': np.int64(1)}
+
+======================================================================
+Model Training with 5-Fold Stratified Cross-Validation
+======================================================================
+
+🔄 Running 5-fold cross-validation...
+✓ Best iteration: 1
+✓ Best log loss: 0.6949
+
+🎯 Training final model on full dataset...
+
+======================================================================
+Model Evaluation Results
+======================================================================
+
+📊 Classification Report:
+----------------------------------------------------------------------
+              precision    recall  f1-score   support
+
+     control      0.000     0.000     0.000         9
+      target      0.526     1.000     0.690        10
+
+    accuracy                          0.526        19
+   macro avg      0.263     0.500     0.345        19
+weighted avg      0.277     0.526     0.363        19
+
+
+📊 Confusion Matrix:
+----------------------------------------------------------------------
+                 Predicted
+                 Control  Target
+Actual Control         0        9
+       Target          0       10
+
+======================================================================
+📈 Performance Summary
+======================================================================
+  Accuracy:  0.526
+  Precision: 0.526
+  Recall:    1.000
+  F1 Score:  0.690 ⚠️
+  ROC AUC:   0.500
+
+======================================================================
+🎯 Target Achievement
+======================================================================
+  Baseline F1 (market-only): 0.553
+  Current F1 (full model):   0.690
+  Improvement:               0.137 (+24.7%)
+
+  ⚠️  TARGET NOT MET: F1 = 0.690 < 0.75
+  📊 Improvement over baseline: +24.7%
+  ✓ Model improved over baseline - partial success
+
+  📍 Recommendation: Review feature importance, consider:
+     - Feature engineering (interaction terms)
+     - Hyperparameter tuning
+     - Additional features (distribution history, recovery patterns)
+
+======================================================================
+🔍 Top 20 Most Important Features
+======================================================================
+
+
+Traceback (most recent call last):
+  File "/workspaces/issuer-credit-analysis/scripts/train_distribution_cut_model.py", line 312, in <module>
+    exit(main())
+         ^^^^^^
+  File "/workspaces/issuer-credit-analysis/scripts/train_distribution_cut_model.py", line 300, in main
+    feature_importance = show_feature_importance(model, feature_cols, top_n=20)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/issuer-credit-analysis/scripts/train_distribution_cut_model.py", line 251, in show_feature_importance
+    bar_length = int(row['importance'] / feature_importance['importance'].max() * 40)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: cannot convert float NaN to integer
