@@ -16,17 +16,20 @@
 6. [Factors That Could Lead to an Upgrade](#factors-that-could-lead-to-an-upgrade)
 7. [Factors That Could Lead to a Downgrade](#factors-that-could-lead-to-a-downgrade)
 8. [Key Indicators](#key-indicators)
-9. [5-Factor Rating Scorecard](#5-factor-rating-scorecard)
-10. [Key Observations](#key-observations)
-11. [Peer Comparison](#peer-comparison)
-12. [Profile](#profile)
+9. [Market Risk Assessment](#market-risk-assessment)
+10. [Macroeconomic Environment](#macroeconomic-environment)
+11. [Distribution Cut Risk Assessment](#distribution-cut-risk-assessment)
+12. [5-Factor Rating Scorecard](#5-factor-rating-scorecard)
+13. [Key Observations](#key-observations)
+14. [Peer Comparison](#peer-comparison)
+15. [Profile](#profile)
     - [Company Background](#company-background)
     - [Business Strategy](#business-strategy)
     - [Portfolio Composition](#portfolio-composition)
     - [Financial Summary](#financial-summary)
     - [Operational Metrics](#operational-metrics)
     - [Management and Governance](#management-and-governance)
-13. [Detailed Credit Analysis](#detailed-credit-analysis)
+16. [Detailed Credit Analysis](#detailed-credit-analysis)
     - [1. Earnings Analysis](#1-earnings-analysis)
     - [2. FFO, AFFO, ACFO, and AFCF Analysis](#2-ffo-affo-acfo-and-afcf-analysis)
         - [2.1 Overview](#21-overview)
@@ -48,11 +51,11 @@
         - [4.4 Liquidity Assessment](#44-liquidity-assessment)
     - [5. Growth Strategy and Capital Allocation](#5-growth-strategy-and-capital-allocation)
     - [6. Operating Track Record and Portfolio Quality](#6-operating-track-record-and-portfolio-quality)
-14. [Scenario Analysis and Stress Testing](#scenario-analysis-and-stress-testing)
-15. [Structural Considerations](#structural-considerations)
-16. [ESG Considerations](#esg-considerations)
-17. [Methodology and Limitations](#methodology-and-limitations)
-18. [Appendices](#appendix-a-moodys-adjusted-debt-reconciliation)
+17. [Scenario Analysis and Stress Testing](#scenario-analysis-and-stress-testing)
+18. [Structural Considerations](#structural-considerations)
+19. [ESG Considerations](#esg-considerations)
+20. [Methodology and Limitations](#methodology-and-limitations)
+21. [Appendices](#appendix-a-moodys-adjusted-debt-reconciliation)
     - [Appendix A: Moody's-Adjusted Debt Reconciliation](#appendix-a-moodys-adjusted-debt-reconciliation)
     - [Appendix B: Moody's-Adjusted EBITDA Reconciliation](#appendix-b-moodys-adjusted-ebitda-reconciliation)
     - [Appendix C: Calculation Methodologies](#appendix-c-calculation-methodologies)
@@ -175,6 +178,141 @@ All financial metrics in this report are presented on the following period basis
 | Gross Leasable Area | {{GLA}} million sq ft | |
 | Occupancy Rate | {{OCCUPANCY}}% | {{OCCUPANCY_ASSESSMENT}} |
 | Same Property NOI Growth | {{NOI_GROWTH}}% | {{NOI_GROWTH_ASSESSMENT}} |
+
+---
+
+## Market Risk Assessment
+
+### Price Performance
+
+| Metric | Value | Assessment |
+|--------|-------|------------|
+| **Current Price** | ${{MARKET_CURRENT_PRICE}} | |
+| **52-Week Range** | ${{MARKET_52W_LOW}} - ${{MARKET_52W_HIGH}} | |
+| **Decline from Peak** | {{MARKET_DECLINE_FROM_PEAK}}% | {{MARKET_STRESS_LEVEL}} |
+| **Days Since Peak** | {{MARKET_DAYS_SINCE_PEAK}} days | |
+
+### Volatility & Momentum
+
+| Metric | Value | Classification |
+|--------|-------|----------------|
+| **30-Day Volatility** | {{MARKET_VOLATILITY_30D}}% annualized | {{MARKET_VOL_30D_CLASS}} |
+| **90-Day Volatility** | {{MARKET_VOLATILITY_90D}}% annualized | {{MARKET_VOL_90D_CLASS}} |
+| **252-Day Volatility** | {{MARKET_VOLATILITY_252D}}% annualized | {{MARKET_VOL_252D_CLASS}} |
+| **Overall Volatility** | | {{MARKET_VOL_CLASSIFICATION}} |
+| **3-Month Return** | {{MARKET_MOMENTUM_3M}}% | |
+| **6-Month Return** | {{MARKET_MOMENTUM_6M}}% | |
+| **12-Month Return** | {{MARKET_MOMENTUM_12M}}% | {{MARKET_MOMENTUM_TREND}} |
+| **Trading Volume vs Average** | {{MARKET_VOLUME_TREND}} | |
+
+### Market Risk Score
+
+**Overall Risk Score:** {{MARKET_RISK_SCORE}}/100 ({{MARKET_RISK_LEVEL}})
+
+**Risk Components:**
+- Price Stress (30%): {{MARKET_PRICE_STRESS_SCORE}}/30
+- Volatility (40%): {{MARKET_VOLATILITY_SCORE}}/40
+- Momentum (20%): {{MARKET_MOMENTUM_SCORE}}/20
+- Volume (10%): {{MARKET_VOLUME_SCORE}}/10
+
+### Market Risk Assessment
+
+{{MARKET_RISK_NARRATIVE}}
+
+### Credit Implications
+
+{{MARKET_CREDIT_IMPLICATIONS}}
+
+---
+
+## Macroeconomic Environment
+
+### Interest Rate Context
+
+**Canada:**
+- **Bank of Canada Policy Rate:** {{MACRO_CA_RATE}}%
+- **12-Month Change:** {{MACRO_CA_CHANGE_BPS}} bps
+- **Rate Cycle:** {{MACRO_CA_CYCLE}}
+- **Peak Rate (12-Month):** {{MACRO_CA_PEAK_RATE}}%
+- **Credit Environment:** {{MACRO_CA_CREDIT_ENVIRONMENT}}
+- **Credit Stress Score:** {{MACRO_CA_STRESS_SCORE}}/100
+
+**United States:**
+- **Federal Funds Rate:** {{MACRO_US_RATE}}%
+- **12-Month Change:** {{MACRO_US_CHANGE_BPS}} bps
+- **Rate Cycle:** {{MACRO_US_CYCLE}}
+
+**Cross-Border Dynamics:**
+- **Canada vs US Rate Spread:** {{MACRO_SPREAD_BPS}} bps
+- **Spread Trend:** {{MACRO_SPREAD_TREND}}
+
+### Rate Environment Assessment
+
+{{MACRO_RATE_NARRATIVE}}
+
+### Credit Implications
+
+{{MACRO_CREDIT_IMPLICATIONS}}
+
+---
+
+## Distribution Cut Risk Assessment
+
+**Model:** Logistic Regression (v2.1) - Trained on n=24 Canadian REIT observations (2020-2025)
+
+### Model Prediction
+
+| Metric | Value |
+|--------|-------|
+| **Distribution Cut Probability** | {{PRED_CUT_PROBABILITY}}% |
+| **Risk Classification** | {{PRED_RISK_BADGE}} {{PRED_RISK_LEVEL}} |
+| **Model Confidence** | {{PRED_CONFIDENCE}} |
+| **Prediction Date** | {{PRED_DATE}} |
+
+**Risk Classification Scale:**
+- 🟢 Very Low: 0-10% probability
+- 🟡 Low: 10-25% probability
+- 🟠 Moderate: 25-50% probability
+- 🔴 High: 50-75% probability
+- 🚨 Very High: 75-100% probability
+
+### Key Risk Drivers (Top 5 Features)
+
+| Rank | Feature | Value | Impact | Model Weight |
+|------|---------|-------|--------|--------------|
+| 1 | {{PRED_DRIVER_1_NAME}} | {{PRED_DRIVER_1_VALUE}} | {{PRED_DRIVER_1_DIRECTION}} risk | {{PRED_DRIVER_1_COEF}} |
+| 2 | {{PRED_DRIVER_2_NAME}} | {{PRED_DRIVER_2_VALUE}} | {{PRED_DRIVER_2_DIRECTION}} risk | {{PRED_DRIVER_2_COEF}} |
+| 3 | {{PRED_DRIVER_3_NAME}} | {{PRED_DRIVER_3_VALUE}} | {{PRED_DRIVER_3_DIRECTION}} risk | {{PRED_DRIVER_3_COEF}} |
+| 4 | {{PRED_DRIVER_4_NAME}} | {{PRED_DRIVER_4_VALUE}} | {{PRED_DRIVER_4_DIRECTION}} risk | {{PRED_DRIVER_4_COEF}} |
+| 5 | {{PRED_DRIVER_5_NAME}} | {{PRED_DRIVER_5_VALUE}} | {{PRED_DRIVER_5_DIRECTION}} risk | {{PRED_DRIVER_5_COEF}} |
+
+### Model Interpretation
+
+{{PRED_NARRATIVE}}
+
+Based on analysis of 15 financial, market, and macroeconomic features, the trained logistic regression model predicts a **{{PRED_RISK_LEVEL}}** probability ({{PRED_CUT_PROBABILITY}}%) of distribution cut within the next 12 months.
+
+### Model Performance
+
+**Training Dataset:**
+- Observations: n=24 Canadian REITs (11 cuts, 13 controls)
+- Performance (5-fold CV): F1=0.813, ROC AUC=0.967, Accuracy=83.0%
+- Improvement over market-only baseline: +47%
+
+**Most Predictive Feature:** Self-funding ratio (coefficient: +0.871)
+
+### Credit Implications
+
+{{PRED_CREDIT_IMPLICATIONS}}
+
+### Important Disclaimers
+
+- **Prediction Horizon:** 12 months from {{REPORTING_PERIOD}}
+- **Geographic Scope:** Canadian REITs only
+- **Data Basis:** Most recent financial data as of {{REPORT_DATE}}
+- **External Factors Not Captured:** Management changes, M&A activity, strategic pivots, regulatory changes
+- **Decision Support:** Model output is one input among many; requires professional credit analyst review
+- **Not Investment Advice:** For informational purposes only
 
 ---
 
