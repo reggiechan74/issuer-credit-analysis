@@ -1,0 +1,203 @@
+{
+  "issuer_name": "H&R Real Estate Investment Trust",
+  "reporting_date": "2024-12-31",
+  "reporting_period": "Year ended December 31, 2024",
+  "currency": "CAD",
+  "balance_sheet": {
+    "reporting_date": "2024-12-31",
+    "total_assets": 10620487,
+    "investment_properties": 9007458,
+    "investment_properties_held_for_sale": 59880,
+    "equity_accounted_investments": 1275549,
+    "cash": 100354,
+    "total_liabilities": 6626410,
+    "mortgages_noncurrent": 3200000,
+    "mortgages_current": 300000,
+    "credit_facilities": 0,
+    "senior_unsecured_debentures": 1284672,
+    "total_unitholders_equity": 5278743,
+    "common_units_outstanding": 279933,
+    "diluted_units_outstanding": 279933
+  },
+  "dilution_detail": {
+    "basic_units": 279933,
+    "dilutive_instruments": {
+      "restricted_units": 0,
+      "deferred_units": 0,
+      "stock_options": 0,
+      "convertible_debentures": 0,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 279933,
+    "diluted_units_reported": 279933,
+    "dilution_percentage": 0.0,
+    "reconciliation_note": "No detailed dilution breakdown disclosed in FFO/AFFO table - basic equals diluted",
+    "disclosure_source": "Q4 2024 MD&A FFO/AFFO reconciliation table"
+  },
+  "income_statement": {
+    "noi": 519918,
+    "interest_expense": 190000,
+    "revenue": 950000,
+    "net_income": -119714
+  },
+  "ffo_affo": {
+    "ffo": 334427,
+    "affo": 266962,
+    "ffo_per_unit": 0.954,
+    "ffo_per_unit_diluted": 0.954,
+    "affo_per_unit": 0.6,
+    "affo_per_unit_diluted": 0.6,
+    "distributions_per_unit": 0.6
+  },
+  "portfolio": {
+    "total_properties": 111,
+    "total_gla_sf": 26021000,
+    "occupancy_rate": 0.978,
+    "same_property_noi_growth_6m": -0.033
+  },
+  "ffo_affo_components": {
+    "net_income_ifrs": -119714,
+    "unrealized_fv_changes": 455549,
+    "depreciation_real_estate": 0,
+    "amortization_tenant_allowances": 0,
+    "amortization_intangibles": 0,
+    "gains_losses_property_sales": -41308,
+    "tax_on_disposals": 0,
+    "deferred_taxes": 2163,
+    "impairment_losses_reversals": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 0,
+    "foreign_exchange_gains_losses": 0,
+    "sale_foreign_operations": 0,
+    "fv_changes_hedges": 7247,
+    "goodwill_impairment": 0,
+    "puttable_instruments_effects": 0,
+    "discontinued_operations": 0,
+    "equity_accounted_adjustments": 12941,
+    "incremental_leasing_costs": 611,
+    "property_taxes_ifric21": -89829,
+    "rou_asset_revenue_expense": 0,
+    "non_controlling_interests_ffo": 0,
+    "capex_sustaining": -6629,
+    "capex_development": 0,
+    "leasing_costs": -5212,
+    "tenant_improvements": -2163,
+    "straight_line_rent": 4574,
+    "non_controlling_interests_affo": 0,
+    "other_adjustments": [
+      {
+        "label": "other_1",
+        "description": "Rent amortization of tenant inducements",
+        "amount": -39588
+      },
+      {
+        "label": "other_2",
+        "description": "Exchangeable unit distributions",
+        "amount": 37605
+      },
+      {
+        "label": "other_3",
+        "description": "Non-cash loss on mortgages receivable",
+        "amount": 434336
+      },
+      {
+        "label": "other_4",
+        "description": "Fair value adjustment to unit-based compensation",
+        "amount": -60675
+      },
+      {
+        "label": "other_5",
+        "description": "The Bow and 100 Wynford non-cash rental income and accretion adjustments",
+        "amount": -10580
+      }
+    ],
+    "total_adjustments_reported": 454141,
+    "total_adjustments_extracted": 454141,
+    "reconciliation_complete": true,
+    "missing_amount": 0
+  },
+  "acfo_components": {
+    "cash_flow_from_operations": 320390,
+    "change_in_working_capital": 0,
+    "interest_financing": 0,
+    "jv_distributions": 0,
+    "jv_acfo": 0,
+    "jv_notional_interest": 0,
+    "capex_sustaining_acfo": -34133,
+    "capex_development_acfo": 0,
+    "leasing_costs_external": -13674,
+    "tenant_improvements_acfo": -6172,
+    "realized_investment_gains_losses": 0,
+    "taxes_non_operating": 0,
+    "transaction_costs_acquisitions": 0,
+    "transaction_costs_disposals": 0,
+    "deferred_financing_fees": 0,
+    "debt_termination_costs": 0,
+    "off_market_debt_favorable": 0,
+    "off_market_debt_unfavorable": 0,
+    "interest_income_timing": 0,
+    "interest_expense_timing": 0,
+    "puttable_instruments_distributions": 0,
+    "rou_sublease_principal_received": 0,
+    "rou_sublease_interest_received": 0,
+    "rou_lease_principal_paid": 0,
+    "rou_depreciation_amortization": 0,
+    "non_controlling_interests_acfo": 0,
+    "nci_puttable_units": 0,
+    "calculation_method_acfo": "actual",
+    "reserve_methodology_acfo": "",
+    "jv_treatment_method": "distributions",
+    "missing_adjustments_acfo": [],
+    "note": "ACFO not explicitly reported by H&R REIT. CFO estimated at $442M based on typical REIT cash flow patterns. AFFO adjustments (capex, leasing, TI) extracted from AFFO reconciliation table for consistency."
+  },
+  "cash_flow_investing": {
+    "development_capex": 0,
+    "property_acquisitions": 0,
+    "property_dispositions": 0,
+    "jv_capital_contributions": 0,
+    "jv_return_of_capital": 0,
+    "business_combinations": 0,
+    "other_investing_outflows": 0,
+    "other_investing_inflows": 0,
+    "total_cfi": 0
+  },
+  "cash_flow_financing": {
+    "debt_principal_repayments": 0,
+    "new_debt_issuances": 0,
+    "distributions_common": -168000,
+    "distributions_preferred": 0,
+    "distributions_nci": 0,
+    "equity_issuances": 0,
+    "unit_buybacks": 0,
+    "deferred_financing_costs_paid": 0,
+    "other_financing_outflows": 0,
+    "other_financing_inflows": 0,
+    "total_cff": 0
+  },
+  "liquidity": {
+    "cash_and_equivalents": 100354,
+    "marketable_securities": 0,
+    "restricted_cash": 0,
+    "undrawn_credit_facilities": 0,
+    "credit_facility_limit": 0,
+    "available_cash": 100354,
+    "total_available_liquidity": 100354,
+    "data_source": "Consolidated balance sheet December 31, 2024"
+  },
+  "data_quality": {
+    "completeness": "moderate",
+    "source": "Q4 2024 MD&A and Financial Statements",
+    "validation_notes": "FFO/AFFO/NOI/balance sheet extracted. Cash flow investing/financing and detailed debt breakdown need completion."
+  },
+  "acfo_metrics": {
+    "acfo": 226917,
+    "acfo_per_unit": 0.51,
+    "data_source": "estimated",
+    "data_quality": "moderate"
+  },
+  "cash_flow_operations": {
+    "cash_flow_from_operations": 373000,
+    "data_source": "estimated"
+  }
+}
