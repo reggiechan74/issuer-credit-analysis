@@ -1,0 +1,105 @@
+{
+  "ticker": "KMP-UN.TO",
+  "reit_name": "KMP",
+  "assessment_date": "2025-10-22 22:42:56",
+  "lookback_days": 365,
+  "data_points": 252,
+  "price_stress": {
+    "stress_detected": "False",
+    "current_price": 17.73,
+    "high_52w": 19.89,
+    "low_52w": 15.88,
+    "decline_from_peak_pct": 10.9,
+    "peak_date": "2024-10-22",
+    "days_since_peak": 365,
+    "stress_level": "LOW (10-20%)",
+    "price_range_52w": 4.01,
+    "distance_from_low_pct": 11.6
+  },
+  "volatility": {
+    "metrics": {
+      "30d": {
+        "volatility_annualized_pct": 12.41,
+        "std_dev_daily_pct": 0.78,
+        "coefficient_of_variation": 21.54,
+        "max_daily_return_pct": 1.4,
+        "min_daily_return_pct": -1.71
+      },
+      "90d": {
+        "volatility_annualized_pct": 14.35,
+        "std_dev_daily_pct": 0.9,
+        "coefficient_of_variation": 7.88,
+        "max_daily_return_pct": 2.16,
+        "min_daily_return_pct": -2.19
+      },
+      "252d": {
+        "volatility_annualized_pct": 19.58,
+        "std_dev_daily_pct": 1.23,
+        "coefficient_of_variation": 32.25,
+        "max_daily_return_pct": 7.46,
+        "min_daily_return_pct": -4.04
+      }
+    },
+    "classification": "LOW (10-20%)",
+    "assessment_date": "2025-10-22"
+  },
+  "momentum": {
+    "metrics": {
+      "3_month": {
+        "total_return_pct": -7.7,
+        "annualized_return_pct": -27.44,
+        "start_price": 19.21,
+        "end_price": 17.73,
+        "period_days": 63
+      },
+      "6_month": {
+        "total_return_pct": 5.29,
+        "annualized_return_pct": 10.85,
+        "start_price": 16.84,
+        "end_price": 17.73,
+        "period_days": 126
+      },
+      "12_month": {
+        "total_return_pct": -10.86,
+        "annualized_return_pct": -10.86,
+        "start_price": 19.89,
+        "end_price": 17.73,
+        "period_days": 252
+      }
+    },
+    "trend": "MILD NEGATIVE (-10% to -5%)",
+    "assessment_date": "2025-10-22"
+  },
+  "volume": {
+    "metrics": {
+      "30d": {
+        "avg_daily_volume": 270472,
+        "total_volume": 8114163,
+        "max_daily_volume": 1943590,
+        "min_daily_volume": 123414,
+        "volume_std_dev": 321509
+      },
+      "90d": {
+        "avg_daily_volume": 264107,
+        "total_volume": 23769710,
+        "max_daily_volume": 1943590,
+        "min_daily_volume": 45121,
+        "volume_std_dev": 207893
+      }
+    },
+    "current_volume": 140907,
+    "volume_vs_30d_avg": 0.52,
+    "volume_trend": "LOW (0.5-0.75x average)"
+  },
+  "risk_score": {
+    "total_score": 25,
+    "max_score": 100,
+    "risk_level": "LOW",
+    "components": {
+      "stress_points": 10,
+      "volatility_points": 5,
+      "momentum_points": 10
+    }
+  },
+  "overall_assessment": "Price within 10.9% of 52-week high (minimal stress). 90-day volatility: 14.3% annualized (LOW (10-20%)). Negative 3-month momentum: -7.7% (MILD NEGATIVE (-10% to -5%)). Overall market risk: LOW (score: 25/100)."
+}

@@ -1,0 +1,105 @@
+{
+  "ticker": "CHP-UN.TO",
+  "reit_name": "CHP",
+  "assessment_date": "2025-10-22 22:42:56",
+  "lookback_days": 365,
+  "data_points": 252,
+  "price_stress": {
+    "stress_detected": "False",
+    "current_price": 15.11,
+    "high_52w": 15.35,
+    "low_52w": 12.86,
+    "decline_from_peak_pct": 1.6,
+    "peak_date": "2025-09-09",
+    "days_since_peak": 43,
+    "stress_level": "MINIMAL (<10%)",
+    "price_range_52w": 2.49,
+    "distance_from_low_pct": 17.5
+  },
+  "volatility": {
+    "metrics": {
+      "30d": {
+        "volatility_annualized_pct": 12.21,
+        "std_dev_daily_pct": 0.77,
+        "coefficient_of_variation": 15.49,
+        "max_daily_return_pct": 1.21,
+        "min_daily_return_pct": -1.57
+      },
+      "90d": {
+        "volatility_annualized_pct": 12.97,
+        "std_dev_daily_pct": 0.82,
+        "coefficient_of_variation": 30.16,
+        "max_daily_return_pct": 2.13,
+        "min_daily_return_pct": -1.59
+      },
+      "252d": {
+        "volatility_annualized_pct": 15.51,
+        "std_dev_daily_pct": 0.98,
+        "coefficient_of_variation": 60.14,
+        "max_daily_return_pct": 4.18,
+        "min_daily_return_pct": -2.53
+      }
+    },
+    "classification": "LOW (10-20%)",
+    "assessment_date": "2025-10-22"
+  },
+  "momentum": {
+    "metrics": {
+      "3_month": {
+        "total_return_pct": 3.92,
+        "annualized_return_pct": 16.63,
+        "start_price": 14.54,
+        "end_price": 15.11,
+        "period_days": 63
+      },
+      "6_month": {
+        "total_return_pct": 4.86,
+        "annualized_return_pct": 9.95,
+        "start_price": 14.41,
+        "end_price": 15.11,
+        "period_days": 126
+      },
+      "12_month": {
+        "total_return_pct": 2.93,
+        "annualized_return_pct": 2.93,
+        "start_price": 14.68,
+        "end_price": 15.11,
+        "period_days": 252
+      }
+    },
+    "trend": "NEUTRAL (-5% to 5%)",
+    "assessment_date": "2025-10-22"
+  },
+  "volume": {
+    "metrics": {
+      "30d": {
+        "avg_daily_volume": 481037,
+        "total_volume": 14431134,
+        "max_daily_volume": 1668266,
+        "min_daily_volume": 199824,
+        "volume_std_dev": 295655
+      },
+      "90d": {
+        "avg_daily_volume": 409228,
+        "total_volume": 36830585,
+        "max_daily_volume": 1668266,
+        "min_daily_volume": 111719,
+        "volume_std_dev": 220021
+      }
+    },
+    "current_volume": 274248,
+    "volume_vs_30d_avg": 0.57,
+    "volume_trend": "LOW (0.5-0.75x average)"
+  },
+  "risk_score": {
+    "total_score": 10,
+    "max_score": 100,
+    "risk_level": "VERY LOW",
+    "components": {
+      "stress_points": 0,
+      "volatility_points": 5,
+      "momentum_points": 5
+    }
+  },
+  "overall_assessment": "Price within 1.6% of 52-week high (minimal stress). 90-day volatility: 13.0% annualized (LOW (10-20%)). Positive 3-month momentum: 3.9% (NEUTRAL (-5% to 5%)). Overall market risk: VERY LOW (score: 10/100)."
+}

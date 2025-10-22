@@ -94,3 +94,28 @@ observations:
     date: '2024-12-31'
     issuer: Extendicare Inc.
     ticker: EXE.TO
+  21:
+    cut_type: control
+    date: '2024-12-31'
+    issuer: RioCan Real Estate Investment Trust
+    ticker: REI-UN.TO
+  22:
+    cut_type: control
+    date: '2023-12-31'
+    issuer: RioCan Real Estate Investment Trust
+    ticker: REI-UN.TO
+  25:
+    cut_type: target
+    date: '2023-12-31'
+    issuer: First Capital Real Estate Investment Trust
+    ticker: FCR-UN.TO
+  26:
+    cut_type: control
+    date: '2023-12-31'
+    issuer: Killam Apartment Real Estate Investment Trust
+    ticker: KMP-UN.TO
+  27:
+    cut_type: control
+    date: '2024-12-31'
+    issuer: Choice Properties Real Estate Investment Trust
+    ticker: CHP-UN.TO

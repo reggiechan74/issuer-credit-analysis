@@ -22,7 +22,13 @@ OBSERVATION_TYPES = {
     6: "target", 7: "target", 8: "target", 9: "target", 10: "target",
     # Controls (no cuts)
     11: "control", 12: "control", 13: "control", 14: "control", 15: "control",
-    16: "control", 17: "control", 18: "control", 19: "control", 20: "control"
+    16: "control", 17: "control", 18: "control", 19: "control", 20: "control",
+    # Phase 1B expansion (obs 21-27)
+    21: "control",  # RioCan Q4 2024 - no cut
+    22: "control",  # RioCan Q4 2023 - no cut
+    25: "target",   # First Capital Q4 2023 - 33% cut Sept 2022
+    26: "control",  # Killam Q4 2023 - no cut
+    27: "control"   # Choice Properties Q4 2024 - no cut
 }
 
 def extract_observation_number(filename):
