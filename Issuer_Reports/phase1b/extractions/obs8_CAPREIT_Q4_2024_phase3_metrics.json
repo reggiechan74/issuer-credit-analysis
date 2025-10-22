@@ -1,0 +1,300 @@
+{
+  "issuer_name": "Canadian Apartment Properties Real Estate Investment Trust",
+  "reporting_date": "2024-12-31",
+  "reporting_period": "Q4 2024 / Year ended December 31, 2024",
+  "currency": "CAD",
+  "balance_sheet": {
+    "common_units_outstanding": 180401,
+    "diluted_units_outstanding": 181500
+  },
+  "leverage_metrics": {
+    "total_debt": 5992888,
+    "net_debt": 5931888,
+    "gross_assets": 16532096,
+    "debt_to_assets_percent": 36.25,
+    "net_debt_ratio": 35.88
+  },
+  "reit_metrics": {
+    "ffo": 285000,
+    "affo": 0,
+    "ffo_per_unit": 1.58,
+    "affo_per_unit": 0,
+    "distributions_per_unit": 0.1902,
+    "ffo_payout_ratio": 12.0,
+    "affo_payout_ratio": 0.0,
+    "source": "issuer_reported",
+    "ffo_per_unit_diluted": 1.57,
+    "ffo_calculated": 266158.0,
+    "affo_calculated": 301158.0,
+    "ffo_calculation_detail": {
+      "ffo_calculated": 266158.0,
+      "net_income_ifrs": -132342,
+      "total_adjustments": 398500.0,
+      "adjustments_detail": {
+        "adjustment_A_unrealized_fv_changes": 379000,
+        "adjustment_B_depreciation_real_estate": 12500,
+        "adjustment_C_amortization_tenant_allowances": 0,
+        "adjustment_D_amortization_intangibles": 0,
+        "adjustment_E_gains_losses_property_sales": -45000,
+        "adjustment_F_tax_on_disposals": 3500,
+        "adjustment_G_deferred_taxes": 18000,
+        "adjustment_H_impairment_losses_reversals": 0,
+        "adjustment_I_revaluation_gains_losses": 0,
+        "adjustment_J_transaction_costs_business_comb": 0,
+        "adjustment_K_foreign_exchange_gains_losses": 12000,
+        "adjustment_L_sale_foreign_operations": 0,
+        "adjustment_M_fv_changes_hedges": 8500,
+        "adjustment_N_goodwill_impairment": 0,
+        "adjustment_O_puttable_instruments_effects": 25000,
+        "adjustment_P_discontinued_operations": 0,
+        "adjustment_Q_equity_accounted_adjustments": 0,
+        "adjustment_R_incremental_leasing_costs": 0,
+        "adjustment_S_property_taxes_ifric21": 0,
+        "adjustment_T_rou_asset_revenue_expense": 0,
+        "adjustment_U_non_controlling_interests_ffo": 15000
+      },
+      "missing_components": [],
+      "available_adjustments": 21,
+      "total_adjustments_count": 21,
+      "data_quality": "strong",
+      "ffo_per_unit": 1.4754,
+      "ffo_per_unit_diluted": 1.4664
+    },
+    "affo_calculation_detail": {
+      "affo_calculated": 301158.0,
+      "ffo_starting_point": 266158.0,
+      "total_adjustments": 35000.0,
+      "adjustments_detail": {
+        "adjustment_V_capex_sustaining": 18000,
+        "adjustment_W_leasing_costs": 5000,
+        "adjustment_X_tenant_improvements": 12000,
+        "adjustment_Y_straight_line_rent": 0,
+        "adjustment_Z_non_controlling_interests_affo": 0
+      },
+      "missing_components": [],
+      "available_adjustments": 5,
+      "total_adjustments_count": 5,
+      "calculation_method": "actual",
+      "reserve_methodology": null,
+      "data_quality": "strong",
+      "affo_per_unit": 1.6694,
+      "affo_per_unit_diluted": 1.6593
+    },
+    "validation": {
+      "ffo_variance_amount": -18842.0,
+      "ffo_variance_percent": -6.61,
+      "ffo_within_threshold": false,
+      "affo_variance_amount": null,
+      "affo_variance_percent": null,
+      "affo_within_threshold": null,
+      "validation_notes": [
+        "FFO variance (-6.6%) exceeds 5% threshold. Review methodology differences."
+      ],
+      "validation_summary": "FFO variance (-6.6%) exceeds 5% threshold. Review methodology differences."
+    },
+    "acfo_calculated": 380000.0,
+    "acfo_calculation_detail": {
+      "acfo_calculated": 380000.0,
+      "cash_flow_from_operations": 440000,
+      "total_adjustments": -60000.0,
+      "adjustments_detail": {
+        "adjustment_1_change_in_working_capital": -25000,
+        "adjustment_2_interest_financing": 0,
+        "adjustment_3a_jv_distributions": 0,
+        "adjustment_3b_jv_acfo": 0,
+        "adjustment_3c_jv_notional_interest": 0.0,
+        "adjustment_4_capex_sustaining_acfo": -18000,
+        "adjustment_4_dev_capex_development_acfo": 0.0,
+        "adjustment_5_leasing_costs_external": -5000,
+        "adjustment_6_tenant_improvements_acfo": -12000,
+        "adjustment_7_realized_investment_gains_losses": 0.0,
+        "adjustment_8_taxes_non_operating": 0.0,
+        "adjustment_9_transaction_costs_acquisitions": 0.0,
+        "adjustment_10_transaction_costs_disposals": 0.0,
+        "adjustment_11_deferred_financing_fees": 0.0,
+        "adjustment_12_debt_termination_costs": 0.0,
+        "adjustment_13a_off_market_debt_favorable": 0.0,
+        "adjustment_13b_off_market_debt_unfavorable": 0.0,
+        "adjustment_14a_interest_income_timing": 0.0,
+        "adjustment_14b_interest_expense_timing": 0.0,
+        "adjustment_15_puttable_instruments_distributions": 0.0,
+        "adjustment_16a_rou_sublease_principal_received": 0.0,
+        "adjustment_16b_rou_sublease_interest_received": 0.0,
+        "adjustment_16c_rou_lease_principal_paid": 0.0,
+        "adjustment_16d_rou_depreciation_amortization": 0.0,
+        "adjustment_17a_non_controlling_interests_acfo": 0.0,
+        "adjustment_17b_nci_puttable_units": 0.0
+      },
+      "missing_components": [
+        "adjustment_3c",
+        "adjustment_4_dev",
+        "adjustment_7",
+        "adjustment_8",
+        "adjustment_9",
+        "adjustment_10",
+        "adjustment_11",
+        "adjustment_12",
+        "adjustment_13a",
+        "adjustment_13b",
+        "adjustment_14a",
+        "adjustment_14b",
+        "adjustment_15",
+        "adjustment_16a",
+        "adjustment_16b",
+        "adjustment_16c",
+        "adjustment_16d",
+        "adjustment_17a",
+        "adjustment_17b"
+      ],
+      "available_adjustments": 7,
+      "total_adjustments_count": 17,
+      "calculation_method": "actual",
+      "jv_treatment_method": "unknown",
+      "reserve_methodology": null,
+      "consistency_checks": {
+        "capex_match": false,
+        "capex_variance": -36000,
+        "tenant_improvements_match": false,
+        "tenant_improvements_variance": -24000
+      },
+      "data_quality": "moderate",
+      "acfo_per_unit": 2.1064,
+      "acfo_per_unit_diluted": 2.0937
+    },
+    "acfo_validation": {
+      "acfo_variance_amount": 120000.0,
+      "acfo_variance_percent": 46.15,
+      "acfo_within_threshold": false,
+      "validation_notes": [
+        "ACFO variance (46.2%) exceeds 5% threshold. Review methodology differences (joint venture treatment, CAPEX/leasing cost methods)."
+      ],
+      "validation_summary": "ACFO variance (46.2%) exceeds 5% threshold. Review methodology differences (joint venture treatment, CAPEX/leasing cost methods)."
+    },
+    "acfo": 260000
+  },
+  "coverage_ratios": {
+    "noi_interest_coverage": 2.33,
+    "annualized_interest_expense": 255000,
+    "period_interest_expense": 255000,
+    "annualization_factor": 1,
+    "detected_period": "annual_q4"
+  },
+  "portfolio_metrics": {
+    "total_properties": 0,
+    "gla_sf": 0,
+    "occupancy_rate": 0.98,
+    "occupancy_including_commitments": 0,
+    "same_property_noi_growth": 0
+  },
+  "afcf_metrics": {
+    "afcf": 885000.0,
+    "acfo_starting_point": 260000,
+    "net_cfi": 625000.0,
+    "cfi_breakdown": {
+      "development_capex": {
+        "description": "Development CAPEX (growth projects)",
+        "amount": -85000
+      },
+      "property_acquisitions": {
+        "description": "Property acquisitions",
+        "amount": -165000
+      },
+      "property_dispositions": {
+        "description": "Property dispositions (proceeds)",
+        "amount": 875000
+      },
+      "jv_capital_contributions": {
+        "description": "JV capital contributions",
+        "amount": 0
+      },
+      "jv_return_of_capital": {
+        "description": "JV return of capital",
+        "amount": 0
+      },
+      "business_combinations": {
+        "description": "Business combinations",
+        "amount": 0
+      },
+      "other_investing_outflows": {
+        "description": "Other investing outflows",
+        "amount": 0
+      },
+      "other_investing_inflows": {
+        "description": "Other investing inflows",
+        "amount": 0
+      }
+    },
+    "missing_components": [],
+    "available_components": 8,
+    "total_components": 8,
+    "data_quality": "strong",
+    "has_cfi_data": true,
+    "reconciliation_check": {
+      "calculated_net_cfi": 625000.0,
+      "reported_total_cfi": 625000,
+      "variance": 0.0,
+      "matches": true
+    },
+    "afcf_per_unit": 4.9057,
+    "afcf_per_unit_diluted": 4.876
+  },
+  "afcf_coverage": {
+    "afcf_debt_service_coverage": 1.21,
+    "afcf_distribution_coverage": 20.68,
+    "afcf_payout_ratio": 4.8,
+    "afcf_self_funding_ratio": 1.15,
+    "total_debt_service": 730000,
+    "total_distributions": 42800,
+    "net_financing_needs": 632800,
+    "data_quality": "strong",
+    "afcf_self_funding_capacity": 112200.0
+  },
+  "afcf_reconciliation": {
+    "afcf_calculation_valid": true,
+    "acfo_cfi_reconciles": true,
+    "cash_flow_statement_reconciles": true,
+    "development_capex_consistent": null,
+    "validation_notes": [
+      "\u2713 AFCF calculation correct: ACFO + Net CFI = AFCF",
+      "\u2139 Cash flow components: CFO (440,000) + CFI (625,000) + CFF (-424,800) = 640,200"
+    ],
+    "reconciliation_summary": "\u2713 AFCF calculation correct: ACFO + Net CFI = AFCF | \u2139 Cash flow components: CFO (440,000) + CFI (625,000) + CFF (-424,800) = 640,200"
+  },
+  "burn_rate_analysis": {
+    "applicable": false,
+    "monthly_burn_rate": null,
+    "period_burn_rate": null,
+    "period_months": 12,
+    "afcf": 885000.0,
+    "mandatory_obligations": 772800,
+    "self_funding_ratio": 1.15,
+    "reason": "AFCF covers mandatory obligations - surplus of $112,200 for the 12-month period",
+    "data_quality": "complete",
+    "monthly_surplus": 9350.0
+  },
+  "dilution_analysis": {
+    "has_dilution_detail": true,
+    "dilution_percentage": 0.61,
+    "dilution_materiality": "minimal",
+    "material_instruments": [],
+    "convertible_debt_risk": "none",
+    "governance_score": "enhanced",
+    "credit_assessment": "\u2713 Low dilution risk - minimal equity overhang, positive for creditworthiness",
+    "detail": {
+      "basic_units": 180401,
+      "dilutive_instruments": {
+        "restricted_units": 0,
+        "deferred_units": 0,
+        "stock_options": 0,
+        "convertible_debentures": 0,
+        "warrants": 0,
+        "other": 1099
+      },
+      "diluted_units_calculated": 181500,
+      "diluted_units_reported": 181500,
+      "dilution_percentage": 0.61,
+      "reconciliation_note": "Detailed dilution breakdown not disclosed. Estimated from weighted average units.",
+      "disclosure_source": "Q4 2024 Annual Report - MD&A section"
+    }
+  }
+}
