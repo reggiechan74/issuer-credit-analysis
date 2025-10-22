@@ -1,0 +1,261 @@
+{
+  "issuer_name": "CT Real Estate Investment Trust",
+  "reporting_date": "2022-09-30",
+  "reporting_period": "Q3 2022",
+  "currency": "CAD",
+  "data_quality": {
+    "completeness": "strong",
+    "source": "Q3 2022 Report to Unitholders",
+    "validation_notes": "Complete financial statements with detailed FFO/AFFO/ACFO reconciliation tables and comprehensive disclosure"
+  },
+  "balance_sheet": {
+    "reporting_date": "2022-09-30",
+    "total_assets": 6763640,
+    "investment_properties": 6659924,
+    "cash": 6862,
+    "total_liabilities": 2747368,
+    "mortgages_noncurrent": 47074,
+    "mortgages_current": 18352,
+    "credit_facilities": 380000,
+    "senior_unsecured_debentures": 2273000,
+    "total_unitholders_equity": 3984233,
+    "common_units_outstanding": 148252451,
+    "diluted_units_outstanding": 232478903
+  },
+  "dilution_detail": {
+    "basic_units": 148252451,
+    "dilutive_instruments": {
+      "restricted_units": 294644,
+      "deferred_units": 0,
+      "stock_options": 0,
+      "convertible_debentures": 81952255,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 232499350,
+    "diluted_units_reported": 232478903,
+    "dilution_percentage": 56.8,
+    "reconciliation_note": "Includes dilution from Class B LP Units (81,952,255) and other unit plans (294,644). Class B LP Units are economically equivalent to Units and are exchangeable. Class C LP Units treated as debt.",
+    "disclosure_source": "Note 10 to Q3 2022 Financial Statements"
+  },
+  "income_statement": {
+    "noi": 97045,
+    "interest_expense": 24623,
+    "revenue": 133155,
+    "net_income": 79771,
+    "q3_2022": {
+      "property_revenue": 133155,
+      "property_expense": 36110,
+      "noi": 97045,
+      "general_admin_expense": 3213,
+      "interest_expense": 24623,
+      "fair_value_adjustment": 6020,
+      "net_income": 79771
+    },
+    "ytd_2022": {
+      "property_revenue": 397620,
+      "property_expense": 105819,
+      "noi": 291801,
+      "general_admin_expense": 9780,
+      "interest_expense": 70717,
+      "fair_value_adjustment": 22077,
+      "net_income": 236862
+    }
+  },
+  "ffo_affo": {
+    "ffo": 73412,
+    "affo": 66620,
+    "ffo_per_unit": 0.313,
+    "ffo_per_unit_diluted": 0.313,
+    "affo_per_unit": 0.284,
+    "affo_per_unit_diluted": 0.284,
+    "acfo": 68102,
+    "acfo_per_unit": 0.290,
+    "distributions_per_unit": 0.292,
+    "affo_payout_ratio": 102.8,
+    "q3_2022": {
+      "ffo": 73412,
+      "ffo_per_unit_basic": 0.313,
+      "ffo_per_unit_diluted": 0.313,
+      "affo": 66620,
+      "affo_per_unit_basic": 0.284,
+      "affo_per_unit_diluted": 0.284,
+      "acfo": 68102,
+      "distributions_per_unit": 0.292,
+      "distributions_paid": 68525,
+      "affo_payout_ratio": 102.8
+    },
+    "ytd_2022": {
+      "ffo": 220639,
+      "ffo_per_unit_basic": 0.944,
+      "ffo_per_unit_diluted": 0.944,
+      "affo": 200268,
+      "affo_per_unit_basic": 0.856,
+      "affo_per_unit_diluted": 0.857,
+      "acfo": 203849,
+      "distributions_per_unit": 0.876,
+      "distributions_paid": 204787,
+      "affo_payout_ratio": 102.3
+    }
+  },
+  "portfolio": {
+    "total_properties": 362,
+    "total_gla_sf": 30125000,
+    "occupancy_rate": 0.995,
+    "occupancy_with_commitments": 0.995
+  },
+  "ffo_affo_components": {
+    "net_income_ifrs": 79771,
+    "unrealized_fv_changes": -6020,
+    "depreciation_real_estate": 0,
+    "amortization_tenant_allowances": 0,
+    "amortization_intangibles": 0,
+    "gains_losses_property_sales": 0,
+    "tax_on_disposals": 0,
+    "deferred_taxes": 181,
+    "impairment_losses_reversals": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 0,
+    "foreign_exchange_gains_losses": 0,
+    "sale_foreign_operations": 0,
+    "fv_changes_hedges": 0,
+    "goodwill_impairment": 0,
+    "puttable_instruments_effects": 0,
+    "discontinued_operations": 0,
+    "equity_accounted_adjustments": 0,
+    "incremental_leasing_costs": 0,
+    "property_taxes_ifric21": 0,
+    "rou_asset_revenue_expense": -541,
+    "non_controlling_interests_ffo": 21,
+    "capex_sustaining": 0,
+    "capex_development": 0,
+    "leasing_costs": 0,
+    "tenant_improvements": 0,
+    "straight_line_rent": 462,
+    "non_controlling_interests_affo": 0,
+    "other_adjustments": [
+      {
+        "label": "other_1",
+        "description": "Fair value adjustment of unit-based compensation",
+        "amount": 213,
+        "source_page": "MD&A page 23"
+      },
+      {
+        "label": "other_2",
+        "description": "Internal leasing expense",
+        "amount": -94,
+        "source_page": "MD&A page 23"
+      },
+      {
+        "label": "other_3",
+        "description": "Lease principal payments on right-of-use assets",
+        "amount": 608,
+        "source_page": "MD&A page 23"
+      },
+      {
+        "label": "other_4",
+        "description": "Capital expenditure reserve (AFFO)",
+        "amount": -6310,
+        "source_page": "MD&A page 23"
+      }
+    ],
+    "total_adjustments_reported": -6359,
+    "total_adjustments_extracted": -6170,
+    "reconciliation_complete": true,
+    "missing_amount": -189,
+    "calculation_method": "reserve",
+    "reserve_methodology": "Capital expenditure reserve based on building condition reports prepared by independent consultants, reflecting average annual spending level",
+    "affo_adjustments_issuer_reported": [
+      {
+        "description": "Property straight-line rent revenue",
+        "amount": 462,
+        "source_page": "MD&A page 23",
+        "note": "Adjustment to reverse straight-line rent accounting"
+      },
+      {
+        "description": "Capital expenditure reserve",
+        "amount": -6310,
+        "source_page": "MD&A page 23, page 46",
+        "note": "Reserve methodology - based on average expenditures from building condition reports"
+      }
+    ],
+    "affo_total_adjustments_issuer": -6792,
+    "affo_reconciliation_check": "FFO $73,412 + AFFO adjustments $(6,792) = AFFO $66,620 ✓"
+  },
+  "acfo_components": {
+    "cash_flow_from_operations": 96949,
+    "change_in_working_capital": -21830,
+    "interest_financing": 0,
+    "jv_distributions": 0,
+    "jv_acfo": 0,
+    "jv_notional_interest": 0,
+    "capex_sustaining_acfo": 0,
+    "capex_development_acfo": 0,
+    "leasing_costs_external": 0,
+    "tenant_improvements_acfo": 0,
+    "realized_investment_gains_losses": 0,
+    "taxes_non_operating": 0,
+    "transaction_costs_acquisitions": 0,
+    "transaction_costs_disposals": 0,
+    "deferred_financing_fees": 0,
+    "debt_termination_costs": 0,
+    "off_market_debt_favorable": 0,
+    "off_market_debt_unfavorable": 0,
+    "interest_income_timing": 0,
+    "interest_expense_timing": 0,
+    "puttable_instruments_distributions": 0,
+    "rou_sublease_principal_received": 0,
+    "rou_sublease_interest_received": 0,
+    "rou_lease_principal_paid": 608,
+    "rou_depreciation_amortization": 0,
+    "non_controlling_interests_acfo": 21,
+    "calculation_method_acfo": "actual",
+    "jv_treatment_method": "distributions"
+  },
+  "cash_flow_investing": {
+    "development_capex": -73815,
+    "property_acquisitions": -3660,
+    "property_dispositions": 0,
+    "jv_capital_contributions": 0,
+    "jv_return_of_capital": 0,
+    "business_combinations": 0,
+    "other_investing_outflows": 0,
+    "other_investing_inflows": 49,
+    "total_cfi": -77426
+  },
+  "cash_flow_financing": {
+    "debt_principal_repayments": -253767,
+    "new_debt_issuances": 249300,
+    "distributions_common": -68525,
+    "distributions_preferred": 0,
+    "distributions_nci": -14490,
+    "equity_issuances": 1327,
+    "unit_buybacks": 0,
+    "deferred_financing_costs_paid": 0,
+    "other_financing_outflows": -4232,
+    "other_financing_inflows": 0,
+    "total_cff": -90387
+  },
+  "liquidity": {
+    "cash_and_equivalents": 6862,
+    "marketable_securities": 0,
+    "restricted_cash": 0,
+    "undrawn_credit_facilities": 620000,
+    "credit_facility_limit": 1000000,
+    "available_cash": 6862,
+    "total_available_liquidity": 626862,
+    "data_source": "Balance sheet + Note 9 Credit Facilities. Bank Credit Facility: $1,000,000 limit with $380,000 drawn = $620,000 available. CTC Credit Facility: uncommitted, $0 drawn."
+  },
+  "validation": {
+    "balance_sheet_balanced": true,
+    "noi_margin_reasonable": true,
+    "notes": [
+      "Balance sheet balances: Assets ($6,763,640) = Liabilities ($2,747,368) + Equity ($3,984,233) + NCI ($32,039)",
+      "NOI margin: 72.9% (97,045 / 133,155) - healthy for single-tenant net lease REIT",
+      "Occupancy rate: 99.5% - very strong",
+      "AFFO payout ratio: 102.8% Q3 2022, 102.3% YTD - slightly unsustainable (above 100%)",
+      "Interest coverage (EBITFV/Interest): 4.05x TTM - strong",
+      "Debt/Assets: 40.6% - conservative leverage"
+    ]
+  }
+}
