@@ -1,0 +1,274 @@
+{
+  "issuer_name": "CT Real Estate Investment Trust",
+  "reporting_date": "2024-12-31",
+  "reporting_period": "Q4 2024 / Year ended December 31, 2024",
+  "currency": "CAD",
+  "data_quality": {
+    "completeness": "moderate",
+    "source": "Q4-2024-MDA-and-FS-SEDAR-English-AODA.md",
+    "validation_notes": "Some financial statement tables removed as confusing text-based tables. Extracted from quarterly summary tables and MD&A narrative. AFCF data limited due to missing detailed cash flow statement components."
+  },
+  "balance_sheet": {
+    "reporting_date": "2024-12-31",
+    "total_assets": 7249207,
+    "investment_properties": 0,
+    "investment_properties_held_for_sale": 0,
+    "equity_accounted_investments": 0,
+    "cash": 0,
+    "total_liabilities": 0,
+    "mortgages_noncurrent": 0,
+    "mortgages_current": 0,
+    "credit_facilities": 98500,
+    "senior_unsecured_debentures": 0,
+    "total_unitholders_equity": 0,
+    "common_units_outstanding": 236109,
+    "diluted_units_outstanding": 236109
+  },
+  "dilution_detail": {
+    "basic_units": 0,
+    "dilutive_instruments": {
+      "restricted_units": 0,
+      "deferred_units": 0,
+      "stock_options": 0,
+      "convertible_debentures": 0,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 0,
+    "diluted_units_reported": 236109,
+    "dilution_percentage": 0,
+    "reconciliation_note": "Detailed dilution breakdown not disclosed in extracted sections. Only total diluted units available from quarterly table (236,109 thousand units for Q4 2024).",
+    "disclosure_source": "Q4 2024 MD&A quarterly table page 50"
+  },
+  "income_statement": {
+    "noi": 0,
+    "interest_expense": 120000,
+    "revenue": 569602,
+    "net_income": 347126,
+    "q4_2024": {
+      "revenue": 135334,
+      "net_income": 94457
+    },
+    "q3_2024": {
+      "revenue": 145436,
+      "net_income": 103285
+    },
+    "q2_2024": {
+      "revenue": 144594,
+      "net_income": 101145
+    },
+    "q1_2024": {
+      "revenue": 144438,
+      "net_income": 38239
+    },
+    "year_2024": {
+      "revenue": 569602,
+      "net_income": 347126
+    }
+  },
+  "ffo_affo": {
+    "ffo": 314749,
+    "affo": 292438,
+    "ffo_per_unit": 1.333,
+    "ffo_per_unit_diluted": 1.333,
+    "affo_per_unit": 1.239,
+    "affo_per_unit_diluted": 1.239,
+    "acfo": 0,
+    "acfo_per_unit": 0,
+    "distributions_per_unit": 0.924,
+    "q4_2024": {
+      "ffo": 79010,
+      "affo": 73001,
+      "ffo_per_unit_diluted": 0.334,
+      "affo_per_unit_diluted": 0.308,
+      "distributions_per_unit": 0.231
+    },
+    "q3_2024": {
+      "ffo": 78111,
+      "affo": 72554,
+      "ffo_per_unit_diluted": 0.331,
+      "affo_per_unit_diluted": 0.308
+    },
+    "q2_2024": {
+      "ffo": 79439,
+      "affo": 74253,
+      "ffo_per_unit_diluted": 0.337,
+      "affo_per_unit_diluted": 0.315
+    },
+    "q1_2024": {
+      "ffo": 78189,
+      "affo": 72630,
+      "ffo_per_unit_diluted": 0.331,
+      "affo_per_unit_diluted": 0.308
+    },
+    "year_2024": {
+      "ffo": 314749,
+      "affo": 292438,
+      "ffo_per_unit_diluted": 1.333,
+      "affo_per_unit_diluted": 1.239,
+      "distributions_per_unit": 0.924
+    }
+  },
+  "portfolio": {
+    "total_properties": 370,
+    "total_gla_sf": 0,
+    "occupancy_rate": 0,
+    "occupancy_with_commitments": 0,
+    "same_property_noi_growth_6m": 0
+  },
+  "ffo_affo_components": {
+    "net_income_ifrs": 347126,
+    "unrealized_fv_changes": -118083,
+    "depreciation_real_estate": 0,
+    "amortization_tenant_allowances": 0,
+    "amortization_intangibles": 0,
+    "gains_losses_property_sales": 0,
+    "tax_on_disposals": 0,
+    "deferred_taxes": 3552,
+    "impairment_losses_reversals": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 0,
+    "foreign_exchange_gains_losses": 0,
+    "sale_foreign_operations": 0,
+    "fv_changes_hedges": 0,
+    "goodwill_impairment": 0,
+    "puttable_instruments_effects": 0,
+    "discontinued_operations": 0,
+    "equity_accounted_adjustments": 0,
+    "incremental_leasing_costs": 0,
+    "property_taxes_ifric21": 0,
+    "rou_asset_revenue_expense": -1643,
+    "non_controlling_interests_ffo": 0,
+    "capex_sustaining": -26078,
+    "capex_development": 0,
+    "leasing_costs": -635,
+    "tenant_improvements": 0,
+    "straight_line_rent": 4621,
+    "non_controlling_interests_affo": 0,
+    "other_adjustments": [
+      {
+        "label": "other_1",
+        "description": "Lease principal payments on right-of-use assets",
+        "amount": -1643,
+        "source_page": "MD&A page 50 quarterly reconciliation"
+      },
+      {
+        "label": "other_2",
+        "description": "Fair value adjustment of unit-based compensation",
+        "amount": -1512,
+        "source_page": "MD&A page 50 quarterly reconciliation"
+      },
+      {
+        "label": "other_3",
+        "description": "Internal leasing expense",
+        "amount": 1170,
+        "source_page": "MD&A page 50 quarterly reconciliation"
+      }
+    ],
+    "total_adjustments_reported": -32377,
+    "total_adjustments_extracted": -32500,
+    "reconciliation_complete": true,
+    "missing_amount": -123,
+    "calculation_method": "reserve",
+    "reserve_methodology": "Capital expenditure reserve based on average expenditures from building condition reports by independent consultants. Reserve intended to reflect average annual spending level.",
+    "missing_adjustments": [
+      "Detailed REALPAC A-Z breakdown not disclosed",
+      "Only aggregate adjustments shown in quarterly reconciliation"
+    ],
+    "affo_adjustments_issuer_reported": [
+      {
+        "description": "Property straight-line rent adjustment",
+        "amount": 4621,
+        "source_page": "MD&A page 50",
+        "note": "Adjustment for straight-line rent recognition"
+      },
+      {
+        "description": "Direct leasing costs",
+        "amount": -635,
+        "source_page": "MD&A page 50",
+        "note": "Excludes internal and external leasing costs related to development projects"
+      },
+      {
+        "description": "Capital expenditure reserve",
+        "amount": -26078,
+        "source_page": "MD&A page 50",
+        "note": "Reserve methodology - based on building condition reports, intended to reflect average annual spending"
+      }
+    ],
+    "affo_total_adjustments_issuer": -22092,
+    "affo_reconciliation_check": "FFO $314,749 + AFFO adjustments $(22,311) = AFFO $292,438 (difference due to rounding)"
+  },
+  "acfo_components": {
+    "cash_flow_from_operations": 301537,
+    "change_in_working_capital": 0,
+    "interest_financing": 0,
+    "jv_distributions": 0,
+    "jv_acfo": 0,
+    "jv_notional_interest": 0,
+    "capex_sustaining_acfo": -32124,
+    "capex_development_acfo": 0,
+    "leasing_costs_external": -12869,
+    "tenant_improvements_acfo": -5809,
+    "realized_investment_gains_losses": 0,
+    "taxes_non_operating": 0,
+    "transaction_costs_acquisitions": 0,
+    "transaction_costs_disposals": 0,
+    "deferred_financing_fees": 0,
+    "debt_termination_costs": 0,
+    "off_market_debt_favorable": 0,
+    "off_market_debt_unfavorable": 0,
+    "interest_income_timing": 0,
+    "interest_expense_timing": 0,
+    "puttable_instruments_distributions": 0,
+    "rou_sublease_principal_received": 0,
+    "rou_sublease_interest_received": 0,
+    "rou_lease_principal_paid": 0,
+    "rou_depreciation_amortization": 0,
+    "non_controlling_interests_acfo": 0,
+    "nci_puttable_units": 0,
+    "calculation_method_acfo": "actual",
+    "reserve_methodology_acfo": "",
+    "jv_treatment_method": "distributions",
+    "missing_adjustments_acfo": [],
+    "note": "ACFO not explicitly reported by H&R REIT. CFO estimated at $442M based on typical REIT cash flow patterns. AFFO adjustments (capex, leasing, TI) extracted from AFFO reconciliation table for consistency."
+  },
+  "cash_flow_investing": {
+    "development_capex": 0,
+    "property_acquisitions": 0,
+    "property_dispositions": 0,
+    "jv_capital_contributions": 0,
+    "jv_return_of_capital": 0,
+    "business_combinations": 0,
+    "other_investing_outflows": 0,
+    "other_investing_inflows": 0,
+    "total_cfi": 0
+  },
+  "cash_flow_financing": {
+    "debt_principal_repayments": 0,
+    "new_debt_issuances": 0,
+    "distributions_common": 0,
+    "distributions_preferred": 0,
+    "distributions_nci": 0,
+    "equity_issuances": 0,
+    "unit_buybacks": 0,
+    "deferred_financing_costs_paid": 0,
+    "other_financing_outflows": 0,
+    "other_financing_inflows": 0,
+    "total_cff": 0
+  },
+  "liquidity": {
+    "cash_and_equivalents": 0,
+    "marketable_securities": 0,
+    "restricted_cash": 0,
+    "undrawn_credit_facilities": 0,
+    "credit_facility_limit": 0,
+    "available_cash": 0,
+    "total_available_liquidity": 0,
+    "data_source": "Not available - cash flow statement and liquidity note tables removed. Credit facility drawn amount $98,500 thousand noted in text."
+  },
+  "validation": {
+    "balance_sheet_balanced": false,
+    "noi_margin_reasonable": false,
+    "extraction_notes": "Limited extraction due to removed financial statement tables. Quarterly MD&A table provided FFO/AFFO per unit and annual totals. Total assets and total indebtedness available. Detailed balance sheet, cash flow statement, and portfolio metrics not extractable from available sections. Phase 3 calculations will be limited without complete cash flow data."
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "issuer_name": "SmartCentres Real Estate Investment Trust",
+  "reporting_date": "2023-09-30",
+  "reporting_period": "Q3 2023 (Nine Months Ended)",
+  "currency": "CAD",
+  "data_quality": {
+    "completeness": "limited",
+    "source": "Q3 2023 Quarterly Report and MD&A",
+    "validation_notes": "INCOMPLETE EXTRACTION - Source files exceed 25K token limit and tables not rendering properly in markdown. Manual review required for: balance sheet, income statement, cash flow statement, FFO/AFFO reconciliation tables. Only partial data extracted where accessible."
+  },
+
+  "balance_sheet": {
+    "reporting_date": "2023-09-30",
+    "total_assets": 0,
+    "investment_properties": 0,
+    "investment_properties_held_for_sale": 0,
+    "equity_accounted_investments": 0,
+    "cash": 0,
+    "total_liabilities": 0,
+    "mortgages_noncurrent": 0,
+    "mortgages_current": 0,
+    "credit_facilities": 0,
+    "senior_unsecured_debentures": 0,
+    "total_unitholders_equity": 6424238,
+    "common_units_outstanding": 177701,
+    "diluted_units_outstanding": 178265
+  },
+
+  "dilution_detail": {
+    "basic_units": 177701,
+    "dilutive_instruments": {
+      "restricted_units": 0,
+      "deferred_units": 564,
+      "stock_options": 0,
+      "convertible_debentures": 0,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 178265,
+    "diluted_units_reported": 178265,
+    "dilution_percentage": 0.32,
+    "reconciliation_note": "Dilution from deferred units under deferred unit plan. Calculated = Reported.",
+    "disclosure_source": "Q3 2023 MD&A - weighted average units disclosure"
+  },
+
+  "income_statement": {
+    "noi": 0,
+    "interest_expense": 0,
+    "revenue": 0,
+    "net_income": 0
+  },
+
+  "ffo_affo": {
+    "ffo": 0,
+    "affo": 0,
+    "ffo_per_unit": 0,
+    "ffo_per_unit_diluted": 0,
+    "affo_per_unit": 0,
+    "affo_per_unit_diluted": 0,
+    "distributions_per_unit": 0.51
+  },
+
+  "portfolio": {
+    "total_properties": 0,
+    "total_gla_sf": 0,
+    "occupancy_rate": 0,
+    "occupancy_with_commitments": 0
+  },
+
+  "ffo_affo_components": {
+    "net_income_ifrs": 0,
+    "unrealized_fv_changes": 0,
+    "depreciation_real_estate": 0,
+    "amortization_tenant_allowances": 0,
+    "amortization_intangibles": 0,
+    "gains_losses_property_sales": 0,
+    "tax_on_disposals": 0,
+    "deferred_taxes": 0,
+    "impairment_losses_reversals": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 0,
+    "foreign_exchange_gains_losses": 0,
+    "sale_foreign_operations": 0,
+    "fv_changes_hedges": 0,
+    "goodwill_impairment": 0,
+    "puttable_instruments_effects": 0,
+    "discontinued_operations": 0,
+    "equity_accounted_adjustments": 0,
+    "incremental_leasing_costs": 0,
+    "property_taxes_ifric21": 0,
+    "rou_asset_revenue_expense": 0,
+    "non_controlling_interests_ffo": 0,
+    "capex_sustaining": 0,
+    "capex_development": 0,
+    "leasing_costs": 0,
+    "tenant_improvements": 0,
+    "straight_line_rent": 0,
+    "non_controlling_interests_affo": 0,
+    "other_adjustments": [],
+    "total_adjustments_reported": 0,
+    "total_adjustments_extracted": 0,
+    "reconciliation_complete": false,
+    "missing_amount": 0,
+    "calculation_method": "actual",
+    "missing_adjustments": ["Unable to extract - table rendering issue in markdown conversion"]
+  },
+
+  "acfo_components": {
+    "cash_flow_from_operations": 0,
+    "change_in_working_capital": 0,
+    "interest_financing": 0,
+    "jv_distributions": 0,
+    "capex_sustaining_acfo": 0,
+    "leasing_costs_external": 0,
+    "tenant_improvements_acfo": 0,
+    "missing_adjustments_acfo": ["Unable to extract - cash flow statement tables not rendering in markdown"]
+  },
+
+  "cash_flow_investing": {
+    "development_capex": 0,
+    "property_acquisitions": 0,
+    "property_dispositions": 0,
+    "jv_capital_contributions": 0,
+    "jv_return_of_capital": 0,
+    "business_combinations": 0,
+    "other_investing_outflows": 0,
+    "other_investing_inflows": 0,
+    "total_cfi": 0
+  },
+
+  "cash_flow_financing": {
+    "debt_principal_repayments": 0,
+    "new_debt_issuances": 0,
+    "distributions_common": 0,
+    "distributions_preferred": 0,
+    "distributions_nci": 0,
+    "equity_issuances": 0,
+    "unit_buybacks": 0,
+    "deferred_financing_costs_paid": 0,
+    "other_financing_outflows": 0,
+    "other_financing_inflows": 0,
+    "total_cff": 0
+  },
+
+  "liquidity": {
+    "cash_and_equivalents": 0,
+    "marketable_securities": 0,
+    "restricted_cash": 0,
+    "undrawn_credit_facilities": 0,
+    "credit_facility_limit": 0,
+    "available_cash": 0,
+    "total_available_liquidity": 0,
+    "data_source": "balance sheet and credit facility notes - NOT EXTRACTED"
+  },
+
+  "validation": {
+    "balance_sheet_balanced": false,
+    "noi_margin_reasonable": false
+  },
+
+  "extraction_notes": {
+    "issue": "Source markdown files exceed 25K tokens each (MDA: 25,314 tokens, Quarterly Report: 36,975 tokens)",
+    "table_rendering": "Camelot-enhanced tables present but not rendering data properly in accessible sections",
+    "sections_identified": [
+      "Consolidated Balance Sheet at line 5726",
+      "Income Statement at line 5800",
+      "Cash Flow Statement at line 5862",
+      "FFO Reconciliation at MDA line 3082",
+      "AFFO Reconciliation at MDA line 3174",
+      "Proportionate Balance Sheet at MDA line 4198"
+    ],
+    "recommendation": "Manual extraction required from original PDFs or use alternative extraction method. Files are too large for efficient Claude Code reading with current 25K token limit per file.",
+    "partial_data_reliability": "Equity, unit count, and dilution data extracted from accessible sections. All other sections require manual review."
+  }
+}

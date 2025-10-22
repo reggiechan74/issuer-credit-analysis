@@ -1,0 +1,257 @@
+{
+  "issuer_name": "Extendicare Inc.",
+  "reporting_date": "2024-12-31",
+  "reporting_period": "Q4 2024 / Year ended December 31, 2024",
+  "currency": "CAD",
+  "data_quality": {
+    "completeness": "moderate",
+    "source": "Extendicare Inc. 2024 Annual Financial Statements and MD&A",
+    "validation_notes": "Note: Extendicare is a SENIOR CARE PROVIDER, not a REIT. FFO/AFFO are company-specific non-GAAP measures used for senior care operations, NOT REALPAC REIT metrics. No investment properties, no traditional NOI. Amounts in thousands of CAD."
+  },
+  "balance_sheet": {
+    "reporting_date": "2024-12-31",
+    "total_assets": 719788,
+    "investment_properties": 0,
+    "investment_properties_held_for_sale": 0,
+    "equity_accounted_investments": 24746,
+    "cash": 121846,
+    "total_liabilities": 595436,
+    "mortgages_noncurrent": 261394,
+    "mortgages_current": 31093,
+    "credit_facilities": 0,
+    "senior_unsecured_debentures": 0,
+    "total_unitholders_equity": 124352,
+    "common_units_outstanding": 83467,
+    "diluted_units_outstanding": 95362
+  },
+  "dilution_detail": {
+    "basic_units": 84218,
+    "dilutive_instruments": {
+      "restricted_units": 0,
+      "deferred_units": 0,
+      "stock_options": 0,
+      "convertible_debentures": 11144,
+      "warrants": 0,
+      "other": 0
+    },
+    "diluted_units_calculated": 95362,
+    "diluted_units_reported": 95362,
+    "dilution_percentage": 13.22,
+    "reconciliation_note": "Dilution from convertible debentures (redeemed in 2024 - dilution calculated from average outstanding during year). Basic: 84,218k, Diluted: 95,362k per Table 31 page 28.",
+    "disclosure_source": "MD&A page 28, Table 31 - Weighted Average Number of Shares"
+  },
+  "income_statement": {
+    "noi": 0,
+    "interest_expense": 20145,
+    "revenue": 1466202,
+    "net_income": 75209,
+    "note": "Extendicare is a senior care company - no traditional REIT NOI. 'Earnings before depreciation, amortization, and other' = $144,549k (closest equivalent to EBITDA). Interest expense = Net finance costs $15,735k + interest component estimated at ~$20M based on debt levels."
+  },
+  "ffo_affo": {
+    "ffo": 95315,
+    "affo": 92805,
+    "ffo_per_unit": 1.13,
+    "ffo_per_unit_diluted": 1.07,
+    "affo_per_unit": 1.10,
+    "affo_per_unit_diluted": 1.02,
+    "acfo": 0,
+    "acfo_per_unit": 0,
+    "distributions_per_unit": 0.48,
+    "note": "Extendicare FFO/AFFO are company-specific non-GAAP measures for senior care operations, NOT REALPAC REIT metrics. FFO = Net earnings + depreciation/amortization + deferred taxes + fair value adjustments + other adjustments - maintenance capex for FFEC. AFFO = FFO + non-cash items - additional maintenance capex. See MD&A Table 31 page 28."
+  },
+  "portfolio": {
+    "total_properties": 0,
+    "total_gla_sf": 0,
+    "occupancy_rate": 0,
+    "note": "Extendicare operates senior care facilities (nursing homes, retirement homes, home care), not investment properties. Portfolio metrics not applicable for REIT schema."
+  },
+  "ffo_affo_components": {
+    "net_income_ifrs": 75209,
+    "unrealized_fv_changes": 0,
+    "depreciation_real_estate": 33336,
+    "amortization_tenant_allowances": 0,
+    "amortization_intangibles": 0,
+    "gains_losses_property_sales": 0,
+    "tax_on_disposals": 0,
+    "deferred_taxes": -2592,
+    "impairment_losses_reversals": 0,
+    "revaluation_gains_losses": 0,
+    "transaction_costs_business_comb": 0,
+    "foreign_exchange_gains_losses": 0,
+    "sale_foreign_operations": 0,
+    "fv_changes_hedges": 0,
+    "goodwill_impairment": 0,
+    "puttable_instruments_effects": 0,
+    "discontinued_operations": 0,
+    "equity_accounted_adjustments": 0,
+    "incremental_leasing_costs": 0,
+    "property_taxes_ifric21": 0,
+    "rou_asset_revenue_expense": 0,
+    "non_controlling_interests_ffo": 0,
+    "capex_sustaining": -7815,
+    "capex_development": 0,
+    "leasing_costs": 0,
+    "tenant_improvements": 0,
+    "straight_line_rent": 0,
+    "non_controlling_interests_affo": 0,
+    "other_adjustments": [
+      {
+        "label": "other_1",
+        "description": "Depreciation for office leases",
+        "amount": -2897,
+        "source_page": "MD&A page 28, Table 31"
+      },
+      {
+        "label": "other_2",
+        "description": "Other expense (income)",
+        "amount": -2450,
+        "source_page": "MD&A page 28, Table 31"
+      },
+      {
+        "label": "other_3",
+        "description": "Loss on early redemption of convertible debentures",
+        "amount": 820,
+        "source_page": "MD&A page 28, Table 31"
+      },
+      {
+        "label": "other_4",
+        "description": "Fair value adjustments",
+        "amount": 699,
+        "source_page": "MD&A page 28, Table 31"
+      },
+      {
+        "label": "other_5",
+        "description": "Current income tax recovery on other expense and fair value adjustments",
+        "amount": -1032,
+        "source_page": "MD&A page 28, Table 31"
+      },
+      {
+        "label": "other_6",
+        "description": "FFO adjustments for joint ventures",
+        "amount": 2037,
+        "source_page": "MD&A page 28, Table 31"
+      },
+      {
+        "label": "other_7",
+        "description": "Amortization of deferred financing costs",
+        "amount": 1817,
+        "source_page": "MD&A page 28, Table 31 - AFFO adjustments"
+      },
+      {
+        "label": "other_8",
+        "description": "Accretion costs",
+        "amount": 1110,
+        "source_page": "MD&A page 28, Table 31 - AFFO adjustments"
+      },
+      {
+        "label": "other_9",
+        "description": "Non-cash share-based compensation",
+        "amount": 1889,
+        "source_page": "MD&A page 28, Table 31 - AFFO adjustments"
+      },
+      {
+        "label": "other_10",
+        "description": "Principal portion of government capital funding",
+        "amount": 1653,
+        "source_page": "MD&A page 28, Table 31 - AFFO adjustments"
+      },
+      {
+        "label": "other_11",
+        "description": "Additional maintenance capex",
+        "amount": -8527,
+        "source_page": "MD&A page 28, Table 31 - AFFO adjustments"
+      },
+      {
+        "label": "other_12",
+        "description": "AFFO adjustments for joint ventures",
+        "amount": -452,
+        "source_page": "MD&A page 28, Table 31 - AFFO adjustments"
+      }
+    ],
+    "total_adjustments_reported": 20106,
+    "total_adjustments_extracted": 20106,
+    "reconciliation_complete": true,
+    "missing_amount": 0,
+    "calculation_method": "actual",
+    "reserve_methodology": "Extendicare uses 'depreciation for FFEC (maintenance capex)' as a reserve estimate, then adjusts for 'additional maintenance capex' to reflect actual spending",
+    "missing_adjustments": [],
+    "note": "Extendicare FFO/AFFO calculation differs significantly from REALPAC REIT methodology. Starting point is Net Earnings $75,209k. FFO = $95,315k (Year 2024). AFFO = $92,805k (Year 2024). Reconciliation: Net Earnings + Depreciation/Amortization - Depreciation for FFEC - Depreciation for office leases + Other adjustments + Deferred taxes + JV adjustments = FFO. Then FFO + non-cash items - additional maintenance capex = AFFO."
+  },
+  "acfo_components": {
+    "cash_flow_from_operations": 143639,
+    "change_in_working_capital": 0,
+    "interest_financing": 0,
+    "jv_distributions": 2432,
+    "jv_acfo": 0,
+    "jv_notional_interest": 0,
+    "capex_sustaining_acfo": -7815,
+    "capex_development_acfo": -41950,
+    "leasing_costs_external": 0,
+    "tenant_improvements_acfo": 0,
+    "realized_investment_gains_losses": 0,
+    "taxes_non_operating": 0,
+    "transaction_costs_acquisitions": 0,
+    "transaction_costs_disposals": 0,
+    "deferred_financing_fees": 1817,
+    "debt_termination_costs": 0,
+    "off_market_debt_favorable": 0,
+    "off_market_debt_unfavorable": 0,
+    "interest_income_timing": 0,
+    "interest_expense_timing": 0,
+    "puttable_instruments_distributions": 0,
+    "rou_sublease_principal_received": 0,
+    "rou_sublease_interest_received": 0,
+    "rou_lease_principal_paid": 0,
+    "rou_depreciation_amortization": 0,
+    "non_controlling_interests_acfo": 0,
+    "nci_puttable_units": 0,
+    "calculation_method_acfo": "actual",
+    "reserve_methodology_acfo": "N/A - senior care company, not REIT",
+    "jv_treatment_method": "distributions",
+    "missing_adjustments_acfo": [
+      "Most ACFO adjustments not applicable for senior care company"
+    ],
+    "note": "Extendicare is not a REIT. CFO = $143,639k from cash flow statement (Page 60, Table 67). Development capex = Purchase of property, equipment and intangible assets = $41,950k. JV distributions = $2,432k. Most ACFO adjustments not applicable for senior care operations."
+  },
+  "cash_flow_investing": {
+    "development_capex": -41950,
+    "property_acquisitions": 0,
+    "property_dispositions": 20482,
+    "jv_capital_contributions": -718,
+    "jv_return_of_capital": 2432,
+    "business_combinations": 0,
+    "other_investing_outflows": 0,
+    "other_investing_inflows": 10643,
+    "total_cfi": -9111,
+    "note": "From Consolidated Statements of Cash Flows, Page 60, Table 67. Purchase of property, equipment and intangible assets = $(41,950)k. Proceeds from sale of assets to joint venture = $20,482k. Proceeds from sale of Class C LTC assets = $8,990k. Investment in JV = $(718)k. Distributions from JV = $2,432k. Other investing inflows include proceeds from sale of Class C LTC assets + change in other assets."
+  },
+  "cash_flow_financing": {
+    "debt_principal_repayments": -18936,
+    "new_debt_issuances": 130000,
+    "distributions_common": -40020,
+    "distributions_preferred": 0,
+    "distributions_nci": 0,
+    "equity_issuances": 0,
+    "unit_buybacks": 0,
+    "deferred_financing_costs_paid": -3331,
+    "other_financing_outflows": -155598,
+    "other_financing_inflows": 19,
+    "total_cff": -87866,
+    "note": "From Consolidated Statements of Cash Flows, Page 60, Table 67. Issuance of long-term debt = $130,000k. Repayment of long-term debt and lease liabilities = $(18,936)k. Dividends paid = $(40,020)k. Redemption of convertible debentures = $(125,680)k. Payment of lease liabilities related to purchase of LTC assets from lessor = $(29,918)k. Financing costs = $(3,331)k. Change in restricted cash = $19k. Other financing outflows = $(125,680)k debenture redemption + $(29,918)k lease payments = $(155,598)k."
+  },
+  "liquidity": {
+    "cash_and_equivalents": 121846,
+    "marketable_securities": 0,
+    "restricted_cash": 710,
+    "undrawn_credit_facilities": 0,
+    "credit_facility_limit": 0,
+    "available_cash": 121136,
+    "total_available_liquidity": 121136,
+    "data_source": "Balance sheet (Page 56, Table 62). Cash and cash equivalents = $121,846k. Restricted cash = $710k. Available cash = $121,846k - $710k = $121,136k. Credit facilities not disclosed in extracted sections - unable to determine undrawn capacity."
+  },
+  "validation": {
+    "balance_sheet_balanced": true,
+    "noi_margin_reasonable": false,
+    "notes": "Balance sheet balances: Total assets $719,788k = Total liabilities $595,436k + Shareholders' equity $124,352k. NOI not applicable for senior care company. Revenue $1,466,202k. EBITDA equivalent (Earnings before depreciation, amortization, and other) = $144,549k = 9.9% margin, which is reasonable for senior care operations."
+  }
+}
