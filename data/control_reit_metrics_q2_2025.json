@@ -1,0 +1,61 @@
+{
+  "extraction_date": "2025-10-22",
+  "purpose": "Control REIT metrics for distribution cut prediction model (Issue #37)",
+  "reporting_period": "Q2 2025",
+  "control_reits": [
+    {
+      "ticker": "SRU-UN.TO",
+      "issuer_name": "SmartCentres Real Estate Investment Trust",
+      "reporting_period": "Q2 2025",
+      "sector": "Retail",
+      "metrics": {
+        "affo_payout_ratio": 85.3,
+        "interest_coverage": 2.6,
+        "debt_to_assets": 44.2,
+        "debt_to_ebitda": 9.6,
+        "occupancy_rate": 98.6,
+        "available_liquidity": 1200000000
+      },
+      "data_sources": [
+        "https://www.businesswire.com/news/home/20250807428381/en/SmartCentres-Real-Estate-Investment-Trust-Releases-Second-Quarter-Results-for-2025",
+        "https://www.ainvest.com/news/smartcentres-reit-q2-2025-earnings-strategic-catalyst-long-term-growth-shifting-retail-landscape-2508/",
+        "https://www.globenewswire.com/news-release/2024/11/13/2980767/0/en/SmartCentres-Real-Estate-Investment-Trust-Releases-Third-Quarter-Results-for-2024.html",
+        "https://www.globenewswire.com/news-release/2025/02/12/3025506/0/en/SmartCentres-Real-Estate-Investment-Trust-Releases-Fourth-Quarter-and-Full-Year-Results-for-2024.html"
+      ],
+      "extraction_notes": "TTM AFFO payout ratio calculated as: (Monthly distribution $0.15417 × 12 = $1.85) / (TTM AFFO per unit $2.17) = 85.3%. TTM AFFO per unit calculated from Q3 2024 ($0.61) + Q4 2024 ($0.47) + Q1 2025 ($0.54) + Q2 2025 ($0.55) = $2.17. Interest coverage ratio of 2.6x directly reported in Q2 2025 earnings. Debt/Assets ratio of 44.2% and Debt/EBITDA of 9.6x (adjusted) reported in Q2 2025 results. Occupancy rate improved to 98.6% (in-place and committed) in Q2 2025. Available liquidity of approximately $1.2 billion reported in Q2 2025 earnings call. SmartCentres is a control REIT (no distribution cut) with strong retail fundamentals - Canada's largest shopping center REIT with 197 properties, $12.0 billion in assets, and 35.6 million SF. 81.2% retail exposure, maintained distributions throughout COVID-19 demonstrating retail sector resilience. Payout ratio has improved from 90% TTM in Q3 2024 to 85.3% TTM as of Q2 2025, showing strengthening coverage."
+    },
+    {
+      "ticker": "DIR-UN.TO",
+      "issuer_name": "Dream Industrial Real Estate Investment Trust",
+      "reporting_period": "Q2 2025",
+      "sector": "Industrial",
+      "metrics": {
+        "affo_payout_ratio": null,
+        "ffo_payout_ratio": 67.3,
+        "interest_coverage": 5.1,
+        "debt_to_assets": 38.0,
+        "debt_to_ebitda": 8.2,
+        "occupancy_rate": 96.0,
+        "available_liquidity": 714400000
+      },
+      "data_sources": [
+        "https://investors.dream.ca/wp-content/uploads/2025/08/Q2-2025-Press-Release-FINAL.pdf",
+        "https://investors.dream.ca/wp-content/uploads/2025/08/DIR-Q2-Report-FINAL.pdf",
+        "https://www.morningstar.com/news/business-wire/20250805653712/dream-industrial-reit-reports-strong-q2-2025-financial-results",
+        "https://www.ainvest.com/news/dream-industrial-reit-sustain-70-cent-distribution-debt-market-pressures-2506/"
+      ],
+      "extraction_notes": "Dream Industrial REIT reports FFO (Funds from Operations) as its primary operating metric, not AFFO (Adjusted Funds from Operations). Q2 2025 diluted FFO per unit was $0.26, up 4.1% YoY. Monthly distribution is $0.05833 per unit ($0.70 annualized). Calculated FFO payout ratio: $0.175 quarterly distribution / $0.26 FFO = 67.3%. Interest coverage ratio is strong at 5.1x (down slightly from 5.2x in Q4 2024). Debt metrics are conservative: 38% debt-to-assets (net of cash), 8.2x net debt-to-EBITDA. Occupancy is excellent at 96.0%, up 60 bps from Q1 2025. Available liquidity is $714.4M including $42.6M cash and substantial undrawn credit facilities. Pro forma subsequent $200M Series G debenture issuance, total liquidity exceeds $900M. Total assets: $8.3B as of June 30, 2025. This is a CONTROL REIT (no distribution cut) with strong industrial REIT fundamentals - high occupancy, conservative leverage, strong interest coverage, and healthy payout ratios well below 100%."
+    }
+  ],
+  "status": {
+    "smartcentres": "EXTRACTED",
+    "dream_industrial": "EXTRACTED",
+    "capreit": "DEFERRED"
+  },
+  "next_steps": [
+    "Extract CAPREIT Q2 2025 metrics (deferred)",
+    "Update training_dataset_v1.csv with control metrics",
+    "Re-run feature_engineering.py to generate training_dataset_v2.csv",
+    "Validate complete dataset (9 observations, no missing control metrics)"
+  ]
+}
