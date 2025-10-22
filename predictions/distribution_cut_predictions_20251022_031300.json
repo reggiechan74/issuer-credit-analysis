@@ -1,0 +1,416 @@
+[
+  {
+    "ticker": "HR-UN.TO",
+    "prediction": "CUT",
+    "cut_probability": 0.9977999626419839,
+    "risk_level": "CRITICAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": 3.1240186436105137,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": 0.591199526791147,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": 0.1672258908141139,
+        "direction": "increases",
+        "magnitude": "moderate"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": -0.02388941297343358,
+        "direction": "decreases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "liquidity_risk_score",
+        "shap_value": -5.731526364627371e-15,
+        "direction": "decreases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 99.0,
+      "interest_coverage": 2.5,
+      "debt_to_assets": 48.1,
+      "debt_to_ebitda": 0,
+      "occupancy_rate": 0,
+      "sector": "Retail/Office"
+    }
+  },
+  {
+    "ticker": "SOT-UN.TO",
+    "prediction": "CUT",
+    "cut_probability": 0.9977999626419837,
+    "risk_level": "CRITICAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": 3.1240186436105057,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": 0.5911995267911474,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": 0.16722589081411243,
+        "direction": "increases",
+        "magnitude": "moderate"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": -0.023889412973489704,
+        "direction": "decreases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "interest_coverage",
+        "shap_value": -4.40619762898109e-15,
+        "direction": "decreases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 49.7,
+      "interest_coverage": 1.6,
+      "debt_to_assets": 65.3,
+      "debt_to_ebitda": 13.1,
+      "occupancy_rate": 0,
+      "sector": "Office"
+    }
+  },
+  {
+    "ticker": "REI-UN.TO",
+    "prediction": "CUT",
+    "cut_probability": 0.9977999626419837,
+    "risk_level": "CRITICAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": 3.12401864361051,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": 0.591199526791147,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": 0.23292177649108708,
+        "direction": "increases",
+        "magnitude": "moderate"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": -0.08958529865043496,
+        "direction": "decreases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "liquidity_risk_score",
+        "shap_value": -5.731526364627371e-15,
+        "direction": "decreases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 100.0,
+      "interest_coverage": 2.5,
+      "debt_to_assets": 47.0,
+      "debt_to_ebitda": 0,
+      "occupancy_rate": 0,
+      "sector": "Retail"
+    }
+  },
+  {
+    "ticker": "TNT-UN.TO",
+    "prediction": "CUT",
+    "cut_probability": 0.9977999626419839,
+    "risk_level": "CRITICAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": 3.1240186436105146,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": 0.5911995267911485,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": 0.07166823892034159,
+        "direction": "increases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": 0.07166823892033868,
+        "direction": "increases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "interest_coverage",
+        "shap_value": 3.3653635433950058e-15,
+        "direction": "increases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 110.0,
+      "interest_coverage": 3.0,
+      "debt_to_assets": 59.3,
+      "debt_to_ebitda": 9.96,
+      "occupancy_rate": 0,
+      "sector": "Office"
+    }
+  },
+  {
+    "ticker": "TNT-UN.TO",
+    "prediction": "CUT",
+    "cut_probability": 0.9977999626419837,
+    "risk_level": "CRITICAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": 3.1240186436105066,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": 0.5911995267911474,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": 0.16722589081411243,
+        "direction": "increases",
+        "magnitude": "moderate"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": -0.023889412973489704,
+        "direction": "decreases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "interest_coverage",
+        "shap_value": -4.40619762898109e-15,
+        "direction": "decreases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 69.0,
+      "interest_coverage": 2.43,
+      "debt_to_assets": 61.4,
+      "debt_to_ebitda": 0,
+      "occupancy_rate": 0,
+      "sector": "Office"
+    }
+  },
+  {
+    "ticker": "AX-UN.TO",
+    "prediction": "CUT",
+    "cut_probability": 0.9977999626419839,
+    "risk_level": "CRITICAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": 3.1240186436105164,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": 0.5911995267911485,
+        "direction": "increases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": 0.07166823892034159,
+        "direction": "increases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": 0.07166823892033868,
+        "direction": "increases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "liquidity_risk_score",
+        "shap_value": 2.8796409701214998e-15,
+        "direction": "increases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 112.5,
+      "interest_coverage": 3.14,
+      "debt_to_assets": 48.6,
+      "debt_to_ebitda": 8.4,
+      "occupancy_rate": 0,
+      "sector": "Office"
+    }
+  },
+  {
+    "ticker": "CAR-UN.TO",
+    "prediction": "NO CUT",
+    "cut_probability": 0.004241509757002097,
+    "risk_level": "MINIMAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": -6.248037287221022,
+        "direction": "decreases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": -1.182399053582297,
+        "direction": "decreases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": -0.20903236351764473,
+        "direction": "decreases",
+        "magnitude": "moderate"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": -0.07764059216368546,
+        "direction": "decreases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "liquidity_risk_score",
+        "shap_value": -2.293304435241339e-15,
+        "direction": "decreases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 99.6,
+      "interest_coverage": 3.3,
+      "debt_to_assets": 38.5,
+      "debt_to_ebitda": 0,
+      "occupancy_rate": 0,
+      "sector": "Residential"
+    }
+  },
+  {
+    "ticker": "SRU-UN.TO",
+    "prediction": "NO CUT",
+    "cut_probability": 0.004241509757002109,
+    "risk_level": "MINIMAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": -6.248037287221003,
+        "direction": "decreases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": -1.182399053582295,
+        "direction": "decreases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": -0.2090323635176429,
+        "direction": "decreases",
+        "magnitude": "moderate"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": -0.07764059216371248,
+        "direction": "decreases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "liquidity_risk_score",
+        "shap_value": -2.293304435241339e-15,
+        "direction": "decreases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 85.3,
+      "interest_coverage": 2.6,
+      "debt_to_assets": 44.2,
+      "debt_to_ebitda": 9.6,
+      "occupancy_rate": 0,
+      "sector": "Retail"
+    }
+  },
+  {
+    "ticker": "DIR-UN.TO",
+    "prediction": "NO CUT",
+    "cut_probability": 0.004241509757002067,
+    "risk_level": "MINIMAL",
+    "top_drivers": [
+      {
+        "feature": "debt_to_assets",
+        "shap_value": -6.248037287221006,
+        "direction": "decreases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "leverage_liquidity_interaction",
+        "shap_value": -1.1823990535822981,
+        "direction": "decreases",
+        "magnitude": "high"
+      },
+      {
+        "feature": "is_office",
+        "shap_value": -0.2090323635176429,
+        "direction": "decreases",
+        "magnitude": "moderate"
+      },
+      {
+        "feature": "affo_payout_ratio",
+        "shap_value": -0.07764059216371248,
+        "direction": "decreases",
+        "magnitude": "low"
+      },
+      {
+        "feature": "liquidity_risk_score",
+        "shap_value": -2.293304435241339e-15,
+        "direction": "decreases",
+        "magnitude": "low"
+      }
+    ],
+    "input_features": {
+      "affo_payout_ratio": 67.3,
+      "interest_coverage": 5.1,
+      "debt_to_assets": 38.0,
+      "debt_to_ebitda": 8.2,
+      "occupancy_rate": 0,
+      "sector": "Industrial"
+    }
+  }
+]
