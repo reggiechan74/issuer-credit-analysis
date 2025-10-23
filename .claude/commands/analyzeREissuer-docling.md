@@ -39,9 +39,14 @@ Execute the full 5-phase credit analysis pipeline using **Docling** for PDF conv
 - Same as existing pipeline (pure Python, 0 tokens)
 - Calculate FFO, AFFO, ACFO, AFCF, coverage ratios
 
+**Phase 3.5: Data Enrichment (OPTIONAL)**
+- Same as existing pipeline (pure Python + OpenBB APIs)
+- Enrich with market risk, macro environment, distribution cut prediction
+- Graceful degradation if ticker not found or enrichment fails
+
 **Phase 4: Credit Analysis**
-- Same as existing pipeline (issuer_due_diligence_expert_slim agent)
-- Generate qualitative credit assessment
+- Same as existing pipeline (issuer_due_diligence_expert_slim agent, enhanced with Issue #40)
+- Generate qualitative credit assessment with enriched data when available
 
 **Phase 5: Generate Final Report**
 - Same as existing pipeline (template-based, 0 tokens)
@@ -84,9 +89,24 @@ Execute the full 5-phase credit analysis pipeline using **Docling** for PDF conv
    ```
    - Creates `phase3_calculated_metrics.json`
 
+5.5. **Phase 3.5: Enrich with market/macro/prediction data (OPTIONAL)**
+   ```bash
+   # Extract ticker from Phase 2 data
+   TICKER=$(grep -oP '"ticker":\s*"\K[^"]+' Issuer_Reports/{Issuer_Name}/temp/phase2_extracted_data.json 2>/dev/null || echo "")
+
+   if [ -n "$TICKER" ]; then
+     python scripts/enrich_phase4_data.py \
+       --ticker "$TICKER" \
+       --phase3-file Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json \
+       --output Issuer_Reports/{Issuer_Name}/temp/phase4_enriched_data.json
+   fi
+   ```
+   - Creates `phase4_enriched_data.json` (if ticker found and enrichment succeeds)
+   - Gracefully skips if no ticker or enrichment fails
+
 6. **Phase 4: Invoke credit analysis agent**
    - Use Task tool with `issuer_due_diligence_expert_slim` agent
-   - Agent analyzes Phase 3 metrics
+   - Agent uses enriched data if available, otherwise standard metrics
    - Creates `phase4_credit_analysis.md`
 
 7. **Phase 5: Generate final report**
@@ -111,6 +131,7 @@ Issuer_Reports/
       phase2_extracted_data.json
       phase2_extraction_prompt.txt
       phase3_calculated_metrics.json
+      phase4_enriched_data.json    (if Phase 3.5 succeeded)
       phase4_agent_prompt.txt
       phase4_credit_analysis.md
     reports/
