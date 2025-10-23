@@ -36,7 +36,7 @@ try:
     sys.path.insert(0, str(Path(__file__).parent))
     from openbb_market_monitor import MarketDataMonitor
     from openbb_macro_monitor import EnhancedMacroMonitor
-    from openbb_data_collector import DividendCollector
+    from openbb_data_collector import OpenBBDataCollector
 except ImportError as e:
     print(f"ERROR: Cannot import OpenBB monitoring modules: {e}")
     print("Ensure openbb_market_monitor.py, openbb_macro_monitor.py, and openbb_data_collector.py exist")
@@ -167,7 +167,7 @@ class Phase4DataEnricher:
         print(f"{'='*60}")
 
         try:
-            collector = DividendCollector(self.ticker)
+            collector = OpenBBDataCollector(self.ticker)
             history = collector.get_dividend_history(years=10)
 
             if history.empty:
