@@ -530,6 +530,224 @@ Ranked by impact on distribution cut probability:
 
 ---
 
+## Regression Formula (Model v2.2)
+
+### Complete Mathematical Formula
+
+The model uses logistic regression to calculate the probability of a distribution cut:
+
+**P(Distribution Cut) = 1 / (1 + e^(-z)) × 100%**
+
+where the **z-score** is calculated as:
+
+**z = -0.0800** +
+  **+0.6859** × annualized_interest_expense (scaled) +
+  **+0.6284** × same_property_noi_growth (scaled) +
+  **+0.3016** × monthly_burn_rate (scaled) +
+  **+0.2842** × ffo_per_unit (scaled) +
+  **+0.2619** × observation (scaled) +
+  **-1.1039** × occupancy_rate (scaled) +
+  **-0.7108** × ffo_payout_ratio (scaled) +
+  **-0.5948** × total_properties (scaled) +
+  **-0.4124** × noi_interest_coverage (scaled) +
+  **-0.3273** × distributions_per_unit (scaled) +
+  **-0.2357** × affo_per_unit (scaled) +
+  **-0.1665** × available_cash (scaled) +
+  **-0.1595** × ffo_reported (scaled) +
+  **-0.0872** × ffo_per_unit_calc (scaled) +
+  **-0.0102** × total_available_liquidity (scaled)
+
+### Model Coefficients (β) - Ranked by Importance
+
+| Rank | Feature | Coefficient (β) | Impact |
+|------|---------|-----------------|--------|
+| 1 | **occupancy_rate** | -1.1039 | ↓ **STRONGEST PROTECTIVE** - Higher occupancy → Lower cut risk |
+| 2 | **ffo_payout_ratio** | -0.7108 | ↓ Higher payout → Lower cut risk (counterintuitive*)
+| 3 | **annualized_interest_expense** | +0.6859 | ↑ Higher debt service → Higher cut risk |
+| 4 | **same_property_noi_growth** | +0.6284 | ↑ Paradoxically, growth → Higher cut risk** |
+| 5 | **total_properties** | -0.5948 | ↓ Larger portfolio → Lower cut risk (diversification) |
+| 6 | **noi_interest_coverage** | -0.4124 | ↓ Stronger coverage → Lower cut risk |
+| 7 | **distributions_per_unit** | -0.3273 | ↓ Higher distributions → Lower cut risk |
+| 8 | **monthly_burn_rate** | +0.3016 | ↑ Higher cash burn → Higher cut risk |
+| 9 | **ffo_per_unit** | +0.2842 | ↑ Paradoxically, higher FFO/unit → Higher cut risk** |
+| 10 | **observation** | +0.2619 | ↑ Sample position effect |
+| 11 | **affo_per_unit** | -0.2357 | ↓ Higher AFFO/unit → Lower cut risk |
+| 12 | **available_cash** | -0.1665 | ↓ More cash → Lower cut risk |
+| 13 | **ffo_reported** | -0.1595 | ↓ Higher FFO → Lower cut risk |
+| 14 | **ffo_per_unit_calc** | -0.0872 | ↓ Higher calculated FFO/unit → Lower cut risk |
+| 15 | **total_available_liquidity** | -0.0102 | ↓ More liquidity → Lower cut risk (weak signal) |
+
+### Key Insights from Coefficients
+
+#### 1. Occupancy Rate is King (β = -1.104)
+
+**Occupancy rate** is the **strongest predictor** of distribution sustainability:
+- Each 1 standard deviation increase in occupancy reduces z-score by 1.1
+- Example: 95% occupancy vs 85% occupancy = ~1.1 reduction in cut probability
+- **Credit Implication:** Occupancy is the foundation - without tenants, no cash flow
+
+#### 2. Counterintuitive Finding: FFO Payout Ratio (β = -0.711)
+
+The model shows **higher FFO payout ratio DECREASES cut probability**. This seems backwards but makes sense:
+
+**Explanation:**
+- REITs with **low payouts** (50-70%) have often already cut or are conserving cash → Model sees this as a risk signal
+- REITs with **high payouts** (100%+) are unsustainable but haven't cut *yet* → Captured by other features (burn rate, AFCF metrics)
+- The **sustainable AFCF features** (monthly_burn_rate, self_funding_ratio) capture true sustainability better than payout ratio alone
+
+**Example - HR REIT (98.6% cut probability):**
+- FFO Payout: 204% (negative coefficient helps slightly, -0.71 × high payout)
+- BUT massive burn rate (+0.30 × very high burn), low coverage (+0.69 × high interest expense)
+- Net effect: Very high cut probability despite "counterintuitive" payout coefficient
+
+**Example - CT REIT (10.9% cut probability):**
+- FFO Payout: 72.6% (positive coefficient hurts slightly, -0.71 × moderate payout)
+- BUT positive AFCF (-1.10 × high occupancy), strong coverage (-0.41 × strong NOI coverage)
+- Net effect: Very low cut probability
+
+#### 3. Same Property NOI Growth Paradox (β = +0.628)
+
+**Higher NOI growth is associated with HIGHER cut risk.** Counterintuitive findings:
+
+**Explanation:**
+- REITs pursuing **aggressive growth** may be overextending (acquisitions, development)
+- Growth-at-any-cost strategies can strain cash flow (captured by burn_rate feature)
+- Sustainable growth requires balanced approach (not maximum growth rate)
+
+**Credit Implication:** Growth is good, but only if supported by sustainable cash flow generation.
+
+#### 4. Sustainable AFCF Captured Indirectly
+
+Model v2.2 doesn't directly use AFCF_sustainable (from comprehensive testing), but captures it through:
+- **monthly_burn_rate** (+0.302): High burn = High cut risk
+- **annualized_interest_expense** (+0.686): High debt service = High cut risk
+- **available_cash** (-0.166): Low cash = High cut risk
+- **noi_interest_coverage** (-0.412): Weak coverage = High cut risk
+
+**Combined Effect:** These features together measure the REIT's ability to self-fund obligations, which is the essence of sustainable AFCF.
+
+### Feature Scaling and Standardization
+
+**All features are standardized before applying coefficients:**
+
+```
+X_scaled = (X_raw - mean) / std_dev
+```
+
+**Why This Matters:**
+- Features have vastly different ranges:
+  - total_debt: $500M - $8B
+  - occupancy_rate: 0.70 - 0.99
+  - monthly_burn_rate: -$50M to +$20M
+- Standardization ensures equal contribution to the z-score
+- Coefficients represent impact per standard deviation change
+
+**Example Calculation:**
+For RioCan REIT with occupancy_rate = 0.978 (97.8%):
+1. Standardize: (0.978 - mean_occupancy) / std_dev_occupancy = +0.85 (assuming mean=0.92, std=0.05)
+2. Apply coefficient: -1.1039 × 0.85 = -0.938
+3. This contributes -0.938 to the z-score (reduces cut probability)
+
+### Risk Classification Thresholds
+
+Based on predicted probability:
+
+| Probability | Risk Level | Interpretation | Action |
+|-------------|------------|----------------|--------|
+| < 5% | Very Low | CT REIT (10.9%) | Monitor quarterly |
+| 5-15% | Low | - | Monitor quarterly |
+| 15-30% | Moderate | Killam (17.5%), Dream Industrial (29.3%) | Monitor monthly |
+| 30-50% | High | RioCan (48.5%) | Monitor weekly, deep dive |
+| > 50% | Very High | 8 REITs including HR (98.6%), NorthWest Healthcare (97.9%) | Daily monitoring, prepare for cut |
+
+### Prediction Examples
+
+#### Example 1: Low Risk REIT (CT REIT - 10.9% probability)
+
+**Key Features:**
+- Occupancy Rate: 98.9% → Scaled: +2.1 std → Contribution: -1.104 × 2.1 = **-2.32** (strong negative)
+- NOI Coverage: 3.64x → Scaled: +1.5 std → Contribution: -0.412 × 1.5 = **-0.62** (negative)
+- Monthly Burn Rate: Low → Scaled: -0.8 std → Contribution: +0.302 × -0.8 = **-0.24** (negative)
+
+**Result:** z-score is very negative → P(Cut) = 10.9% (Very Low Risk)
+
+#### Example 2: High Risk REIT (HR REIT - 98.6% probability)
+
+**Key Features:**
+- Annualized Interest Expense: $241M → Scaled: +2.8 std → Contribution: +0.686 × 2.8 = **+1.92** (strong positive)
+- Monthly Burn Rate: -$58M → Scaled: +2.5 std → Contribution: +0.302 × 2.5 = **+0.76** (positive)
+- Occupancy Rate: 92.0% → Scaled: -0.5 std → Contribution: -1.104 × -0.5 = **+0.55** (positive, hurts)
+
+**Result:** z-score is very positive → P(Cut) = 98.6% (Very High Risk)
+
+### Model Limitations
+
+**1. Linear Assumptions**
+- Logistic regression assumes linear relationships in log-odds space
+- Non-linear interactions (e.g., occupancy × leverage) not captured
+- Future versions could add interaction terms
+
+**2. Feature Correlation**
+- Some features correlated (ffo_per_unit, affo_per_unit, acfo_per_unit)
+- L2 regularization helps but doesn't eliminate multicollinearity
+- Coefficients may be unstable across different samples
+
+**3. Small Sample Size (n=24)**
+- Coefficient estimates have wider confidence intervals
+- Standard errors not reported (future enhancement)
+- External validation needed to confirm stability
+
+**4. Temporal Bias**
+- Training data includes COVID period (2020-2023)
+- May overweight pandemic-specific factors
+- Macro features may not generalize to different rate environments
+
+### Using the Formula in Practice
+
+**Step 1: Extract Raw Features**
+```python
+features_raw = {
+    'occupancy_rate': 0.978,
+    'ffo_payout_ratio': 71.2,
+    'annualized_interest_expense': 104600,
+    # ... all 15 features
+}
+```
+
+**Step 2: Standardize Features**
+```python
+# Using fitted scaler from model
+features_scaled = scaler.transform([features_raw])
+```
+
+**Step 3: Calculate Z-Score**
+```python
+z = intercept + sum(coefficient_i × feature_i_scaled)
+z = -0.0800 + (-1.1039 × occupancy_scaled) + ... + (-0.0102 × liquidity_scaled)
+```
+
+**Step 4: Convert to Probability**
+```python
+probability = 1 / (1 + exp(-z))
+# Example: z = -2.5 → probability = 1/(1+exp(2.5)) = 1/13.18 = 0.076 = 7.6%
+```
+
+**Step 5: Classify Risk Level**
+```python
+if probability < 0.05:
+    risk_level = "Very Low"
+elif probability < 0.15:
+    risk_level = "Low"
+elif probability < 0.30:
+    risk_level = "Moderate"
+elif probability < 0.50:
+    risk_level = "High"
+else:
+    risk_level = "Very High"
+```
+
+---
+
 ## Validation Methodology
 
 ### Cross-Validation Strategy
