@@ -23,12 +23,19 @@ print("MODEL COMPARISON: v2.1 (Total AFCF) vs v2.2 (Sustainable AFCF)")
 print("="*70)
 print()
 
-# Test REITs
-reits = [
-    ("Artis REIT", "Issuer_Reports/Artis_REIT/temp/phase4_enriched_data.json"),
-    ("RioCan REIT", "Issuer_Reports/RioCan_REIT/temp/phase4_enriched_data.json"),
-    ("Dream Industrial REIT", "Issuer_Reports/Dream_Industrial_REIT/temp/phase4_enriched_data.json")
-]
+# Test REITs - Find all with Phase 4 enriched data
+from pathlib import Path
+
+reit_paths = []
+for p in Path('Issuer_Reports').iterdir():
+    if p.is_dir() and p.name != 'phase1b':
+        enriched = p / 'temp' / 'phase4_enriched_data.json'
+        if enriched.exists():
+            # Clean up name
+            name = p.name.replace('_', ' ')
+            reit_paths.append((name, str(enriched)))
+
+reits = sorted(reit_paths, key=lambda x: x[0])
 
 results = []
 
