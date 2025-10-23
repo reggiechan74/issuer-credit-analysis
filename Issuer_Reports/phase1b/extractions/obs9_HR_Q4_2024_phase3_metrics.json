@@ -173,40 +173,60 @@
   },
   "afcf_metrics": {
     "afcf": 266411.0,
+    "afcf_sustainable": 266411.0,
+    "net_cfi_sustainable": 0.0,
+    "afcf_total": 266411.0,
+    "net_cfi_total": 0.0,
+    "non_recurring_cfi": 0.0,
     "acfo_starting_point": 266411.0,
-    "net_cfi": 0.0,
     "cfi_breakdown": {
       "development_capex": {
         "description": "Development CAPEX (growth projects)",
-        "amount": 0
+        "amount": 0,
+        "recurring": true,
+        "rationale": "Ongoing portfolio improvement"
       },
       "property_acquisitions": {
         "description": "Property acquisitions",
-        "amount": 0
-      },
-      "property_dispositions": {
-        "description": "Property dispositions (proceeds)",
-        "amount": 0
+        "amount": 0,
+        "recurring": true,
+        "rationale": "Routine growth investments (if < materiality threshold)"
       },
       "jv_capital_contributions": {
         "description": "JV capital contributions",
-        "amount": 0
-      },
-      "jv_return_of_capital": {
-        "description": "JV return of capital",
-        "amount": 0
-      },
-      "business_combinations": {
-        "description": "Business combinations",
-        "amount": 0
+        "amount": 0,
+        "recurring": true,
+        "rationale": "Ongoing JV partnership investments"
       },
       "other_investing_outflows": {
         "description": "Other investing outflows",
-        "amount": 0
+        "amount": 0,
+        "recurring": true,
+        "rationale": "Routine investing activities"
+      },
+      "property_dispositions": {
+        "description": "Property dispositions (proceeds)",
+        "amount": 0,
+        "recurring": false,
+        "rationale": "Non-recurring asset sales"
+      },
+      "jv_return_of_capital": {
+        "description": "JV return of capital",
+        "amount": 0,
+        "recurring": false,
+        "rationale": "One-time JV exits"
+      },
+      "business_combinations": {
+        "description": "Business combinations",
+        "amount": 0,
+        "recurring": false,
+        "rationale": "Non-recurring M&A activity"
       },
       "other_investing_inflows": {
         "description": "Other investing inflows",
-        "amount": 0
+        "amount": 0,
+        "recurring": false,
+        "rationale": "Non-recurring proceeds"
       }
     },
     "missing_components": [],
@@ -215,11 +235,14 @@
     "data_quality": "strong",
     "has_cfi_data": true,
     "reconciliation_check": {
-      "calculated_net_cfi": 0.0,
+      "calculated_net_cfi_total": 0.0,
+      "calculated_net_cfi_sustainable": 0.0,
       "reported_total_cfi": 0,
       "variance": 0.0,
-      "matches": true
+      "matches": true,
+      "note": "Reconciliation uses total CFI (all components) vs issuer-reported total"
     },
+    "methodology_note": "Sustainable AFCF excludes non-recurring items (property dispositions, M&A, JV exits) following AFFO/ACFO principles",
     "afcf_per_unit": 0.9517,
     "afcf_per_unit_diluted": 0.9517
   },
@@ -240,11 +263,13 @@
     "cash_flow_statement_reconciles": true,
     "development_capex_consistent": true,
     "validation_notes": [
-      "\u2713 AFCF calculation correct: ACFO + Net CFI = AFCF",
+      "\u2713 Sustainable AFCF calculation correct: ACFO (266,411) + Recurring CFI (0) = AFCF (266,411)",
+      "\u2713 Total AFCF (for comparison): ACFO (266,411) + All CFI (0) = 266,411",
+      "\u2713 Non-recurring CFI excluded: 0 CAD thousands",
       "\u2713 Development CAPEX consistent: ACFO (0) matches CFI (0)",
       "\u2139 Cash flow components: CFO (320,390) + CFI (0) + CFF (0) = 320,390"
     ],
-    "reconciliation_summary": "\u2713 AFCF calculation correct: ACFO + Net CFI = AFCF | \u2713 Development CAPEX consistent: ACFO (0) matches CFI (0) | \u2139 Cash flow components: CFO (320,390) + CFI (0) + CFF (0) = 320,390"
+    "reconciliation_summary": "\u2713 Sustainable AFCF calculation correct: ACFO (266,411) + Recurring CFI (0) = AFCF (266,411) | \u2713 Total AFCF (for comparison): ACFO (266,411) + All CFI (0) = 266,411 | \u2713 Non-recurring CFI excluded: 0 CAD thousands | \u2713 Development CAPEX consistent: ACFO (0) matches CFI (0) | \u2139 Cash flow components: CFO (320,390) + CFI (0) + CFF (0) = 320,390"
   },
   "burn_rate_analysis": {
     "applicable": true,

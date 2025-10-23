@@ -2,10 +2,85 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Version:** 1.0.14
-**Last Updated:** 2025-10-22
+**Version:** 1.0.15
+**Last Updated:** 2025-10-23
 **Pipeline Version:** 1.0.13 (Structural Considerations Content Extraction)
 **OpenBB Integration:** v1.0.0 (Complete - Issue #39)
+**Distribution Cut Prediction Model:** v2.2 (Sustainable AFCF - Issue #45)
+
+---
+
+## Distribution Cut Prediction Model v2.2 (Issue #45) - NEW ✨
+
+**Status:** COMPLETE (Oct 23, 2025)
+**Model File:** `models/distribution_cut_logistic_regression_v2.2.pkl`
+
+### Overview
+
+Updated distribution cut prediction model to align with two-tier AFCF methodology (v1.0.14 - Issue #40). Model v2.2 is trained on **sustainable AFCF** instead of total AFCF, providing more conservative and credit-appropriate risk assessments.
+
+### Why This Update Was Necessary
+
+**Problem:** Model v2.1 was trained on total AFCF (includes non-recurring items like property dispositions), but Phase 3 now calculates sustainable AFCF (recurring items only). This caused a feature distribution mismatch.
+
+**Impact:** v2.1 significantly **underestimated** distribution cut risk by 27-58 percentage points:
+- Artis REIT: 5.4% → 63.5% (+58.1%)
+- RioCan REIT: 1.3% → 48.5% (+47.2%)
+- Dream Industrial REIT: 1.4% → 29.3% (+27.9%)
+
+**Root Cause:** Self-funding ratio (AFCF / Total Obligations) was #4 most predictive feature in v2.1, but the AFCF values shifted dramatically after excluding non-recurring items.
+
+### Model Performance
+
+**v2.2 Training Metrics (5-fold CV):**
+- F1 Score: 0.870 (target: ≥0.80) ✅
+- ROC AUC: 0.930
+- Accuracy: 87.5%
+- Precision: 83.3%, Recall: 90.9%
+
+**Training Dataset:**
+- 24 observations (11 distribution cuts, 13 controls)
+- Canadian REITs from 2022-2024
+- All Phase 3 metrics regenerated with sustainable AFCF
+
+**Top 15 Features (by importance):**
+1. monthly_burn_rate (1.1039)
+2. acfo_calculated (0.7108)
+3. available_cash (0.6859)
+4. self_funding_ratio (0.6284) - **Dropped from rank #4 to #15**
+5. total_available_liquidity (0.5948)
+
+**Key Change:** Self-funding ratio dropped from rank #4 (v2.1) to rank #15 (v2.2), reflecting the shift from total AFCF to sustainable AFCF.
+
+### Usage
+
+**Automatic (via enrichment script):**
+```bash
+python scripts/enrich_phase4_data.py \
+  --phase3 Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json \
+  --ticker AX-UN.TO \
+  --model models/distribution_cut_logistic_regression_v2.2.pkl
+```
+
+**Comparison (v2.1 vs v2.2):**
+```bash
+python scripts/compare_model_predictions.py
+```
+
+### Files Modified
+
+- `scripts/regenerate_phase3_for_training.py` - Batch regeneration script (created)
+- `scripts/compare_model_predictions.py` - v2.1 vs v2.2 comparison tool (created)
+- `data/training_dataset_v2_sustainable_afcf.csv` - New training dataset (created)
+- `models/distribution_cut_logistic_regression_v2.2.pkl` - New model (created)
+
+### Next Steps
+
+- **Production deployment:** Update default model path in `enrich_phase4_data.py` to v2.2
+- **Monitoring:** Track prediction accuracy on new observations
+- **Documentation:** Update user-facing docs to reflect new risk levels
+
+**See GitHub Issue #45 for complete implementation details**
 
 ---
 

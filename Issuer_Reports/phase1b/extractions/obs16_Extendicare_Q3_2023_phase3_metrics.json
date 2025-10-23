@@ -167,41 +167,61 @@
     "same_property_noi_growth": 0
   },
   "afcf_metrics": {
-    "afcf": -107155.0,
+    "afcf": -109192.0,
+    "afcf_sustainable": -109192.0,
+    "net_cfi_sustainable": -109192.0,
+    "afcf_total": -107155.0,
+    "net_cfi_total": -107155.0,
+    "non_recurring_cfi": 2037.0,
     "acfo_starting_point": 0,
-    "net_cfi": -107155.0,
     "cfi_breakdown": {
       "development_capex": {
         "description": "Development CAPEX (growth projects)",
-        "amount": 0
+        "amount": 0,
+        "recurring": true,
+        "rationale": "Ongoing portfolio improvement"
       },
       "property_acquisitions": {
         "description": "Property acquisitions",
-        "amount": 0
-      },
-      "property_dispositions": {
-        "description": "Property dispositions (proceeds)",
-        "amount": 0
+        "amount": 0,
+        "recurring": true,
+        "rationale": "Routine growth investments (if < materiality threshold)"
       },
       "jv_capital_contributions": {
         "description": "JV capital contributions",
-        "amount": 0
-      },
-      "jv_return_of_capital": {
-        "description": "JV return of capital",
-        "amount": 0
-      },
-      "business_combinations": {
-        "description": "Business combinations",
-        "amount": 0
+        "amount": 0,
+        "recurring": true,
+        "rationale": "Ongoing JV partnership investments"
       },
       "other_investing_outflows": {
         "description": "Other investing outflows",
-        "amount": -109192
+        "amount": -109192,
+        "recurring": true,
+        "rationale": "Routine investing activities"
+      },
+      "property_dispositions": {
+        "description": "Property dispositions (proceeds)",
+        "amount": 0,
+        "recurring": false,
+        "rationale": "Non-recurring asset sales"
+      },
+      "jv_return_of_capital": {
+        "description": "JV return of capital",
+        "amount": 0,
+        "recurring": false,
+        "rationale": "One-time JV exits"
+      },
+      "business_combinations": {
+        "description": "Business combinations",
+        "amount": 0,
+        "recurring": false,
+        "rationale": "Non-recurring M&A activity"
       },
       "other_investing_inflows": {
         "description": "Other investing inflows",
-        "amount": 2037
+        "amount": 2037,
+        "recurring": false,
+        "rationale": "Non-recurring proceeds"
       }
     },
     "missing_components": [],
@@ -210,24 +230,27 @@
     "data_quality": "strong",
     "has_cfi_data": true,
     "reconciliation_check": {
-      "calculated_net_cfi": -107155.0,
+      "calculated_net_cfi_total": -107155.0,
+      "calculated_net_cfi_sustainable": -109192.0,
       "reported_total_cfi": -107155,
       "variance": 0.0,
-      "matches": true
+      "matches": true,
+      "note": "Reconciliation uses total CFI (all components) vs issuer-reported total"
     },
-    "afcf_per_unit": -1.2574,
-    "afcf_per_unit_diluted": -1.115
+    "methodology_note": "Sustainable AFCF excludes non-recurring items (property dispositions, M&A, JV exits) following AFFO/ACFO principles",
+    "afcf_per_unit": -1.2813,
+    "afcf_per_unit_diluted": -1.1362
   },
   "afcf_coverage": {
-    "afcf_debt_service_coverage": -9.69,
-    "afcf_distribution_coverage": -3.52,
-    "afcf_payout_ratio": -28.4,
-    "afcf_self_funding_ratio": -2.58,
+    "afcf_debt_service_coverage": -9.87,
+    "afcf_distribution_coverage": -3.59,
+    "afcf_payout_ratio": -27.8,
+    "afcf_self_funding_ratio": -2.63,
     "total_debt_service": 11064,
     "total_distributions": 30404,
     "net_financing_needs": 41468,
     "data_quality": "moderate",
-    "afcf_self_funding_capacity": -148623.0
+    "afcf_self_funding_capacity": -150660.0
   },
   "afcf_reconciliation": {
     "afcf_calculation_valid": true,
@@ -235,20 +258,22 @@
     "cash_flow_statement_reconciles": true,
     "development_capex_consistent": true,
     "validation_notes": [
-      "\u2713 AFCF calculation correct: ACFO + Net CFI = AFCF",
+      "\u2713 Sustainable AFCF calculation correct: ACFO (0) + Recurring CFI (-109,192) = AFCF (-109,192)",
+      "\u2713 Total AFCF (for comparison): ACFO (0) + All CFI (-107,155) = -107,155",
+      "\u2713 Non-recurring CFI excluded: 2,037 CAD thousands",
       "\u2713 Development CAPEX consistent: ACFO (0) matches CFI (0)",
       "\u2139 Cash flow components: CFO (4,244) + CFI (-107,155) + CFF (0) = -102,911"
     ],
-    "reconciliation_summary": "\u2713 AFCF calculation correct: ACFO + Net CFI = AFCF | \u2713 Development CAPEX consistent: ACFO (0) matches CFI (0) | \u2139 Cash flow components: CFO (4,244) + CFI (-107,155) + CFF (0) = -102,911"
+    "reconciliation_summary": "\u2713 Sustainable AFCF calculation correct: ACFO (0) + Recurring CFI (-109,192) = AFCF (-109,192) | \u2713 Total AFCF (for comparison): ACFO (0) + All CFI (-107,155) = -107,155 | \u2713 Non-recurring CFI excluded: 2,037 CAD thousands | \u2713 Development CAPEX consistent: ACFO (0) matches CFI (0) | \u2139 Cash flow components: CFO (4,244) + CFI (-107,155) + CFF (0) = -102,911"
   },
   "burn_rate_analysis": {
     "applicable": true,
-    "monthly_burn_rate": -16513.67,
-    "period_burn_rate": -148623.0,
+    "monthly_burn_rate": -16740.0,
+    "period_burn_rate": -150660.0,
     "period_months": 9,
-    "afcf": -107155.0,
+    "afcf": -109192.0,
     "mandatory_obligations": 41468,
-    "self_funding_ratio": -2.58,
+    "self_funding_ratio": -2.63,
     "reason": null,
     "data_quality": "strong"
   },
@@ -263,16 +288,16 @@
     "data_source": "Balance sheet (cash: 96,252; restricted cash: 599), MD&A page 26 (credit facilities: $112.3M limit, $75.8M undrawn capacity). Credit facilities: one secured by 13 Class C LTC homes in Ontario, one secured by home health care business assets. As at Sep 30, 2023: $27.3M securing pension obligations, $3.0M for JV capital contributions, $6.2M for LTC home obligations = $36.5M drawn, leaving $75.8M undrawn."
   },
   "cash_runway": {
-    "runway_months": 5.8,
+    "runway_months": 5.7,
     "runway_years": 0.5,
-    "extended_runway_months": 10.4,
+    "extended_runway_months": 10.2,
     "extended_runway_years": 0.9,
-    "depletion_date": "2024-03-21",
+    "depletion_date": "2024-03-19",
     "available_cash": 95653,
     "total_available_liquidity": 171453,
     "data_quality": "strong",
     "error": null,
-    "extended_depletion_date": "2024-08-07"
+    "extended_depletion_date": "2024-08-01"
   },
   "liquidity_risk": {
     "risk_level": "CRITICAL",
@@ -295,10 +320,10 @@
   "sustainable_burn": {
     "target_runway_months": 24,
     "sustainable_monthly_burn": 3985.54,
-    "actual_monthly_burn": -16513.67,
-    "excess_burn_per_month": 12528.13,
-    "excess_burn_annualized": 150337.54,
-    "status": "Above sustainable - Overspending by $12,528/month",
+    "actual_monthly_burn": -16740.0,
+    "excess_burn_per_month": 12754.46,
+    "excess_burn_annualized": 153053.5,
+    "status": "Above sustainable - Overspending by $12,754/month",
     "available_cash": 95653,
     "data_quality": "strong"
   },
