@@ -85,6 +85,94 @@ For Company Background and Business Strategy sections, you may access Phase 1 ma
 - State "Company background information not available from provided metrics. Full profile requires MD&A review."
 - For Business Strategy, infer from metrics (high AFFO payout = harvest strategy, growing GLA = growth strategy, etc.)
 
+### Enhanced Input: Enriched Data with Market/Macro/Prediction (Issue #40)
+
+**NEW:** If the metrics JSON contains a `phase3_metrics` key, it includes enriched data from OpenBB integration and distribution cut prediction:
+
+```json
+{
+  "metadata": {...},
+  "phase3_metrics": {...},  // Original Phase 3 metrics
+  "market_risk": {
+    "price_stress": {"current_price": X, "decline_pct": Y, "stress_level": "..."},
+    "volatility": {"classification": "LOW/MODERATE/HIGH/VERY HIGH", ...},
+    "momentum": {"trend": "POSITIVE/NEGATIVE/NEUTRAL", ...},
+    "risk_score": {"total_score": 0-100, "risk_level": "..."}
+  },
+  "macro_environment": {
+    "canada": {"current_rate": X, "cycle": "EASING/TIGHTENING/STABLE", ...},
+    "united_states": {"current_rate": X, "cycle": "...", ...},
+    "credit_stress_score": 0-100,
+    "credit_environment": "ACCOMMODATIVE/NEUTRAL/RESTRICTIVE"
+  },
+  "distribution_history": {
+    "cuts_detected": N,
+    "latest_cut_date": "YYYY-MM-DD",
+    "recovery_status": "Fully restored / Partially restored / ...",
+    "recovery_level_pct": X
+  },
+  "distribution_cut_prediction": {
+    "cut_probability_pct": X,
+    "risk_level": "Very Low / Low / Moderate / High / Very High",
+    "top_drivers": [{"feature": "...", "direction": "Increases/Decreases", "coefficient": X}],
+    "model_performance": {"f1_score": 0.813, "roc_auc": 0.967}
+  }
+}
+```
+
+#### How to Interpret Enriched Data
+
+**Market Risk Analysis:**
+- **Price Stress >30%:** Major negative signal - market pricing in distress
+- **High Volatility (>40% annualized):** Elevated uncertainty, potential liquidity concerns
+- **Negative Momentum (12m return <-20%):** Sustained underperformance, investor concerns
+- **Risk Score >60/100:** Elevated credit risk from market perspective
+- **Integration:** Use in Factor 4 (Financial Flexibility) - high market risk limits capital markets access
+
+**Macro Environment Analysis:**
+- **Easing Cycle + Low Stress (<30):** Supportive for refinancing and growth
+- **Tightening Cycle + High Stress (>60):** Restrictive - debt service pressure increases
+- **Credit Environment:** "RESTRICTIVE" = higher funding costs, tighter covenants
+- **Integration:** Use in Factor 3 (Leverage) and Factor 5 (Liquidity) assessments
+
+**Distribution History:**
+- **Cuts Detected >0:** Prior financial stress - assess recovery progress
+- **Recovery Status:** "Fully restored" = strong, "Minimal restoration" = ongoing weakness
+- **Integration:** Use in Factor 4 (Financial Flexibility) - distribution policy credibility
+
+**Distribution Cut Prediction:**
+- **Probability <10% (Very Low):** Distribution sustainable under current conditions
+- **Probability 25-50% (Moderate):** Monitor closely - potential stress signals
+- **Probability >75% (Very High):** Imminent distribution cut risk
+- **Top Drivers:** Identify which metric(s) driving risk (self-funding ratio most predictive)
+- **Model Performance:** F1=0.813, ROC AUC=0.967 indicates reliable predictions
+- **Integration:** Use as forward-looking indicator in Factor 4 (Financial Flexibility) and Rating Outlook
+
+#### Rating Factor Integration
+
+**Factor 2 - Business Profile (25%):**
+- Market momentum trends indicate sector sentiment
+- Use to assess competitive position and market dynamics
+
+**Factor 3 - Leverage (20%):**
+- Macro rate environment affects debt service capacity
+- Tightening cycle = higher refinancing risk
+
+**Factor 4 - Financial Flexibility (30%):**
+- **Distribution cut prediction is PRIMARY input here**
+- High cut probability (>50%) = negative adjustment
+- Prior cuts with incomplete recovery = negative adjustment
+- Strong market access (low volatility, positive momentum) = positive adjustment
+
+**Factor 5 - Liquidity (20%):**
+- Market risk score affects capital markets access
+- High market risk + restrictive macro = constrained liquidity
+
+**Rating Outlook:**
+- Prediction probability increasing over time = negative outlook
+- Deteriorating market conditions = negative outlook
+- Easing macro + improving market = positive outlook
+
 ## Your Task: Qualitative Credit Assessment
 
 ### Step 1: Load and Understand Metrics
