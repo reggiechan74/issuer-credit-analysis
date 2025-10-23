@@ -138,30 +138,98 @@ echo "   → Output: ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_
 
 **Output:** `./Issuer_Reports/{issuer}/temp/phase3_calculated_metrics.json` (auto-generated)
 
+### Phase 3.5: Data Enrichment (Market/Macro/Prediction) - OPTIONAL
+**Status:** ✅ Implemented (Issue #40)
+
+Enrich Phase 3 metrics with market risk, macroeconomic environment, and distribution cut prediction data.
+
+**IMPORTANT:** This phase is OPTIONAL but highly recommended. If it fails or is skipped, the pipeline continues with Phase 4 using standard metrics only (graceful degradation).
+
+```bash
+echo ""
+echo "=========================================="
+echo "PHASE 3.5: DATA ENRICHMENT (OPTIONAL)"
+echo "=========================================="
+
+# Extract ticker from issuer name or Phase 2 data
+TICKER=$(grep -oP '"ticker":\s*"\K[^"]+' Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase2_extracted_data.json 2>/dev/null || echo "")
+
+if [ -z "$TICKER" ]; then
+  echo "⚠️  No ticker found - skipping enrichment (graceful degradation)"
+  echo "   Phase 4 will use standard metrics only"
+else
+  echo "📈 Phase 3.5: Enriching with market/macro/prediction data (ticker: $TICKER)..."
+
+  python scripts/enrich_phase4_data.py \
+    --ticker "$TICKER" \
+    --phase3-file Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json \
+    --output Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_enriched_data.json
+
+  if [ $? -ne 0 ]; then
+    echo "⚠️  Phase 3.5 failed - continuing with standard metrics (graceful degradation)"
+    echo "   Phase 4 will use phase3_calculated_metrics.json"
+  else
+    echo "✅ Phase 3.5 complete: Data enriched with market/macro/prediction"
+    echo "   → Output: ./Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_enriched_data.json"
+    echo "   → Market risk: ✓"
+    echo "   → Macro data: ✓"
+    echo "   → Distribution cut prediction: ✓"
+  fi
+fi
+```
+
+**What This Adds:**
+- **Market Risk Assessment:** Price stress, volatility (30d/90d/252d), momentum (3m/6m/12m), risk score (0-100)
+- **Macroeconomic Environment:** Bank of Canada + Fed rates, rate cycle, credit environment score
+- **Distribution Cut Risk:** ML model prediction (probability, risk level, drivers)
+
+**Graceful Degradation:**
+- No ticker found → skips enrichment, uses standard metrics
+- Enrichment fails → continues with standard metrics, shows N/A in report sections
+- All new sections designed to work with or without enrichment
+
+**Output (if successful):** `./Issuer_Reports/{issuer}/temp/phase4_enriched_data.json`
+
 ### Phase 4: Credit Analysis (Slim Agent)
-**Status:** ✅ Implemented
+**Status:** ✅ Implemented (Enhanced with Issue #40)
 
 Generate qualitative credit assessment using slim agent.
 
 **IMPORTANT:** This phase requires Claude Code to invoke the agent using the Task tool.
 
-After Phase 3 completes:
-1. Load the Phase 3 metrics from `./Issuer_Reports/{issuer}/temp/phase3_calculated_metrics.json`
+After Phase 3 (and optionally Phase 3.5) complete:
+1. **Check for enriched data** - Use `phase4_enriched_data.json` if available (from Phase 3.5), otherwise use `phase3_calculated_metrics.json`
 2. Create the extraction prompt for the agent
 3. Invoke `issuer_due_diligence_expert_slim` agent using Task tool with the metrics
 4. Save the agent's analysis to `./Issuer_Reports/{issuer}/temp/phase4_credit_analysis.md`
 
 **Agent Configuration:**
 - **Agent:** `issuer_due_diligence_expert_slim`
-- **Input:** Phase 3 calculated metrics JSON
+- **Input:** Phase 3 calculated metrics JSON (standard OR enriched)
 - **Output:** Qualitative credit assessment markdown (save to phase4_credit_analysis.md)
 - **Token usage:** ~12,000 tokens
 - **Focus:** 5-factor scorecard, strengths/challenges, rating outlook
+- **Enhanced sections (if enriched data available):**
+  - Market Risk Assessment (Section 9.1)
+  - Macroeconomic Environment (Section 9.2)
+  - Distribution Cut Risk (Section 9.3)
 
 **Steps:**
 ```python
+import os
+
+# Determine which metrics file to use (enriched takes precedence)
+enriched_path = "Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_enriched_data.json"
+standard_path = "Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json"
+
+if os.path.exists(enriched_path):
+    metrics_path = enriched_path
+    print("✅ Using enriched data (market/macro/prediction)")
+else:
+    metrics_path = standard_path
+    print("⚠️  Using standard metrics only (no enrichment)")
+
 # Read metrics
-metrics_path = "Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json"
 with open(metrics_path) as f:
     metrics = json.load(f)
 
@@ -170,6 +238,8 @@ with open(metrics_path) as f:
 ```
 
 **Output:** `./Issuer_Reports/{issuer}/temp/phase4_credit_analysis.md`
+
+**Backward Compatibility:** Agent works with both standard and enriched metrics files. If enriched data unavailable, Sections 9.1-9.3 will show "N/A" in final report.
 
 You should invoke the agent directly rather than running a bash script for this phase.
 
@@ -230,10 +300,11 @@ Issuer_Reports/
 ✅ **Phase 1: Working** - PDF to markdown conversion (PyMuPDF4LLM + Camelot, foreground)
 ✅ **Phase 2: Working** - Markdown→JSON extraction (file references, ~1K tokens)
 ✅ **Phase 3: Working** - Safe calculation library (pure functions)
-✅ **Phase 4: Working** - Slim agent for credit analysis (7.7KB agent profile)
-✅ **Phase 5: Working** - Report template engine (pure Python, 0 tokens)
+✅ **Phase 3.5: Working** - Market/macro/prediction enrichment (OPTIONAL, Issue #40)
+✅ **Phase 4: Working** - Slim agent for credit analysis (7.7KB agent profile, enhanced with Issue #40)
+✅ **Phase 5: Working** - Report template engine (pure Python, 0 tokens, enhanced with Issue #40)
 
-**Architecture:** Sequential markdown-first approach. Phase 1 completes before Phase 2 begins, ensuring clean pre-processed data and context-efficient extraction.
+**Architecture:** Sequential markdown-first approach. Phase 1 completes before Phase 2 begins, ensuring clean pre-processed data and context-efficient extraction. Phase 3.5 is optional - if skipped or failed, pipeline continues with graceful degradation.
 
 ## Success Indicators
 
@@ -243,34 +314,37 @@ After Phase 5 completes successfully, you will have the following folder structu
 Issuer_Reports/
   {Issuer_Name}/
     temp/
-      phase1_markdown/*.md        - Markdown versions of financial statements
-      phase2_extracted_data.json  - Structured financial data
-      phase2_extraction_prompt.txt - Extraction prompt (for debugging)
-      phase3_calculated_metrics.json - Comprehensive credit metrics
-      phase4_agent_prompt.txt     - Agent invocation prompt (for review/debugging)
-      phase4_credit_analysis.md   - Qualitative credit assessment with scorecard
+      phase1_markdown/*.md            - Markdown versions of financial statements
+      phase2_extracted_data.json      - Structured financial data
+      phase2_extraction_prompt.txt    - Extraction prompt (for debugging)
+      phase3_calculated_metrics.json  - Comprehensive credit metrics
+      phase4_enriched_data.json       - Enhanced with market/macro/prediction (if Phase 3.5 succeeded)
+      phase4_agent_prompt.txt         - Agent invocation prompt (for review/debugging)
+      phase4_credit_analysis.md       - Qualitative credit assessment with scorecard
     reports/
-      {timestamp}_Credit_Opinion_{issuer}.md - Final timestamped credit opinion report (~17,000 characters)
+      {timestamp}_Credit_Opinion_{issuer}.md - Final timestamped credit opinion report (~20,000 characters)
 ```
 
 **Key outputs:**
 - **temp/** folder contains all intermediate files (can be cleaned up after analysis)
 - **reports/** folder contains timestamped final reports (permanent archive)
+- **phase4_enriched_data.json** only present if Phase 3.5 succeeded (ticker found and enrichment successful)
 
 ## Token Usage Optimization
 
 This multi-phase approach reduces token usage by **89%** with markdown-first extraction:
 - ❌ Old approach: 121,500 tokens (failed with context errors)
-- ✅ New approach: ~13,000 tokens total across all phases
+- ✅ New approach (with enrichment): ~13,000 tokens total across all phases
   - Phase 1: 0 tokens (Python preprocessing, PyMuPDF4LLM+Camelot)
   - Phase 2: ~1,000 tokens (file references, not embedded content)
   - Phase 3: 0 tokens (pure Python calculations)
-  - Phase 4: ~12,000 tokens (slim agent credit analysis)
+  - Phase 3.5: 0 tokens (pure Python + OpenBB API calls, OPTIONAL)
+  - Phase 4: ~12,000 tokens (slim agent credit analysis, enhanced with enriched data)
   - Phase 5: 0 tokens (pure Python templating)
 
 **Key Benefit:** File references (~1K tokens) vs direct PDF reading (~136K tokens) preserves context for extraction logic.
 
-**Total Cost:** ~$0.30 per issuer analysis
+**Total Cost:** ~$0.30 per issuer analysis (Phase 3.5 uses free OpenBB APIs - $0 additional cost)
 
 ## Example Usage
 
