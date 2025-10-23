@@ -168,14 +168,24 @@ class Phase4DataEnricher:
 
         try:
             collector = OpenBBDataCollector(self.ticker)
-            history = collector.get_dividend_history(years=10)
+            # Calculate start_date for 10 years of history
+            from datetime import datetime, timedelta
+            end_date = datetime.now().strftime('%Y-%m-%d')
+            start_date = (datetime.now() - timedelta(days=365*10)).strftime('%Y-%m-%d')
+            history = collector.get_dividend_history(start_date=start_date, end_date=end_date)
 
             if history.empty:
                 print(f"⚠️  No distribution history available for {self.ticker}")
                 return self._generate_distribution_fallback()
 
             # Analyze distribution cuts
-            cuts = collector.detect_distribution_cuts(history, threshold_pct=10.0)
+            cuts_list = collector.detect_dividend_cuts(history, lookback_years=10)
+            # Convert list to DataFrame for consistency
+            import pandas as pd
+            if cuts_list:
+                cuts = pd.DataFrame(cuts_list)
+            else:
+                cuts = pd.DataFrame()
 
             # Get current distribution
             if not history.empty:
@@ -406,10 +416,19 @@ class Phase4DataEnricher:
         # Dilution
         dilution = phase3.get('dilution_analysis', {})
         fundamentals['dilution_percentage'] = dilution.get('dilution_percentage', 0)
-        fundamentals['dilution_materiality'] = dilution.get('dilution_materiality', 'low')
 
-        # Sector (from Phase 2 or default)
-        fundamentals['sector'] = phase3.get('sector', 'Other')
+        # Encode categorical feature: dilution_materiality
+        dilution_materiality_str = dilution.get('dilution_materiality', 'low')
+        materiality_encoding = {'minimal': 0, 'low': 1, 'moderate': 2, 'high': 3}
+        fundamentals['dilution_materiality'] = materiality_encoding.get(dilution_materiality_str, 1)
+
+        # Sector (from Phase 2 or default) - encode as numeric
+        sector_str = phase3.get('sector', 'Other')
+        sector_encoding = {
+            'Retail': 0, 'Office': 1, 'Industrial': 2, 'Residential': 3,
+            'Diversified': 4, 'Healthcare': 5, 'Storage': 6, 'Other': 7
+        }
+        fundamentals['sector'] = sector_encoding.get(sector_str, 7)
 
         # Market features (17 from market_data)
         market_features = self._extract_market_features(market_data)
@@ -426,10 +445,27 @@ class Phase4DataEnricher:
         """Extract 17 market features from market assessment."""
         features = {}
 
+        # Helper function to encode classification strings
+        def encode_classification(value_str: str, encoding_map: dict, default: int = 0) -> int:
+            """Extract first word from string like 'LOW (10-20%)' and encode."""
+            if not isinstance(value_str, str):
+                return default
+            # Extract first word before parenthesis or space
+            first_word = value_str.split('(')[0].split()[0].strip().upper()
+            return encoding_map.get(first_word, default)
+
+        # Encoding maps
+        stress_encoding = {'MINIMAL': 0, 'LOW': 1, 'MODERATE': 2, 'HIGH': 3, 'SEVERE': 4}
+        volatility_encoding = {'VERY': 0, 'LOW': 1, 'MODERATE': 2, 'HIGH': 3, 'EXTREME': 4}
+        trend_encoding = {'STRONGLY': -2, 'NEGATIVE': -1, 'NEUTRAL': 0, 'POSITIVE': 1, 'STRONGLY POSITIVE': 2}
+        risk_encoding = {'VERY': 0, 'LOW': 1, 'MODERATE': 2, 'HIGH': 3, 'CRITICAL': 4}
+
         # Price stress
         price_stress = market_data.get('price_stress', {})
         features['mkt_price_stress_decline_pct'] = price_stress.get('decline_pct', 0)
-        features['mkt_price_stress_level'] = price_stress.get('stress_level', 'MINIMAL')
+        features['mkt_price_stress_level'] = encode_classification(
+            price_stress.get('stress_level', 'MINIMAL'), stress_encoding, 0
+        )
         features['mkt_price_52w_high'] = price_stress.get('high_52w', 0)
         features['mkt_price_52w_low'] = price_stress.get('low_52w', 0)
         features['mkt_price_current'] = price_stress.get('current_price', 0)
@@ -439,20 +475,26 @@ class Phase4DataEnricher:
         features['mkt_volatility_30d_pct'] = volatility.get('metrics', {}).get('30_day', {}).get('annualized_volatility_pct', 0)
         features['mkt_volatility_90d_pct'] = volatility.get('metrics', {}).get('90_day', {}).get('annualized_volatility_pct', 0)
         features['mkt_volatility_252d_pct'] = volatility.get('metrics', {}).get('252_day', {}).get('annualized_volatility_pct', 0)
-        features['mkt_volatility_classification'] = volatility.get('classification', 'LOW')
+        features['mkt_volatility_classification'] = encode_classification(
+            volatility.get('classification', 'LOW'), volatility_encoding, 1
+        )
 
         # Momentum
         momentum = market_data.get('momentum', {})
         features['mkt_momentum_3m_pct'] = momentum.get('metrics', {}).get('3_month', {}).get('total_return_pct', 0)
         features['mkt_momentum_6m_pct'] = momentum.get('metrics', {}).get('6_month', {}).get('total_return_pct', 0)
         features['mkt_momentum_12m_pct'] = momentum.get('metrics', {}).get('12_month', {}).get('total_return_pct', 0)
-        features['mkt_momentum_trend'] = momentum.get('trend', 'NEUTRAL')
+        features['mkt_momentum_trend'] = encode_classification(
+            momentum.get('trend', 'NEUTRAL'), trend_encoding, 0
+        )
 
         # Volume and risk
         features['mkt_volume_30d_avg'] = market_data.get('volume', {}).get('avg_30d', 0)
         features['mkt_volume_vs_avg'] = market_data.get('volume', {}).get('vs_avg_pct', 0)
         features['mkt_risk_score'] = market_data.get('risk_score', {}).get('total_score', 0)
-        features['mkt_risk_level'] = market_data.get('risk_score', {}).get('risk_level', 'LOW')
+        features['mkt_risk_level'] = encode_classification(
+            market_data.get('risk_score', {}).get('risk_level', 'LOW'), risk_encoding, 1
+        )
 
         return features
 
@@ -460,19 +502,29 @@ class Phase4DataEnricher:
         """Extract 9 macro features from macro assessment."""
         features = {}
 
+        # Encoding maps for macro features
+        cycle_encoding = {'EASING': -1, 'STABLE': 0, 'TIGHTENING': 1}
+        environment_encoding = {'SUPPORTIVE': 0, 'NEUTRAL': 1, 'STRESSED': 2, 'CRISIS': 3}
+
         # Canadian rates
         canada = macro_data.get('canada', {})
         features['macro_ca_policy_rate'] = canada.get('current_rate', 0)
         features['macro_ca_rate_change_12m_bps'] = canada.get('change_12m_bps', 0)
-        features['macro_ca_rate_cycle'] = canada.get('cycle', 'STABLE')
+        # Encode cycle
+        cycle_str = canada.get('cycle', 'STABLE')
+        features['macro_ca_rate_cycle'] = cycle_encoding.get(cycle_str.upper() if isinstance(cycle_str, str) else 'STABLE', 0)
         features['macro_ca_credit_stress_score'] = macro_data.get('credit_stress_score', 0)
-        features['macro_ca_credit_environment'] = macro_data.get('credit_environment', 'NEUTRAL')
+        # Encode environment
+        env_str = macro_data.get('credit_environment', 'NEUTRAL')
+        features['macro_ca_credit_environment'] = environment_encoding.get(env_str.upper() if isinstance(env_str, str) else 'NEUTRAL', 1)
 
         # US rates
         us = macro_data.get('united_states', {})
         features['macro_us_policy_rate'] = us.get('current_rate', 0) if us else 0
         features['macro_us_rate_change_12m_bps'] = us.get('change_12m_bps', 0) if us else 0
-        features['macro_us_rate_cycle'] = us.get('cycle', 'STABLE') if us else 'STABLE'
+        # Encode US cycle
+        us_cycle_str = us.get('cycle', 'STABLE') if us else 'STABLE'
+        features['macro_us_rate_cycle'] = cycle_encoding.get(us_cycle_str.upper() if isinstance(us_cycle_str, str) else 'STABLE', 0)
 
         # Rate differential
         features['macro_rate_diff_ca_us_bps'] = macro_data.get('spread_bps', 0)
@@ -594,8 +646,21 @@ class Phase4DataEnricher:
         output_path = Path(output_file)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
+        # Custom JSON encoder to handle numpy types
+        class NumpyEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, (np.integer, np.int64, np.int32)):
+                    return int(obj)
+                elif isinstance(obj, (np.floating, np.float64, np.float32)):
+                    return float(obj)
+                elif isinstance(obj, (np.bool_,)):
+                    return bool(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                return super().default(obj)
+
         with open(output_path, 'w') as f:
-            json.dump(enriched_data, f, indent=2)
+            json.dump(enriched_data, f, indent=2, cls=NumpyEncoder)
 
         print(f"\n💾 Enriched data saved to: {output_path}")
         print(f"   File size: {output_path.stat().st_size / 1024:.1f} KB")
