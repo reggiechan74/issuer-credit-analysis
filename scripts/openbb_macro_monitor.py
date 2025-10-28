@@ -106,15 +106,114 @@ class EnhancedMacroMonitor:
             'observations': len(df)
         }
     
+    def generate_overall_assessment(self, ca_analysis, us_analysis, stress_score, environment, spread):
+        """Generate narrative assessment of rate environment."""
+        ca_rate = ca_analysis['current_rate']
+        ca_change = ca_analysis['change_12m_bps']
+        ca_cycle = ca_analysis['cycle']
+        ca_peak = ca_analysis['max_rate']
+
+        # Build narrative
+        narrative = f"Bank of Canada in {ca_cycle.lower()} cycle ({ca_rate:.2f}%, "
+        if ca_change < 0:
+            narrative += f"down {abs(ca_change):.0f} bps from {ca_peak:.2f}% peak). "
+        else:
+            narrative += f"up {ca_change:.0f} bps). "
+
+        narrative += f"{environment.capitalize()} credit environment (stress score: {stress_score}/100) "
+
+        if stress_score < 30:
+            narrative += "supports REIT refinancing and capital markets access. "
+        elif stress_score < 50:
+            narrative += "provides moderate support for REIT financing. "
+        else:
+            narrative += "creates challenging conditions for REIT refinancing. "
+
+        if us_analysis:
+            us_rate = us_analysis['current_rate']
+            us_change = us_analysis['change_12m_bps']
+            us_cycle = us_analysis['cycle']
+
+            narrative += f"US Fed also in {us_cycle.lower()} mode ({us_rate:.2f}%, "
+            if us_change < 0:
+                narrative += f"down {abs(us_change):.0f} bps), "
+            else:
+                narrative += f"up {us_change:.0f} bps), "
+
+            if ca_cycle == us_cycle or (ca_change < 0 and us_change < 0):
+                narrative += "creating synchronized North American rate movement. "
+            else:
+                narrative += "diverging from Canadian policy. "
+
+            if spread is not None:
+                spread_bps = abs(spread * 100)
+                if spread < 0:
+                    narrative += f"Canada maintains typical {spread_bps:.0f} bps discount to US rates."
+                else:
+                    narrative += f"Canada unusually {spread_bps:.0f} bps above US rates."
+
+        return narrative
+
+    def generate_credit_implications(self, ca_analysis, stress_score, environment):
+        """Generate credit implications narrative for REITs."""
+        ca_rate = ca_analysis['current_rate']
+        ca_change = ca_analysis['change_12m_bps']
+        ca_cycle = ca_analysis['cycle']
+
+        # Overall direction
+        if ca_change < 0 or 'EASING' in ca_cycle:
+            direction = "POSITIVE"
+            trend_desc = "Lower rates reduce borrowing costs and improve debt service coverage ratios"
+        elif ca_change > 0 or 'TIGHTENING' in ca_cycle:
+            direction = "NEGATIVE"
+            trend_desc = "Higher rates increase borrowing costs and pressure debt service coverage"
+        else:
+            direction = "NEUTRAL"
+            trend_desc = "Stable rates provide predictable refinancing environment"
+
+        implications = f"{direction} for REITs: {trend_desc}. "
+
+        # Environment-specific implications
+        if environment == "ACCOMMODATIVE":
+            implications += "Easing environment supports property valuations and equity issuance capacity. "
+            implications += "REITs with near-term debt maturities benefit from refinancing at lower rates. "
+            implications += "Credit spreads typically tighten in accommodative conditions, improving access to capital markets. "
+        elif environment == "MODERATE":
+            implications += "Moderate environment maintains balanced financing conditions. "
+            implications += "REITs with strong balance sheets retain good capital markets access. "
+            implications += "Focus on covenant compliance and liquidity management remains important. "
+        elif environment == "TIGHT":
+            implications += "Restrictive environment pressures REIT valuations and financing capacity. "
+            implications += "Credit spreads likely widening, increasing cost of capital. "
+            implications += "REITs with refinancing needs face higher rates and stricter lending conditions. "
+        else:  # VERY TIGHT
+            implications += "Very tight environment creates severe financing challenges. "
+            implications += "Capital markets access limited; equity issuance difficult. "
+            implications += "Focus shifts to liquidity preservation and covenant compliance. "
+
+        # Rate level specific guidance
+        if ca_rate >= 4.5:
+            implications += "Elevated rate level (≥4.5%) suggests continued pressure on coverage ratios. "
+        elif ca_rate <= 2.5:
+            implications += "Low rate level (≤2.5%) provides favorable refinancing opportunities. "
+
+        # Cycle-specific guidance
+        if 'EASING' in ca_cycle:
+            implications += "Watch for rate stabilization signals as cycle matures; plan refinancing during easing window."
+        elif 'TIGHTENING' in ca_cycle:
+            implications += "Monitor peak rate expectations; consider pre-funding or extending maturities before further increases."
+
+        return implications
+
     def generate_assessment(self, lookback=120):
         """Generate comprehensive Canada + US rate assessment."""
         print("Analyzing North American interest rate environment...")
-        
+
         # Get Canadian rates
         ca_df = self.get_boc_rate(lookback)
         print(f"✓ Bank of Canada: {len(ca_df)} observations")
         ca_analysis = self.analyze_rate_cycle(ca_df, "Canada")
-        
+
         # Get US rates
         us_df = self.get_us_fed_rate(lookback)
         if not us_df.empty:
@@ -122,24 +221,24 @@ class EnhancedMacroMonitor:
             us_analysis = self.analyze_rate_cycle(us_df, "United States")
         else:
             us_analysis = None
-        
+
         # Calculate spread
         spread = None
         if us_analysis:
             spread = ca_analysis['current_rate'] - us_analysis['current_rate']
-        
+
         # Credit environment scoring
         ca_rate = ca_analysis['current_rate']
         rate_stress = min(40, int(ca_rate / 5.0 * 40))
-        
+
         cycle_stress = 0
         if 'TIGHTENING' in ca_analysis['cycle']:
             cycle_stress = 30
         elif ca_analysis['cycle'] == 'STABLE':
             cycle_stress = 5
-        
+
         stress_score = rate_stress + cycle_stress
-        
+
         if stress_score >= 70:
             environment = "VERY TIGHT"
         elif stress_score >= 50:
@@ -148,7 +247,11 @@ class EnhancedMacroMonitor:
             environment = "MODERATE"
         else:
             environment = "ACCOMMODATIVE"
-        
+
+        # Generate narratives
+        overall_assessment = self.generate_overall_assessment(ca_analysis, us_analysis, stress_score, environment, spread)
+        credit_implications = self.generate_credit_implications(ca_analysis, stress_score, environment)
+
         assessment = {
             'assessment_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'canada': {
@@ -164,9 +267,11 @@ class EnhancedMacroMonitor:
             'rate_differential': {
                 'ca_minus_us_bps': round(spread * 100, 0) if spread is not None else None,
                 'note': 'Negative = Canada below US (typical), Positive = Canada above US (unusual)'
-            } if spread is not None else None
+            } if spread is not None else None,
+            'overall_assessment': overall_assessment,
+            'credit_implications': credit_implications
         }
-        
+
         return assessment
 
 if __name__ == '__main__':

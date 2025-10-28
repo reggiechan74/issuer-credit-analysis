@@ -1,5 +1,5 @@
 {
-  "assessment_date": "2025-10-22 12:47:04",
+  "assessment_date": "2025-10-23 02:32:19",
   "canada": {
     "data_source": "Bank of Canada Valet API",
     "policy_rate": {
@@ -10,7 +10,7 @@
       "cycle": "EASING",
       "max_rate": 5.25,
       "min_rate": 0.5,
-      "observations": 58
+      "observations": 117
     },
     "credit_stress_score": 22,
     "credit_environment": "ACCOMMODATIVE"
@@ -24,8 +24,8 @@
       "change_12m_bps": -91.0,
       "cycle": "MILD EASING",
       "max_rate": 5.33,
-      "min_rate": 0.06,
-      "observations": 59
+      "min_rate": 0.05,
+      "observations": 118
     }
   },
   "rate_differential": {

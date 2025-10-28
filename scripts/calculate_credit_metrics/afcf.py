@@ -7,12 +7,14 @@ Per REALPAC methodology with double-counting prevention.
 
 def calculate_afcf(financial_data):
     """
-    Calculate Adjusted Free Cash Flow (AFCF) from ACFO and investing activities
+    Calculate Adjusted Free Cash Flow (AFCF) using Two-Tier Methodology (v1.0.14)
 
-    AFCF = ACFO + Net Cash Flow from Investing Activities
+    TWO-TIER APPROACH:
+    1. Sustainable AFCF = ACFO + Recurring CFI Only (PRIMARY METRIC)
+    2. Total AFCF = ACFO + All CFI (COMPARISON METRIC)
 
-    Purpose: Measure cash available for financing obligations (debt service + distributions)
-    after all operating AND investing activities.
+    Purpose: Measure sustainable cash available for financing obligations after
+    recurring investing activities, excluding non-recurring items like asset sales.
 
     CRITICAL: Prevents double-counting with ACFO:
     - Sustaining CAPEX: Already deducted in ACFO (Adj 4) - DO NOT deduct again
@@ -20,26 +22,37 @@ def calculate_afcf(financial_data):
     - External Leasing Costs: Already in ACFO (Adj 5) - DO NOT deduct again
     - JV Distributions: Already in ACFO (Adj 3) - DO NOT add again
 
-    AFCF should ONLY include investing activities NOT in ACFO:
+    RECURRING CFI (included in Sustainable AFCF):
     - Development CAPEX (growth projects, not sustaining)
-    - Property acquisitions and dispositions
-    - JV capital contributions/returns (not distributions)
-    - Other investing activities
+    - Property acquisitions (routine, < materiality threshold)
+    - JV capital contributions (ongoing partnerships)
+    - Other investing outflows (routine activities)
+
+    NON-RECURRING CFI (excluded from Sustainable AFCF):
+    - Property dispositions (asset sales)
+    - JV return of capital (one-time exits)
+    - Business combinations (M&A)
+    - Other investing inflows (non-recurring proceeds)
 
     Args:
         financial_data (dict): Validated JSON with cash_flow_investing section and ACFO calculated
 
     Returns:
         dict: {
-            'afcf': float,
-            'afcf_per_unit': float | None,  # Basic - calculated if common_units_outstanding available
-            'afcf_per_unit_diluted': float | None,  # Diluted - calculated if diluted_units_outstanding available
+            'afcf': float,  # Sustainable AFCF (primary metric)
+            'afcf_sustainable': float,  # Same as afcf
+            'net_cfi_sustainable': float,  # Recurring CFI only
+            'afcf_total': float,  # Total AFCF (for comparison)
+            'net_cfi_total': float,  # All CFI
+            'non_recurring_cfi': float,  # Amount excluded from sustainable
+            'afcf_per_unit': float | None,  # Basic per-unit
+            'afcf_per_unit_diluted': float | None,  # Diluted per-unit
             'acfo_starting_point': float,
-            'net_cfi': float,
-            'cfi_breakdown': dict,  # Individual CFI components
+            'cfi_breakdown': dict,  # Components with 'recurring' flags
             'data_quality': str,  # 'strong', 'moderate', 'limited', 'none'
             'has_cfi_data': bool,
-            'missing_components': list
+            'missing_components': list,
+            'methodology_note': str
         }
     """
 
@@ -69,53 +82,108 @@ def calculate_afcf(financial_data):
             'has_cfi_data': True
         }
 
-    # Define investing activity components
+    # Define investing activity components with sustainability classification
+    # Following AFFO/ACFO principles: focus on recurring, sustainable cash flows
     cfi_components = {
-        'development_capex': 'Development CAPEX (growth projects)',
-        'property_acquisitions': 'Property acquisitions',
-        'property_dispositions': 'Property dispositions (proceeds)',
-        'jv_capital_contributions': 'JV capital contributions',
-        'jv_return_of_capital': 'JV return of capital',
-        'business_combinations': 'Business combinations',
-        'other_investing_outflows': 'Other investing outflows',
-        'other_investing_inflows': 'Other investing inflows'
+        # Recurring/Sustainable items (included in Sustainable AFCF)
+        'development_capex': {
+            'description': 'Development CAPEX (growth projects)',
+            'recurring': True,
+            'rationale': 'Ongoing portfolio improvement'
+        },
+        'property_acquisitions': {
+            'description': 'Property acquisitions',
+            'recurring': True,
+            'rationale': 'Routine growth investments (if < materiality threshold)'
+        },
+        'jv_capital_contributions': {
+            'description': 'JV capital contributions',
+            'recurring': True,
+            'rationale': 'Ongoing JV partnership investments'
+        },
+        'other_investing_outflows': {
+            'description': 'Other investing outflows',
+            'recurring': True,
+            'rationale': 'Routine investing activities'
+        },
+
+        # Non-recurring items (excluded from Sustainable AFCF)
+        'property_dispositions': {
+            'description': 'Property dispositions (proceeds)',
+            'recurring': False,
+            'rationale': 'Non-recurring asset sales'
+        },
+        'jv_return_of_capital': {
+            'description': 'JV return of capital',
+            'recurring': False,
+            'rationale': 'One-time JV exits'
+        },
+        'business_combinations': {
+            'description': 'Business combinations',
+            'recurring': False,
+            'rationale': 'Non-recurring M&A activity'
+        },
+        'other_investing_inflows': {
+            'description': 'Other investing inflows',
+            'recurring': False,
+            'rationale': 'Non-recurring proceeds'
+        }
     }
 
-    # Collect CFI components and calculate net CFI
+    # Collect CFI components and calculate BOTH total and sustainable net CFI
     cfi_breakdown = {}
     missing_components = []
-    net_cfi = 0.0
+    net_cfi_total = 0.0  # Total CFI (all components)
+    net_cfi_sustainable = 0.0  # Sustainable CFI (recurring only)
     available_count = 0
 
-    for component, description in cfi_components.items():
+    for component, component_info in cfi_components.items():
         if component in cfi_data and cfi_data[component] is not None:
             value = cfi_data[component]
             cfi_breakdown[component] = {
-                'description': description,
-                'amount': value
+                'description': component_info['description'],
+                'amount': value,
+                'recurring': component_info['recurring'],
+                'rationale': component_info['rationale']
             }
-            net_cfi += value
+            net_cfi_total += value
+
+            # Only add recurring items to sustainable CFI
+            if component_info['recurring']:
+                net_cfi_sustainable += value
+
             available_count += 1
         else:
             missing_components.append(component)
             cfi_breakdown[component] = {
-                'description': description,
-                'amount': 0.0
+                'description': component_info['description'],
+                'amount': 0.0,
+                'recurring': component_info['recurring'],
+                'rationale': component_info['rationale']
             }
 
-    # Calculate AFCF
-    afcf = acfo + net_cfi
+    # Calculate TWO versions of AFCF:
+    # 1. Sustainable AFCF = ACFO + Recurring CFI only (PRIMARY METRIC)
+    # 2. Total AFCF = ACFO + All CFI (for comparison/transparency)
+    afcf_sustainable = acfo + net_cfi_sustainable
+    afcf_total = acfo + net_cfi_total
+
+    # Use sustainable AFCF as the primary metric
+    afcf = afcf_sustainable
 
     # Check against total_cfi if provided (for reconciliation)
+    # Note: Use total CFI for reconciliation (should match reported total)
     reconciliation_check = None
     if 'total_cfi' in cfi_data and cfi_data['total_cfi'] is not None:
         reported_cfi = cfi_data['total_cfi']
-        variance = net_cfi - reported_cfi
+        variance = net_cfi_total - reported_cfi
         reconciliation_check = {
-            'calculated_net_cfi': net_cfi,
+            'calculated_net_cfi_total': net_cfi_total,
+            'calculated_net_cfi_sustainable': net_cfi_sustainable,
             'reported_total_cfi': reported_cfi,
             'variance': variance,
-            'matches': abs(variance) < 100  # Allow small rounding differences
+            'matches': abs(variance) < 100,  # Allow small rounding differences
+            'note': 'Reconciliation uses total CFI (all components) vs issuer-reported total'
         }
 
     # Assess data quality
@@ -144,16 +212,30 @@ def calculate_afcf(financial_data):
                 afcf_per_unit_diluted = round(afcf / units_diluted, 4)
 
     result = {
-        'afcf': round(afcf, 0),
+        # PRIMARY METRIC: Sustainable AFCF (recurring CFI only)
+        'afcf': round(afcf_sustainable, 0),
+        'afcf_sustainable': round(afcf_sustainable, 0),
+        'net_cfi_sustainable': round(net_cfi_sustainable, 0),
+
+        # COMPARISON: Total AFCF (all CFI components)
+        'afcf_total': round(afcf_total, 0),
+        'net_cfi_total': round(net_cfi_total, 0),
+
+        # Non-recurring adjustment (difference between total and sustainable)
+        'non_recurring_cfi': round(net_cfi_total - net_cfi_sustainable, 0),
+
+        # Breakdown and metadata
         'acfo_starting_point': acfo,
-        'net_cfi': round(net_cfi, 0),
         'cfi_breakdown': cfi_breakdown,
         'missing_components': missing_components,
         'available_components': available_count,
         'total_components': len(cfi_components),
         'data_quality': data_quality,
         'has_cfi_data': True,
-        'reconciliation_check': reconciliation_check
+        'reconciliation_check': reconciliation_check,
+
+        # Methodology note
+        'methodology_note': 'Sustainable AFCF excludes non-recurring items (property dispositions, M&A, JV exits) following AFFO/ACFO principles'
     }
 
     # Add per-unit if calculated
@@ -326,30 +408,48 @@ def validate_afcf_reconciliation(financial_data, acfo, afcf):
         'reconciliation_summary': ''
     }
 
-    # Check 1: AFCF = ACFO + Net CFI
+    # Check 1: TWO-TIER AFCF = ACFO + Sustainable CFI (recurring only)
     if acfo is not None and afcf is not None and 'cash_flow_investing' in financial_data:
         cfi_data = financial_data['cash_flow_investing']
 
-        # Calculate net CFI from components
-        net_cfi = 0
+        # Calculate BOTH total and sustainable net CFI from components
+        net_cfi_total = 0
+        net_cfi_sustainable = 0
+
+        # Define recurring components (same as in calculate_afcf)
+        recurring_components = {'development_capex', 'property_acquisitions',
+                               'jv_capital_contributions', 'other_investing_outflows'}
+
         for component in ['development_capex', 'property_acquisitions', 'property_dispositions',
                          'jv_capital_contributions', 'jv_return_of_capital', 'business_combinations',
                          'other_investing_outflows', 'other_investing_inflows']:
             if component in cfi_data and cfi_data[component] is not None:
-                net_cfi += cfi_data[component]
+                value = cfi_data[component]
+                net_cfi_total += value
+                if component in recurring_components:
+                    net_cfi_sustainable += value
 
-        calculated_afcf = acfo + net_cfi
-        variance = afcf - calculated_afcf
+        calculated_afcf_sustainable = acfo + net_cfi_sustainable
+        calculated_afcf_total = acfo + net_cfi_total
+        variance = afcf - calculated_afcf_sustainable
 
         if abs(variance) < 1:  # Allow tiny rounding differences
             result['afcf_calculation_valid'] = True
             result['acfo_cfi_reconciles'] = True
-            result['validation_notes'].append('✓ AFCF calculation correct: ACFO + Net CFI = AFCF')
+            result['validation_notes'].append(
+                f'✓ Sustainable AFCF calculation correct: ACFO ({acfo:,.0f}) + Recurring CFI ({net_cfi_sustainable:,.0f}) = AFCF ({afcf:,.0f})'
+            )
+            result['validation_notes'].append(
+                f'✓ Total AFCF (for comparison): ACFO ({acfo:,.0f}) + All CFI ({net_cfi_total:,.0f}) = {calculated_afcf_total:,.0f}'
+            )
+            result['validation_notes'].append(
+                f'✓ Non-recurring CFI excluded: {net_cfi_total - net_cfi_sustainable:,.0f} CAD thousands'
+            )
         else:
             result['afcf_calculation_valid'] = False
             result['acfo_cfi_reconciles'] = False
             result['validation_notes'].append(
-                f'✗ AFCF calculation error: AFCF ({afcf:,.0f}) ≠ ACFO ({acfo:,.0f}) + Net CFI ({net_cfi:,.0f}). '
+                f'✗ AFCF calculation error: AFCF ({afcf:,.0f}) ≠ ACFO ({acfo:,.0f}) + Sustainable CFI ({net_cfi_sustainable:,.0f}). '
                 f'Variance: {variance:,.0f}'
             )
 

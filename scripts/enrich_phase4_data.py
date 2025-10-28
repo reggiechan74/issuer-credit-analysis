@@ -204,7 +204,7 @@ class Phase4DataEnricher:
                 recovery_status = self._analyze_recovery(history, latest_cut)
 
                 # Calculate recovery level
-                pre_cut_amount = latest_cut.get('prev_amount', current_monthly)
+                pre_cut_amount = latest_cut.get('previous_monthly', current_monthly)
                 if pre_cut_amount > 0:
                     recovery_level_pct = (current_monthly / pre_cut_amount) * 100
 
@@ -215,8 +215,8 @@ class Phase4DataEnricher:
                 'current_monthly': current_monthly,
                 'current_annual': current_annual,
                 'cuts_detected': len(cuts),
-                'latest_cut_date': cuts.iloc[-1]['date'].strftime('%Y-%m-%d') if not cuts.empty else None,
-                'latest_cut_magnitude_pct': cuts.iloc[-1]['cut_pct'] if not cuts.empty else 0,
+                'latest_cut_date': cuts.iloc[-1]['cut_date'] if not cuts.empty else None,
+                'latest_cut_magnitude_pct': cuts.iloc[-1]['cut_percentage'] if not cuts.empty else 0,
                 'recovery_status': recovery_status,
                 'recovery_level_pct': recovery_level_pct,
                 'data_quality': 'strong' if len(history) > 50 else 'weak'
@@ -235,11 +235,17 @@ class Phase4DataEnricher:
 
     def _analyze_recovery(self, history: pd.DataFrame, latest_cut: pd.Series) -> str:
         """Analyze recovery status after distribution cut."""
-        cut_date = latest_cut['date']
-        pre_cut_amount = latest_cut.get('prev_amount', 0)
+        import pandas as pd
+        cut_date = latest_cut['cut_date']
+        pre_cut_amount = latest_cut.get('previous_monthly', 0)
 
-        # Get distributions after cut
-        post_cut = history[history['date'] > cut_date]
+        # Convert cut_date string (e.g., '2023-01') to Period for comparison
+        cut_period = pd.Period(cut_date)
+
+        # Get distributions after cut (history has 'ex_dividend_date' column)
+        history_with_period = history.copy()
+        history_with_period['period'] = pd.to_datetime(history['ex_dividend_date']).dt.to_period('M')
+        post_cut = history_with_period[history_with_period['period'] > cut_period]
 
         if post_cut.empty:
             return "Cut occurred recently - no recovery data"

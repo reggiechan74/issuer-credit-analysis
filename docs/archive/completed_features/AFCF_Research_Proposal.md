@@ -1,12 +1,33 @@
 # Adjusted Free Cash Flow (AFCF) - Research & Proposal
 
-## Executive Summary
+---
+
+## ⚠️ DOCUMENT STATUS: SUPERSEDED
+
+**This document represents the original AFCF proposal (v1.0) from 2025-10-20.**
+
+**SUPERSEDED BY:** Two-Tier AFCF Methodology (v1.0.14, 2025-10-23)
+- See: `docs/AFCF_TWO_TIER_METHODOLOGY.md`
+
+**Key Changes:**
+1. **Original proposal** included ALL CFI components (including property dispositions)
+2. **New methodology** excludes non-recurring items (property dispositions, M&A, JV exits)
+3. **Rationale:** Align with AFFO/ACFO sustainability principles
+4. **Implementation:** Two-tier approach (Sustainable AFCF + Total AFCF for comparison)
+
+**This document is preserved for historical reference and shows the evolution of the methodology.**
+
+---
+
+## Executive Summary (Original Proposal)
 
 This document proposes a new **Adjusted Free Cash Flow (AFCF)** metric that bridges the gap between operating cash flow (ACFO) and financing cash flows for real estate issuer credit analysis. AFCF represents the cash available to service debt and equity obligations after all operating and investing activities.
 
 **Date:** 2025-10-20
 **Purpose:** Design AFCF calculation methodology for comparing against debt/equity payments
 **Starting Point:** ACFO (Adjusted Cash Flow from Operations) per REALPAC methodology
+
+**⚠️ NOTE:** The formula proposed in this document (`AFCF = ACFO + All CFI`) was found to produce misleading results when non-recurring items (property dispositions) artificially inflated AFCF. See the two-tier methodology for the revised approach.
 
 ---
 
@@ -709,7 +730,166 @@ Change in Cash = 50,000 - 28,000 - 19,000 = 3,000  ✅
 
 ---
 
+## ADDENDUM: Methodology Evolution (2025-10-23)
+
+### What We Learned
+
+**Original Implementation (v1.0.6):**
+The formula `AFCF = ACFO + All CFI` was implemented as proposed in this document. Initial testing with Artis REIT Q2 2025 revealed a critical flaw:
+
+**Artis REIT Q2 2025 Results:**
+```
+ACFO: $7,198k (weak operating cash flow)
++ All CFI: $43,054k (includes $47,389k property dispositions)
+= AFCF: +$50,252k ← MISLEADING (appeared positive due to asset sales)
+```
+
+**Problem Identified:**
+- Property dispositions (+$47,389k) are non-recurring asset sales
+- Including them in AFCF made the metric look positive when operations were weak
+- Violated AFFO/ACFO principles of focusing on sustainable, recurring cash flows
+- Could lead to incorrect credit assessments
+
+### User Feedback (Oct 23, 2025)
+
+**Quote 1:** "check the net cash flow from investing numbers. It's unusual that it would be showing as a positive number."
+
+**Quote 2:** "we need to correct the AFCF formula. asset sales are not sustainable so it should be stripped out of the calculation."
+
+**Quote 3:** "given the intention of the AFCF is to compare against ongoing financing obligations that cannot be suspended, such as dividend distributions and mortgage payments, any negative cash flow that stems from the CFI section should be items that are not financed by one-time debt financing or equity raises."
+
+### Revised Methodology (v1.0.14)
+
+**Two-Tier Approach Implemented:**
+
+**Tier 1: Sustainable AFCF (Primary)**
+```
+Sustainable AFCF = ACFO + Recurring CFI Only
+
+Recurring CFI:
+✓ Development CAPEX (ongoing)
+✓ Property acquisitions (routine)
+✓ JV capital contributions (ongoing)
+✓ Other investing outflows (routine)
+
+Non-Recurring CFI (Excluded):
+✗ Property dispositions (asset sales)
+✗ JV return of capital (one-time exits)
+✗ Business combinations (M&A)
+✗ Other investing inflows (non-recurring)
+```
+
+**Tier 2: Total AFCF (Comparison)**
+```
+Total AFCF = ACFO + All CFI (for transparency)
+```
+
+**Artis REIT Q2 2025 Results (Revised):**
+```
+ACFO: $7,198k
++ Recurring CFI: -$40,631k
+= Sustainable AFCF: -$33,433k ← REALISTIC (shows cash burn)
+
+Non-recurring CFI excluded: $83,685k
+  • Property dispositions: $47,389k
+  • Other investing inflows: $32,785k
+  • JV return of capital: $3,511k
+
+Total AFCF (for comparison): $50,252k
+```
+
+### Key Insights
+
+1. **Alignment with AFFO/ACFO Principles:**
+   - AFFO/ACFO focus on recurring, sustainable cash flows
+   - AFCF should follow the same philosophy
+   - Non-recurring items distort true cash generation capacity
+
+2. **Credit Analysis Implications:**
+   - Sustainable AFCF reveals true self-funding capacity
+   - Asset sales are one-time and cannot sustain operations
+   - More accurate assessment of financing needs
+
+3. **Answering the Matching Question:**
+   - Self-funding analysis automatically nets new financing
+   - No need to manually attribute each CFI item to financing sources
+   - Conservative approach: recurring items assumed cash-financed
+
+4. **Dual Reporting for Transparency:**
+   - Primary metric: Sustainable AFCF (recurring only)
+   - Comparison metric: Total AFCF (all CFI)
+   - Clear breakdown of recurring vs. non-recurring components
+
+### Lessons Learned
+
+**Lesson 1: Test with Real Data Early**
+- Theoretical formulas may look correct but produce misleading results
+- Real financial statement testing reveals edge cases (large asset sales)
+- Artis REIT example exposed the flaw immediately
+
+**Lesson 2: Follow Industry Principles**
+- REALPAC methodology for AFFO/ACFO is well-established
+- Sustainability principle should extend to AFCF
+- Don't deviate without strong justification
+
+**Lesson 3: Transparency Through Dual Reporting**
+- Don't hide information (still report total AFCF)
+- Make primary metric the sustainable one
+- Document rationale for exclusions
+
+**Lesson 4: User Feedback is Critical**
+- "It's unusual that it would be showing as a positive number" - caught the problem
+- Sophisticated questions about matching CFI to CFF refined the solution
+- Iterative improvement based on real-world use
+
+### Implementation Changes
+
+**Files Modified:**
+- `scripts/calculate_credit_metrics.py` - Two-tier AFCF calculation
+- `docs/AFCF_TWO_TIER_METHODOLOGY.md` - New comprehensive documentation
+- `docs/archive/completed_features/AFCF_Research_Proposal.md` - This addendum
+
+**Schema Changes:**
+```json
+{
+  "afcf_metrics": {
+    "afcf": -33433,                    // PRIMARY: Sustainable AFCF
+    "afcf_sustainable": -33433,
+    "net_cfi_sustainable": -40631,
+    "afcf_total": 50252,               // COMPARISON: Total AFCF
+    "net_cfi_total": 43054,
+    "non_recurring_cfi": 83685,        // Excluded amount
+    "cfi_breakdown": {
+      "property_dispositions": {
+        "amount": 47389,
+        "recurring": false,             // ← New flag
+        "rationale": "Non-recurring asset sales"
+      }
+    }
+  }
+}
+```
+
+### Conclusion of Evolution
+
+The two-tier AFCF methodology represents a significant improvement over the original proposal:
+
+1. ✅ **Aligns with AFFO/ACFO principles** - Sustainability focus
+2. ✅ **Prevents misleading metrics** - Excludes non-recurring windfalls
+3. ✅ **Maintains transparency** - Reports both metrics
+4. ✅ **Solves matching problem** - Netting approach for financing
+5. ✅ **Tested with real data** - Artis REIT validates methodology
+
+**This evolution demonstrates the importance of:**
+- Iterative refinement based on real-world testing
+- Alignment with established industry principles
+- User feedback in methodology development
+- Transparency in reporting and documentation
+
+---
+
 **Document Author:** Claude Code & Reggie Chan
-**Date:** 2025-10-20
-**Version:** 1.0 (Draft)
-**Status:** Proposal - Pending Implementation
+**Original Date:** 2025-10-20
+**Updated:** 2025-10-23 (Addendum added)
+**Version:** 1.0 (Original Proposal - Superseded)
+**Status:** Archived - See Two-Tier AFCF Methodology (v1.0.14)

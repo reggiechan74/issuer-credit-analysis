@@ -33,13 +33,13 @@ from calculate_credit_metrics.acfo import generate_acfo_reconciliation
 
 def load_metrics(metrics_path):
     """
-    Load Phase 3 calculated metrics
+    Load Phase 3 calculated metrics (or enriched Phase 4 data)
 
     Args:
-        metrics_path: Path to Phase 3 metrics JSON
+        metrics_path: Path to Phase 3 metrics JSON or Phase 4 enriched JSON
 
     Returns:
-        dict: Metrics data
+        dict: Metrics data (merged if enriched file)
 
     Raises:
         FileNotFoundError: If file doesn't exist
@@ -56,9 +56,23 @@ def load_metrics(metrics_path):
     print(f"📊 Loading Phase 3 metrics from: {metrics_path}")
 
     with open(metrics_path, 'r') as f:
-        metrics = json.load(f)
+        data = json.load(f)
 
-    print(f"✓ Loaded metrics for: {metrics.get('issuer_name', 'Unknown')}")
+    # Check if this is an enriched file (has phase3_metrics nested)
+    if 'phase3_metrics' in data:
+        print("✓ Detected enriched data file (Phase 4 enrichment)")
+        # Extract Phase 3 metrics and merge with enrichment data at top level
+        metrics = data['phase3_metrics'].copy()
+        # Add enrichment data at top level for template access
+        metrics['market_risk'] = data.get('market_risk')
+        metrics['macro_environment'] = data.get('macro_environment')
+        metrics['distribution_cut_prediction'] = data.get('distribution_cut_prediction')
+        metrics['distribution_history'] = data.get('distribution_history')
+        print(f"✓ Loaded enriched metrics for: {metrics.get('issuer_name', 'Unknown')}")
+    else:
+        # Standard Phase 3 file
+        metrics = data
+        print(f"✓ Loaded metrics for: {metrics.get('issuer_name', 'Unknown')}")
 
     return metrics
 
@@ -1362,19 +1376,22 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     gla = portfolio_metrics.get('gla_sf', 0) / 1_000_000  # Convert to millions
 
     # Extract enriched data (Issue #40: market, macro, distribution history, prediction)
-    # Check if metrics contains enriched data structure (has 'phase3_metrics' key)
-    if 'phase3_metrics' in metrics:
-        # Enriched data from enrich_phase4_data.py
+    # Check if metrics contains enriched data (market_risk key present and not None)
+    # Note: load_metrics() merges enriched data at top level, so check for market_risk directly
+    if metrics.get('market_risk') is not None:
+        # Enriched data from enrich_phase4_data.py (merged at top level by load_metrics)
         market_risk = metrics.get('market_risk', {})
         macro_environment = metrics.get('macro_environment', {})
         distribution_history = metrics.get('distribution_history', {})
         distribution_prediction = metrics.get('distribution_cut_prediction', {})
+        print("✓ Using enriched data for market/macro/prediction sections")
     else:
         # No enriched data - use empty dictionaries (graceful degradation)
         market_risk = {}
         macro_environment = {}
         distribution_history = {}
         distribution_prediction = {}
+        print("⚠️  No enriched data found - market/macro/prediction sections will show N/A")
 
     # Generate assessments
     leverage_level, leverage_rating, leverage_threshold = assess_leverage(debt_to_assets)
@@ -2331,45 +2348,47 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'PEER_FFO_AFFO_ACFO_AFCF_COMPARISON': 'Peer comparison not available in this analysis',
 
         # ========== Issue #40: Market Risk Placeholders (26) ==========
+        # Fixed: Corrected data paths to match enrich_phase4_data.py output structure
         'MARKET_CURRENT_PRICE': f"{market_risk.get('price_stress', {}).get('current_price', 0):.2f}" if market_risk else 'N/A',
         'MARKET_52W_HIGH': f"{market_risk.get('price_stress', {}).get('high_52w', 0):.2f}" if market_risk else 'N/A',
         'MARKET_52W_LOW': f"{market_risk.get('price_stress', {}).get('low_52w', 0):.2f}" if market_risk else 'N/A',
-        'MARKET_DECLINE_FROM_PEAK': f"{market_risk.get('price_stress', {}).get('decline_pct', 0):.1f}" if market_risk else 'N/A',
+        'MARKET_DECLINE_FROM_PEAK': f"{market_risk.get('price_stress', {}).get('decline_from_peak_pct', 0):.1f}" if market_risk else 'N/A',  # Fixed: decline_from_peak_pct not decline_pct
         'MARKET_DAYS_SINCE_PEAK': f"{market_risk.get('price_stress', {}).get('days_since_peak', 0):.0f}" if market_risk else 'N/A',
         'MARKET_STRESS_LEVEL': market_risk.get('price_stress', {}).get('stress_level', 'N/A') if market_risk else 'N/A',
-        'MARKET_VOLATILITY_30D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('30_day', {}).get('annualized_volatility_pct', 0):.1f}" if market_risk else 'N/A',
-        'MARKET_VOLATILITY_90D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('90_day', {}).get('annualized_volatility_pct', 0):.1f}" if market_risk else 'N/A',
-        'MARKET_VOLATILITY_252D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('252_day', {}).get('annualized_volatility_pct', 0):.1f}" if market_risk else 'N/A',
-        'MARKET_VOL_30D_CLASS': market_risk.get('volatility', {}).get('metrics', {}).get('30_day', {}).get('classification', 'N/A') if market_risk else 'N/A',
-        'MARKET_VOL_90D_CLASS': market_risk.get('volatility', {}).get('metrics', {}).get('90_day', {}).get('classification', 'N/A') if market_risk else 'N/A',
-        'MARKET_VOL_252D_CLASS': market_risk.get('volatility', {}).get('metrics', {}).get('252_day', {}).get('classification', 'N/A') if market_risk else 'N/A',
-        'MARKET_VOL_CLASSIFICATION': market_risk.get('volatility', {}).get('overall_classification', 'N/A') if market_risk else 'N/A',
+        'MARKET_VOLATILITY_30D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('30d', {}).get('volatility_annualized_pct', 0):.1f}" if market_risk else 'N/A',  # Fixed: 30d not 30_day, volatility_annualized_pct
+        'MARKET_VOLATILITY_90D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('90d', {}).get('volatility_annualized_pct', 0):.1f}" if market_risk else 'N/A',  # Fixed: 90d not 90_day
+        'MARKET_VOLATILITY_252D': f"{market_risk.get('volatility', {}).get('metrics', {}).get('252d', {}).get('volatility_annualized_pct', 0):.1f}" if market_risk else 'N/A',  # Fixed: 252d not 252_day
+        'MARKET_VOL_30D_CLASS': market_risk.get('volatility', {}).get('metrics', {}).get('30d', {}).get('classification', 'N/A') if market_risk else 'N/A',  # Fixed: 30d
+        'MARKET_VOL_90D_CLASS': market_risk.get('volatility', {}).get('metrics', {}).get('90d', {}).get('classification', 'N/A') if market_risk else 'N/A',  # Fixed: 90d
+        'MARKET_VOL_252D_CLASS': market_risk.get('volatility', {}).get('metrics', {}).get('252d', {}).get('classification', 'N/A') if market_risk else 'N/A',  # Fixed: 252d
+        'MARKET_VOL_CLASSIFICATION': market_risk.get('volatility', {}).get('classification', 'N/A') if market_risk else 'N/A',  # Fixed: removed 'overall_classification' level
         'MARKET_MOMENTUM_3M': f"{market_risk.get('momentum', {}).get('metrics', {}).get('3_month', {}).get('total_return_pct', 0):.1f}" if market_risk else 'N/A',
         'MARKET_MOMENTUM_6M': f"{market_risk.get('momentum', {}).get('metrics', {}).get('6_month', {}).get('total_return_pct', 0):.1f}" if market_risk else 'N/A',
         'MARKET_MOMENTUM_12M': f"{market_risk.get('momentum', {}).get('metrics', {}).get('12_month', {}).get('total_return_pct', 0):.1f}" if market_risk else 'N/A',
         'MARKET_MOMENTUM_TREND': market_risk.get('momentum', {}).get('trend', 'N/A') if market_risk else 'N/A',
         'MARKET_VOLUME_TREND': market_risk.get('volume', {}).get('trend', 'N/A') if market_risk else 'N/A',
-        'MARKET_PRICE_STRESS_SCORE': f"{market_risk.get('risk_score', {}).get('price_stress_score', 0):.0f}" if market_risk else 'N/A',
-        'MARKET_VOLATILITY_SCORE': f"{market_risk.get('risk_score', {}).get('volatility_score', 0):.0f}" if market_risk else 'N/A',
-        'MARKET_MOMENTUM_SCORE': f"{market_risk.get('risk_score', {}).get('momentum_score', 0):.0f}" if market_risk else 'N/A',
-        'MARKET_VOLUME_SCORE': f"{market_risk.get('risk_score', {}).get('volume_score', 0):.0f}" if market_risk else 'N/A',
+        'MARKET_PRICE_STRESS_SCORE': f"{market_risk.get('risk_score', {}).get('components', {}).get('stress_points', 0):.0f}" if market_risk else 'N/A',  # Fixed: risk_score.components.stress_points
+        'MARKET_VOLATILITY_SCORE': f"{market_risk.get('risk_score', {}).get('components', {}).get('volatility_points', 0):.0f}" if market_risk else 'N/A',  # Fixed: components.volatility_points
+        'MARKET_MOMENTUM_SCORE': f"{market_risk.get('risk_score', {}).get('components', {}).get('momentum_points', 0):.0f}" if market_risk else 'N/A',  # Fixed: components.momentum_points
+        'MARKET_VOLUME_SCORE': f"{market_risk.get('risk_score', {}).get('components', {}).get('volume_points', 0):.0f}" if market_risk else 'N/A',  # Fixed: components.volume_points
         'MARKET_RISK_SCORE': f"{market_risk.get('risk_score', {}).get('total_score', 0):.0f}" if market_risk else 'N/A',
         'MARKET_RISK_LEVEL': market_risk.get('risk_score', {}).get('risk_level', 'N/A') if market_risk else 'N/A',
         'MARKET_RISK_NARRATIVE': market_risk.get('overall_assessment', 'Market risk assessment unavailable') if market_risk else 'Market risk assessment unavailable',
         'MARKET_CREDIT_IMPLICATIONS': market_risk.get('credit_implications', 'Credit implications analysis unavailable') if market_risk else 'Credit implications analysis unavailable',
 
         # ========== Issue #40: Macro Environment Placeholders (13) ==========
-        'MACRO_CA_RATE': f"{macro_environment.get('canada', {}).get('current_rate', 0):.2f}" if macro_environment else 'N/A',
-        'MACRO_CA_CHANGE_BPS': f"{macro_environment.get('canada', {}).get('change_12m_bps', 0):.0f}" if macro_environment else 'N/A',
-        'MACRO_CA_CYCLE': macro_environment.get('canada', {}).get('cycle', 'N/A') if macro_environment else 'N/A',
-        'MACRO_CA_PEAK_RATE': f"{macro_environment.get('canada', {}).get('max_rate', 0):.2f}" if macro_environment else 'N/A',
-        'MACRO_CA_CREDIT_ENVIRONMENT': macro_environment.get('credit_environment', 'N/A') if macro_environment else 'N/A',
-        'MACRO_CA_STRESS_SCORE': f"{macro_environment.get('credit_stress_score', 0):.0f}" if macro_environment else 'N/A',
-        'MACRO_US_RATE': f"{macro_environment.get('united_states', {}).get('current_rate', 0):.2f}" if macro_environment and macro_environment.get('united_states') else 'N/A',
-        'MACRO_US_CHANGE_BPS': f"{macro_environment.get('united_states', {}).get('change_12m_bps', 0):.0f}" if macro_environment and macro_environment.get('united_states') else 'N/A',
-        'MACRO_US_CYCLE': macro_environment.get('united_states', {}).get('cycle', 'N/A') if macro_environment and macro_environment.get('united_states') else 'N/A',
-        'MACRO_SPREAD_BPS': f"{macro_environment.get('spread_bps', 0):.0f}" if macro_environment and macro_environment.get('spread_bps') is not None else 'N/A',
-        'MACRO_SPREAD_TREND': macro_environment.get('spread_trend', 'N/A') if macro_environment else 'N/A',
+        # Fixed: Added missing 'policy_rate' nesting level for Canada and US rates
+        'MACRO_CA_RATE': f"{macro_environment.get('canada', {}).get('policy_rate', {}).get('current_rate', 0):.2f}" if macro_environment else 'N/A',
+        'MACRO_CA_CHANGE_BPS': f"{macro_environment.get('canada', {}).get('policy_rate', {}).get('change_12m_bps', 0):.0f}" if macro_environment else 'N/A',
+        'MACRO_CA_CYCLE': macro_environment.get('canada', {}).get('policy_rate', {}).get('cycle', 'N/A') if macro_environment else 'N/A',
+        'MACRO_CA_PEAK_RATE': f"{macro_environment.get('canada', {}).get('policy_rate', {}).get('max_rate', 0):.2f}" if macro_environment else 'N/A',
+        'MACRO_CA_CREDIT_ENVIRONMENT': macro_environment.get('canada', {}).get('credit_environment', 'N/A') if macro_environment else 'N/A',  # Fixed: under canada not top level
+        'MACRO_CA_STRESS_SCORE': f"{macro_environment.get('canada', {}).get('credit_stress_score', 0):.0f}" if macro_environment else 'N/A',  # Fixed: under canada not top level
+        'MACRO_US_RATE': f"{macro_environment.get('united_states', {}).get('policy_rate', {}).get('current_rate', 0):.2f}" if macro_environment and macro_environment.get('united_states') else 'N/A',
+        'MACRO_US_CHANGE_BPS': f"{macro_environment.get('united_states', {}).get('policy_rate', {}).get('change_12m_bps', 0):.0f}" if macro_environment and macro_environment.get('united_states') else 'N/A',
+        'MACRO_US_CYCLE': macro_environment.get('united_states', {}).get('policy_rate', {}).get('cycle', 'N/A') if macro_environment and macro_environment.get('united_states') else 'N/A',
+        'MACRO_SPREAD_BPS': f"{macro_environment.get('rate_differential', {}).get('ca_minus_us_bps', 0):.0f}" if macro_environment and macro_environment.get('rate_differential') else 'N/A',  # Fixed: rate_differential.ca_minus_us_bps
+        'MACRO_SPREAD_TREND': 'N/A',  # Note: spread_trend not in enriched data structure - would need to be added to enrich_phase4_data.py
         'MACRO_RATE_NARRATIVE': macro_environment.get('overall_assessment', 'Macro environment assessment unavailable') if macro_environment else 'Macro environment assessment unavailable',
         'MACRO_CREDIT_IMPLICATIONS': macro_environment.get('credit_implications', 'Credit implications analysis unavailable') if macro_environment else 'Credit implications analysis unavailable',
 
