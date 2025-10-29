@@ -9,15 +9,15 @@
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    REAL ESTATE ISSUER CREDIT ANALYSIS PIPELINE              │
-│                                                                             │
-│  Input: Financial Statements PDFs → Output: Credit Opinion Report          │
-│                                                                             │
-│  Phases: 5 Sequential + 1 Optional Enrichment                              │
-│  Token Usage: ~13,000 tokens total (~$0.30 per analysis)                   │
-│  Execution Time: ~60 seconds (PyMuPDF) or ~20 minutes (Docling)            │
-└─────────────────────────────────────────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════════╗
+║           REAL ESTATE ISSUER CREDIT ANALYSIS PIPELINE                     ║
+║                                                                           ║
+║  Input: Financial Statements PDFs → Output: Credit Opinion Report        ║
+║                                                                           ║
+║  Phases: 5 Sequential + 1 Optional Enrichment                            ║
+║  Token Usage: ~13,000 tokens (~$0.30 per analysis)                       ║
+║  Execution Time: ~60 seconds (PyMuPDF) or ~20 minutes (Docling)          ║
+╚═══════════════════════════════════════════════════════════════════════════╝
 ```
 
 ---
@@ -1060,323 +1060,231 @@ Issuer_Reports/Example_REIT/reports/
 ## Complete Data Flow Diagram
 
 ```
-┌───────────────────────────────────────────────────────────────────────────┐
-│                           INPUT: USER-PROVIDED PDFs                       │
-│                                                                           │
-│  • Financial Statements PDF (30-50 pages)                                │
-│  • MD&A PDF (20-40 pages)                                                │
-│  • Issuer Name (string)                                                  │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                    INPUT: USER-PROVIDED PDFs                          ║
+║                                                                       ║
+║  • Financial Statements PDF (30-50 pages)                            ║
+║  • MD&A PDF (20-40 pages)                                            ║
+║  • Issuer Name (string)                                              ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                         PHASE 1: PDF → MARKDOWN                          │
-│                                                                           │
-│  Tool: preprocess_pdfs_enhanced.py (PyMuPDF + Camelot)                   │
-│        OR preprocess_pdfs_docling.py (Docling FAST)                      │
-│                                                                           │
-│  Processing:                                                              │
-│    - Extract text and tables from PDFs                                   │
-│    - Convert to structured markdown                                      │
-│    - Preserve financial statement hierarchies                            │
-│                                                                           │
-│  Time: 30 seconds (PyMuPDF) or 20 minutes (Docling)                      │
-│  Tokens: 0                                                                │
-│  Cost: $0.00                                                              │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                      PHASE 1: PDF → MARKDOWN                          ║
+║                                                                       ║
+║  Tool: preprocess_pdfs_enhanced.py (PyMuPDF + Camelot)               ║
+║        OR preprocess_pdfs_docling.py (Docling FAST)                  ║
+║                                                                       ║
+║  Processing:                                                          ║
+║    - Extract text and tables from PDFs                               ║
+║    - Convert to structured markdown                                  ║
+║    - Preserve financial statement hierarchies                        ║
+║                                                                       ║
+║  Time: 30 seconds (PyMuPDF) or 20 minutes (Docling)                  ║
+║  Tokens: 0  |  Cost: $0.00                                           ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                     OUTPUT: PHASE 1 MARKDOWN FILES                        │
-│                                                                           │
-│  Issuer_Reports/{Issuer}/temp/phase1_markdown/                           │
-│    ├── statements.md (~300KB, 113 tables)                                │
-│    └── mda.md (~245KB, text + tables)                                    │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                  OUTPUT: PHASE 1 MARKDOWN FILES                       ║
+║                                                                       ║
+║  Issuer_Reports/{Issuer}/temp/phase1_markdown/                       ║
+║    ├── statements.md (~300KB, 113 tables)                            ║
+║    └── mda.md (~245KB, text + tables)                                ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                         PHASE 2: MARKDOWN → JSON                         │
-│                                                                           │
-│  Tool: extract_key_metrics_efficient.py                                  │
-│  Schema: .claude/knowledge/phase2_extraction_schema.json                 │
-│  Guide: .claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md              │
-│                                                                           │
-│  Processing:                                                              │
-│    - Read markdown files via Claude Code Read tool                       │
-│    - Extract structured financial data                                   │
-│    - Validate against JSON schema                                        │
-│    - Save to JSON                                                         │
-│                                                                           │
-│  Time: 5-10 seconds                                                       │
-│  Tokens: ~1,000 (file references)                                        │
-│  Cost: $0.00                                                              │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                      PHASE 2: MARKDOWN → JSON                         ║
+║                                                                       ║
+║  Tool: extract_key_metrics_efficient.py                              ║
+║  Schema: .claude/knowledge/phase2_extraction_schema.json             ║
+║                                                                       ║
+║  Processing:                                                          ║
+║    - Read markdown files via Claude Code Read tool                   ║
+║    - Extract structured financial data                               ║
+║    - Validate against JSON schema → Save to JSON                     ║
+║                                                                       ║
+║  Time: 5-10 seconds  |  Tokens: ~1,000  |  Cost: $0.00              ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                      OUTPUT: PHASE 2 EXTRACTED JSON                       │
-│                                                                           │
-│  Issuer_Reports/{Issuer}/temp/                                           │
-│    └── phase2_extracted_data.json (~50-100KB)                            │
-│                                                                           │
-│  Contents:                                                                │
-│    - Balance sheet (flat structure)                                      │
-│    - Income statement (top-level values)                                 │
-│    - FFO/AFFO/ACFO reconciliations (43 REALPAC adjustments)              │
-│    - Cash flows (operating, investing, financing)                        │
-│    - Portfolio details (occupancy, GLA, properties)                      │
-│    - Debt details (maturities, covenants, facilities)                    │
-│    - Liquidity (cash, credit facilities)                                 │
-│    - Distributions (common, preferred, NCI)                              │
-│    - Dilution detail (optional)                                          │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                   OUTPUT: PHASE 2 EXTRACTED JSON                      ║
+║                                                                       ║
+║  File: phase2_extracted_data.json (~50-100KB)                        ║
+║                                                                       ║
+║  Contents:                                                            ║
+║    • Balance sheet (flat structure)                                  ║
+║    • Income statement (top-level values)                             ║
+║    • FFO/AFFO/ACFO reconciliations (43 REALPAC adjustments)          ║
+║    • Cash flows (operating, investing, financing)                    ║
+║    • Portfolio, debt, liquidity, distributions, dilution             ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                  VALIDATION: SCHEMA COMPLIANCE CHECK                      │
-│                                                                           │
-│  Tool: validate_extraction_schema.py                                     │
-│                                                                           │
-│  Checks:                                                                  │
-│    ✓ Flat structure for balance_sheet                                    │
-│    ✓ Top-level values for income_statement                               │
-│    ✓ No null values in numeric fields                                    │
-│    ✓ Decimal format for rates (0-1 range)                                │
-│    ✓ All required fields present                                         │
-│                                                                           │
-│  CRITICAL: Phase 3 will FAIL if schema validation fails                  │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║               VALIDATION: SCHEMA COMPLIANCE CHECK                     ║
+║                                                                       ║
+║  Tool: validate_extraction_schema.py                                 ║
+║                                                                       ║
+║  Checks:                                                              ║
+║    ✓ Flat structure for balance_sheet                                ║
+║    ✓ Top-level values for income_statement                           ║
+║    ✓ No null values in numeric fields                                ║
+║    ✓ Decimal format for rates (0-1 range)                            ║
+║                                                                       ║
+║  ⚠️  CRITICAL: Phase 3 will FAIL if validation fails                 ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                    PHASE 3: JSON → CALCULATED METRICS                    │
-│                                                                           │
-│  Tool: calculate_credit_metrics.py                                       │
-│                                                                           │
-│  Processing:                                                              │
-│    - Calculate FFO, AFFO, ACFO (per-unit: basic & diluted)              │
-│    - Calculate AFCF (if cash flow data present)                         │
-│    - Calculate burn rate & cash runway (if liquidity data present)      │
-│    - Analyze dilution (if dilution_detail present)                      │
-│    - Calculate leverage metrics (Debt/Assets, Net Debt/EBITDA)          │
-│    - Calculate liquidity metrics                                         │
-│    - Calculate portfolio metrics (occupancy, NOI margin)                 │
-│    - Validate calculations                                               │
-│                                                                           │
-│  Functions:                                                               │
-│    - calculate_ffo_from_components()                                     │
-│    - calculate_affo_from_ffo()                                           │
-│    - calculate_acfo_from_components()                                    │
-│    - calculate_afcf()                                                    │
-│    - calculate_burn_rate()                                               │
-│    - calculate_cash_runway()                                             │
-│    - analyze_dilution()                                                  │
-│    - calculate_leverage_metrics()                                        │
-│    - calculate_liquidity_metrics()                                       │
-│    - calculate_portfolio_metrics()                                       │
-│                                                                           │
-│  Time: < 1 second                                                         │
-│  Tokens: 0 (pure Python)                                                 │
-│  Cost: $0.00                                                              │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                 PHASE 3: JSON → CALCULATED METRICS                    ║
+║                                                                       ║
+║  Tool: calculate_credit_metrics.py                                   ║
+║                                                                       ║
+║  Calculations:                                                        ║
+║    • FFO, AFFO, ACFO (per-unit: basic & diluted)                    ║
+║    • AFCF (if cash flow data present)                               ║
+║    • Burn rate & cash runway (if liquidity data present)            ║
+║    • Dilution analysis (if dilution_detail present)                 ║
+║    • Leverage, liquidity, portfolio metrics                          ║
+║                                                                       ║
+║  Functions: calculate_ffo_from_components(), calculate_affo(),       ║
+║    calculate_acfo(), calculate_afcf(), calculate_burn_rate(),        ║
+║    calculate_cash_runway(), analyze_dilution(), etc.                 ║
+║                                                                       ║
+║  Time: < 1 second  |  Tokens: 0  |  Cost: $0.00                     ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                   OUTPUT: PHASE 3 CALCULATED METRICS JSON                 │
-│                                                                           │
-│  Issuer_Reports/{Issuer}/temp/                                           │
-│    └── phase3_calculated_metrics.json (~150-300KB)                       │
-│                                                                           │
-│  Contents:                                                                │
-│    - ffo_metrics (total, per-unit basic/diluted, reported, variance)    │
-│    - affo_metrics (total, per-unit, payout ratio)                       │
-│    - acfo_metrics (total, per-unit, coverage ratio)                     │
-│    - afcf_metrics (total, per-unit, self-funding ratio)                 │
-│    - afcf_coverage (debt service coverage, payout ratio)                │
-│    - burn_rate_analysis (monthly/annual, net financing needs)           │
-│    - cash_runway (months/years, depletion date, risk level)             │
-│    - dilution_analysis (percentage, materiality, governance score)      │
-│    - leverage_metrics (debt/assets, net debt/ebitda, interest coverage) │
-│    - liquidity_metrics (current ratio, debt maturity profile)           │
-│    - portfolio_metrics (occupancy, NOI margin, revenue/SF)              │
-│    - validation (balance sheet balanced, warnings, errors)              │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                OUTPUT: PHASE 3 CALCULATED METRICS                     ║
+║                                                                       ║
+║  File: phase3_calculated_metrics.json (~150-300KB)                   ║
+║                                                                       ║
+║  Contents:                                                            ║
+║    • ffo_metrics, affo_metrics, acfo_metrics, afcf_metrics          ║
+║    • afcf_coverage, burn_rate_analysis, cash_runway                 ║
+║    • dilution_analysis, leverage_metrics, liquidity_metrics         ║
+║    • portfolio_metrics, validation                                   ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│            PHASE 3.5 (OPTIONAL): DATA ENRICHMENT                         │
-│                                                                           │
-│  Tool: enrich_phase4_data.py                                             │
-│  Model: distribution_cut_logistic_regression_v2.2.pkl                    │
-│                                                                           │
-│  Data Sources:                                                            │
-│    1. OpenBB Platform (Market Data)                                      │
-│       - TMX: Price, volume, 52-week high/low                            │
-│       - YFinance: Financial statement validation                         │
-│    2. OpenBB Platform (Dividend History)                                 │
-│       - 10-15 years dividend history                                     │
-│       - Distribution cut detection                                       │
-│       - Recovery analysis                                                │
-│    3. Bank of Canada Valet API (Macro Data)                             │
-│       - Canadian policy rate                                             │
-│    4. Federal Reserve FRED API (Macro Data)                             │
-│       - US Federal Funds Rate                                            │
-│    5. ML Model v2.2 (Distribution Cut Prediction)                       │
-│       - 28 Phase 3 features                                              │
-│       - Logistic regression prediction                                   │
-│       - Top risk drivers                                                 │
-│                                                                           │
-│  Processing:                                                              │
-│    - Extract market risk metrics (price stress, volatility, momentum)   │
-│    - Extract macro environment (rate cycle, credit stress score)        │
-│    - Extract dividend history (cuts, recovery patterns)                 │
-│    - Generate ML prediction (cut probability, risk level)               │
-│    - Merge with Phase 3 metrics                                          │
-│                                                                           │
-│  Time: 10-15 seconds                                                      │
-│  Tokens: 0 (Python + API calls)                                         │
-│  Cost: $0.00 (all free tier APIs)                                       │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║             PHASE 3.5 (OPTIONAL): DATA ENRICHMENT                     ║
+║                                                                       ║
+║  Tool: enrich_phase4_data.py                                         ║
+║  Model: distribution_cut_logistic_regression_v2.2.pkl                ║
+║                                                                       ║
+║  Data Sources:                                                        ║
+║    1. OpenBB Platform: Market data (TMX, YFinance)                  ║
+║    2. OpenBB Platform: Dividend history (10-15 years)               ║
+║    3. Bank of Canada: Policy rate (Valet API)                       ║
+║    4. Federal Reserve: Fed rate (FRED API)                          ║
+║    5. ML Model v2.2: Distribution cut prediction (28 features)      ║
+║                                                                       ║
+║  Processing:                                                          ║
+║    • Market risk (price stress, volatility, momentum)               ║
+║    • Macro environment (rate cycle, credit stress)                  ║
+║    • Dividend history (cuts, recovery patterns)                     ║
+║    • ML prediction (cut probability, risk level, drivers)           ║
+║                                                                       ║
+║  Time: 10-15 seconds  |  Tokens: 0  |  Cost: $0.00 (free APIs)     ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                OUTPUT: PHASE 3 ENRICHED METRICS JSON (OPTIONAL)           │
-│                                                                           │
-│  Issuer_Reports/{Issuer}/temp/                                           │
-│    └── phase3_enriched_data.json (~200-400KB)                            │
-│                                                                           │
-│  Additional Contents (beyond Phase 3):                                   │
-│    - market_data (price stress, volatility, momentum, risk score)       │
-│    - macro_environment (rates, rate cycle, credit stress)               │
-│    - distribution_history (cuts, recovery, yield)                       │
-│    - distribution_cut_prediction (probability, risk level, drivers)     │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║              OUTPUT: PHASE 3 ENRICHED METRICS (OPTIONAL)              ║
+║                                                                       ║
+║  File: phase3_enriched_data.json (~200-400KB)                        ║
+║                                                                       ║
+║  Additional Contents (beyond Phase 3):                               ║
+║    • market_data, macro_environment                                  ║
+║    • distribution_history, distribution_cut_prediction               ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                   PHASE 4: CREDIT ANALYSIS GENERATION                     │
-│                                                                           │
-│  Method: Invoke issuer_due_diligence_expert_slim agent via Task tool    │
-│  Agent Profile: .claude/agents/domain_expert/issuer_due_diligence_expert_slim.md │
-│                                                                           │
-│  Processing:                                                              │
-│    - Read Phase 3 metrics (or enriched data)                            │
-│    - Generate executive summary                                          │
-│    - Analyze 5 credit factors:                                           │
-│      1. Business profile                                                 │
-│      2. Operating performance                                            │
-│      3. Cash flow generation                                             │
-│      4. Capital structure & flexibility                                  │
-│      5. Financial policy                                                 │
-│    - Assess liquidity & burn rate                                       │
-│    - Evaluate distribution cut risk (if enriched)                       │
-│    - Research 3-4 peer REITs (parallel web searches)                    │
-│    - Provide rating & outlook                                            │
-│    - Save markdown output                                                │
-│                                                                           │
-│  Time: 30-60 seconds                                                      │
-│  Tokens: ~12,000                                                         │
-│  Cost: ~$0.30                                                             │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                PHASE 4: CREDIT ANALYSIS GENERATION                    ║
+║                                                                       ║
+║  Method: Invoke issuer_due_diligence_expert_slim via Task tool      ║
+║  Agent: .claude/agents/domain_expert/issuer_due_diligence_...       ║
+║                                                                       ║
+║  Processing:                                                          ║
+║    • Read Phase 3 metrics (or enriched data)                        ║
+║    • Analyze 5 credit factors (business, operations, cash flow,     ║
+║      capital structure, financial policy)                            ║
+║    • Assess liquidity & burn rate                                    ║
+║    • Evaluate distribution cut risk (if enriched)                    ║
+║    • Research 3-4 peer REITs (parallel web searches)                ║
+║    • Provide rating & outlook                                        ║
+║                                                                       ║
+║  Time: 30-60 seconds  |  Tokens: ~12,000  |  Cost: ~$0.30          ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                  OUTPUT: PHASE 4 CREDIT ANALYSIS MARKDOWN                 │
-│                                                                           │
-│  Issuer_Reports/{Issuer}/temp/                                           │
-│    └── phase4_credit_analysis.md (~30-50KB)                              │
-│                                                                           │
-│  Contents:                                                                │
-│    - Executive summary                                                    │
-│    - Factor 1: Business Profile                                          │
-│    - Factor 2: Operating Performance                                     │
-│    - Factor 3: Cash Flow Generation                                      │
-│    - Factor 4: Capital Structure & Financial Flexibility                 │
-│    - Factor 5: Financial Policy                                          │
-│    - Liquidity & Burn Rate Analysis                                      │
-│    - Distribution Cut Risk Assessment                                    │
-│    - Peer Comparison (3-4 REITs)                                         │
-│    - Rating & Outlook                                                     │
-│    - Appendix: Data Sources                                              │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║              OUTPUT: PHASE 4 CREDIT ANALYSIS MARKDOWN                 ║
+║                                                                       ║
+║  File: phase4_credit_analysis.md (~30-50KB)                          ║
+║                                                                       ║
+║  Contents:                                                            ║
+║    • Executive summary                                               ║
+║    • 5 credit factors analysis                                       ║
+║    • Liquidity & burn rate analysis                                  ║
+║    • Distribution cut risk (if enriched)                             ║
+║    • Peer comparison, rating & outlook                               ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                    PHASE 5: FINAL REPORT GENERATION                       │
-│                                                                           │
-│  Tool: generate_final_report.py                                          │
-│  Template: templates/credit_opinion_template_enhanced.md                 │
-│                                                                           │
-│  Inputs:                                                                  │
-│    - Phase 2: phase2_extracted_data.json                                 │
-│    - Phase 3: phase3_calculated_metrics.json (or enriched)              │
-│    - Phase 4: phase4_credit_analysis.md                                  │
-│                                                                           │
-│  Processing:                                                              │
-│    - Load all input JSON and markdown files                              │
-│    - Populate 2000+ placeholders in template                             │
-│    - Generate dual-table reporting (reported vs calculated)             │
-│    - Parse structural considerations from Phase 4                        │
-│    - Calculate coverage quality assessments                              │
-│    - Format currency and percentages                                     │
-│    - Insert Phase 4 credit analysis                                      │
-│    - Add disclaimers and appendices                                      │
-│    - Save timestamped final report                                       │
-│                                                                           │
-│  Helper Functions:                                                        │
-│    - calculate_per_unit()                                                │
-│    - calculate_payout_ratio()                                            │
-│    - calculate_coverage_ratio()                                          │
-│    - assess_distribution_coverage()                                      │
-│    - assess_self_funding_capacity()                                      │
-│    - parse_debt_structure()                                              │
-│    - parse_security_collateral()                                         │
-│    - check_perpetual_securities()                                        │
-│                                                                           │
-│  Time: < 1 second                                                         │
-│  Tokens: 0 (pure Python)                                                 │
-│  Cost: $0.00                                                              │
-└─────────────────────────────────┬─────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                 PHASE 5: FINAL REPORT GENERATION                      ║
+║                                                                       ║
+║  Tool: generate_final_report.py                                      ║
+║  Template: templates/credit_opinion_template_enhanced.md             ║
+║                                                                       ║
+║  Inputs:                                                              ║
+║    • Phase 2: phase2_extracted_data.json                             ║
+║    • Phase 3: phase3_calculated_metrics.json (or enriched)           ║
+║    • Phase 4: phase4_credit_analysis.md                              ║
+║                                                                       ║
+║  Processing:                                                          ║
+║    • Load all inputs → Populate 2000+ template placeholders          ║
+║    • Generate dual-table reporting (reported vs calculated)          ║
+║    • Parse structural considerations from Phase 4                    ║
+║    • Format currency/percentages → Insert Phase 4 analysis           ║
+║    • Add disclaimers and appendices → Save timestamped report        ║
+║                                                                       ║
+║  Time: < 1 second  |  Tokens: 0  |  Cost: $0.00                     ║
+╚═════════════════════════════════╤═════════════════════════════════════╝
                                   │
                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                    OUTPUT: FINAL CREDIT OPINION REPORT                    │
-│                                                                           │
-│  Issuer_Reports/{Issuer}/reports/                                        │
-│    └── {YYYY-MM-DD_HHMMSS}_Credit_Opinion_{Issuer}.md (~200-300KB)      │
-│                                                                           │
-│  Contents (13 Sections):                                                  │
-│    1. Executive Summary                                                   │
-│    2. Financial Performance Metrics                                       │
-│       2.1 FFO                                                             │
-│       2.2 AFFO                                                            │
-│       2.3 ACFO                                                            │
-│       2.4 AFCF                                                            │
-│       2.5 Coverage Ratios                                                 │
-│       2.6 Bridge & Gap Analysis                                           │
-│       2.7 Self-Funding Analysis                                           │
-│    3. Balance Sheet Analysis                                              │
-│    4. Portfolio Overview                                                  │
-│    5. Liquidity & Debt Analysis                                           │
-│    6. Burn Rate & Cash Runway Analysis                                    │
-│    7. Distribution Cut Risk Assessment                                    │
-│    8. Structural Considerations                                           │
-│       8.1 Debt Structure                                                  │
-│       8.2 Security & Collateral                                           │
-│       8.3 Perpetual Securities                                            │
-│    9. Qualitative Credit Assessment (Phase 4 inserted)                    │
-│   10. Market & Macro Environment                                          │
-│   11. Peer Comparison                                                     │
-│   12. Rating & Outlook                                                    │
-│   13. Appendices                                                          │
-│       A. Data Sources                                                     │
-│       B. Methodology                                                      │
-│       C. Disclaimers                                                      │
-│                                                                           │
-│  Format: Professional Moody's-style credit opinion                        │
-│  Placeholder Population: 90%+ (varies by data availability)              │
-└───────────────────────────────────────────────────────────────────────────┘
+╔═══════════════════════════════════════════════════════════════════════╗
+║                 OUTPUT: FINAL CREDIT OPINION REPORT                   ║
+║                                                                       ║
+║  File: {YYYY-MM-DD_HHMMSS}_Credit_Opinion_{Issuer}.md               ║
+║  Location: Issuer_Reports/{Issuer}/reports/                          ║
+║  Size: ~200-300KB                                                     ║
+║                                                                       ║
+║  Contents (13 Sections):                                              ║
+║    1. Executive Summary                                              ║
+║    2. Financial Performance (FFO/AFFO/ACFO/AFCF, coverage ratios)   ║
+║    3. Balance Sheet Analysis                                         ║
+║    4. Portfolio Overview                                             ║
+║    5. Liquidity & Debt Analysis                                      ║
+║    6. Burn Rate & Cash Runway                                        ║
+║    7. Distribution Cut Risk                                          ║
+║    8. Structural Considerations                                      ║
+║    9. Qualitative Credit Assessment (Phase 4)                        ║
+║   10. Market & Macro Environment                                     ║
+║   11. Peer Comparison                                                ║
+║   12. Rating & Outlook                                               ║
+║   13. Appendices (sources, methodology, disclaimers)                 ║
+║                                                                       ║
+║  Format: Professional Moody's-style credit opinion                   ║
+║  Completeness: 90%+ placeholder population                           ║
+╚═══════════════════════════════════════════════════════════════════════╝
 ```
 
 ---
@@ -1419,32 +1327,40 @@ Issuer_Reports/Example_REIT/reports/
 ## File Dependency Graph
 
 ```
-INPUT PDFs
-    │
-    ├─→ Phase 1 → statements.md ─┐
-    │                             │
-    └─→ Phase 1 → mda.md ─────────┤
-                                  │
-                                  ├─→ Phase 2 → phase2_extracted_data.json ─┐
-                                                                             │
-                                                                             ├─→ Validation (schema check)
-                                                                             │
-                                                                             ├─→ Phase 3 → phase3_calculated_metrics.json ─┐
-                                                                                                                            │
-                                                                                                                            ├─→ Phase 3.5 (optional) → phase3_enriched_data.json ─┐
-                                                                                                                            │                                                      │
-                                                                                                                            └──────────────────────────────────────────────────────┤
-                                                                                                                                                                                   │
-                                                                                                                                                                                   ├─→ Phase 4 → phase4_credit_analysis.md ─┐
-                                                                                                                                                                                                                                │
-                                                                                                                                                                                                                                │
-phase2_extracted_data.json ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-                                                                                                                                                                                    │
-phase3_calculated_metrics.json (or enriched) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-                                                                                                                                                                                    │
-                                                                                                                                                                                    ├─→ Phase 5 → FINAL_REPORT.md
-                                                                                                                                                                                    │
-phase4_credit_analysis.md ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+INPUT: Financial Statement PDFs (2 files)
+   │
+   ├──▶ PHASE 1: PDF → Markdown
+   │      ├── statements.md (300KB)
+   │      └── mda.md (245KB)
+   │
+   ├──▶ PHASE 2: Markdown → JSON
+   │      └── phase2_extracted_data.json (50-100KB)
+   │            │
+   │            ├──▶ VALIDATION: Schema check (MANDATORY)
+   │            │
+   │            └──▶ PHASE 3: JSON → Calculated Metrics
+   │                   └── phase3_calculated_metrics.json (150-300KB)
+   │                         │
+   │                         ├──▶ PHASE 3.5 (OPTIONAL): Enrichment
+   │                         │      └── phase3_enriched_data.json (200-400KB)
+   │                         │
+   │                         └──▶ PHASE 4: Credit Analysis Generation
+   │                                └── phase4_credit_analysis.md (30-50KB)
+   │
+   └──▶ PHASE 5: Final Report Generation
+          │
+          ├── Input 1: phase2_extracted_data.json
+          ├── Input 2: phase3_calculated_metrics.json (or enriched)
+          ├── Input 3: phase4_credit_analysis.md
+          │
+          └── Output: {TIMESTAMP}_Credit_Opinion_{Issuer}.md (200-300KB)
+
+SEQUENTIAL DEPENDENCIES:
+  Phase 1 MUST complete → Phase 2 can start
+  Phase 2 MUST complete → Phase 3 can start
+  Phase 3 MUST complete → Phase 3.5 (optional) or Phase 4 can start
+  Phase 4 MUST complete → Phase 5 can start
+  Phase 5 requires: Phase 2 + Phase 3 + Phase 4 outputs
 ```
 
 ---
