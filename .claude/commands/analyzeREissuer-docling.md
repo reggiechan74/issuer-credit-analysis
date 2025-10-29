@@ -111,12 +111,25 @@ Execute the full 5-phase credit analysis pipeline using **Docling** for PDF conv
 
 7. **Phase 5: Generate final report**
    ```bash
+   # Use enriched data if available (from Phase 3.5), otherwise fall back to standard metrics
+   ENRICHED_PATH="Issuer_Reports/{Issuer_Name}/temp/phase4_enriched_data.json"
+   STANDARD_PATH="Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json"
+
+   if [ -f "$ENRICHED_PATH" ]; then
+     METRICS_FILE="$ENRICHED_PATH"
+     echo "✅ Using enriched data (includes market/macro/prediction sections)"
+   else
+     METRICS_FILE="$STANDARD_PATH"
+     echo "⚠️  Using standard metrics only"
+   fi
+
    python scripts/generate_final_report.py \
      --template credit_opinion_template.md \
-     Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json \
+     "$METRICS_FILE" \
      Issuer_Reports/{Issuer_Name}/temp/phase4_credit_analysis.md
    ```
    - Creates timestamped report in `Issuer_Reports/{Issuer_Name}/reports/`
+   - **Automatically uses enriched data** if Phase 3.5 succeeded (includes market/macro/prediction sections)
    - **New in v1.0.13:** Structural Considerations section now auto-populated from Phase 4 content
 
 ## Expected Output
