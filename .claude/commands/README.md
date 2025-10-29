@@ -42,7 +42,26 @@ Issuer_Reports/{Issuer_Name}/
     └── {timestamp}_Credit_Opinion_{Issuer_Name}.md
 ```
 
-**Token Usage:** ~18,000 tokens total (~$0.45 per analysis)
+**Token Usage:** ~13,000 tokens total (~$0.30 per analysis)
+
+---
+
+### `/analyzeREissuer-docling` - Credit Analysis with Docling PDF Conversion
+
+Alternative version of `/analyzeREissuer` using Docling for higher-quality PDF conversion (slower but cleaner table extraction).
+
+**Usage:**
+```bash
+/analyzeREissuer-docling @financial-statements.pdf @mda.pdf "Issuer Name"
+```
+
+**Key Differences from Default:**
+- **Phase 1:** Uses Docling FAST mode instead of PyMuPDF4LLM + Camelot
+- **Processing Time:** ~20 minutes (vs 30 seconds for PyMuPDF)
+- **Table Quality:** Cleaner 4-column tables, better structure
+- **Use Case:** When PyMuPDF extraction has formatting issues
+
+**All other phases identical to standard `/analyzeREissuer` command.**
 
 ---
 
@@ -98,6 +117,87 @@ Quality assurance before presenting credit analysis to stakeholders or credit co
 
 ---
 
+### `/verifyconversion` - Phase 1 PDF Conversion Quality Check
+
+Validates the quality of Phase 1 markdown conversion by checking table structure, data integrity, and completeness.
+
+**Usage:**
+```bash
+/verifyconversion "Issuer Name"
+```
+
+**What It Does:**
+- Validates table extraction completeness
+- Checks table structure (proper rows/columns)
+- Verifies financial statement hierarchies preserved
+- Identifies missing or malformed tables
+- Recommends Docling if PyMuPDF extraction has issues
+
+**Use Case:** QA check after Phase 1 before proceeding to extraction.
+
+---
+
+### `/verifyextract` - Phase 2 Extraction Accuracy Validation
+
+Validates Phase 2 extraction accuracy by comparing extracted JSON against Phase 1 markdown source.
+
+**Usage:**
+```bash
+/verifyextract "Issuer Name"
+```
+
+**What It Does:**
+- Compares Phase 2 JSON against Phase 1 markdown
+- Validates balance sheet, income statement, cash flows
+- Checks FFO/AFFO/ACFO reconciliation completeness
+- Verifies schema compliance
+- Identifies extraction errors or omissions
+
+**Use Case:** QA check after Phase 2 before Phase 3 calculations.
+
+---
+
+### `/updatemodel` - Distribution Cut Prediction Model Update
+
+Comprehensive workflow for updating the distribution cut prediction model with new training data.
+
+**Usage:**
+```bash
+/updatemodel
+```
+
+**What It Does:**
+
+11-step guided workflow:
+1. **Assess Current Model** - Review v2.2 baseline (F1: 0.870, ROC AUC: 0.930)
+2. **Identify Observations** - Find 3-5 distribution cuts + 3-5 controls
+3. **Collect PDFs** - Download financial statements from SEDAR+
+4. **Generate Phase 3 Metrics** - Run pipeline for each observation
+5. **Build Training Dataset** - Extract 28 Phase 3 features, compile CSV
+6. **Merge Data** - Combine new data with existing training set
+7. **Train Model** - Retrain logistic regression (includes Python script)
+8. **Validate Model** - Compare v2.3 vs v2.2 performance
+9. **Deploy Model** - Archive v2.2, deploy v2.3, update docs
+10. **Verify Deployment** - Test with real pipeline run
+11. **Commit Changes** - Git commit with detailed changelog
+
+**Key Features:**
+- Complete Python training scripts provided
+- Model validation framework (side-by-side comparison)
+- Deployment procedures (archive, deploy, verify)
+- Documentation templates (README, CHANGELOG)
+- Troubleshooting guide for common issues
+
+**Success Criteria:**
+- F1 Score ≥ 0.80 (target)
+- Improved over v2.2 baseline
+- Tested with full pipeline run
+- Documented in CHANGELOG
+
+**Use Case:** Quarterly model updates or when 5+ new observations available.
+
+---
+
 ## How Slash Commands Work
 
 1. **Create Command:** Place a `.md` file in `.claude/commands/` directory
@@ -149,13 +249,32 @@ If the command doesn't appear:
 
 This project includes specialized commands for real estate credit analysis:
 
-- **Credit Analysis Pipeline:** Multi-phase approach to avoid context limits
-- **Quality Assurance:** Validation and verification workflows
-- **Token Optimization:** 0-token phases using pure Python/templating
+### Analysis Commands
+- **`/analyzeREissuer`** - Primary credit analysis pipeline (PyMuPDF, 30s, ~$0.30)
+- **`/analyzeREissuer-docling`** - Alternative with Docling (20min, higher quality)
 
-For detailed methodology, see: `/docs/METHODOLOGY.md`
+### Quality Assurance Commands
+- **`/verifyreport`** - Comprehensive report validation (Phase 5 QA)
+- **`/verifyconversion`** - PDF conversion quality check (Phase 1 QA)
+- **`/verifyextract`** - Extraction accuracy validation (Phase 2 QA)
+
+### Model Management Commands
+- **`/updatemodel`** - Update distribution cut prediction model with new training data
+
+### Architecture Highlights
+- **Multi-Phase Pipeline:** Avoids context limits through sequential processing
+- **Token Optimization:** 0-token phases using pure Python/templating
+- **ML Prediction:** Integrated distribution cut risk model (v2.2, F1: 0.870)
+- **Quality Controls:** Validation at each phase for accuracy
+
+### Documentation
+
+- **Pipeline Architecture:** `PIPELINE_ARCHITECTURE.md` - Complete input/output flow diagrams
+- **Schema Documentation:** `.claude/knowledge/SCHEMA_README.md` - Phase 2 extraction schema
+- **Model Documentation:** `models/README.md` - Distribution cut prediction model specs
+- **Quick Reference:** `PIPELINE_QUICK_REFERENCE.md` - Phase-by-phase commands
 
 ---
 
 **Maintained by:** Credit Analysis Team
-**Last Updated:** October 2025
+**Last Updated:** October 29, 2025
