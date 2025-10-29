@@ -2,7 +2,7 @@
 
 **Multi-phase credit analysis system for real estate investment trusts (REITs) using Claude Code agents.**
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Version](https://img.shields.io/badge/version-1.0.15-blue.svg)](CHANGELOG.md)
 [![Model](https://img.shields.io/badge/model-v2.2-green.svg)](models/README.md)
 
@@ -612,14 +612,23 @@ Contributions welcome! Areas of interest:
 
 ## License
 
-GNU General Public License v3.0 (GPL-3.0) - See LICENSE file for details.
+Copyright 2025 Reggie Chan
 
-This project is licensed under the GPL-3.0, which requires that:
-- Source code must be made available when the software is distributed
-- Modifications must be released under the same license
-- You may use this software for any purpose, but modified versions distributed to others must also be open source under GPL-3.0
+Licensed under the Apache License, Version 2.0 (the "License").
 
-For the complete license text, see the [LICENSE](LICENSE) file.
+This project is licensed under Apache 2.0, which allows:
+- ✅ Commercial use
+- ✅ Modification and distribution
+- ✅ Patent use (explicit patent grant included)
+- ✅ Private use
+- ✅ Integration into proprietary systems
+
+**Requirements:**
+- Attribution to the original author (Reggie Chan)
+- Include copy of the Apache 2.0 license
+- State any significant changes made
+
+For the complete license text, see the [LICENSE](LICENSE) file or visit http://www.apache.org/licenses/LICENSE-2.0
 
 ## Disclaimer
 
