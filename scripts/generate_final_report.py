@@ -1547,13 +1547,13 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
                     return sections[key]
         return 'Not available'
 
-    exec_summary = get_section(analysis_sections, 'Executive Summary', 'EXECUTIVE SUMMARY')
+    exec_summary = get_section(analysis_sections, 'Executive Summary', 'EXECUTIVE SUMMARY', 'Credit Opinion Summary', 'CREDIT OPINION SUMMARY')
     credit_strengths = get_section(analysis_sections, 'Credit Strengths', 'CREDIT STRENGTHS')
     credit_challenges = get_section(analysis_sections, 'Credit Challenges', 'CREDIT CHALLENGES')
     rating_outlook = get_section(analysis_sections, 'Rating Outlook', 'RATING OUTLOOK')
     upgrade_factors = get_section(analysis_sections, 'Upgrade Factors', 'Factors That Could Lead to an Upgrade', 'RATING SENSITIVITY ANALYSIS')
     downgrade_factors = get_section(analysis_sections, 'Downgrade Factors', 'Factors That Could Lead to a Downgrade', 'RATING SENSITIVITY ANALYSIS')
-    scorecard_table = get_section(analysis_sections, 'Factor-by-Factor Scoring', 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard', 'FIVE-FACTOR CREDIT SCORECARD', 'Rating Methodology and Scorecard', 'Scorecard Assessment')
+    scorecard_table = get_section(analysis_sections, 'Factor-by-Factor Scoring', 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard', 'FIVE-FACTOR CREDIT SCORECARD', 'Rating Methodology and Scorecard', 'Scorecard Assessment', 'Key Credit Factors', 'KEY CREDIT FACTORS')
     key_observations = get_section(analysis_sections, 'Key Observations', 'KEY OBSERVATIONS AND CONCLUSIONS')
 
     # Extract key drivers from Executive Summary (look for bullets after "Key Credit Drivers:")
@@ -1571,10 +1571,60 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # Template will re-add it with numbered list
         exec_summary = exec_summary.split('**Key Credit Drivers:**')[0].strip()
 
+    # If no drivers found in exec summary, try to extract from Key Credit Factors table
+    if not drivers and scorecard_table:
+        # Extract factor names from markdown table (format: | **1. Factor Name** | Weight | Assessment | Score | Rationale |)
+        for line in scorecard_table.split('\n'):
+            # Look for table rows with factors (starts with |, contains "**", and has "Factor" in it)
+            if line.strip().startswith('|') and '**' in line and not line.startswith('|---') and not line.startswith('| **Factor**'):
+                # Extract text between ** ** (factor name)
+                factor_match = re.search(r'\*\*([^\*]+)\*\*', line)
+                if factor_match:
+                    factor_text = factor_match.group(1).strip()
+                    # Remove leading numbers (e.g., "1. " or "1)")
+                    factor_text = re.sub(r'^\d+[\.\)]\s*', '', factor_text)
+                    # Skip header rows
+                    if factor_text and 'Factor' not in factor_text:
+                        drivers.append(factor_text)
+
     # Remove "Scorecard-Indicated Rating:" from exec summary if present (template adds it)
     if exec_summary and 'Scorecard-Indicated Rating:' in exec_summary:
         # Remove just the first line with the rating
         exec_summary = re.sub(r'\*\*Scorecard-Indicated Rating:\s*[^\n]+\*\*\n\n', '', exec_summary)
+
+    # Synthesize Credit Strengths and Credit Challenges from scorecard table if not available
+    if credit_strengths == 'Not available' and scorecard_table:
+        strengths_list = []
+        challenges_list = []
+
+        for line in scorecard_table.split('\n'):
+            if line.strip().startswith('|') and '**' in line and not line.startswith('|---'):
+                # Parse table row: | **Factor** | Weight | Assessment | Score | Rationale |
+                cells = [cell.strip() for cell in line.split('|')]
+                if len(cells) >= 6:
+                    factor_match = re.search(r'\*\*([^\*]+)\*\*', cells[1])
+                    score_match = re.search(r'(\d+)/5', cells[4])  # Score column
+                    rationale = cells[5] if len(cells) > 5 else ''
+
+                    if factor_match and score_match:
+                        factor_name = factor_match.group(1).strip()
+                        factor_name = re.sub(r'^\d+[\.\)]\s*', '', factor_name)  # Remove numbers
+                        score = int(score_match.group(1))
+
+                        # Skip header rows
+                        if 'Factor' in factor_name or 'Overall' in factor_name:
+                            continue
+
+                        # Strengths: score >= 4, Challenges: score <= 2
+                        if score >= 4:
+                            strengths_list.append(f"- **{factor_name}:** {rationale}")
+                        elif score <= 2:
+                            challenges_list.append(f"- **{factor_name}:** {rationale}")
+
+        if strengths_list:
+            credit_strengths = '\n'.join(strengths_list)
+        if challenges_list:
+            credit_challenges = '\n'.join(challenges_list)
 
     # Extract outlook value from Phase 4 analysis
     outlook = 'Stable'  # default fallback
@@ -1588,6 +1638,23 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     if rating_outlook and rating_outlook.startswith('**Outlook:'):
         # Remove the duplicate "Outlook: STABLE" header that's already in the narrative
         rating_outlook = re.sub(r'^\*\*Outlook:\s+\w+\*\*\n\n', '', rating_outlook)
+
+    # Extract upgrade/downgrade factors from Rating Outlook section if not found separately
+    if upgrade_factors == 'Not available' and rating_outlook:
+        # Look for "Rating Upgrade Factors" or "Upgrade Scenarios" subsection
+        upgrade_match = re.search(r'\*\*Rating Upgrade Factors[^\n]*\*\*:?(.*?)(?=\*\*Rating Downgrade Factors|\*\*Downgrade Scenarios|---|\Z)', rating_outlook, re.DOTALL)
+        if not upgrade_match:
+            upgrade_match = re.search(r'\*\*Upgrade Scenarios[^\n]*\*\*:?(.*?)(?=\*\*Downgrade Scenarios|---|\Z)', rating_outlook, re.DOTALL)
+        if upgrade_match:
+            upgrade_factors = upgrade_match.group(1).strip()
+
+    if downgrade_factors == 'Not available' and rating_outlook:
+        # Look for "Rating Downgrade Factors" or "Downgrade Scenarios" subsection
+        downgrade_match = re.search(r'\*\*Rating Downgrade Factors[^\n]*\*\*:?(.*?)(?=---|\Z)', rating_outlook, re.DOTALL)
+        if not downgrade_match:
+            downgrade_match = re.search(r'\*\*Downgrade Scenarios[^\n]*\*\*:?(.*?)(?=---|\Z)', rating_outlook, re.DOTALL)
+        if downgrade_match:
+            downgrade_factors = downgrade_match.group(1).strip()
 
     # Enhanced template sections (from Report A)
     company_background = get_section(analysis_sections, 'Company Background', 'Profile', 'PROFILE')
