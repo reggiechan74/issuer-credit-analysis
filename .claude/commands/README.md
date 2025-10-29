@@ -20,7 +20,7 @@ Performs comprehensive credit analysis on a real estate issuer using a 5-phase p
 
 **Example:**
 ```bash
-/analyzeREissuer @ArtisREIT-Q2-25-Consol-FS-Aug-7.pdf @ArtisREIT-Q2-25-MDA-Aug-7.pdf "Artis REIT"
+/analyzeREissuer @ExampleREIT-Q2-25-Consol-FS-Aug-7.pdf @ExampleREIT-Q2-25-MDA-Aug-7.pdf "Example REIT"
 ```
 
 **What It Does:**
@@ -81,8 +81,8 @@ Verifies the accuracy of a generated credit opinion report by comparing it again
 
 **Example:**
 ```bash
-/verifyreport "Artis REIT"
-/verifyreport "Artis REIT" "2025-10-17_125408_Credit_Opinion_Artis_Real_Estate_Investment_Trust.md"
+/verifyreport "Example REIT"
+/verifyreport "Example REIT" "2025-10-17_125408_Credit_Opinion_Example_Real_Estate_Investment_Trust.md"
 ```
 
 **What It Does:**
