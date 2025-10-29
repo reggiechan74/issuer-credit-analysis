@@ -3,21 +3,46 @@
 **Multi-phase credit analysis system for real estate investment trusts (REITs) using Claude Code agents.**
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/version-1.0.13-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.15-blue.svg)](CHANGELOG.md)
+[![Model](https://img.shields.io/badge/model-v2.2-green.svg)](models/README.md)
 
-## What's New in v1.0.13 🎉
+## What's New in v1.0.15 🎉
+
+### Distribution Cut Prediction Model v2.2 Deployed (October 29, 2025)
+
+✅ **Model v2.2 fixes critical underestimation issue - now accurately predicts distribution cut risk for distressed REITs**
+
+**The Problem with v2.1:**
+- Artis REIT: Predicted 2.1% (Very Low) when actual risk was 67.1% (High)
+- Underestimation: 65 percentage points off
+- Root cause: Feature distribution mismatch (trained on total AFCF, but Phase 3 calculates sustainable AFCF)
+
+**Model v2.2 Improvements:**
+- ✅ **67.1% High risk prediction** for Artis REIT (was 2.1% Very Low) - aligns with critical distress
+- ✅ **Sustainable AFCF methodology** - matches Phase 3 calculations (Issue #40)
+- ✅ **28 Phase 3 features** (was 54 with market/macro) - more focused feature set
+- ✅ **Validated on 3 REITs** - improvements of +27 to +65 percentage points
+- ✅ **Production deployment** - default model path updated, v2.1 archived
+
+**Performance (5-fold CV):**
+- F1 Score: 0.870, ROC AUC: 0.930, Accuracy: 87.5%
+- Top drivers: monthly_burn_rate, acfo_calculated, available_cash
+
+**See:** [Model v2.2 Documentation](models/README.md) | [Deployment Summary](docs/MODEL_V2.2_DEPLOYMENT_SUMMARY.md) | [Analysis](docs/DISTRIBUTION_CUT_MODEL_DISCREPANCY_ANALYSIS.md)
+
+---
+
+### Previous Updates (v1.0.13)
 
 **Structural Considerations Content Extraction (October 21, 2025)**
 
 ✅ **Debt Structure, Security & Collateral, Perpetual Securities sections now auto-populated from Phase 4 analysis**
 
-Previously these sections displayed "Not available" even when Phase 4 contained relevant content. Now the system intelligently extracts:
+- **Debt Structure**: Credit facilities, covenant compliance, debt profile
+- **Security & Collateral**: Unencumbered asset pool, LTV ratios, recovery estimates
+- **Perpetual Securities**: Automatically detected or marked "Not applicable"
 
-- **Debt Structure**: Credit facilities ($X.XB limit, $X.XB drawn), covenant compliance (Debt/Assets vs thresholds, interest coverage), debt profile
-- **Security & Collateral**: Unencumbered asset pool ($X.XB, X% of gross assets), LTV ratios, recovery estimates (>80-90%)
-- **Perpetual Securities**: Automatically detected from balance sheet or marked "Not applicable"
-
-**Impact**: +15% report completeness, $0 token cost, production-ready with graceful degradation. See [CHANGELOG.md](CHANGELOG.md) for technical details.
+**Impact**: +15% report completeness, $0 token cost. See [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -28,24 +53,36 @@ This system performs comprehensive credit analysis on real estate issuers (REITs
 ### Key Features
 
 - **5-Phase Sequential Pipeline**: Proven architecture (PDF→Markdown→JSON→Metrics→Analysis→Report)
+- **Distribution Cut Prediction**: ML model v2.2 predicts 12-month distribution cut risk (High accuracy: F1=0.87, ROC AUC=0.93)
 - **99.2% Token Reduction**: File reference patterns reduce Phase 2 from ~140K to ~1K tokens
 - **Dual PDF Conversion Methods**: Choose between speed (PyMuPDF4LLM+Camelot, ~30s) or quality (Docling, ~20min)
+- **Market Data Integration**: Automated price stress, volatility, and momentum analysis via OpenBB Platform
+- **Macro Environment Tracking**: Bank of Canada and Federal Reserve rate monitoring with credit stress scoring
 - **Context-Efficient Phase 2**: File references preserve ~199K tokens for extraction logic
 - **Absolute Path Implementation**: Reliable execution from any working directory
 - **Organized Output**: Issuer-specific folders with separate temp and reports directories
 - **Claude Code Integration**: Uses Claude Code agents for intelligent extraction and analysis
-- **Zero-API Dependency**: Works entirely within Claude Code environment (no external API keys needed)
+- **Zero-API Dependency**: Core pipeline works entirely within Claude Code (OpenBB optional, $0 cost)
 - **Test-Driven Development**: Comprehensive test suite for all phases
 - **Production Ready**: Generates professional credit opinion reports with 5-factor scorecard analysis
 - **100% Success Rate**: Sequential markdown-first approach prevents context window exhaustion
 
-## Architecture (v1.0.13 - Sequential Markdown-First)
+## Architecture (v1.0.15 - Sequential Markdown-First with ML Prediction)
 
 ```
-Phase 1 (PDF→MD)  →  Phase 2 (MD→JSON)  →  Phase 3 (Calc)  →  Phase 4 (Agent)  →  Phase 5 (Report)
-PyMuPDF/Docling      File refs (~1K tok)    Pure Python        Slim Agent (12K)    Template (0 tok)
-0 tokens, 30s-20min  Context-efficient      0 tokens           Credit analysis     Final report
+Phase 1        Phase 2          Phase 3         Phase 3.5        Phase 4         Phase 5
+PDF→MD    →   MD→JSON     →    Calculations  →  Enrichment  →   Agent      →    Report
+PyMuPDF/      File refs        Pure Python      ML Model v2.2    Slim Agent      Template
+Docling       (~1K tok)        0 tokens         0 tokens         (12K tok)       (0 tok)
+30s-20min     Efficient        FFO/AFFO/ACFO    Cut risk:        Credit          Final
+                               AFCF metrics     67% High         analysis        report
 ```
+
+**Phase 3.5 (Optional - Enrichment):**
+- Market risk data (OpenBB Platform): Price stress, volatility, momentum
+- Macro environment (Bank of Canada, Federal Reserve): Rate cycles, credit stress
+- Distribution history: 10-year dividend history, cut detection, recovery analysis
+- **Distribution cut prediction (Model v2.2)**: 12-month cut probability with risk drivers
 
 ### Two PDF Conversion Methods (Phase 1)
 
@@ -89,21 +126,67 @@ PyMuPDF/Docling      File refs (~1K tok)    Pure Python        Slim Agent (12K) 
 - ✅ **Absolute paths**: Reliable execution from any working directory using `Path.cwd()`
 - ✅ **Proven reliability**: 100% success rate on production workloads
 
+### Distribution Cut Prediction (Model v2.2)
+
+**Predicts 12-month distribution cut probability** for Canadian REITs using logistic regression trained on 24 observations (11 cuts, 13 controls).
+
+**Model Performance:**
+- **F1 Score:** 0.870 (5-fold CV) - Excellent balance between precision and recall
+- **ROC AUC:** 0.930 - Strong discrimination between cut vs. no-cut
+- **Accuracy:** 87.5% - High overall prediction accuracy
+
+**Key Features (Top 5):**
+1. **Monthly burn rate** - Cash depletion speed (most predictive)
+2. **ACFO calculated** - Sustainable operating cash flow
+3. **Available cash** - Immediate liquidity
+4. **Total available liquidity** - Cash + undrawn facilities
+5. **Self-funding ratio** - AFCF / Total obligations
+
+**Example Predictions:**
+| REIT | Cut Probability | Risk Level | Financial Context |
+|------|----------------|------------|-------------------|
+| **Artis REIT** | 67.1% | 🔴 High | Cash runway: 1.6 months, Self-funding: -0.61x |
+| **RioCan REIT** | 48.5% | 🔴 High | Sustainable AFCF negative |
+| **Dream Industrial** | 29.3% | 🟠 Moderate | AFFO payout: 115% |
+
+**What Changed in v2.2:**
+- ✅ Fixed 65-point underestimation in severe distress cases
+- ✅ Uses sustainable AFCF methodology (aligns with Phase 3)
+- ✅ 28 Phase 3 features only (removed market/macro for simplicity)
+- ✅ Deployed to production (Oct 29, 2025)
+
+**Risk Classification:**
+- 🟢 Very Low: 0-10% probability
+- 🟡 Low: 10-25%
+- 🟠 Moderate: 25-50%
+- 🔴 High: 50-75%
+- 🚨 Very High: 75-100%
+
+**See:** [Model Documentation](models/README.md) | [Deployment Analysis](docs/MODEL_V2.2_DEPLOYMENT_SUMMARY.md)
+
 ### Output Structure
 
 ```
 Issuer_Reports/
   {Issuer_Name}/
     temp/                                    # Intermediate files (can delete)
-      phase1_markdown/*.md
-      phase2_extracted_data.json
-      phase2_extraction_prompt.txt
-      phase3_calculated_metrics.json
-      phase4_agent_prompt.txt
-      phase4_credit_analysis.md
+      phase1_markdown/*.md                   # Converted PDFs (markdown format)
+      phase2_extracted_data.json             # Extracted financial data
+      phase2_extraction_prompt.txt           # Extraction prompt for debugging
+      phase3_calculated_metrics.json         # Calculated metrics (FFO/AFFO/ACFO/AFCF)
+      phase4_enriched_data.json              # Phase 3 + market/macro/prediction (optional)
+      phase4_agent_prompt.txt                # Agent prompt for debugging
+      phase4_credit_analysis.md              # Qualitative credit assessment
     reports/                                 # Final reports (permanent)
-      2025-10-17_153045_Credit_Opinion_{issuer}.md
+      2025-10-29_031335_Credit_Opinion_{issuer}.md  # Timestamped final report
 ```
+
+**Note:** If Phase 3.5 enrichment runs successfully, `phase4_enriched_data.json` includes:
+- Phase 3 calculated metrics
+- Market risk assessment (price stress, volatility, momentum)
+- Macro environment (BoC/Fed rates, credit stress score)
+- Distribution history (10-year dividend data, cut detection)
+- **Distribution cut prediction** (Model v2.2: probability, risk level, top drivers)
 
 ## Installation
 
@@ -194,14 +277,16 @@ Best for interactive analysis and production workloads:
 # With Claude Code open in this directory:
 /analyzeREissuer @statements.pdf @mda.pdf "Artis REIT"
 
-# The slash command automatically executes all 5 phases:
+# The slash command automatically executes all phases:
 # 1. Phase 1: PDF → Markdown (PyMuPDF4LLM + Camelot, 113 tables extracted)
 # 2. Phase 2: Markdown → JSON (file references, ~1K tokens)
 # 3. Phase 3: Calculate metrics (0 tokens, pure Python)
+# 3.5. Enrichment: Market/macro data + distribution cut prediction (Model v2.2)
 # 4. Phase 4: Credit analysis (slim agent, ~12K tokens)
 # 5. Phase 5: Generate report (0 tokens, templating)
 
 # Total time: ~60 seconds | Total cost: ~$0.30
+# Output includes: 67.1% High distribution cut risk prediction (example)
 ```
 
 **Method 2: Cleaner Extraction** - `/analyzeREissuer-docling`
