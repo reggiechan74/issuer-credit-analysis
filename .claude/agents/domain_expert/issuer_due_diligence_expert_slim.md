@@ -572,15 +572,140 @@ key credit weakness requiring close monitoring of conversion triggers.
 
 ## Output Format
 
-Generate a markdown document with clear sections, quantified assessments, and professional caveats.
+**CRITICAL:** Phase 5 depends on EXACT section headers. Use the precise format below with NO variations.
 
-**Target length:** 1,500-2,500 words (comprehensive analysis with new sections)
+### Required Section Structure (Exact Headers)
 
-**New sections require:**
-- Peer Comparison: Research 3-4 comparable REITs with similar characteristics
-- Scenario Analysis: 4 scenarios (Base/Upside/Downside/Stress) with pro forma metrics
-- Company Background: Extract from MD&A or state unavailable
-- Business Strategy: Identify from MD&A or infer from metrics
+```markdown
+## 1. Credit Opinion Summary
+
+[4 paragraphs of comprehensive credit analysis]
+
+**Key Credit Drivers:**
+- Driver 1 (concise factor name)
+- Driver 2
+- Driver 3
+- Driver 4-6
+
+---
+
+## 2. Key Credit Factors
+
+| **Factor** | **Weight** | **Assessment** | **Score** | **Rationale** |
+|------------|------------|----------------|-----------|---------------|
+| **1. Scale & Diversification** | X% | Rating | X/5 | Brief explanation |
+| **2. Asset Quality & Portfolio** | X% | Rating | X/5 | Brief explanation |
+| **3. Leverage & Coverage** | X% | Rating | X/5 | Brief explanation |
+| **4. Financial Flexibility** | X% | Rating | X/5 | Brief explanation |
+| **5. Liquidity & Cash Flow** | X% | Rating | X/5 | Brief explanation |
+| **6. Market Position & Strategy** | X% | Rating | X/5 | Brief explanation |
+| **7. Governance & Transparency** | X% | Rating | X/5 | Brief explanation |
+| **Overall Scorecard Outcome** | **100%** | **Rating** | **X.X/5** | **Overall assessment** |
+
+---
+
+## 3. Rating Outlook
+
+**Outlook:** [Positive/Stable/Negative/Developing] (XX-XX months)
+
+**Justification:**
+
+[Narrative explaining outlook with scenarios]
+
+**Base Case (XX% probability):**
+[Description]
+
+**Upside Case (XX% probability):**
+[Description]
+
+**Downside Case (XX% probability):**
+[Description]
+
+**Distressed Case (XX% probability):** (optional)
+[Description]
+
+**Key Monitoring Metrics:**
+- Metric 1
+- Metric 2
+
+**Rating Upgrade Factors (XX-XX months):**
+- Factor 1 with specific threshold
+- Factor 2
+- Factor 3-6
+
+**Rating Downgrade Factors (XX-XX months):**
+- Factor 1 with specific threshold
+- Factor 2
+- Factor 3-6
+
+---
+
+## 4. Detailed Credit Analysis
+
+### 4.1 Scale & Diversification
+[1,000-1,500 word analysis]
+
+### 4.2 Asset Quality & Portfolio
+[1,000-1,500 word analysis]
+
+### 4.3 Leverage & Coverage
+[1,000-1,500 word analysis]
+
+### 4.4 Financial Flexibility
+[1,000-1,500 word analysis]
+
+### 4.5 Liquidity & Cash Flow
+[1,000-1,500 word analysis]
+
+### 4.6 Market Position & Strategy
+[1,000-1,500 word analysis]
+
+### 4.7 Governance & Transparency
+[1,000-1,500 word analysis]
+
+---
+
+## Optional Sections (if applicable):
+
+## 5. Liquidity and Capital Resources
+## 6. Financial Covenants
+## 7. Debt Maturity Profile
+## 8. Recent Developments
+## 9. Peer Comparison
+## 10. Methodology and Rating Factors
+```
+
+### Header Requirements (CRITICAL)
+
+✅ **MUST USE these exact headers:**
+- "## 1. Credit Opinion Summary" (NOT "Executive Summary")
+- "## 2. Key Credit Factors" (NOT "Scorecard" or "Five-Factor")
+- "## 3. Rating Outlook"
+- "**Rating Upgrade Factors**" (NOT "Upgrade Scenarios")
+- "**Rating Downgrade Factors**" (NOT "Downgrade Scenarios")
+- "## 4. Detailed Credit Analysis"
+
+❌ **DO NOT USE these variations** (breaks Phase 5):
+- "Executive Summary"
+- "Five-Factor Scorecard"
+- "Upgrade Scenarios"
+- "Factor-by-Factor Scoring"
+- "RATING SENSITIVITY ANALYSIS"
+
+### Format Validation Checklist
+
+Before saving output, verify:
+- [ ] Section "1. Credit Opinion Summary" with "**Key Credit Drivers:**" subsection
+- [ ] Section "2. Key Credit Factors" with markdown table
+- [ ] Section "3. Rating Outlook" with embedded upgrade/downgrade factors
+- [ ] Upgrade/downgrade titled exactly: "**Rating Upgrade Factors**" and "**Rating Downgrade Factors**"
+- [ ] Section "4. Detailed Credit Analysis" with 7 numbered subsections
+- [ ] All section numbers sequential (1, 2, 3, 4...)
+- [ ] NO forbidden header variations used
+
+**Why This Matters:** Phase 5 Python script uses exact string matching. Any header variation causes "Not available" placeholders in final report.
+
+**Target length:** 10,000-12,000 words (comprehensive analysis)
 
 ## Important Reminders
 

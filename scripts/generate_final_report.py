@@ -1547,13 +1547,31 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
                     return sections[key]
         return 'Not available'
 
-    exec_summary = get_section(analysis_sections, 'Executive Summary', 'EXECUTIVE SUMMARY', 'Credit Opinion Summary', 'CREDIT OPINION SUMMARY')
-    credit_strengths = get_section(analysis_sections, 'Credit Strengths', 'CREDIT STRENGTHS')
-    credit_challenges = get_section(analysis_sections, 'Credit Challenges', 'CREDIT CHALLENGES')
-    rating_outlook = get_section(analysis_sections, 'Rating Outlook', 'RATING OUTLOOK')
-    upgrade_factors = get_section(analysis_sections, 'Upgrade Factors', 'Factors That Could Lead to an Upgrade', 'RATING SENSITIVITY ANALYSIS')
-    downgrade_factors = get_section(analysis_sections, 'Downgrade Factors', 'Factors That Could Lead to a Downgrade', 'RATING SENSITIVITY ANALYSIS')
-    scorecard_table = get_section(analysis_sections, 'Factor-by-Factor Scoring', 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard', 'FIVE-FACTOR CREDIT SCORECARD', 'Rating Methodology and Scorecard', 'Scorecard Assessment', 'Key Credit Factors', 'KEY CREDIT FACTORS')
+    # Phase 4 Output Format Standard v1.0.0 - Use EXACT headers (no variations)
+    # See: docs/PHASE4_OUTPUT_FORMAT_STANDARD.md
+    exec_summary = get_section(analysis_sections, '1. Credit Opinion Summary')
+    scorecard_table = get_section(analysis_sections, '2. Key Credit Factors')
+    rating_outlook = get_section(analysis_sections, '3. Rating Outlook')
+    credit_strengths = get_section(analysis_sections, '5. Credit Strengths')  # Optional - can synthesize from scorecard
+    credit_challenges = get_section(analysis_sections, '6. Credit Challenges')  # Optional - can synthesize from scorecard
+
+    # Upgrade/downgrade factors are embedded in Rating Outlook section
+    upgrade_factors = 'Not available'
+    downgrade_factors = 'Not available'
+
+    # For backward compatibility with older Phase 4 outputs, fall back to variations if needed
+    if exec_summary == 'Not available':
+        exec_summary = get_section(analysis_sections, 'Executive Summary', 'EXECUTIVE SUMMARY', 'Credit Opinion Summary', 'CREDIT OPINION SUMMARY')
+        print("⚠️  WARNING: Phase 4 used non-standard header. Please update Phase 4 agent to use '1. Credit Opinion Summary'")
+
+    if scorecard_table == 'Not available':
+        scorecard_table = get_section(analysis_sections, 'Factor-by-Factor Scoring', 'Five-Factor Rating Scorecard Analysis', '5-Factor Rating Scorecard', 'Five-Factor Scorecard', 'Five-Factor Rating Scorecard', 'FIVE-FACTOR CREDIT SCORECARD', 'Rating Methodology and Scorecard', 'Scorecard Assessment', 'Key Credit Factors', 'KEY CREDIT FACTORS')
+        print("⚠️  WARNING: Phase 4 used non-standard header. Please update Phase 4 agent to use '2. Key Credit Factors'")
+
+    if rating_outlook == 'Not available':
+        rating_outlook = get_section(analysis_sections, 'Rating Outlook', 'RATING OUTLOOK')
+        print("⚠️  WARNING: Phase 4 used non-standard header. Please update Phase 4 agent to use '3. Rating Outlook'")
+
     key_observations = get_section(analysis_sections, 'Key Observations', 'KEY OBSERVATIONS AND CONCLUSIONS')
 
     # Extract key drivers from Executive Summary (look for bullets after "Key Credit Drivers:")
@@ -1639,22 +1657,30 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # Remove the duplicate "Outlook: STABLE" header that's already in the narrative
         rating_outlook = re.sub(r'^\*\*Outlook:\s+\w+\*\*\n\n', '', rating_outlook)
 
-    # Extract upgrade/downgrade factors from Rating Outlook section if not found separately
-    if upgrade_factors == 'Not available' and rating_outlook:
-        # Look for "Rating Upgrade Factors" or "Upgrade Scenarios" subsection
-        upgrade_match = re.search(r'\*\*Rating Upgrade Factors[^\n]*\*\*:?(.*?)(?=\*\*Rating Downgrade Factors|\*\*Downgrade Scenarios|---|\Z)', rating_outlook, re.DOTALL)
-        if not upgrade_match:
-            upgrade_match = re.search(r'\*\*Upgrade Scenarios[^\n]*\*\*:?(.*?)(?=\*\*Downgrade Scenarios|---|\Z)', rating_outlook, re.DOTALL)
+    # Extract upgrade/downgrade factors from Rating Outlook section (Phase 4 Format Standard v1.0.0)
+    if rating_outlook and rating_outlook != 'Not available':
+        # Primary extraction: Use exact subsection titles from standard
+        upgrade_match = re.search(r'\*\*Rating Upgrade Factors[^\n]*\*\*:?(.*?)(?=\*\*Rating Downgrade Factors|\*\*Key Monitoring|---|\Z)', rating_outlook, re.DOTALL)
         if upgrade_match:
             upgrade_factors = upgrade_match.group(1).strip()
+        elif upgrade_factors == 'Not available':
+            # Backward compatibility: Fall back to old variations
+            upgrade_match = re.search(r'\*\*Upgrade Scenarios[^\n]*\*\*:?(.*?)(?=\*\*Downgrade Scenarios|---|\Z)', rating_outlook, re.DOTALL)
+            if upgrade_match:
+                upgrade_factors = upgrade_match.group(1).strip()
+                print("⚠️  WARNING: Phase 4 used non-standard subsection '**Upgrade Scenarios**'. Please update to '**Rating Upgrade Factors**'")
 
-    if downgrade_factors == 'Not available' and rating_outlook:
-        # Look for "Rating Downgrade Factors" or "Downgrade Scenarios" subsection
+    if rating_outlook and rating_outlook != 'Not available':
+        # Primary extraction: Use exact subsection title from standard
         downgrade_match = re.search(r'\*\*Rating Downgrade Factors[^\n]*\*\*:?(.*?)(?=---|\Z)', rating_outlook, re.DOTALL)
-        if not downgrade_match:
-            downgrade_match = re.search(r'\*\*Downgrade Scenarios[^\n]*\*\*:?(.*?)(?=---|\Z)', rating_outlook, re.DOTALL)
         if downgrade_match:
             downgrade_factors = downgrade_match.group(1).strip()
+        elif downgrade_factors == 'Not available':
+            # Backward compatibility: Fall back to old variations
+            downgrade_match = re.search(r'\*\*Downgrade Scenarios[^\n]*\*\*:?(.*?)(?=---|\Z)', rating_outlook, re.DOTALL)
+            if downgrade_match:
+                downgrade_factors = downgrade_match.group(1).strip()
+                print("⚠️  WARNING: Phase 4 used non-standard subsection '**Downgrade Scenarios**'. Please update to '**Rating Downgrade Factors**'")
 
     # Enhanced template sections (from Report A)
     company_background = get_section(analysis_sections, 'Company Background', 'Profile', 'PROFILE')
