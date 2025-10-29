@@ -623,13 +623,99 @@ For the complete license text, see the [LICENSE](LICENSE) file.
 
 ## Disclaimer
 
-**IMPORTANT:** This tool provides credit analysis for informational purposes only. It is NOT:
-- Investment advice
-- A substitute for professional credit analysis
-- A guarantee of credit quality or investment returns
-- Approved by credit rating agencies
+**IMPORTANT NOTICE: PLEASE READ CAREFULLY BEFORE USING THIS SOFTWARE**
 
-All credit decisions should be reviewed by qualified credit analysts and approved by appropriate credit committees.
+### Purpose and Scope
+
+This software tool (the "Tool") is designed solely for informational and analytical purposes to assist qualified credit professionals in evaluating real estate investment trusts ("REITs") and related issuers. The Tool generates automated credit assessments based on financial data extraction and machine learning models.
+
+### Not Investment Advice or Credit Rating
+
+**THIS TOOL DOES NOT PROVIDE INVESTMENT ADVICE, CREDIT RATINGS, OR RECOMMENDATIONS.** The Tool is not:
+
+- Investment advice, investment recommendations, or investment research
+- A credit rating or credit opinion as defined by securities regulators or rating agencies
+- A substitute for independent professional credit analysis or due diligence
+- A guarantee, warranty, or assurance regarding credit quality, investment returns, or future performance
+- Approved, endorsed, or validated by any credit rating agency, securities regulator, or financial authority
+- Intended for retail investors or non-professional users
+
+### No Fiduciary Relationship
+
+Use of this Tool does not create any fiduciary, advisory, or agency relationship between the user and the Tool's creators, maintainers, or contributors. Users retain full responsibility for their own investment and credit decisions.
+
+### Limitations and Risks
+
+**Machine Learning Model Limitations:**
+- The distribution cut prediction model (v2.2) is trained on limited historical data (24 observations) and may not accurately predict future events
+- Model performance metrics represent historical backtesting and do not guarantee future accuracy
+- The model may produce false positives (incorrectly predicting distribution cuts) or false negatives (failing to predict actual cuts)
+- Model predictions should be validated against independent analysis and not relied upon exclusively
+
+**Data and Extraction Risks:**
+- The Tool relies on automated PDF extraction which may introduce errors, omissions, or misinterpretations
+- Financial data accuracy depends on the quality and completeness of source documents
+- The Tool cannot verify the accuracy of issuer-reported financial statements
+- Users must independently verify all extracted data against original source documents
+
+**Third-Party Data:**
+- Market data, macroeconomic data, and dividend history are sourced from third-party providers (OpenBB Platform, TMX, YFinance, Bank of Canada, Federal Reserve) and may contain errors or delays
+- The Tool's creators make no representations regarding the accuracy, completeness, or timeliness of third-party data
+
+**Analytical Limitations:**
+- The Tool applies standardized REALPAC methodologies which may not be appropriate for all issuers or circumstances
+- Automated analysis cannot replace human judgment regarding qualitative factors, management quality, or strategic considerations
+- The Tool does not consider all factors relevant to credit analysis, including but not limited to: litigation risks, environmental liabilities, regulatory changes, or market conditions
+
+### Professional Review Required
+
+**ALL OUTPUTS FROM THIS TOOL MUST BE REVIEWED, VALIDATED, AND APPROVED BY QUALIFIED CREDIT PROFESSIONALS** before being used for any credit decision, investment decision, or publication. Users should:
+
+1. Independently verify all extracted financial data
+2. Review model predictions against independent credit analysis
+3. Consider qualitative factors not captured by the Tool
+4. Obtain appropriate credit committee or investment committee approval
+5. Ensure compliance with applicable investment policies, credit policies, and regulatory requirements
+
+### Regulatory Compliance
+
+Users are solely responsible for ensuring their use of this Tool complies with all applicable laws, regulations, and professional standards, including but not limited to:
+
+- Securities laws and regulations
+- Investment adviser regulations (if applicable)
+- FINRA, SEC, IIROC, or other regulatory requirements
+- Internal compliance policies and procedures
+- Professional conduct standards and fiduciary duties
+
+### No Warranties
+
+**THIS TOOL IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.** The creators disclaim all warranties including, but not limited to, warranties of accuracy, completeness, merchantability, fitness for a particular purpose, and non-infringement. The creators do not warrant that the Tool will be error-free, uninterrupted, or free from defects.
+
+### Limitation of Liability
+
+**TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE CREATORS, MAINTAINERS, AND CONTRIBUTORS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, OR PUNITIVE DAMAGES** arising out of or related to the use of this Tool, including but not limited to: investment losses, trading losses, lost profits, data inaccuracies, or business interruption, even if advised of the possibility of such damages.
+
+### Intellectual Property and Proper Use
+
+This Tool is licensed under GNU General Public License v3.0. Users must comply with all license terms. Outputs generated by this Tool:
+
+- Should not be represented as official credit ratings or third-party research
+- Must include appropriate disclaimers when shared with third parties
+- Must attribute automated/machine-generated analysis appropriately
+- Should not be used to circumvent regulatory requirements for independent credit analysis
+
+### Acknowledgment
+
+**BY USING THIS TOOL, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREE TO BE BOUND BY THIS DISCLAIMER.** If you do not agree to these terms, do not use this Tool.
+
+### Questions or Concerns
+
+For questions regarding proper use of this Tool, consult with your legal, compliance, or risk management teams before proceeding.
+
+---
+
+**Last Updated:** January 2025
+**Version:** 1.0.15
 
 ## Support
 
