@@ -48,9 +48,12 @@ class Phase4DataEnricher:
     Enriches Phase 3 calculated metrics with market, macro, and predictive data.
     """
 
-    def __init__(self, phase3_file: str, ticker: str, model_file: str = "models/distribution_cut_logistic_regression.pkl"):
+    def __init__(self, phase3_file: str, ticker: str, model_file: str = "models/distribution_cut_logistic_regression_v2.2.pkl"):
         """
         Initialize enricher.
+
+        Model v2.2 (default): Uses 28 Phase 3 features (sustainable AFCF methodology)
+        Model v2.1 (legacy): models/distribution_cut_logistic_regression.pkl (total AFCF)
 
         Args:
             phase3_file: Path to Phase 3 calculated metrics JSON
@@ -266,18 +269,22 @@ class Phase4DataEnricher:
         Run distribution cut prediction model.
 
         Args:
-            market_data: Market assessment dictionary
-            macro_data: Macro assessment dictionary
+            market_data: Market assessment dictionary (kept for backward compatibility, not used in v2.2)
+            macro_data: Macro assessment dictionary (kept for backward compatibility, not used in v2.2)
 
         Returns:
             Prediction results dictionary
+
+        Note:
+            Model v2.2 uses only 28 Phase 3 features (no market/macro inputs).
+            Market and macro data are still collected for report display purposes.
         """
         print(f"\n{'='*60}")
-        print("Running Distribution Cut Prediction Model")
+        print("Running Distribution Cut Prediction Model v2.2")
         print(f"{'='*60}")
 
         try:
-            # Extract features from Phase 3 data
+            # Extract features from Phase 3 data (28 features for v2.2)
             features = self._prepare_features(market_data, macro_data)
 
             # Load model components
@@ -287,10 +294,10 @@ class Phase4DataEnricher:
             selected_features = self.model_data['selected_features']
             target_encoder = self.model_data['target_encoder']
 
-            # Create feature vector (59 features)
+            # Create feature vector (28 features for v2.2)
             X = pd.DataFrame([features])
 
-            # Apply feature selection (59 → 15)
+            # Apply feature selection (28 → 15 for v2.2)
             X_selected = selector.transform(X)
 
             # Scale features
@@ -356,99 +363,96 @@ class Phase4DataEnricher:
 
     def _prepare_features(self, market_data: Dict, macro_data: Dict) -> Dict:
         """
-        Prepare feature vector from Phase 3, market, and macro data.
+        Prepare feature vector from Phase 3 data for model v2.2.
 
         Returns:
-            Dictionary of 59 features required by the model
+            Dictionary of 28 features required by model v2.2 (all from Phase 3, no market/macro)
+
+        Note:
+            Model v2.2 uses sustainable AFCF methodology and only requires Phase 3 fundamental features.
+            Market and macro data parameters are kept for backward compatibility but not used in v2.2.
         """
         phase3 = self.phase3_data
 
-        # Extract fundamental features (33 from Phase 3)
-        fundamentals = {}
+        # Extract 28 fundamental features from Phase 3 (training dataset column order)
+        features = {}
 
-        # Leverage metrics
+        # Leverage metrics (3 features)
         leverage = phase3.get('leverage_metrics', {})
-        fundamentals['total_debt'] = leverage.get('total_debt', 0)
-        fundamentals['debt_to_assets_percent'] = leverage.get('debt_to_assets_percent', 0)
-        fundamentals['net_debt_ratio'] = leverage.get('net_debt_ratio', 0)
+        features['total_debt'] = leverage.get('total_debt', 0)
+        features['debt_to_assets_percent'] = leverage.get('debt_to_assets_percent', 0)
+        features['net_debt_ratio'] = leverage.get('net_debt_ratio', 0)
 
-        # FFO/AFFO/ACFO metrics
-        ffo_metrics = phase3.get('ffo_metrics', {})
-        affo_metrics = phase3.get('affo_metrics', {})
-        acfo_metrics = phase3.get('acfo_metrics', {})
+        # REIT metrics - reported values (4 features)
+        reit = phase3.get('reit_metrics', {})
+        features['ffo_reported'] = reit.get('ffo', 0)
+        features['affo_reported'] = reit.get('affo', 0)
+        features['ffo_per_unit'] = reit.get('ffo_per_unit', 0)
+        features['affo_per_unit'] = reit.get('affo_per_unit', 0)
 
-        fundamentals['ffo_reported'] = ffo_metrics.get('ffo', 0)
-        fundamentals['affo_reported'] = affo_metrics.get('affo', 0)
-        fundamentals['ffo_per_unit'] = ffo_metrics.get('ffo_per_unit', 0)
-        fundamentals['affo_per_unit'] = affo_metrics.get('affo_per_unit', 0)
+        # Distribution metrics (3 features)
+        features['distributions_per_unit'] = reit.get('distributions_per_unit', 0)
+        features['ffo_payout_ratio'] = reit.get('ffo_payout_ratio', 0)
+        features['affo_payout_ratio'] = reit.get('affo_payout_ratio', 0)
 
-        # Distribution metrics
-        distributions = phase3.get('distribution_metrics', {})
-        fundamentals['distributions_per_unit'] = distributions.get('distributions_per_unit', 0)
-        fundamentals['ffo_payout_ratio'] = distributions.get('ffo_payout_ratio_calc', 0)
-        fundamentals['affo_payout_ratio'] = distributions.get('affo_payout_ratio_calc', 0)
+        # Calculated FFO/AFFO/ACFO from Phase 3 (6 features)
+        features['ffo_calculated'] = reit.get('ffo_calculation_detail', {}).get('ffo_calculated', 0)
+        features['affo_calculated'] = reit.get('affo_calculation_detail', {}).get('affo_calculated', 0)
+        features['acfo_calculated'] = reit.get('acfo_calculation_detail', {}).get('acfo_calculated', 0)
+        features['ffo_per_unit_calc'] = reit.get('ffo_calculation_detail', {}).get('ffo_per_unit', 0)
+        features['affo_per_unit_calc'] = reit.get('affo_calculation_detail', {}).get('affo_per_unit', 0)
+        features['acfo_per_unit_calc'] = reit.get('acfo_calculation_detail', {}).get('acfo_per_unit', 0)
 
-        # Calculated FFO/AFFO/ACFO
-        fundamentals['ffo_calculated'] = ffo_metrics.get('ffo', 0)  # Use same if not recalculated
-        fundamentals['affo_calculated'] = affo_metrics.get('affo', 0)
-        fundamentals['acfo_calculated'] = acfo_metrics.get('acfo', 0)
-        fundamentals['ffo_per_unit_calc'] = ffo_metrics.get('ffo_per_unit', 0)
-        fundamentals['affo_per_unit_calc'] = affo_metrics.get('affo_per_unit', 0)
-        fundamentals['acfo_per_unit_calc'] = acfo_metrics.get('acfo_per_unit', 0)
+        # Coverage metrics (2 features)
+        coverage = phase3.get('coverage_ratios', {})
+        features['noi_interest_coverage'] = coverage.get('noi_interest_coverage', 0)
+        features['annualized_interest_expense'] = coverage.get('annualized_interest_expense', 0)
 
-        # Coverage metrics
-        coverage = phase3.get('coverage_metrics', {})
-        fundamentals['noi_interest_coverage'] = coverage.get('noi_interest_coverage', 0)
-        fundamentals['annualized_interest_expense'] = coverage.get('annualized_interest_expense', 0)
-
-        # Portfolio metrics
+        # Portfolio metrics (3 features)
         portfolio = phase3.get('portfolio_metrics', {})
-        fundamentals['total_properties'] = portfolio.get('total_properties', 0)
-        fundamentals['occupancy_rate'] = portfolio.get('occupancy_rate', 0)
-        fundamentals['same_property_noi_growth'] = portfolio.get('same_property_noi_growth', 0)
+        features['total_properties'] = portfolio.get('total_properties', 0)
+        features['occupancy_rate'] = portfolio.get('occupancy_rate', 0)
+        features['same_property_noi_growth'] = portfolio.get('same_property_noi_growth', 0)
 
-        # Liquidity metrics
-        liquidity = phase3.get('liquidity_metrics', {})
-        fundamentals['available_cash'] = liquidity.get('available_cash', 0)
-        fundamentals['total_available_liquidity'] = liquidity.get('total_available_liquidity', 0)
+        # Liquidity metrics (2 features)
+        liquidity = phase3.get('liquidity_position', {})
+        features['available_cash'] = liquidity.get('available_cash', 0)
+        features['total_available_liquidity'] = liquidity.get('total_available_liquidity', 0)
 
-        # Burn rate and self-funding
+        # Burn rate and self-funding (2 features)
         burn_rate = phase3.get('burn_rate_analysis', {})
-        fundamentals['monthly_burn_rate'] = burn_rate.get('monthly_burn_rate', 0)
+        features['monthly_burn_rate'] = burn_rate.get('monthly_burn_rate', 0)
 
         afcf_coverage = phase3.get('afcf_coverage', {})
-        fundamentals['self_funding_ratio'] = afcf_coverage.get('afcf_self_funding_ratio', 0)
+        features['self_funding_ratio'] = afcf_coverage.get('afcf_self_funding_ratio', 0)
 
-        # Dilution
+        # Dilution (2 features)
         dilution = phase3.get('dilution_analysis', {})
-        fundamentals['dilution_percentage'] = dilution.get('dilution_percentage', 0)
+        features['dilution_percentage'] = dilution.get('dilution_percentage', 0)
 
-        # Encode categorical feature: dilution_materiality
+        # Encode categorical feature: dilution_materiality (1 feature)
         dilution_materiality_str = dilution.get('dilution_materiality', 'low')
         materiality_encoding = {'minimal': 0, 'low': 1, 'moderate': 2, 'high': 3}
-        fundamentals['dilution_materiality'] = materiality_encoding.get(dilution_materiality_str, 1)
+        features['dilution_materiality'] = materiality_encoding.get(dilution_materiality_str, 1)
 
-        # Sector (from Phase 2 or default) - encode as numeric
+        # Sector (from Phase 2 or default) - encode as numeric (1 feature)
         sector_str = phase3.get('sector', 'Other')
         sector_encoding = {
             'Retail': 0, 'Office': 1, 'Industrial': 2, 'Residential': 3,
             'Diversified': 4, 'Healthcare': 5, 'Storage': 6, 'Other': 7
         }
-        fundamentals['sector'] = sector_encoding.get(sector_str, 7)
+        features['sector'] = sector_encoding.get(sector_str, 7)
 
-        # Market features (17 from market_data)
-        market_features = self._extract_market_features(market_data)
-
-        # Macro features (9 from macro_data)
-        macro_features = self._extract_macro_features(macro_data)
-
-        # Merge all features
-        features = {**fundamentals, **market_features, **macro_features}
-
+        # Total: 28 features (3+4+3+6+2+3+2+2+2+1 = 28)
         return features
 
     def _extract_market_features(self, market_data: Dict) -> Dict:
-        """Extract 17 market features from market assessment."""
+        """
+        [DEPRECATED - Not used by model v2.2]
+        Extract 17 market features from market assessment.
+
+        Legacy method kept for backward compatibility with model v2.1.
+        """
         features = {}
 
         # Helper function to encode classification strings
@@ -505,7 +509,12 @@ class Phase4DataEnricher:
         return features
 
     def _extract_macro_features(self, macro_data: Dict) -> Dict:
-        """Extract 9 macro features from macro assessment."""
+        """
+        [DEPRECATED - Not used by model v2.2]
+        Extract 9 macro features from macro assessment.
+
+        Legacy method kept for backward compatibility with model v2.1.
+        """
         features = {}
 
         # Encoding maps for macro features
@@ -680,8 +689,8 @@ def main():
     parser.add_argument('--phase3', required=True, help='Path to Phase 3 calculated metrics JSON')
     parser.add_argument('--ticker', required=True, help='REIT ticker symbol (e.g., REI-UN.TO)')
     parser.add_argument('--output', help='Output file for enriched data (default: same dir as phase3)')
-    parser.add_argument('--model', default='models/distribution_cut_logistic_regression.pkl',
-                       help='Path to trained model (default: models/distribution_cut_logistic_regression.pkl)')
+    parser.add_argument('--model', default='models/distribution_cut_logistic_regression_v2.2.pkl',
+                       help='Path to trained model (default: v2.2 - sustainable AFCF methodology)')
     parser.add_argument('--market-lookback', type=int, default=365,
                        help='Market data lookback days (default: 365)')
     parser.add_argument('--macro-lookback', type=int, default=120,
