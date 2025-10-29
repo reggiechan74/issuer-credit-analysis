@@ -13,12 +13,12 @@
 ✅ **Model v2.2 fixes critical underestimation issue - now accurately predicts distribution cut risk for distressed REITs**
 
 **The Problem with v2.1:**
-- Artis REIT: Predicted 2.1% (Very Low) when actual risk was 67.1% (High)
+- REIT A: Predicted 2.1% (Very Low) when actual risk was 67.1% (High)
 - Underestimation: 65 percentage points off
 - Root cause: Feature distribution mismatch (trained on total AFCF, but Phase 3 calculates sustainable AFCF)
 
 **Model v2.2 Improvements:**
-- ✅ **67.1% High risk prediction** for Artis REIT (was 2.1% Very Low) - aligns with critical distress
+- ✅ **67.1% High risk prediction** for REIT A (was 2.1% Very Low) - aligns with critical distress
 - ✅ **Sustainable AFCF methodology** - matches Phase 3 calculations (Issue #40)
 - ✅ **28 Phase 3 features** (was 54 with market/macro) - more focused feature set
 - ✅ **Validated on 3 REITs** - improvements of +27 to +65 percentage points
@@ -145,9 +145,9 @@ Docling       (~1K tok)        0 tokens         0 tokens         (12K tok)      
 **Example Predictions:**
 | REIT | Cut Probability | Risk Level | Financial Context |
 |------|----------------|------------|-------------------|
-| **Artis REIT** | 67.1% | 🔴 High | Cash runway: 1.6 months, Self-funding: -0.61x |
-| **RioCan REIT** | 48.5% | 🔴 High | Sustainable AFCF negative |
-| **Dream Industrial** | 29.3% | 🟠 Moderate | AFFO payout: 115% |
+| **REIT A** | 67.1% | 🔴 High | Cash runway: 1.6 months, Self-funding: -0.61x |
+| **REIT B** | 48.5% | 🔴 High | Sustainable AFCF negative |
+| **REIT C** | 29.3% | 🟠 Moderate | AFFO payout: 115% |
 
 **What Changed in v2.2:**
 - ✅ Fixed 65-point underestimation in severe distress cases
@@ -275,7 +275,7 @@ Best for interactive analysis and production workloads:
 
 ```bash
 # With Claude Code open in this directory:
-/analyzeREissuer @statements.pdf @mda.pdf "Artis REIT"
+/analyzeREissuer @statements.pdf @mda.pdf "REIT Name"
 
 # The slash command automatically executes all phases:
 # 1. Phase 1: PDF → Markdown (PyMuPDF4LLM + Camelot, 113 tables extracted)
@@ -286,7 +286,7 @@ Best for interactive analysis and production workloads:
 # 5. Phase 5: Generate report (0 tokens, templating)
 
 # Total time: ~60 seconds | Total cost: ~$0.30
-# Output includes: 67.1% High distribution cut risk prediction (example)
+# Output includes: Distribution cut risk prediction with risk level
 ```
 
 **Method 2: Cleaner Extraction** - `/analyzeREissuer-docling`
@@ -295,7 +295,7 @@ Alternative for batch processing with cleaner markdown output:
 
 ```bash
 # Same usage, different PDF conversion method:
-/analyzeREissuer-docling @statements.pdf @mda.pdf "Artis REIT"
+/analyzeREissuer-docling @statements.pdf @mda.pdf "REIT Name"
 
 # Uses Docling for Phase 1 (slower but more compact markdown)
 # Phases 2-5 are identical to Method 1
@@ -315,13 +315,13 @@ Generate comprehensive cash burn rate and liquidity runway analysis:
 
 ```bash
 # Using issuer name (searches Issuer_Reports/)
-/burnrate "Dream Industrial REIT"
+/burnrate "REIT Name"
 
 # Using issuer abbreviation
-/burnrate DIR
+/burnrate REIT
 
 # Using direct path to Phase 2 JSON
-/burnrate Issuer_Reports/DIR-Q2-Report-FINAL/temp/phase2_extracted_data.json
+/burnrate Issuer_Reports/REIT_Name/temp/phase2_extracted_data.json
 
 # Report includes:
 # - Cash burn rate (monthly & annualized)
@@ -342,15 +342,15 @@ Choose your PDF conversion method:
 ```bash
 # Method 1: PyMuPDF4LLM + Camelot (Fast - 30 seconds)
 python scripts/preprocess_pdfs_enhanced.py \
-  --issuer-name "Artis REIT" \
+  --issuer-name "REIT Name" \
   statements.pdf mda.pdf
 
 # Method 2: Docling (Cleaner - 20 minutes)
 python scripts/preprocess_pdfs_docling.py \
-  --issuer-name "Artis REIT" \
+  --issuer-name "REIT Name" \
   statements.pdf mda.pdf
 
-# Both create: Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
+# Both create: Issuer_Reports/REIT_Name/temp/phase1_markdown/*.md
 ```
 
 **Phase 2: Markdown → JSON (after Phase 1 completes)**
@@ -358,8 +358,8 @@ python scripts/preprocess_pdfs_docling.py \
 ```bash
 # Extract financial data using file references (~1K tokens)
 python scripts/extract_key_metrics_efficient.py \
-  --issuer-name "Artis REIT" \
-  Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
+  --issuer-name "REIT Name" \
+  Issuer_Reports/REIT_Name/temp/phase1_markdown/*.md
 
 # Then Claude Code reads the prompt and extracts data
 ```
@@ -367,7 +367,7 @@ python scripts/extract_key_metrics_efficient.py \
 **Phase 3: Metric Calculations**
 ```bash
 python scripts/calculate_credit_metrics.py \
-  Issuer_Reports/Artis_REIT/temp/phase2_extracted_data.json
+  Issuer_Reports/REIT_Name/temp/phase2_extracted_data.json
 ```
 
 **Phase 4: Credit Analysis (requires Claude Code agent)**
@@ -379,8 +379,8 @@ python scripts/calculate_credit_metrics.py \
 **Phase 5: Final Report Generation**
 ```bash
 python scripts/generate_final_report.py \
-  Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json \
-  Issuer_Reports/Artis_REIT/temp/phase4_credit_analysis.md
+  Issuer_Reports/REIT_Name/temp/phase3_calculated_metrics.json \
+  Issuer_Reports/REIT_Name/temp/phase4_credit_analysis.md
 ```
 
 ## Usage Examples
@@ -389,10 +389,10 @@ python scripts/generate_final_report.py \
 
 ```bash
 # Example 1: Single REIT with multiple PDFs (recommended)
-/analyzeREissuer @financial_statements.pdf @mda.pdf "CapitaLand Ascendas REIT"
+/analyzeREissuer @financial_statements.pdf @mda.pdf "REIT Name"
 
 # Example 2: Quarterly analysis
-/analyzeREissuer @Q2_2025_statements.pdf "Allied Properties REIT"
+/analyzeREissuer @Q2_2025_statements.pdf "REIT Name"
 ```
 
 ### Manual Phase 1 Execution (if needed)
@@ -400,11 +400,11 @@ python scripts/generate_final_report.py \
 ```bash
 # Using PyMuPDF4LLM + Camelot (current default)
 python scripts/preprocess_pdfs_enhanced.py \
-  --issuer-name "CapitaLand Ascendas REIT" \
+  --issuer-name "REIT Name" \
   financial_statements.pdf mda.pdf
 
 # Results: 113 tables extracted from 75 pages
-# Output: Issuer_Reports/CapitaLand_Ascendas_REIT/temp/phase1_markdown/
+# Output: Issuer_Reports/REIT_Name/temp/phase1_markdown/
 ```
 
 ### Cleanup
@@ -414,10 +414,10 @@ python scripts/preprocess_pdfs_enhanced.py \
 rm -rf Issuer_Reports/*/temp/
 
 # Keep everything organized by issuer
-ls Issuer_Reports/Artis_REIT/reports/
+ls Issuer_Reports/REIT_Name/reports/
 # Output:
-# 2025-10-17_153045_Credit_Opinion_Artis_REIT.md
-# 2025-10-18_091230_Credit_Opinion_Artis_REIT.md
+# 2025-10-17_153045_Credit_Opinion_REIT_Name.md
+# 2025-10-18_091230_Credit_Opinion_REIT_Name.md
 ```
 
 ## Testing
