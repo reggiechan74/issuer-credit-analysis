@@ -248,15 +248,29 @@ You should invoke the agent directly rather than running a bash script for this 
 
 Generate comprehensive final credit opinion report with ET timestamp.
 
+**IMPORTANT:** Use enriched data file if available (from Phase 3.5), otherwise fall back to standard metrics.
+
 ```bash
 echo ""
 echo "=========================================="
 echo "PHASE 5: REPORT GENERATION (0 TOKENS)"
 echo "=========================================="
 
+# Determine which metrics file to use (enriched takes precedence)
+ENRICHED_PATH="Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_enriched_data.json"
+STANDARD_PATH="Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json"
+
+if [ -f "$ENRICHED_PATH" ]; then
+  METRICS_FILE="$ENRICHED_PATH"
+  echo "✅ Using enriched data (includes market/macro/prediction sections)"
+else
+  METRICS_FILE="$STANDARD_PATH"
+  echo "⚠️  Using standard metrics only (Phase 3.5 was skipped or failed)"
+fi
+
 # Generate final credit opinion report (auto-saves to reports/ folder with timestamp)
 python scripts/generate_final_report.py \
-  Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json \
+  "$METRICS_FILE" \
   Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_credit_analysis.md
 
 if [ $? -ne 0 ]; then
@@ -266,12 +280,12 @@ fi
 
 echo "✅ Phase 5 complete: Final credit opinion report generated"
 echo "   → Output: ./Issuer_Reports/{ISSUER_NAME_SAFE}/reports/{timestamp}_Credit_Opinion_{issuer}.md"
-echo "   → Report length: ~17,000 characters"
+echo "   → Report length: ~17,000 characters (standard) or ~18,000 (with enrichment)"
 echo "   → Token usage: 0 tokens (pure templating)"
 ```
 
 **Characteristics:**
-- **Input:** Phase 3 calculated metrics JSON + Phase 4 credit analysis markdown
+- **Input:** Phase 3 calculated metrics JSON (or enriched Phase 4 data if available) + Phase 4 credit analysis markdown
 - **Output:** Comprehensive Moody's-style credit opinion report with ET timestamp
 - **Location:** Automatically saved to `./Issuer_Reports/{issuer}/reports/` folder
 - **Filename:** `{YYYY-MM-DD_HHMMSS}_Credit_Opinion_{Issuer_Name}.md`
