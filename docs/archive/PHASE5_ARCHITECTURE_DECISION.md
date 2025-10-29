@@ -28,22 +28,35 @@ Phase 5 Python script (`generate_final_report.py`) was experiencing section mapp
 
 **Cost:** Would be ~$0.80 per report (if it worked)
 
-#### Option 1b: Two-Part Report (User Suggestion)
-**Approach:** Split report generation into Part 1 (sections 1-12) and Part 2 (sections 13-15), merge with bash
+#### Option 1b: Two-Part Report (User Suggestion - TESTED)
+**Approach:** Split report generation into Part 1 (narrative sections 1-12) and Part 2 (detailed analysis + data appendices), merge with bash
 
-**Result:** ❌ **STILL NOT FEASIBLE**
-- Even Part 1 alone (sections 1-12) exceeded 32K output tokens
-- Phase 4 agent generates very detailed analysis (~12K words already)
-- Would require splitting into 3-4 parts minimum
-- Orchestration complexity: Which sections in which part? How to maintain consistency?
+**Result:** ❌ **STILL NOT FEASIBLE** (empirically tested)
 
-**Cost:** Would be ~$0.90-1.20 per report (3-4 invocations @ $0.30 each)
+**Part 1 Test (Narrative sections):**
+- ✅ **SUCCEEDED** - Generated 9,500 words successfully
+- Included: Header, ToC, Ratings, Executive Summary, Strengths/Challenges, Outlook, Upgrade/Downgrade factors, Key Indicators summary, Scorecard
+- Output: Within 32K token limit
+
+**Part 2 Test (Detailed analysis + data):**
+- ❌ **FAILED** - Exceeded 32K output token limit
+- Attempted: 7-factor detailed analysis + market/macro/distribution risk + peer comparison + complete metrics appendices (all 463 metrics formatted)
+- Issue: Formatting 463 metrics into markdown tables is extremely token-intensive
+
+**Conclusion:** Would require **3-4 parts minimum**:
+- Part 1: Narrative sections ✅
+- Part 2: Detailed factor analysis
+- Part 3: Market/macro/peer analysis
+- Part 4: Complete data appendices
+
+**Cost:** ~$0.90-1.20 per report (3-4 invocations @ $0.30 each)
 
 **Why This Fails:**
 - Current Phase 4 output: 12,341 words = ~20K tokens (already near limit)
 - Final report with formatted tables: 15-25K words = 30-40K tokens
-- Even splitting in half: Each part tries to be comprehensive and exceeds 32K
-- Natural limit: Can't generate >15K words in single output
+- Formatting all 463 metrics in tables: Extremely token-intensive
+- Orchestration complexity: 3-4 parts with consistency requirements
+- Natural limit: LLMs excel at narrative, struggle with bulk data formatting
 
 ### Option 2: Hybrid (Python metrics + LLM narratives)
 **Approach:** Python fills 463 numeric placeholders, LLM agent maps Phase 4 narratives
@@ -170,15 +183,25 @@ Phase 5: Template Assembly
 
 **Key Insight:** Phase 4 is already generating output near the maximum feasible size. Any attempt to expand it to include full report formatting hits the token limit.
 
-**Natural Division of Labor:**
+**Natural Division of Labor (Empirically Validated):**
 - **Phase 4 (LLM):** Complex qualitative analysis requiring judgment
+  - Can generate ~12K words of narrative analysis
+  - Maxes out near 20K output tokens
+  - Perfect for credit assessment, scenarios, recommendations
+
 - **Phase 5 (Python):** Mechanical formatting and template population
+  - Handles 463 numeric placeholders efficiently
+  - Formats data tables instantly (<1 second)
+  - Zero tokens, guaranteed accuracy
+
+**Key Empirical Finding:** Even splitting the final report into 2 parts hits token limits. Part 1 (narrative) succeeded at 9,500 words, but Part 2 (detailed analysis + 463 formatted metrics) still exceeded 32K tokens. Would need **3-4 parts** to work.
 
 This is the **optimal split** given:
-1. Claude's 32K output token limit
-2. Need for comprehensive analysis (12K+ words)
+1. Claude's 32K output token limit (hard constraint)
+2. Need for comprehensive analysis (12K+ words narrative)
 3. Need for accurate metric formatting (463 placeholders)
-4. Cost sensitivity ($0.30 vs $0.90-1.20)
+4. Cost sensitivity ($0.30 vs $0.90-1.20 for 3-4 parts)
+5. Token inefficiency: LLMs use many tokens formatting tables vs Python's instant formatting
 
 ## Conclusion
 
