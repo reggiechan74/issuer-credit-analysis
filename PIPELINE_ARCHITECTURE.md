@@ -38,8 +38,8 @@ Convert financial statement PDFs to structured markdown with extracted tables.
 **Example Input Files:**
 ```
 /workspace/
-  ├── artis_q2_2025_statements.pdf     (30-50 pages)
-  └── artis_q2_2025_mda.pdf            (20-40 pages)
+  ├── reit_q2_2025_statements.pdf     (30-50 pages)
+  └── reit_q2_2025_mda.pdf            (20-40 pages)
 ```
 
 ### Processing Tools
@@ -47,17 +47,17 @@ Convert financial statement PDFs to structured markdown with extracted tables.
 **Option 1: PyMuPDF4LLM + Camelot (Default)**
 ```bash
 python scripts/preprocess_pdfs_enhanced.py \
-  --issuer-name "Artis REIT" \
-  artis_q2_2025_statements.pdf \
-  artis_q2_2025_mda.pdf
+  --issuer-name "Example REIT" \
+  reit_q2_2025_statements.pdf \
+  reit_q2_2025_mda.pdf
 ```
 
 **Option 2: Docling (Alternative)**
 ```bash
 python scripts/preprocess_pdfs_docling.py \
-  --issuer-name "Artis REIT" \
-  artis_q2_2025_statements.pdf \
-  artis_q2_2025_mda.pdf
+  --issuer-name "Example REIT" \
+  reit_q2_2025_statements.pdf \
+  reit_q2_2025_mda.pdf
 ```
 
 ### Outputs
@@ -70,11 +70,11 @@ python scripts/preprocess_pdfs_docling.py \
 **Output Structure:**
 ```
 Issuer_Reports/
-  └── Artis_REIT/
+  └── Example_REIT/
       └── temp/
           └── phase1_markdown/
-              ├── artis_q2_2025_statements.md    (~300KB, 113 tables)
-              └── artis_q2_2025_mda.md           (~245KB, text + tables)
+              ├── reit_q2_2025_statements.md    (~300KB, 113 tables)
+              └── reit_q2_2025_mda.md           (~245KB, text + tables)
 ```
 
 **Markdown Features:**
@@ -115,17 +115,17 @@ Extract structured financial data from markdown files into schema-validated JSON
 
 **Input File Paths:**
 ```
-Issuer_Reports/Artis_REIT/temp/phase1_markdown/
-  ├── artis_q2_2025_statements.md
-  └── artis_q2_2025_mda.md
+Issuer_Reports/Example_REIT/temp/phase1_markdown/
+  ├── reit_q2_2025_statements.md
+  └── reit_q2_2025_mda.md
 ```
 
 ### Processing Tool
 
 ```bash
 python scripts/extract_key_metrics_efficient.py \
-  --issuer-name "Artis REIT" \
-  Issuer_Reports/Artis_REIT/temp/phase1_markdown/*.md
+  --issuer-name "Example REIT" \
+  Issuer_Reports/Example_REIT/temp/phase1_markdown/*.md
 ```
 
 **Token Usage:** ~1,000 tokens (file references, not embedded content)
@@ -158,7 +158,7 @@ python scripts/extract_key_metrics_efficient.py \
 
 ```json
 {
-  "issuer_name": "Artis REIT",
+  "issuer_name": "Example REIT",
   "report_date": "2025-06-30",
   "period": "Q2 2025",
   "balance_sheet": {
@@ -228,7 +228,7 @@ python scripts/extract_key_metrics_efficient.py \
 
 ```bash
 python scripts/validate_extraction_schema.py \
-  Issuer_Reports/Artis_REIT/temp/phase2_extracted_data.json
+  Issuer_Reports/Example_REIT/temp/phase2_extracted_data.json
 ```
 
 **Validation Checks:**
@@ -262,14 +262,14 @@ Calculate credit metrics from extracted financial data using pure Python (NO tok
 
 **Input File Path:**
 ```
-Issuer_Reports/Artis_REIT/temp/phase2_extracted_data.json
+Issuer_Reports/Example_REIT/temp/phase2_extracted_data.json
 ```
 
 ### Processing Tool
 
 ```bash
 python scripts/calculate_credit_metrics.py \
-  Issuer_Reports/Artis_REIT/temp/phase2_extracted_data.json
+  Issuer_Reports/Example_REIT/temp/phase2_extracted_data.json
 ```
 
 **Token Usage:** 0 tokens (pure Python calculations)
@@ -340,7 +340,7 @@ python scripts/calculate_credit_metrics.py \
 
 ```json
 {
-  "issuer_name": "Artis REIT",
+  "issuer_name": "Example REIT",
   "calculation_date": "2025-10-29T12:00:00",
   "data_source": "phase2_extracted_data.json",
 
@@ -486,15 +486,15 @@ Enrich Phase 3 metrics with market data, macro environment, and ML prediction.
 
 **Input File Path:**
 ```
-Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json
+Issuer_Reports/Example_REIT/temp/phase3_calculated_metrics.json
 ```
 
 ### Processing Tool
 
 ```bash
 python scripts/enrich_phase4_data.py \
-  --phase3 Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json \
-  --ticker AX-UN.TO \
+  --phase3 Issuer_Reports/Example_REIT/temp/phase3_calculated_metrics.json \
+  --ticker REIT-UN.TO \
   --model models/distribution_cut_logistic_regression_v2.2.pkl
 ```
 
@@ -505,7 +505,7 @@ python scripts/enrich_phase4_data.py \
 **1. Market Data (OpenBB Platform)**
 
 ```bash
-python scripts/openbb_market_monitor.py --ticker AX-UN.TO
+python scripts/openbb_market_monitor.py --ticker REIT-UN.TO
 ```
 
 **Extracted Metrics:**
@@ -530,7 +530,7 @@ python scripts/openbb_macro_monitor.py --output data/macro.json
 **3. Dividend History (OpenBB Platform)**
 
 ```bash
-python scripts/openbb_data_collector.py --ticker AX-UN.TO
+python scripts/openbb_data_collector.py --ticker REIT-UN.TO
 ```
 
 **Extracted Metrics:**
@@ -565,13 +565,13 @@ python scripts/openbb_data_collector.py --ticker AX-UN.TO
 ```json
 {
   // All Phase 3 metrics (inherited)
-  "issuer_name": "Artis REIT",
+  "issuer_name": "Example REIT",
   "ffo_metrics": { ... },
   "afcf_metrics": { ... },
 
   // NEW: Market data
   "market_data": {
-    "ticker": "AX-UN.TO",
+    "ticker": "REIT-UN.TO",
     "price_current": 5.23,
     "price_52w_high": 12.45,
     "price_stress": true,            // >30% decline
@@ -669,9 +669,9 @@ Generate qualitative credit assessment using Claude Code agent.
 
 **Input File Path:**
 ```
-Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json
+Issuer_Reports/Example_REIT/temp/phase3_calculated_metrics.json
 OR
-Issuer_Reports/Artis_REIT/temp/phase3_enriched_data.json  (if enriched)
+Issuer_Reports/Example_REIT/temp/phase3_enriched_data.json  (if enriched)
 ```
 
 ### Processing Method
@@ -681,7 +681,7 @@ Issuer_Reports/Artis_REIT/temp/phase3_enriched_data.json  (if enriched)
 ```python
 # Invoke issuer_due_diligence_expert_slim agent via Task tool
 # Agent reads Phase 3 JSON and generates credit assessment
-# Output saved to: Issuer_Reports/Artis_REIT/temp/phase4_credit_analysis.md
+# Output saved to: Issuer_Reports/Example_REIT/temp/phase4_credit_analysis.md
 ```
 
 **Token Usage:** ~12,000 tokens (~$0.30)
@@ -765,7 +765,7 @@ Issuer_Reports/Artis_REIT/temp/phase3_enriched_data.json  (if enriched)
 **Markdown Output Structure:**
 
 ```markdown
-# Credit Analysis: Artis REIT
+# Credit Analysis: Example REIT
 
 **Analysis Date:** October 29, 2025
 **Period Analyzed:** Q2 2025
@@ -807,7 +807,7 @@ Issuer_Reports/Artis_REIT/temp/phase3_enriched_data.json  (if enriched)
 
 - Phase 3 calculated metrics: phase3_calculated_metrics.json
 - ML prediction: Model v2.2 (67.1% cut probability)
-- Market data: OpenBB Platform (AX-UN.TO)
+- Market data: OpenBB Platform (REIT-UN.TO)
 - Peer comparison: [List of 3-4 comparable REITs]
 ```
 
@@ -842,7 +842,7 @@ Generate final credit opinion report by populating markdown template with data f
 
 **Input File Paths:**
 ```
-Issuer_Reports/Artis_REIT/temp/
+Issuer_Reports/Example_REIT/temp/
   ├── phase2_extracted_data.json
   ├── phase3_calculated_metrics.json (or phase3_enriched_data.json)
   └── phase4_credit_analysis.md
@@ -853,8 +853,8 @@ Issuer_Reports/Artis_REIT/temp/
 ```bash
 python scripts/generate_final_report.py \
   --template credit_opinion_template_enhanced.md \
-  Issuer_Reports/Artis_REIT/temp/phase3_calculated_metrics.json \
-  Issuer_Reports/Artis_REIT/temp/phase4_credit_analysis.md
+  Issuer_Reports/Example_REIT/temp/phase3_calculated_metrics.json \
+  Issuer_Reports/Example_REIT/temp/phase4_credit_analysis.md
 ```
 
 **Token Usage:** 0 tokens (pure Python string replacement)
@@ -866,7 +866,7 @@ python scripts/generate_final_report.py \
 **Placeholder Categories:**
 
 1. **Metadata** (Section 1)
-   - `{{ISSUER_NAME}}` → "Artis REIT"
+   - `{{ISSUER_NAME}}` → "Example REIT"
    - `{{REPORT_DATE}}` → "October 29, 2025"
    - `{{PERIOD}}` → "Q2 2025"
    - `{{CURRENCY}}` → "CAD"
@@ -951,14 +951,14 @@ python scripts/generate_final_report.py \
 
 **Output File Naming:**
 ```
-Issuer_Reports/Artis_REIT/reports/
-  └── 2025-10-29_125045_Credit_Opinion_Artis_REIT.md
+Issuer_Reports/Example_REIT/reports/
+  └── 2025-10-29_125045_Credit_Opinion_Example_REIT.md
 ```
 
 **Report Structure:**
 
 ```markdown
-# Credit Opinion: Artis REIT
+# Credit Opinion: Example REIT
 
 **Report Date:** October 29, 2025
 **Period Analyzed:** Q2 2025 (June 30, 2025)
