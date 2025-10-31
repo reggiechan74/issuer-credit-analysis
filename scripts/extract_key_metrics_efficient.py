@@ -83,6 +83,47 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 5. **Structure:** FLAT - no nested objects in balance_sheet
 6. **Most Recent Period:** Use latest period data (e.g., Q2 2025, six months)
 
+**CRITICAL FIELD NAMES - VALIDATION CHECKLIST**
+
+⚠️ **Most Common Extraction Errors** (check these BEFORE saving):
+
+**acfo_components:**
+- ✅ `cash_flow_from_operations` (NOT "cash_from_operations", NOT "cfo", NOT "operating_cash_flow")
+  - **Location:** Cash Flow Statement - "Cash provided by operating activities"
+  - **Required:** This field is MANDATORY - without it, ACFO/AFCF/burn rate cannot be calculated
+
+**cash_flow_investing:**
+- ✅ `development_capex` (NOT "capex_investment_properties", NOT "development_capital_expenditures")
+- ✅ `other_investing_outflows` (NOT "capex_other", NOT "other_capex")
+
+**liquidity:**
+- ✅ `cash_and_equivalents` (NOT "cash", NOT "cash_equivalents")
+- ✅ `undrawn_credit_facilities` (NOT "revolver_available", NOT "available_credit", NOT "undrawn_revolver")
+
+**Common Section Mistakes:**
+- ❌ DO NOT put `leasing_costs` or `tenant_improvements` in `cash_flow_investing`
+  - ✅ They belong in `acfo_components` and `ffo_affo_components`
+- ❌ DO NOT use `cash` in liquidity section
+  - ✅ Use `cash_and_equivalents` (even if source says "cash")
+
+**FIELD NAME MAPPING TABLE**
+
+Use this table to map terms in financial statements → correct schema field names:
+
+| Source Document Term | Schema Field Name | Section | Notes |
+|---------------------|-------------------|---------|-------|
+| "Cash and cash equivalents" | `cash_and_equivalents` | liquidity | Use even if balance sheet says "Cash" |
+| "Cash" (balance sheet line) | `cash` | balance_sheet | For balance sheet consistency only |
+| "Cash provided by operating activities" | `cash_flow_from_operations` | acfo_components | REQUIRED field |
+| "Available capacity" / "Undrawn" | `undrawn_credit_facilities` | liquidity | Sum across all facilities |
+| "Revolver available" | `undrawn_credit_facilities` | liquidity | NOT "revolver_available" |
+| "Additions to investment properties" | `development_capex` | cash_flow_investing | Negative number |
+| "Development expenditures" | `development_capex` | cash_flow_investing | NOT "capex_investment_properties" |
+| "Property acquisitions" | `property_acquisitions` | cash_flow_investing | Negative number |
+| "Proceeds from dispositions" | `property_dispositions` | cash_flow_investing | Positive number |
+| "Leasing commissions" | `leasing_costs` | acfo_components | NOT in cash_flow_investing |
+| "Tenant improvements" | `tenant_improvements` | acfo_components | NOT in cash_flow_investing |
+
 **WHERE TO FIND DATA:**
 
 **Balance Sheet:**
@@ -204,17 +245,48 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - **Note:** Some statements combine all distributions into one line - extract as `distributions_common`
 - **Sign Convention:** Outflows are negative, inflows are positive (as shown in statement)
 
-### Step 4: Validation
+### Step 4: Self-Validate BEFORE Saving (CRITICAL)
 
-After extraction, check:
-- ✓ All REQUIRED fields present
-- ✓ Numbers are integers (no commas)
-- ✓ Decimals for rates (0.878 not 87.8)
-- ✓ Balance sheet reasonably balances
-- ✓ Interest expense is POSITIVE
-- ✓ Occupancy between 0.0-1.0
+**⚠️ DO NOT save the JSON file until ALL checks pass!**
+
+Before proceeding to Step 5, perform these validation checks:
+
+**Check 1: Required Field Presence**
+Verify these REQUIRED fields exist and have non-zero values:
+- ✅ `acfo_components.cash_flow_from_operations` (from cash flow statement)
+- ✅ `balance_sheet.cash` (from balance sheet)
+- ✅ `liquidity.cash_and_equivalents` (must equal balance_sheet.cash)
+- ✅ `liquidity.undrawn_credit_facilities` (from credit facility note or MD&A)
+
+**Check 2: Field Name Accuracy**
+Compare your field names against the schema checklist above:
+- ✅ Used `cash_and_equivalents` (NOT "cash") in liquidity section
+- ✅ Used `development_capex` (NOT "capex_investment_properties")
+- ✅ Used `undrawn_credit_facilities` (NOT "revolver_available")
+- ✅ Used `other_investing_outflows` (NOT "capex_other")
+
+**Check 3: Section Placement**
+- ✅ `leasing_costs` and `tenant_improvements` are in `acfo_components` (NOT in cash_flow_investing)
+- ✅ `development_capex` is in `cash_flow_investing` (NOT in acfo_components)
+- ✅ `balance_sheet` has FLAT structure (no nested objects)
+
+**Check 4: Data Quality**
+- ✅ Numbers have no commas or $ signs
+- ✅ Rates are decimals (0.878 not 87.8)
+- ✅ Interest expense is POSITIVE
+- ✅ Occupancy between 0.0-1.0
+- ✅ Balance sheet approximately balances
+
+**If any check fails:**
+1. ❌ DO NOT save the file
+2. 🔍 Review the schema again
+3. 🔧 Correct the field names/structure/values
+4. 🔄 Retry all checks
+5. ✅ Only proceed to Step 5 when ALL checks pass
 
 ### Step 5: Save JSON
+
+**Only after Step 4 validation passes:**
 
 Save to: `{output_path}`
 
@@ -318,6 +390,47 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 5. **Structure:** FLAT - no nested objects in balance_sheet
 6. **Most Recent Period:** Use latest period data (e.g., Q2 2025, six months)
 
+**CRITICAL FIELD NAMES - VALIDATION CHECKLIST**
+
+⚠️ **Most Common Extraction Errors** (check these BEFORE saving):
+
+**acfo_components:**
+- ✅ `cash_flow_from_operations` (NOT "cash_from_operations", NOT "cfo", NOT "operating_cash_flow")
+  - **Location:** Cash Flow Statement - "Cash provided by operating activities"
+  - **Required:** This field is MANDATORY - without it, ACFO/AFCF/burn rate cannot be calculated
+
+**cash_flow_investing:**
+- ✅ `development_capex` (NOT "capex_investment_properties", NOT "development_capital_expenditures")
+- ✅ `other_investing_outflows` (NOT "capex_other", NOT "other_capex")
+
+**liquidity:**
+- ✅ `cash_and_equivalents` (NOT "cash", NOT "cash_equivalents")
+- ✅ `undrawn_credit_facilities` (NOT "revolver_available", NOT "available_credit", NOT "undrawn_revolver")
+
+**Common Section Mistakes:**
+- ❌ DO NOT put `leasing_costs` or `tenant_improvements` in `cash_flow_investing`
+  - ✅ They belong in `acfo_components` and `ffo_affo_components`
+- ❌ DO NOT use `cash` in liquidity section
+  - ✅ Use `cash_and_equivalents` (even if source says "cash")
+
+**FIELD NAME MAPPING TABLE**
+
+Use this table to map terms in financial statements → correct schema field names:
+
+| Source Document Term | Schema Field Name | Section | Notes |
+|---------------------|-------------------|---------|-------|
+| "Cash and cash equivalents" | `cash_and_equivalents` | liquidity | Use even if balance sheet says "Cash" |
+| "Cash" (balance sheet line) | `cash` | balance_sheet | For balance sheet consistency only |
+| "Cash provided by operating activities" | `cash_flow_from_operations` | acfo_components | REQUIRED field |
+| "Available capacity" / "Undrawn" | `undrawn_credit_facilities` | liquidity | Sum across all facilities |
+| "Revolver available" | `undrawn_credit_facilities` | liquidity | NOT "revolver_available" |
+| "Additions to investment properties" | `development_capex` | cash_flow_investing | Negative number |
+| "Development expenditures" | `development_capex` | cash_flow_investing | NOT "capex_investment_properties" |
+| "Property acquisitions" | `property_acquisitions` | cash_flow_investing | Negative number |
+| "Proceeds from dispositions" | `property_dispositions` | cash_flow_investing | Positive number |
+| "Leasing commissions" | `leasing_costs` | acfo_components | NOT in cash_flow_investing |
+| "Tenant improvements" | `tenant_improvements` | acfo_components | NOT in cash_flow_investing |
+
 **WHERE TO FIND DATA:**
 
 **Balance Sheet:**
@@ -439,17 +552,48 @@ Follow this **EXACT schema** (required for Phase 3 compatibility):
 - **Note:** Some statements combine all distributions into one line - extract as `distributions_common`
 - **Sign Convention:** Outflows are negative, inflows are positive (as shown in statement)
 
-### Step 4: Validation
+### Step 4: Self-Validate BEFORE Saving (CRITICAL)
 
-After extraction, check:
-- ✓ All REQUIRED fields present
-- ✓ Numbers are integers (no commas)
-- ✓ Decimals for rates (0.878 not 87.8)
-- ✓ Balance sheet reasonably balances
-- ✓ Interest expense is POSITIVE
-- ✓ Occupancy between 0.0-1.0
+**⚠️ DO NOT save the JSON file until ALL checks pass!**
+
+Before proceeding to Step 5, perform these validation checks:
+
+**Check 1: Required Field Presence**
+Verify these REQUIRED fields exist and have non-zero values:
+- ✅ `acfo_components.cash_flow_from_operations` (from cash flow statement)
+- ✅ `balance_sheet.cash` (from balance sheet)
+- ✅ `liquidity.cash_and_equivalents` (must equal balance_sheet.cash)
+- ✅ `liquidity.undrawn_credit_facilities` (from credit facility note or MD&A)
+
+**Check 2: Field Name Accuracy**
+Compare your field names against the schema checklist above:
+- ✅ Used `cash_and_equivalents` (NOT "cash") in liquidity section
+- ✅ Used `development_capex` (NOT "capex_investment_properties")
+- ✅ Used `undrawn_credit_facilities` (NOT "revolver_available")
+- ✅ Used `other_investing_outflows` (NOT "capex_other")
+
+**Check 3: Section Placement**
+- ✅ `leasing_costs` and `tenant_improvements` are in `acfo_components` (NOT in cash_flow_investing)
+- ✅ `development_capex` is in `cash_flow_investing` (NOT in acfo_components)
+- ✅ `balance_sheet` has FLAT structure (no nested objects)
+
+**Check 4: Data Quality**
+- ✅ Numbers have no commas or $ signs
+- ✅ Rates are decimals (0.878 not 87.8)
+- ✅ Interest expense is POSITIVE
+- ✅ Occupancy between 0.0-1.0
+- ✅ Balance sheet approximately balances
+
+**If any check fails:**
+1. ❌ DO NOT save the file
+2. 🔍 Review the schema again
+3. 🔧 Correct the field names/structure/values
+4. 🔄 Retry all checks
+5. ✅ Only proceed to Step 5 when ALL checks pass
 
 ### Step 5: Save JSON
+
+**Only after Step 4 validation passes:**
 
 Save to: `{output_path}`
 
