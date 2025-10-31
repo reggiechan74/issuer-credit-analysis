@@ -686,7 +686,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="Enrich Phase 3 metrics with market, macro, and predictive data"
     )
-    parser.add_argument('--phase3', required=True, help='Path to Phase 3 calculated metrics JSON')
+    parser.add_argument('--phase3', '--phase3-file', dest='phase3', required=True,
+                       help='Path to Phase 3 calculated metrics JSON')
     parser.add_argument('--ticker', required=True, help='REIT ticker symbol (e.g., REI-UN.TO)')
     parser.add_argument('--output', help='Output file for enriched data (default: same dir as phase3)')
     parser.add_argument('--model', default='models/distribution_cut_logistic_regression_v2.2.pkl',

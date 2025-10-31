@@ -162,7 +162,7 @@ else
 
   python scripts/enrich_phase4_data.py \
     --ticker "$TICKER" \
-    --phase3-file Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json \
+    --phase3 Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json \
     --output Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_enriched_data.json
 
   if [ $? -ne 0 ]; then

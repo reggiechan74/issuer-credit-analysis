@@ -97,7 +97,7 @@ Execute the full 5-phase credit analysis pipeline using **Docling** for PDF conv
    if [ -n "$TICKER" ]; then
      python scripts/enrich_phase4_data.py \
        --ticker "$TICKER" \
-       --phase3-file Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json \
+       --phase3 Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json \
        --output Issuer_Reports/{Issuer_Name}/temp/phase4_enriched_data.json
    fi
    ```
