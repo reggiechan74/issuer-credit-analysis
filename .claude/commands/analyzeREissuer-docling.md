@@ -172,13 +172,6 @@ Issuer_Reports/
 - Use existing pipeline (`/analyzeREissuer`) for interactive/fast analysis
 - Use this pipeline for batch jobs or cleaner extraction testing
 
-## Example
 
-```
-/analyzeREissuer-docling \
-  @Issuer_FS/ArtisReit_FS/ArtisREIT-Q2-25-Consol-FS-Aug-7.pdf \
-  @Issuer_FS/ArtisReit_FS/ArtisREIT-Q2-25-MDA-Aug-7.pdf \
-  "Artis REIT"
-```
 
 Expected time: ~20 minutes

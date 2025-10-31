@@ -50,7 +50,7 @@ python scripts/calculate_credit_metrics.py Issuer_Reports/REIT_Name/temp/phase2_
 
 # Phase 5: Generate report
 python scripts/generate_final_report.py \
-  --template credit_opinion_template_enhanced.md \
+  --template credit_opinion_template.md \
   Issuer_Reports/REIT_Name/temp/phase3_calculated_metrics.json \
   Issuer_Reports/REIT_Name/temp/phase4_credit_analysis.md
 ```
@@ -148,7 +148,7 @@ Cash Runway = Available Cash / Monthly Burn Rate
 - `scripts/openbb_*.py` - Market/macro/dividend data collection
 
 **Configuration:**
-- `templates/credit_opinion_template_enhanced.md` - Report template
+- `templates/credit_opinion_template.md` - Report template
 - `.claude/agents/domain_expert/issuer_due_diligence_expert_slim.md` - Phase 4 agent
 - `.claude/commands/analyzeREissuer.md` - Main command
 - `.claude/knowledge/*.json` - Schema and extraction guides

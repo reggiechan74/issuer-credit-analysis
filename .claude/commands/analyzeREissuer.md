@@ -270,6 +270,7 @@ fi
 
 # Generate final credit opinion report (auto-saves to reports/ folder with timestamp)
 python scripts/generate_final_report.py \
+  --template credit_opinion_template.md \
   "$METRICS_FILE" \
   Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_credit_analysis.md
 
@@ -292,6 +293,8 @@ echo "   → Token usage: 0 tokens (pure templating)"
 - **Token usage:** 0 tokens (pure Python templating)
 - **Execution time:** <1 second
 - **Report sections:** Executive Summary, Credit Strengths/Challenges, Rating Outlook, Upgrade/Downgrade Factors, Key Indicators, 5-Factor Scorecard, Detailed Analysis, Liquidity, ESG, Methodology, Appendices
+- **Automatically uses enriched data** if Phase 3.5 succeeded (includes market/macro/prediction sections)
+- **New in v1.0.13:** Structural Considerations section now auto-populated from Phase 4 content
 
 **Output Structure:**
 ```
@@ -336,7 +339,7 @@ Issuer_Reports/
       phase4_agent_prompt.txt         - Agent invocation prompt (for review/debugging)
       phase4_credit_analysis.md       - Qualitative credit assessment with scorecard
     reports/
-      {timestamp}_Credit_Opinion_{issuer}.md - Final timestamped credit opinion report (~20,000 characters)
+      {timestamp}_Credit_Opinion_{issuer}.md - Final timestamped credit opinion report (~17-18K characters)
 ```
 
 **Key outputs:**
