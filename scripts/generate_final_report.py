@@ -1572,6 +1572,17 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         rating_outlook = get_section(analysis_sections, 'Rating Outlook', 'RATING OUTLOOK')
         print("⚠️  WARNING: Phase 4 used non-standard header. Please update Phase 4 agent to use '3. Rating Outlook'")
 
+    # Add fallbacks for Credit Strengths and Credit Challenges (Issue #52)
+    if credit_strengths == 'Not available':
+        credit_strengths = get_section(analysis_sections, 'Credit Strengths', 'CREDIT STRENGTHS', 'Strengths', 'STRENGTHS')
+        if credit_strengths != 'Not available':
+            print("⚠️  WARNING: Phase 4 used non-standard header for Credit Strengths. Please update Phase 4 agent to use '5. Credit Strengths'")
+
+    if credit_challenges == 'Not available':
+        credit_challenges = get_section(analysis_sections, 'Credit Challenges', 'CREDIT CHALLENGES', 'Credit Concerns', 'CREDIT CONCERNS', 'Challenges', 'CHALLENGES', 'Concerns', 'CONCERNS')
+        if credit_challenges != 'Not available':
+            print("⚠️  WARNING: Phase 4 used non-standard header for Credit Challenges. Please update Phase 4 agent to use '6. Credit Challenges'")
+
     key_observations = get_section(analysis_sections, 'Key Observations', 'KEY OBSERVATIONS AND CONCLUSIONS')
 
     # Extract key drivers from Executive Summary (look for bullets after "Key Credit Drivers:")
@@ -1683,11 +1694,11 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
                 print("⚠️  WARNING: Phase 4 used non-standard subsection '**Downgrade Scenarios**'. Please update to '**Rating Downgrade Factors**'")
 
     # Enhanced template sections (from Report A)
-    company_background = get_section(analysis_sections, 'Company Background', 'Profile', 'PROFILE')
-    business_strategy = get_section(analysis_sections, 'Business Strategy', 'BUSINESS STRATEGY')
+    company_background = get_section(analysis_sections, 'Company Background', 'COMPANY BACKGROUND', 'Company Profile', 'COMPANY PROFILE', 'Profile', 'PROFILE', 'Background', 'BACKGROUND')
+    business_strategy = get_section(analysis_sections, 'Business Strategy', 'BUSINESS STRATEGY', 'Strategy', 'STRATEGY', 'Strategic Direction', 'STRATEGIC DIRECTION')
     portfolio_composition_detail = get_section(analysis_sections, 'Portfolio Composition', 'PORTFOLIO COMPOSITION')
     management_governance = get_section(analysis_sections, 'Management and Governance', 'MANAGEMENT AND GOVERNANCE')
-    peer_comparison = get_section(analysis_sections, 'Peer Comparison', 'PEER COMPARISON')
+    peer_comparison = get_section(analysis_sections, 'Peer Comparison', 'PEER COMPARISON', 'Peer Analysis', 'PEER ANALYSIS', 'Competitive Position', 'COMPETITIVE POSITION', 'Competitive Positioning', 'COMPETITIVE POSITIONING')
     earnings_analysis = get_section(analysis_sections, 'Earnings Analysis', 'EARNINGS ANALYSIS')
     leverage_coverage_detail = get_section(analysis_sections, 'Leverage and Coverage Analysis', 'LEVERAGE AND COVERAGE ANALYSIS')
     growth_strategy = get_section(analysis_sections, 'Growth Strategy and Capital Allocation', 'GROWTH STRATEGY', 'Capital Allocation')
