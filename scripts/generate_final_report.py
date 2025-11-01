@@ -608,8 +608,12 @@ def calculate_payout_ratio(metric_per_unit, distributions_per_unit):
         None
         >>> calculate_payout_ratio(None, 0.30)
         None
+        >>> calculate_payout_ratio(-0.0298, 0.14)
+        None  # Negative metric (loss) - payout ratio meaningless
     """
-    if metric_per_unit is None or metric_per_unit == 0:
+    # Check for invalid inputs: None, zero, or negative (loss)
+    # When metric is negative, payout ratio is meaningless (REIT paying from capital, not cash flow)
+    if metric_per_unit is None or metric_per_unit == 0 or metric_per_unit < 0:
         return None
     if distributions_per_unit is None:
         return None
@@ -637,8 +641,14 @@ def calculate_coverage_ratio(metric_per_unit, dist_per_unit):
         0.57
         >>> calculate_coverage_ratio(0, 0.30)
         None
+        >>> calculate_coverage_ratio(-0.0298, 0.14)
+        None  # Negative metric (loss) - coverage ratio meaningless
     """
-    if metric_per_unit is None or metric_per_unit == 0 or dist_per_unit is None or dist_per_unit == 0:
+    # Check for invalid inputs: None, zero, or negative (loss)
+    # When metric is negative, coverage ratio is meaningless (REIT has loss, not covering distributions)
+    if metric_per_unit is None or metric_per_unit == 0 or metric_per_unit < 0:
+        return None
+    if dist_per_unit is None or dist_per_unit == 0:
         return None
     return round(metric_per_unit / dist_per_unit, 2)
 
@@ -1853,9 +1863,16 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     validation = reit_metrics.get('validation', {})
     acfo_validation = acfo_metrics.get('acfo_validation', {}) if acfo_metrics else {}
 
+    # Pre-calculate payout ratios for calculated metrics (Issue #57: handle negative values)
+    # When metric is negative (loss), payout ratio is meaningless → returns None → displays as "N/A"
+    # IMPORTANT: Get per-unit values from calculation_detail sections (not top-level issuer-reported values)
+    ffo_per_unit_calc = reit_metrics.get('ffo_calculation_detail', {}).get('ffo_per_unit_diluted')
+    affo_per_unit_calc = reit_metrics.get('affo_calculation_detail', {}).get('affo_per_unit_diluted')
 
-
-
+    ffo_payout_calc = calculate_payout_ratio(ffo_per_unit_calc, distributions)
+    affo_payout_calc = calculate_payout_ratio(affo_per_unit_calc, distributions)
+    acfo_payout_calc = calculate_payout_ratio(acfo_metrics.get('acfo_per_unit_diluted'), distributions) if acfo_metrics else None
+    afcf_payout_calc = calculate_payout_ratio(afcf_metrics.get('afcf_per_unit'), distributions) if afcf_metrics else None
 
 
 
@@ -1916,25 +1933,25 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # ========================================
         # Section 2.2.2: REALPAC-Calculated Metrics (v1.0.12)
         # ========================================
-        # FFO Calculated - Use Phase 3 per-unit values (already corrected for unit mismatch)
+        # FFO Calculated - Use Phase 3 per-unit values from calculation_detail (Issue #57)
         'FFO_CALCULATED': f"{reit_metrics.get('ffo_calculated', ffo):,.0f}",
-        'FFO_PER_UNIT_CALCULATED': f"{reit_metrics.get('ffo_per_unit_diluted', 0):.4f}",  # Use Phase 3 value
-        'FFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(reit_metrics.get('ffo_per_unit_diluted'), distributions) or 0:.1f}",
+        'FFO_PER_UNIT_CALCULATED': f"{ffo_per_unit_calc:.4f}" if ffo_per_unit_calc is not None else '0.0000',
+        'FFO_PAYOUT_CALCULATED': f"{ffo_payout_calc:.1f}" if ffo_payout_calc is not None else 'N/A',
 
-        # AFFO Calculated - Use Phase 3 per-unit values (already corrected for unit mismatch)
+        # AFFO Calculated - Use Phase 3 per-unit values from calculation_detail (Issue #57)
         'AFFO_CALCULATED': f"{reit_metrics.get('affo_calculated', affo):,.0f}",
-        'AFFO_PER_UNIT_CALCULATED': f"{reit_metrics.get('affo_per_unit_diluted', 0):.4f}",  # Use Phase 3 value
-        'AFFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(reit_metrics.get('affo_per_unit_diluted'), distributions) or 0:.1f}",
+        'AFFO_PER_UNIT_CALCULATED': f"{affo_per_unit_calc:.4f}" if affo_per_unit_calc is not None else '0.0000',
+        'AFFO_PAYOUT_CALCULATED': f"{affo_payout_calc:.1f}" if affo_payout_calc is not None else 'N/A',
 
         # ACFO Calculated - Use Phase 3 per-unit values (already corrected for unit mismatch)
         'ACFO_CALCULATED': f"{acfo_metrics.get('acfo', 0):,.0f}" if acfo_metrics.get('acfo') else 'Not available',
         'ACFO_PER_UNIT_CALCULATED': f"{acfo_metrics.get('acfo_per_unit_diluted', 0):.4f}" if acfo_metrics.get('acfo_per_unit_diluted') else 'Not available',  # Use Phase 3 value
-        'ACFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(acfo_metrics.get('acfo_per_unit_diluted'), distributions) or 0:.1f}" if acfo_metrics.get('acfo_per_unit_diluted') else 'Not available',
+        'ACFO_PAYOUT_CALCULATED': f"{acfo_payout_calc:.1f}" if acfo_payout_calc is not None else 'N/A',
 
         # AFCF Calculated
         'AFCF_CALCULATED': f"{afcf_metrics.get('afcf', 0):,.0f}" if afcf_metrics.get('afcf') else 'Not available',
         'AFCF_PER_UNIT_CALCULATED': f"{afcf_metrics.get('afcf_per_unit', 0):.4f}" if afcf_metrics.get('afcf_per_unit') else 'Not available',
-        'AFCF_PAYOUT_CALCULATED': f"{calculate_payout_ratio(afcf_metrics.get('afcf_per_unit'), distributions) or 0:.1f}" if afcf_metrics.get('afcf_per_unit') else 'Not available',
+        'AFCF_PAYOUT_CALCULATED': f"{afcf_payout_calc:.1f}" if afcf_payout_calc is not None else 'N/A',
 
         # ========================================
         # Variance Placeholders (Reported vs Calculated)
