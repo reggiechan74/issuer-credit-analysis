@@ -247,13 +247,17 @@ def calculate_ffo_from_components(financial_data):
         if 'common_units_outstanding' in financial_data['balance_sheet']:
             units = financial_data['balance_sheet']['common_units_outstanding']
             if units and units > 0:
-                ffo_per_unit = round(ffo_calculated / units, 4)
+                # Note: ffo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                ffo_per_unit = round(ffo_calculated / (units / 1000), 4)
 
         # Diluted per-unit
         if 'diluted_units_outstanding' in financial_data['balance_sheet']:
             units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
             if units_diluted and units_diluted > 0:
-                ffo_per_unit_diluted = round(ffo_calculated / units_diluted, 4)
+                # Note: ffo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                ffo_per_unit_diluted = round(ffo_calculated / (units_diluted / 1000), 4)
 
     result = {
         'ffo_calculated': round(ffo_calculated, 0),
@@ -357,13 +361,17 @@ def calculate_affo_from_ffo(financial_data, ffo):
         if 'common_units_outstanding' in financial_data['balance_sheet']:
             units = financial_data['balance_sheet']['common_units_outstanding']
             if units and units > 0:
-                affo_per_unit = round(affo_calculated / units, 4)
+                # Note: affo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                affo_per_unit = round(affo_calculated / (units / 1000), 4)
 
         # Diluted per-unit
         if 'diluted_units_outstanding' in financial_data['balance_sheet']:
             units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
             if units_diluted and units_diluted > 0:
-                affo_per_unit_diluted = round(affo_calculated / units_diluted, 4)
+                # Note: affo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                affo_per_unit_diluted = round(affo_calculated / (units_diluted / 1000), 4)
 
     result = {
         'affo_calculated': round(affo_calculated, 0),
@@ -843,13 +851,17 @@ def calculate_acfo_from_components(financial_data):
         if 'common_units_outstanding' in financial_data['balance_sheet']:
             units = financial_data['balance_sheet']['common_units_outstanding']
             if units and units > 0:
-                acfo_per_unit = round(acfo_calculated / units, 4)
+                # Note: acfo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                acfo_per_unit = round(acfo_calculated / (units / 1000), 4)
 
         # Diluted per-unit
         if 'diluted_units_outstanding' in financial_data['balance_sheet']:
             units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
             if units_diluted and units_diluted > 0:
-                acfo_per_unit_diluted = round(acfo_calculated / units_diluted, 4)
+                # Note: acfo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                acfo_per_unit_diluted = round(acfo_calculated / (units_diluted / 1000), 4)
 
     result = {
         'acfo_calculated': round(acfo_calculated, 0),
@@ -1202,13 +1214,17 @@ def calculate_afcf(financial_data):
         if 'common_units_outstanding' in financial_data['balance_sheet']:
             units = financial_data['balance_sheet']['common_units_outstanding']
             if units and units > 0:
-                afcf_per_unit = round(afcf / units, 4)
+                # Note: afcf is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                afcf_per_unit = round(afcf / (units / 1000), 4)
 
         # Diluted per-unit
         if 'diluted_units_outstanding' in financial_data['balance_sheet']:
             units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
             if units_diluted and units_diluted > 0:
-                afcf_per_unit_diluted = round(afcf / units_diluted, 4)
+                # Note: afcf is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                afcf_per_unit_diluted = round(afcf / (units_diluted / 1000), 4)
 
     result = {
         # PRIMARY METRIC: Sustainable AFCF (recurring CFI only)

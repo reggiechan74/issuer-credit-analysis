@@ -159,13 +159,17 @@ def calculate_acfo_from_components(financial_data):
         if 'common_units_outstanding' in financial_data['balance_sheet']:
             units = financial_data['balance_sheet']['common_units_outstanding']
             if units and units > 0:
-                acfo_per_unit = round(acfo_calculated / units, 4)
+                # Note: acfo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                acfo_per_unit = round(acfo_calculated / (units / 1000), 4)
 
         # Diluted per-unit
         if 'diluted_units_outstanding' in financial_data['balance_sheet']:
             units_diluted = financial_data['balance_sheet']['diluted_units_outstanding']
             if units_diluted and units_diluted > 0:
-                acfo_per_unit_diluted = round(acfo_calculated / units_diluted, 4)
+                # Note: acfo_calculated is in thousands, units is raw count
+                # Convert units to thousands for consistent calculation
+                acfo_per_unit_diluted = round(acfo_calculated / (units_diluted / 1000), 4)
 
     result = {
         'acfo_calculated': round(acfo_calculated, 0),
