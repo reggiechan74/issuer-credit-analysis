@@ -126,7 +126,7 @@ Extract:
 
 Load and parse the Phase 2 JSON file to extract the same metrics.
 
-**Structure:** See `.claude/knowledge/phase2_extraction_schema.json` for schema
+**Structure:** See `.claude/knowledge/phase2_extraction_schema_v2.json` for schema
 
 **Extract:**
 - `balance_sheet` - All balance sheet items

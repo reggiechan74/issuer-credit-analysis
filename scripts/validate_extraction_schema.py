@@ -246,7 +246,7 @@ def main():
             print(f"  {error}")
 
         print("\n💡 Fix these errors before running Phase 3 calculations")
-        print("\n📚 Schema reference: .claude/knowledge/phase2_extraction_schema.json")
+        print("\n📚 Schema reference: .claude/knowledge/phase2_extraction_schema_v2.json")
         sys.exit(1)
 
 

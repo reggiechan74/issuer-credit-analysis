@@ -6,7 +6,7 @@ This document defines the **standardized JSON schema** that Phase 2 extraction M
 
 ## Schema Files
 
-1. **`phase2_extraction_schema.json`** - JSON Schema specification (AUTHORITATIVE, machine-readable)
+1. **`phase2_extraction_schema_v2.json`** - JSON Schema specification (AUTHORITATIVE, machine-readable)
 2. **`COMPREHENSIVE_EXTRACTION_GUIDE.md`** - Detailed extraction guide with examples
 3. **This README** - Complete schema documentation with examples
 
@@ -1020,7 +1020,7 @@ When creating new Phase 2 extractions:
 
 ## References
 
-- **Schema Definition:** `.claude/knowledge/phase2_extraction_schema.json` (AUTHORITATIVE)
+- **Schema Definition:** `.claude/knowledge/phase2_extraction_schema_v2.json` (AUTHORITATIVE)
 - **Extraction Guide:** `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
 - **Validator:** `scripts/validate_extraction_schema.py`
 - **Phase 3 Script:** `scripts/calculate_credit_metrics.py`

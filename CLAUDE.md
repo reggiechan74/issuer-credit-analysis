@@ -95,7 +95,7 @@ python scripts/validate_extraction_schema.py Issuer_Reports/REIT_Name/temp/phase
 ```
 
 **Schema reference:**
-- `.claude/knowledge/phase2_extraction_schema.json` (authoritative)
+- `.claude/knowledge/phase2_extraction_schema_v2.json` (authoritative)
 - `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md` (extraction guide)
 - `.claude/knowledge/SCHEMA_README.md` (complete docs)
 

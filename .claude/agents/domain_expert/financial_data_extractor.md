@@ -54,7 +54,7 @@ You will receive:
 
 **CRITICAL:** Follow the EXACT schema defined in the authoritative schema file:
 
-📋 **Primary Schema Reference:** `.claude/knowledge/phase2_extraction_schema.json`
+📋 **Primary Schema Reference:** `.claude/knowledge/phase2_extraction_schema_v2.json`
 - **AUTHORITATIVE SOURCE** - Complete JSON Schema specification
 - Defines all required and optional fields with types and descriptions
 - Used for validation by `validate_extraction_schema.py`
@@ -118,7 +118,7 @@ The schema includes these major sections:
 11. **Portfolio** (REQUIRED):
     - property_count, total_gla_sf, occupancy_rate
 
-**IMPORTANT:** Read the schema file directly (`.claude/knowledge/phase2_extraction_schema.json`) to ensure you have the complete, up-to-date field definitions and requirements.
+**IMPORTANT:** Read the schema file directly (`.claude/knowledge/phase2_extraction_schema_v2.json`) to ensure you have the complete, up-to-date field definitions and requirements.
 
 ---
 
@@ -252,7 +252,7 @@ Saved to: [output path]
 
 ## Reference Documents
 
-- **Schema specification:** `.claude/knowledge/phase2_extraction_schema.json` (AUTHORITATIVE)
+- **Schema specification:** `.claude/knowledge/phase2_extraction_schema_v2.json` (AUTHORITATIVE)
 - **Extraction guide:** `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
 - **Full documentation:** `.claude/knowledge/SCHEMA_README.md`
 

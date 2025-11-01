@@ -1788,7 +1788,15 @@ def calculate_coverage_ratios(financial_data):
     noi_interest_coverage = noi / interest_expense
 
     # Detect reporting period to determine correct annualization factor
-    reporting_period = financial_data.get('reporting_period', '').lower()
+    # v2.0 schema: reporting_period is an object with period_label
+    # v1.0 schema: reporting_period is a string
+    reporting_period_raw = financial_data.get('reporting_period', '')
+    if isinstance(reporting_period_raw, dict):
+        # v2.0 schema - use period_label or period_type
+        reporting_period = reporting_period_raw.get('period_label', reporting_period_raw.get('period_type', '')).lower()
+    else:
+        # v1.0 schema - it's already a string
+        reporting_period = reporting_period_raw.lower()
 
     # REIT Quarterly Pattern: Q1=3mo, Q2=6mo, Q3=9mo, Q4=12mo
     if 'q2' in reporting_period or ' q2' in reporting_period:
@@ -1927,6 +1935,7 @@ def calculate_all_metrics(financial_data):
 
     # Assemble complete output with issuer identification
     result = {
+        'schema_version': '2.0.0',  # Phase 3 outputs v2.0 schema
         'issuer_name': financial_data['issuer_name'],
         'reporting_date': financial_data['reporting_date'],
         'reporting_period': financial_data.get('reporting_period', 'Unknown'),
@@ -1940,6 +1949,41 @@ def calculate_all_metrics(financial_data):
         'coverage_ratios': coverage_ratios,
         'portfolio_metrics': portfolio_metrics
     }
+
+    # Restructure reit_metrics into v2.0 format if input is v2.0
+    if 'reit_metrics' in financial_data and isinstance(financial_data['reit_metrics'], dict):
+        input_reit_metrics = financial_data['reit_metrics']
+
+        # Check if input has v2.0 structure (with issuer_reported/realpac_calculated)
+        if 'issuer_reported' in input_reit_metrics:
+            # V2.0 input - preserve issuer_reported, update realpac_calculated with our calculations
+            result['reit_metrics'] = {
+                'issuer_reported': input_reit_metrics['issuer_reported'],  # Pass through from Phase 2
+                'realpac_calculated': {
+                    'ffo': reit_metrics.get('ffo_calculated'),
+                    'affo': reit_metrics.get('affo_calculated'),
+                    'acfo': reit_metrics.get('acfo_calculated') or reit_metrics.get('acfo'),
+                    'afcf': afcf_metrics.get('afcf') if afcf_metrics else None,
+                    'ffo_per_unit_diluted': reit_metrics.get('ffo_calculation_detail', {}).get('ffo_per_unit_diluted'),
+                    'affo_per_unit_diluted': reit_metrics.get('affo_calculation_detail', {}).get('affo_per_unit_diluted'),
+                    'acfo_per_unit_diluted': reit_metrics.get('acfo_calculation_detail', {}).get('acfo_per_unit_diluted'),
+                    'afcf_per_unit': afcf_metrics.get('afcf_per_unit_diluted') if afcf_metrics else None,
+                    'ffo_payout_ratio': reit_metrics.get('validation', {}).get('ffo_payout_ratio_calculated'),
+                    'affo_payout_ratio': reit_metrics.get('validation', {}).get('affo_payout_ratio_calculated'),
+                    'acfo_payout_ratio': reit_metrics.get('acfo_validation', {}).get('acfo_payout_ratio_calculated'),
+                    'afcf_payout_ratio': afcf_coverage.get('afcf_payout_ratio') if afcf_coverage else None,
+                    'ffo_coverage_ratio': reit_metrics.get('validation', {}).get('ffo_coverage_ratio_calculated'),
+                    'affo_coverage_ratio': reit_metrics.get('validation', {}).get('affo_coverage_ratio_calculated'),
+                    'acfo_coverage_ratio': reit_metrics.get('acfo_validation', {}).get('acfo_coverage_ratio_calculated'),
+                    'afcf_coverage_ratio': afcf_coverage.get('afcf_debt_service_coverage') if afcf_coverage else None,
+                    'calculation_timestamp': reit_metrics.get('ffo_calculation_detail', {}).get('calculation_timestamp', '')
+                },
+                'validation': input_reit_metrics.get('validation', {})  # Pass through if exists
+            }
+
+            # Update validation section with calculated variances
+            if 'validation' in reit_metrics:
+                result['reit_metrics']['validation'] = reit_metrics['validation']
 
     # Add AFCF metrics if calculated
     if afcf_metrics is not None:

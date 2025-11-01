@@ -34,13 +34,13 @@ def generate_template_from_schema(schema_path=None):
     This ensures extractors follow the exact schema structure from the start.
 
     Args:
-        schema_path: Path to schema JSON file (default: .claude/knowledge/phase2_extraction_schema.json)
+        schema_path: Path to schema JSON file (default: .claude/knowledge/phase2_extraction_schema_v2.json)
 
     Returns:
         dict: Template with correct structure and field names, zero/empty values
     """
     if schema_path is None:
-        schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+        schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema_v2.json'
 
     with open(schema_path) as f:
         schema = json.load(f)
@@ -145,7 +145,7 @@ def format_error_guidance(errors):
     # Generic fallback if no specific patterns matched
     if not guidance:
         guidance.append("• Follow the template structure EXACTLY - do not modify field names or structure")
-        guidance.append("• Check schema specification: .claude/knowledge/phase2_extraction_schema.json")
+        guidance.append("• Check schema specification: .claude/knowledge/phase2_extraction_schema_v2.json")
 
     return "\n".join(guidance)
 
@@ -197,7 +197,7 @@ def create_retry_prompt(markdown_files, output_path, issuer_name, previous_error
         str: Enhanced prompt with error corrections
     """
     # Generate template from schema
-    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema_v2.json'
     template = generate_template_from_schema(schema_path)
 
     # Identify specific problems
@@ -314,7 +314,7 @@ The previous extraction got some things right. Use this as reference but FIX THE
 
 ---
 
-**Schema Reference:** `.claude/knowledge/phase2_extraction_schema.json`
+**Schema Reference:** `.claude/knowledge/phase2_extraction_schema_v2.json`
 **Extraction Guide:** `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
 """
 
@@ -407,7 +407,7 @@ def create_efficient_extraction_prompt(markdown_files, output_path, issuer_name)
     """
 
     # Load schema from single source of truth
-    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema_v2.json'
     with open(schema_path, 'r') as f:
         schema_template = f.read()
 
@@ -450,7 +450,7 @@ This pre-filled template includes ALL required fields with correct names and str
 4. **Use 0 for missing numeric values** (NOT null)
 5. **Flat structure:** No unnecessary nesting (balance_sheet is flat, not nested by period)
 
-**Full schema specification available at:** `.claude/knowledge/phase2_extraction_schema.json`
+**Full schema specification available at:** `.claude/knowledge/phase2_extraction_schema_v2.json`
 
 ### Step 3: Data Extraction Guidelines
 
@@ -683,7 +683,7 @@ Fix any errors before proceeding to Phase 3.
 ## REFERENCE DOCUMENTS
 
 **Schema & Templates:**
-- Schema specification: `.claude/knowledge/phase2_extraction_schema.json`
+- Schema specification: `.claude/knowledge/phase2_extraction_schema_v2.json`
 - Template with examples: `.claude/knowledge/phase2_extraction_template.json`
 - Full schema documentation: `.claude/knowledge/SCHEMA_README.md`
 
@@ -728,7 +728,7 @@ def create_pdf_direct_extraction_prompt(pdf_files, output_path, issuer_name):
     """
 
     # Load schema from single source of truth
-    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema_v2.json'
 
     # Generate pre-filled template
     template = generate_template_from_schema(schema_path)
@@ -769,7 +769,7 @@ This pre-filled template includes ALL required fields with correct names and str
 4. **Use 0 for missing numeric values** (NOT null)
 5. **Flat structure:** No unnecessary nesting (balance_sheet is flat, not nested by period)
 
-**Full schema specification available at:** `.claude/knowledge/phase2_extraction_schema.json`
+**Full schema specification available at:** `.claude/knowledge/phase2_extraction_schema_v2.json`
 
 ### Step 3: Data Extraction Guidelines
 
@@ -1002,7 +1002,7 @@ Fix any errors before proceeding to Phase 3.
 ## REFERENCE DOCUMENTS
 
 **Schema & Templates:**
-- Schema specification: `.claude/knowledge/phase2_extraction_schema.json`
+- Schema specification: `.claude/knowledge/phase2_extraction_schema_v2.json`
 - Template with examples: `.claude/knowledge/phase2_extraction_template.json`
 - Full schema documentation: `.claude/knowledge/SCHEMA_README.md`
 
@@ -1165,7 +1165,7 @@ def main():
             print(f"   1. Review failed extraction: {args.output}")
             print(f"   2. Check validation errors above")
             print(f"   3. Fix manually or delete output file to start fresh")
-            print(f"\n📚 Schema reference: .claude/knowledge/phase2_extraction_schema.json")
+            print(f"\n📚 Schema reference: .claude/knowledge/phase2_extraction_schema_v2.json")
             sys.exit(1)
 
         # Generate retry prompt

@@ -1320,11 +1320,28 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         str: Complete report
     """
 
-    # Extract metrics
+    # Validate schema version
+    schema_version = metrics.get('schema_version', '1.0')
+    if schema_version != '2.0.0':
+        raise ValueError(
+            f"Phase 5 requires schema v2.0.0, but received v{schema_version}.\n"
+            f"Please run: python scripts/convert_schema_v1_to_v2.py <metrics_file>"
+        )
+
+    # Extract metadata
     issuer_name = metrics.get('issuer_name', 'Unknown Issuer')
     reporting_date = metrics.get('reporting_date', 'Unknown')
-    report_period = metrics.get('reporting_period', 'Unknown')  # Use consistent field name from Phase 2/3
+
+    # Handle reporting_period (now an object in v2.0)
+    reporting_period_obj = metrics.get('reporting_period', {})
+    if isinstance(reporting_period_obj, dict):
+        report_period = reporting_period_obj.get('period_label', 'Unknown')
+    else:
+        # Fallback for malformed data
+        report_period = str(reporting_period_obj)
+
     currency = metrics.get('currency', 'CAD')
+    ticker = metrics.get('ticker', 'N/A')
 
     leverage_metrics = metrics.get('leverage_metrics', {})
     reit_metrics = metrics.get('reit_metrics', {})
@@ -1340,17 +1357,14 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     liquidity_risk = metrics.get('liquidity_risk', {})
     sustainable_burn = metrics.get('sustainable_burn', {})
 
-    # ACFO metrics are stored in reit_metrics, not as top-level acfo_metrics
-    acfo_metrics = {
-        'acfo': reit_metrics.get('acfo'),
-        'acfo_per_unit': reit_metrics.get('acfo_per_unit'),
-        'acfo_per_unit_diluted': reit_metrics.get('acfo_per_unit_diluted'),
-        'acfo_payout_ratio': reit_metrics.get('acfo_payout_ratio'),
-        'data_source': 'calculated' if reit_metrics.get('acfo') else None,
-        'acfo_calculation_detail': reit_metrics.get('acfo_calculation_detail', {}),
-        'acfo_validation': reit_metrics.get('acfo_validation', {}),
-        'data_quality': reit_metrics.get('acfo_calculation_detail', {}).get('data_quality')
-    } if reit_metrics.get('acfo') else {}
+    # Extract distributions (v2.0: separate section)
+    distributions_section = metrics.get('distributions', {})
+    distributions = distributions_section.get('per_unit', 0)
+    distributions_total = distributions_section.get('total', 0)
+
+    # Extract issuer-reported vs REALPAC-calculated metrics (v2.0 schema)
+    issuer_reported = reit_metrics.get('issuer_reported', {})
+    realpac_calculated = reit_metrics.get('realpac_calculated', {})
 
     # Extract specific values
     total_debt = leverage_metrics.get('total_debt', 0)
@@ -1359,21 +1373,46 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     debt_to_assets = leverage_metrics.get('debt_to_assets_percent', 0)
     net_debt_ratio = leverage_metrics.get('net_debt_ratio', 0)
 
-    # Extract issuer-reported metrics (quarterly from Phase 2/3)
-    ffo = reit_metrics.get('ffo', 0)
-    affo = reit_metrics.get('affo', 0)
-    ffo_per_unit = reit_metrics.get('ffo_per_unit', 0)
-    affo_per_unit = reit_metrics.get('affo_per_unit', 0)
-    ffo_payout = reit_metrics.get('ffo_payout_ratio', 0)
-    affo_payout = reit_metrics.get('affo_payout_ratio', 0)
+    # Issuer-reported metrics (Section 2.5.1)
+    ffo = issuer_reported.get('ffo', 0)
+    affo = issuer_reported.get('affo', 0)
+    acfo_reported = issuer_reported.get('acfo')  # Usually None
+    ffo_per_unit = issuer_reported.get('ffo_per_unit_diluted', 0)
+    affo_per_unit = issuer_reported.get('affo_per_unit_diluted', 0)
+    ffo_payout = issuer_reported.get('ffo_payout_ratio', 0)
+    affo_payout = issuer_reported.get('affo_payout_ratio', 0)
+    # NEW: Read coverage ratios directly from schema (Issue #58 fix)
+    ffo_coverage_reported = issuer_reported.get('ffo_coverage_ratio')
+    affo_coverage_reported = issuer_reported.get('affo_coverage_ratio')
+    acfo_coverage_reported = issuer_reported.get('acfo_coverage_ratio')
 
-    # Get YTD distributions per unit (for consistency with YTD ACFO/AFCF totals)
-    # Phase 2 has ytd_2025.distributions_per_unit which matches the YTD period
-    distributions = reit_metrics.get('distributions_per_unit', 0)  # Default to quarterly
-    if phase2_data:
-        ytd_distributions = phase2_data.get('ffo_affo', {}).get('ytd_2025', {}).get('distributions_per_unit')
-        if ytd_distributions:
-            distributions = ytd_distributions  # Use YTD if available
+    # REALPAC-calculated metrics (Section 2.5.2)
+    ffo_calculated = realpac_calculated.get('ffo', 0)
+    affo_calculated = realpac_calculated.get('affo', 0)
+    acfo_calculated = realpac_calculated.get('acfo')
+    afcf_calculated = realpac_calculated.get('afcf')
+
+    ffo_per_unit_calc = realpac_calculated.get('ffo_per_unit_diluted', 0)
+    affo_per_unit_calc = realpac_calculated.get('affo_per_unit_diluted', 0)
+    acfo_per_unit_calc = realpac_calculated.get('acfo_per_unit_diluted')
+    afcf_per_unit_calc = realpac_calculated.get('afcf_per_unit')
+    # NEW: Read coverage/payout ratios from schema (no more calculation needed)
+    ffo_coverage_calc = realpac_calculated.get('ffo_coverage_ratio')
+    affo_coverage_calc = realpac_calculated.get('affo_coverage_ratio')
+    acfo_coverage_calc = realpac_calculated.get('acfo_coverage_ratio')
+    afcf_coverage_calc = realpac_calculated.get('afcf_coverage_ratio')
+    ffo_payout_calc = realpac_calculated.get('ffo_payout_ratio')
+    affo_payout_calc = realpac_calculated.get('affo_payout_ratio')
+    acfo_payout_calc = realpac_calculated.get('acfo_payout_ratio')
+    afcf_payout_calc = realpac_calculated.get('afcf_payout_ratio')
+
+    # ACFO metrics (for backward compatibility with template references)
+    acfo_metrics = {
+        'acfo': acfo_calculated,
+        'acfo_per_unit_diluted': acfo_per_unit_calc,
+        'acfo_payout_ratio': acfo_payout_calc,
+        'data_source': 'calculated'
+    } if acfo_calculated else {}
 
     noi_coverage = coverage_ratios.get('noi_interest_coverage', 0)
     annualized_interest = coverage_ratios.get('annualized_interest_expense', 0)
@@ -1461,10 +1500,8 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     afcf_recon_table = format_afcf_reconciliation_table(acfo_value, afcf_value, net_cfi_value, currency)
 
     # Bridge Analysis (Section 2.6) - FFO → AFFO → ACFO
-    # Extract calculated values
-    ffo_calculated = reit_metrics.get('ffo_calculated', 0) or 0
-    affo_calculated = reit_metrics.get('affo_calculated', 0) or 0
-    acfo_calculated = reit_metrics.get('acfo_calculated', 0) or 0
+    # NOTE: ffo_calculated, affo_calculated, acfo_calculated already extracted from v2.0 schema
+    # at lines 1390-1394 - don't re-extract from old v1.0 paths!
 
     # FFO → AFFO Bridge (Calculated vs Reported)
     # Try calculated values first
@@ -1797,85 +1834,39 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     acfo_dist_cov_total = (acfo_amount / total_distributions_ytd) if acfo_amount and total_distributions_ytd else None
 
     # Calculate reported coverage ratios (per-unit basis)
-    ffo_rep = ffo_affo_reported.get('ffo', ffo)
-    affo_rep = ffo_affo_reported.get('affo', affo)
-    acfo_rep = ffo_affo_reported.get('acfo', 0)
-
-    # Convert reported totals to per-unit for coverage calculations
-    ffo_per_unit_rep = ffo_affo_reported.get('ffo_per_unit', calculate_per_unit(ffo_rep, common_units))
-    affo_per_unit_rep = ffo_affo_reported.get('affo_per_unit', calculate_per_unit(affo_rep, common_units))
-    acfo_per_unit_rep = ffo_affo_reported.get('acfo_per_unit', calculate_per_unit(acfo_rep, common_units)) if acfo_rep else None
-
-    # Calculate coverage ratios using per-unit values
-    ffo_cov_rep = calculate_coverage_ratio(ffo_per_unit_rep, distributions)
+    # v2.0 SCHEMA: All coverage/payout ratios read directly from schema (Issue #58 fix)
+    # No more calculation needed - values come from issuer_reported and realpac_calculated sections
 
     # Format variance percentages with None handling
-    ffo_var_pct = reit_metrics.get('validation', {}).get('ffo_variance_percent')
+    validation = reit_metrics.get('validation', {})
+    ffo_var_pct = validation.get('ffo_variance_percent')
     ffo_var_formatted = f"{ffo_var_pct:.1f}%" if ffo_var_pct is not None else "N/A (not reported)"
 
-    affo_var_pct = reit_metrics.get('validation', {}).get('affo_variance_percent')
+    affo_var_pct = validation.get('affo_variance_percent')
     affo_var_formatted = f"{affo_var_pct:.1f}%" if affo_var_pct is not None else "N/A (not reported)"
-    affo_cov_rep = calculate_coverage_ratio(affo_per_unit_rep, distributions)
-    acfo_cov_rep = calculate_coverage_ratio(acfo_per_unit_rep, distributions) if acfo_per_unit_rep else None
 
-    # Get calculated coverage ratios from Phase 3 (per-unit basis)
-    coverage_ratios_detail = reit_metrics.get('coverage_ratios', {})
+    # FFO to AFFO bridge (issuer-reported)
+    ffo_to_affo_reduction_rep = ffo - affo if ffo and affo else 0
+    ffo_to_affo_pct_rep = (ffo_to_affo_reduction_rep / ffo * 100) if ffo else 0
 
-    # Calculate per-unit values for calculated metrics (from *_calculation_detail objects)
-    ffo_calc = reit_metrics.get('ffo_calculated', ffo)
-    ffo_calc_detail = reit_metrics.get('ffo_calculation_detail', {})
-    ffo_per_unit_calc = ffo_calc_detail.get('ffo_per_unit', calculate_per_unit(ffo_calc, common_units))
+    # FFO to AFFO bridge (calculated)
+    ffo_to_affo_reduction_calc = ffo_calculated - affo_calculated if ffo_calculated and affo_calculated else 0
+    ffo_to_affo_pct_calc = (ffo_to_affo_reduction_calc / ffo_calculated * 100) if ffo_calculated else 0
 
-    affo_calc = reit_metrics.get('affo_calculated', affo)
-    affo_calc_detail = reit_metrics.get('affo_calculation_detail', {})
-    affo_per_unit_calc = affo_calc_detail.get('affo_per_unit', calculate_per_unit(affo_calc, common_units))
-
-    acfo_calc_detail = acfo_metrics.get('acfo_calculation_detail', {}) if acfo_metrics else {}
-    acfo_per_unit_calc = acfo_calc_detail.get('acfo_per_unit', calculate_per_unit(acfo_metrics.get('acfo', 0), common_units)) if acfo_metrics.get('acfo') else None
-
-    afcf_per_unit_calc = afcf_metrics.get('afcf_per_unit', calculate_per_unit(afcf_metrics.get('afcf', 0), common_units)) if afcf_metrics.get('afcf') else None
-
-    # Calculate coverage ratios using per-unit values
-    ffo_cov_calc = coverage_ratios_detail.get('ffo_coverage', calculate_coverage_ratio(ffo_per_unit_calc, distributions))
-    affo_cov_calc = coverage_ratios_detail.get('affo_coverage', calculate_coverage_ratio(affo_per_unit_calc, distributions))
-    acfo_cov_calc = coverage_ratios_detail.get('acfo_coverage', calculate_coverage_ratio(acfo_per_unit_calc, distributions)) if acfo_per_unit_calc else None
-    afcf_cov_calc = calculate_coverage_ratio(afcf_per_unit_calc, distributions) if afcf_per_unit_calc else None
-
-    # FFO to AFFO bridge (reported)
-    ffo_to_affo_reduction_rep = ffo_rep - affo_rep if ffo_rep and affo_rep else 0
-    ffo_to_affo_pct_rep = (ffo_to_affo_reduction_rep / ffo_rep * 100) if ffo_rep else 0
-
-    # Gap analysis (reported)
-    affo_acfo_gap_rep = affo_rep - acfo_rep if affo_rep and acfo_rep else 0
-    affo_acfo_gap_pct_rep = (affo_acfo_gap_rep / affo_rep * 100) if affo_rep and acfo_rep else 0
+    # Gap analysis (issuer-reported)
+    affo_acfo_gap_rep = affo - acfo_reported if affo and acfo_reported else 0
+    affo_acfo_gap_pct_rep = (affo_acfo_gap_rep / affo * 100) if affo and acfo_reported else 0
 
     # Gap analysis (calculated)
-    affo_calc = reit_metrics.get('affo_calculated', affo)
-    acfo_calc = acfo_metrics.get('acfo', 0) if acfo_metrics else 0
-    affo_acfo_gap_calc = affo_calc - acfo_calc if affo_calc and acfo_calc else 0
-    affo_acfo_gap_pct_calc = (affo_acfo_gap_calc / affo_calc * 100) if affo_calc and acfo_calc else 0
+    affo_acfo_gap_calc = affo_calculated - acfo_calculated if affo_calculated and acfo_calculated else 0
+    affo_acfo_gap_pct_calc = (affo_acfo_gap_calc / affo_calculated * 100) if affo_calculated and acfo_calculated else 0
 
     # AFCF from Reported ACFO (if available)
     net_cfi = phase2_data.get('cash_flow_investing', {}).get('total_cfi', 0) if phase2_data else 0
-    afcf_rep_based = acfo_rep + net_cfi if acfo_rep else None
+    afcf_rep_based = acfo_reported + net_cfi if acfo_reported else None
 
-    # Extract validation data
-    validation = reit_metrics.get('validation', {})
+    # Extract ACFO validation data (for legacy placeholder support)
     acfo_validation = acfo_metrics.get('acfo_validation', {}) if acfo_metrics else {}
-
-    # Pre-calculate payout ratios for calculated metrics (Issue #57: handle negative values)
-    # When metric is negative (loss), payout ratio is meaningless → returns None → displays as "N/A"
-    # IMPORTANT: Get per-unit values from calculation_detail sections (not top-level issuer-reported values)
-    ffo_per_unit_calc = reit_metrics.get('ffo_calculation_detail', {}).get('ffo_per_unit_diluted')
-    affo_per_unit_calc = reit_metrics.get('affo_calculation_detail', {}).get('affo_per_unit_diluted')
-
-    ffo_payout_calc = calculate_payout_ratio(ffo_per_unit_calc, distributions)
-    affo_payout_calc = calculate_payout_ratio(affo_per_unit_calc, distributions)
-    acfo_payout_calc = calculate_payout_ratio(acfo_metrics.get('acfo_per_unit_diluted'), distributions) if acfo_metrics else None
-    afcf_payout_calc = calculate_payout_ratio(afcf_metrics.get('afcf_per_unit'), distributions) if afcf_metrics else None
-
-
-
 
 
     # Build replacements dictionary
@@ -1915,42 +1906,38 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # ========================================
         # Section 2.2.1: Issuer-Reported Metrics (v1.0.12)
         # ========================================
-        # FFO Reported
-        'FFO_REPORTED': f"{ffo_affo_reported.get('ffo', ffo):,.0f}",
-        'FFO_PER_UNIT_REPORTED': f"{ffo_affo_reported.get('ffo_per_unit', ffo_per_unit):.4f}",
-        'FFO_PAYOUT_REPORTED': f"{calculate_payout_ratio(ffo_affo_reported.get('ffo_per_unit', ffo_per_unit), distributions_per_unit_reported) or 0:.1f}",
+        # ========================================
+        # Section 2.2.1: Issuer-Reported Metrics (v2.0 schema)
+        # ========================================
+        'FFO_REPORTED': f"{ffo:,.0f}",
+        'FFO_PER_UNIT_REPORTED': f"{ffo_per_unit:.4f}",
+        'FFO_PAYOUT_REPORTED': f"{ffo_payout:.1f}" if ffo_payout else 'N/A',
 
-        # AFFO Reported
-        'AFFO_REPORTED': f"{ffo_affo_reported.get('affo', affo):,.0f}",
-        'AFFO_PER_UNIT_REPORTED': f"{ffo_affo_reported.get('affo_per_unit', affo_per_unit):.4f}",
-        'AFFO_PAYOUT_REPORTED': f"{calculate_payout_ratio(ffo_affo_reported.get('affo_per_unit', affo_per_unit), distributions_per_unit_reported) or 0:.1f}",
+        'AFFO_REPORTED': f"{affo:,.0f}",
+        'AFFO_PER_UNIT_REPORTED': f"{affo_per_unit:.4f}",
+        'AFFO_PAYOUT_REPORTED': f"{affo_payout:.1f}" if affo_payout else 'N/A',
 
-        # ACFO Reported (if available - rare)
-        'ACFO_REPORTED': f"{ffo_affo_reported.get('acfo', 0):,.0f}" if ffo_affo_reported.get('acfo') else 'Not reported',
-        'ACFO_PER_UNIT_REPORTED': f"{ffo_affo_reported.get('acfo_per_unit', 0):.4f}" if ffo_affo_reported.get('acfo_per_unit') else 'N/A',
-        'ACFO_PAYOUT_REPORTED': f"{calculate_payout_ratio(ffo_affo_reported.get('acfo_per_unit'), distributions_per_unit_reported):.1f}" if ffo_affo_reported.get('acfo_per_unit') else 'N/A',
+        'ACFO_REPORTED': f"{acfo_reported:,.0f}" if acfo_reported else 'Not reported',
+        'ACFO_PER_UNIT_REPORTED': 'N/A',  # Issuers rarely report ACFO per unit
+        'ACFO_PAYOUT_REPORTED': 'N/A',
 
         # ========================================
-        # Section 2.2.2: REALPAC-Calculated Metrics (v1.0.12)
+        # Section 2.2.2: REALPAC-Calculated Metrics (v2.0 schema - Issue #57/#58 fixes)
         # ========================================
-        # FFO Calculated - Use Phase 3 per-unit values from calculation_detail (Issue #57)
-        'FFO_CALCULATED': f"{reit_metrics.get('ffo_calculated', ffo):,.0f}",
+        'FFO_CALCULATED': f"{ffo_calculated:,.0f}",
         'FFO_PER_UNIT_CALCULATED': f"{ffo_per_unit_calc:.4f}" if ffo_per_unit_calc is not None else '0.0000',
         'FFO_PAYOUT_CALCULATED': f"{ffo_payout_calc:.1f}" if ffo_payout_calc is not None else 'N/A',
 
-        # AFFO Calculated - Use Phase 3 per-unit values from calculation_detail (Issue #57)
-        'AFFO_CALCULATED': f"{reit_metrics.get('affo_calculated', affo):,.0f}",
+        'AFFO_CALCULATED': f"{affo_calculated:,.0f}",
         'AFFO_PER_UNIT_CALCULATED': f"{affo_per_unit_calc:.4f}" if affo_per_unit_calc is not None else '0.0000',
         'AFFO_PAYOUT_CALCULATED': f"{affo_payout_calc:.1f}" if affo_payout_calc is not None else 'N/A',
 
-        # ACFO Calculated - Use Phase 3 per-unit values (already corrected for unit mismatch)
-        'ACFO_CALCULATED': f"{acfo_metrics.get('acfo', 0):,.0f}" if acfo_metrics.get('acfo') else 'Not available',
-        'ACFO_PER_UNIT_CALCULATED': f"{acfo_metrics.get('acfo_per_unit_diluted', 0):.4f}" if acfo_metrics.get('acfo_per_unit_diluted') else 'Not available',  # Use Phase 3 value
+        'ACFO_CALCULATED': f"{acfo_calculated:,.0f}" if acfo_calculated else 'Not available',
+        'ACFO_PER_UNIT_CALCULATED': f"{acfo_per_unit_calc:.4f}" if acfo_per_unit_calc else 'Not available',
         'ACFO_PAYOUT_CALCULATED': f"{acfo_payout_calc:.1f}" if acfo_payout_calc is not None else 'N/A',
 
-        # AFCF Calculated
-        'AFCF_CALCULATED': f"{afcf_metrics.get('afcf', 0):,.0f}" if afcf_metrics.get('afcf') else 'Not available',
-        'AFCF_PER_UNIT_CALCULATED': f"{afcf_metrics.get('afcf_per_unit', 0):.4f}" if afcf_metrics.get('afcf_per_unit') else 'Not available',
+        'AFCF_CALCULATED': f"{afcf_calculated:,.0f}" if afcf_calculated else 'Not available',
+        'AFCF_PER_UNIT_CALCULATED': f"{afcf_per_unit_calc:.4f}" if afcf_per_unit_calc else 'Not available',
         'AFCF_PAYOUT_CALCULATED': f"{afcf_payout_calc:.1f}" if afcf_payout_calc is not None else 'N/A',
 
         # ========================================
@@ -2014,30 +2001,37 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'AFCF_VARIANCE_FLAG': '-',
 
         # ========================================
-        # Section 2.5.1: Distribution Coverage (Reported)
+        # Section 2.5.1: Issuer-Reported Coverage Ratios (v2.0 schema - Issue #58 fix)
         # ========================================
+        # Read directly from schema - no more calculation!
+        # Coverage ratios are total-based (not per-unit), fixing Section 2.5.1 display issue
 
-
-
-
-        'FFO_COVERAGE_REPORTED': f"{ffo_cov_rep:.2f}" if ffo_cov_rep else 'N/A',
-        'FFO_COVERAGE_ASSESSMENT_REPORTED': assess_distribution_coverage(ffo_cov_rep),
-        'AFFO_COVERAGE_REPORTED': f"{affo_cov_rep:.2f}" if affo_cov_rep else 'N/A',
-        'AFFO_COVERAGE_ASSESSMENT_REPORTED': assess_distribution_coverage(affo_cov_rep),
-        'ACFO_COVERAGE_REPORTED': f"{acfo_cov_rep:.2f}" if acfo_cov_rep else 'N/A',
-        'ACFO_COVERAGE_ASSESSMENT_REPORTED': assess_distribution_coverage(acfo_cov_rep) if acfo_rep else 'Not reported',
+        'FFO_COVERAGE_REPORTED': f"{ffo_coverage_reported:.2f}" if ffo_coverage_reported else 'N/A',
+        'FFO_COVERAGE_ASSESSMENT_REPORTED': assess_distribution_coverage(ffo_coverage_reported),
+        'AFFO_COVERAGE_REPORTED': f"{affo_coverage_reported:.2f}" if affo_coverage_reported else 'N/A',
+        'AFFO_COVERAGE_ASSESSMENT_REPORTED': assess_distribution_coverage(affo_coverage_reported),
+        'ACFO_COVERAGE_REPORTED': f"{acfo_coverage_reported:.2f}" if acfo_coverage_reported else 'N/A',
+        'ACFO_COVERAGE_ASSESSMENT_REPORTED': assess_distribution_coverage(acfo_coverage_reported) if acfo_reported else 'Not reported',
 
         # ========================================
-        # Section 2.5.2: Distribution Coverage (Calculated)
+        # Section 2.5.2: REALPAC-Calculated Coverage Ratios (v2.0 schema)
         # ========================================
+        # Read directly from schema - handles negative values (returns None → displays N/A)
 
+        'FFO_COVERAGE_CALCULATED': f"{ffo_coverage_calc:.2f}" if ffo_coverage_calc else 'N/A',
+        'AFFO_COVERAGE_CALCULATED': f"{affo_coverage_calc:.2f}" if affo_coverage_calc else 'N/A',
+        'ACFO_COVERAGE_CALCULATED': f"{acfo_coverage_calc:.2f}" if acfo_coverage_calc else 'N/A',
+        'AFCF_COVERAGE': f"{afcf_coverage_calc:.2f}" if afcf_coverage_calc else 'N/A',
 
-        'FFO_COVERAGE_CALCULATED': f"{ffo_cov_calc:.2f}" if ffo_cov_calc else 'N/A',
-        'AFFO_COVERAGE_CALCULATED': f"{affo_cov_calc:.2f}" if affo_cov_calc else 'N/A',
-        'ACFO_COVERAGE_CALCULATED': f"{acfo_cov_calc:.2f}" if acfo_cov_calc else 'N/A',
-        'FFO_COVERAGE_ASSESSMENT_CALCULATED': assess_distribution_coverage(ffo_cov_calc),
-        'AFFO_COVERAGE_ASSESSMENT_CALCULATED': assess_distribution_coverage(affo_cov_calc),
-        'ACFO_COVERAGE_ASSESSMENT_CALCULATED': assess_distribution_coverage(acfo_cov_calc) if acfo_cov_calc else 'Not available',
+        # Assessment placeholders (template uses shorter names without _CALCULATED suffix)
+        'FFO_COVERAGE_ASSESSMENT': assess_distribution_coverage(ffo_coverage_calc),
+        'AFFO_COVERAGE_ASSESSMENT': assess_distribution_coverage(affo_coverage_calc),
+        'ACFO_COVERAGE_ASSESSMENT': assess_distribution_coverage(acfo_coverage_calc) if acfo_coverage_calc else 'Not available',
+
+        # Legacy placeholders with _CALCULATED suffix (kept for compatibility)
+        'FFO_COVERAGE_ASSESSMENT_CALCULATED': assess_distribution_coverage(ffo_coverage_calc),
+        'AFFO_COVERAGE_ASSESSMENT_CALCULATED': assess_distribution_coverage(affo_coverage_calc),
+        'ACFO_COVERAGE_ASSESSMENT_CALCULATED': assess_distribution_coverage(acfo_coverage_calc) if acfo_coverage_calc else 'Not available',
 
         # ========================================
         # Section 2.6.1: Bridge Analysis (Reported)
@@ -2076,11 +2070,11 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'BRIDGE_ANALYSIS_INTERPRETATION': gap_interpretation,
         'AFFO_ACFO_GAP_ANALYSIS': gap_interpretation,  # Template uses this name
 
-        'AFFO_ACFO_GAP_REPORTED': f"{affo_acfo_gap_rep:,.0f}" if acfo_rep else 'N/A',
-        'AFFO_ACFO_GAP_PERCENT_REPORTED': f"{affo_acfo_gap_pct_rep:.1f}" if acfo_rep else 'N/A',
+        'AFFO_ACFO_GAP_REPORTED': f"{affo_acfo_gap_rep:,.0f}" if acfo_reported else 'N/A',
+        'AFFO_ACFO_GAP_PERCENT_REPORTED': f"{affo_acfo_gap_pct_rep:.1f}" if acfo_reported else 'N/A',
         'AFFO_ACFO_GAP_CALCULATED': f"{affo_acfo_adjustment:,.0f}",
         'AFFO_ACFO_GAP_PERCENT_CALCULATED': f"{affo_acfo_adjustment_pct:.1f}",
-        'AFFO_ACFO_GAP_VARIANCE': f"{(affo_acfo_adjustment - affo_acfo_gap_rep):,.0f}" if acfo_rep else 'Not available',
+        'AFFO_ACFO_GAP_VARIANCE': f"{(affo_acfo_adjustment - affo_acfo_gap_rep):,.0f}" if acfo_reported else 'Not available',
 
         # ========================================
         # Section 2.7: AFCF Analysis (Enhanced)
@@ -2331,7 +2325,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'DILUTION_ANALYSIS': dilution_analysis.get('credit_assessment', 'Dilution detail not extracted in Phase 2. Enable comprehensive extraction for detailed dilution analysis.') if dilution_analysis else 'Dilution detail not extracted in Phase 2.',
 
         # FFO/AFFO Validation Placeholders (duplicate FFO_REPORTED removed - Issue #33)
-        'FFO_CALCULATED': f"{reit_metrics.get('ffo_calculated', 0):,.0f}",
+        # NOTE: FFO_CALCULATED already defined above from v2.0 schema (line 1928) - removed duplicate
         'FFO_VARIANCE_AMOUNT': f"{reit_metrics.get('validation', {}).get('ffo_variance_amount', 0):,.0f}" if reit_metrics.get('validation', {}).get('ffo_variance_amount') is not None else 'N/A',
         'FFO_VARIANCE_PERCENT': f"{reit_metrics.get('validation', {}).get('ffo_variance_percent', 0):.1f}" if reit_metrics.get('validation', {}).get('ffo_variance_percent') is not None else 'N/A',
         'FFO_VALIDATION_STATUS': '✓ Within threshold' if reit_metrics.get('validation', {}).get('ffo_within_threshold') else '⚠️ Exceeds threshold - review methodology',
@@ -2346,12 +2340,12 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # Distribution Coverage Placeholders (Per-Unit Basis)
         'FFO_COVERAGE': f"{(1 / (ffo_payout / 100) if ffo_payout > 0 else 0):.2f}",
         'AFFO_COVERAGE': f"{(1 / (affo_payout / 100) if affo_payout > 0 else 0):.2f}",
-        'ACFO_COVERAGE': f"{acfo_cov_calc:.2f}x" if acfo_cov_calc else 'Not available',  # Per-unit
-        'AFCF_COVERAGE': f"{afcf_cov_calc:.2f}" if afcf_cov_calc else 'Not available',  # Per-unit
+        'ACFO_COVERAGE': f"{acfo_coverage_calc:.2f}x" if acfo_coverage_calc else 'Not available',  # Per-unit
+        'AFCF_COVERAGE': f"{afcf_coverage_calc:.2f}" if afcf_coverage_calc else 'Not available',  # Per-unit
         'FFO_COVERAGE_ASSESSMENT': 'Adequate' if ffo_payout < 90 else 'Tight coverage',
         'AFFO_COVERAGE_ASSESSMENT': 'Unsustainable' if affo_payout > 100 else 'Adequate',
-        'ACFO_COVERAGE_ASSESSMENT': assess_distribution_coverage(acfo_cov_calc) if acfo_cov_calc else 'Not available',
-        'AFCF_COVERAGE_ASSESSMENT': assess_distribution_coverage(afcf_cov_calc) if afcf_cov_calc else 'Not available',
+        'ACFO_COVERAGE_ASSESSMENT': assess_distribution_coverage(acfo_coverage_calc) if acfo_coverage_calc else 'Not available',
+        'AFCF_COVERAGE_ASSESSMENT': assess_distribution_coverage(afcf_coverage_calc) if afcf_coverage_calc else 'Not available',
         'DISTRIBUTION_COVERAGE_ANALYSIS': f"FFO coverage: {(1 / (ffo_payout / 100) if ffo_payout > 0 else 0):.2f}x. AFFO coverage: {(1 / (affo_payout / 100) if affo_payout > 0 else 0):.2f}x. AFFO payout ratio of {affo_payout:.1f}% indicates distributions exceed sustainable cash flow.",
         'DISTRIBUTION_SUSTAINABILITY': 'Unsustainable' if affo_payout > 100 else 'Sustainable',
         'DISTRIBUTION_SUSTAINABILITY_CONCLUSION': f"Distributions {'exceed' if affo_payout > 100 else 'within'} sustainable cash flow (AFFO payout: {affo_payout:.1f}%)",
@@ -2391,9 +2385,9 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'ACFO_SOURCE': acfo_metrics.get('data_source', 'not calculated'),
         'ACFO_PERIOD': report_period,
         'ACFO_CALCULATED': f"{acfo_metrics.get('acfo', 0):,.0f}" if acfo_metrics.get('acfo') else 'Not available',
-        'ACFO_REPORTED': f"{acfo_rep:,.0f}" if acfo_rep else 'Not available',
-        'ACFO_VARIANCE_AMOUNT': f"{(acfo_metrics.get('acfo', 0) - acfo_rep):,.0f}" if acfo_metrics.get('acfo') and acfo_rep else 'Not available',
-        'ACFO_VARIANCE_PERCENT': f"{((acfo_metrics.get('acfo', 0) - acfo_rep) / acfo_rep * 100):.1f}" if acfo_metrics.get('acfo') and acfo_rep and acfo_rep != 0 else 'N/A',
+        'ACFO_REPORTED': f"{acfo_reported:,.0f}" if acfo_reported else 'Not available',
+        'ACFO_VARIANCE_AMOUNT': f"{(acfo_metrics.get('acfo', 0) - acfo_reported):,.0f}" if acfo_metrics.get('acfo') and acfo_reported else 'Not available',
+        'ACFO_VARIANCE_PERCENT': f"{((acfo_metrics.get('acfo', 0) - acfo_reported) / acfo_reported * 100):.1f}" if acfo_metrics.get('acfo') and acfo_reported and acfo_reported != 0 else 'N/A',
         'ACFO_VALIDATION_STATUS': '✓ ACFO calculated successfully' if acfo_metrics.get('acfo') else 'Not calculated - requires cash flow statement',
         'ACFO_DATA_QUALITY': acfo_metrics.get('data_quality', 'Not available').capitalize() if acfo_metrics.get('acfo') else 'Not available',
         'ACFO_CALCULATION_METHOD': acfo_metrics.get('calculation_method', 'Not calculated') if acfo_metrics.get('acfo') else 'Not calculated',
@@ -2401,7 +2395,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'ACFO_ADJUSTMENTS_AVAILABLE': str(len([k for k, v in acfo_metrics.get('acfo_calculation_detail', {}).get('adjustments', {}).items() if v != 0])) if acfo_metrics.get('acfo') else '0',
         'ACFO_OBSERVATIONS': f"ACFO calculated: {acfo_metrics.get('acfo', 0):,.0f}" if acfo_metrics.get('acfo') else 'ACFO not calculated. Requires cash_flow_from_operations in Phase 2 extraction.',
         'ACFO_CONSISTENCY_CHECKS': 'Performed - see reconciliation section' if acfo_metrics.get('acfo') else 'Not performed - ACFO not calculated',
-        'ACFO_PAYOUT_ASSESSMENT': assess_distribution_coverage(acfo_cov_calc) if acfo_cov_calc else 'Not available',
+        'ACFO_PAYOUT_ASSESSMENT': assess_distribution_coverage(acfo_coverage_calc) if acfo_coverage_calc else 'Not available',
         'CAPEX_CONSISTENCY_STATUS': '✅ Consistent' if acfo_metrics.get('acfo_reconciliation', {}).get('capex_consistent') else 'Not verified',
         'TI_CONSISTENCY_STATUS': '✅ Consistent' if acfo_metrics.get('acfo_reconciliation', {}).get('ti_consistent') else 'Not verified',
         'LEASING_CONSISTENCY_STATUS': '✅ Consistent' if acfo_metrics.get('acfo_reconciliation', {}).get('leasing_consistent') else 'Not verified',
@@ -2414,7 +2408,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'AFCF_KEY_OBSERVATIONS': f"AFCF of ${afcf_metrics.get('afcf', 0):,.0f} represents free cash flow after all investing activities" if afcf_metrics.get('afcf') else 'AFCF not calculated - requires ACFO as starting point',
         'AFCF_CREDIT_ASSESSMENT': f"AFCF debt service coverage of {afcf_coverage.get('afcf_debt_service_coverage', 0):.2f}x indicates {assess_afcf_coverage(afcf_coverage.get('afcf_debt_service_coverage', 0)).lower()}" if afcf_coverage.get('afcf_debt_service_coverage') else 'Not available without AFCF calculation',
         'AFCF_VALIDATION_NOTES': f"AFCF calculated from ACFO (${acfo_metrics.get('acfo', 0):,.0f}) + Net CFI (${afcf_metrics.get('net_cfi', 0):,.0f})" if afcf_metrics.get('afcf') else 'AFCF calculation requires ACFO (CFO + adjustments)',
-        'AFCF_PAYOUT_ASSESSMENT': assess_distribution_coverage(afcf_cov_calc) if afcf_cov_calc else 'Not calculated - requires AFCF',
+        'AFCF_PAYOUT_ASSESSMENT': assess_distribution_coverage(afcf_coverage_calc) if afcf_coverage_calc else 'Not calculated - requires AFCF',
         'AFCF_DS_ASSESSMENT': assess_afcf_coverage(afcf_coverage.get('afcf_debt_service_coverage', 0)) if afcf_coverage.get('afcf_debt_service_coverage') is not None else 'Not calculated',
         'AFCF_SF_ASSESSMENT': assess_self_funding_ratio(afcf_coverage.get('afcf_self_funding_ratio', 0)) if afcf_coverage.get('afcf_self_funding_ratio') is not None else 'Not calculated',
         'AFCF_DISTRIBUTION_COVERAGE': f"{afcf_coverage.get('afcf_distribution_coverage', 0):.2f}" if afcf_coverage.get('afcf_distribution_coverage') else 'Not available',
@@ -2429,7 +2423,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'FINANCING_ANNUALIZED': 'Not available',
         'FINANCING_PERIOD': report_period,
         'NET_FINANCING_ANNUALIZED': 'Not available',
-        'DISTRIBUTIONS_TOTAL': f"{afcf_coverage.get('total_distributions', 0):,.0f}" if afcf_coverage.get('total_distributions') else 'Not available',
+        'DISTRIBUTIONS_TOTAL': f"{distributions_total:,.0f}" if distributions_total else 'Not available',
         'DIST_ANNUALIZED': f"{abs(phase2_data.get('cash_flow_financing', {}).get('distributions_common', 0)) * coverage_ratios.get('annualization_factor', 2):,.0f}" if phase2_data and phase2_data.get('cash_flow_financing') else 'Not available',
         'DIST_PERIOD': report_period,
 

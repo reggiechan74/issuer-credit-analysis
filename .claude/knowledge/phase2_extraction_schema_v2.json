@@ -1,0 +1,945 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase 2 Extraction Schema v2.0",
+  "description": "Standardized JSON schema for Phase 2 financial data extraction with explicit separation of issuer-reported vs REALPAC-calculated values. Version 2.0 addresses critical issues from schema review (2025-11-01).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "issuer_name",
+    "ticker",
+    "reporting_date",
+    "reporting_period",
+    "currency",
+    "financial_units",
+    "balance_sheet",
+    "income_statement",
+    "reit_metrics",
+    "portfolio",
+    "distributions",
+    "ffo_affo_components",
+    "acfo_components",
+    "cash_flow_investing",
+    "cash_flow_financing",
+    "liquidity",
+    "dilution_detail"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "2.0.0",
+      "description": "Schema version for backward compatibility tracking. MUST be '2.0.0' for this schema."
+    },
+    "extraction_metadata": {
+      "type": "object",
+      "description": "Metadata about the extraction process",
+      "properties": {
+        "extraction_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when extraction was performed"
+        },
+        "extraction_method": {
+          "type": "string",
+          "enum": ["manual", "llm", "hybrid"],
+          "description": "Method used for extraction"
+        },
+        "model_name": {
+          "type": "string",
+          "description": "LLM model name if applicable (e.g., 'claude-sonnet-4')"
+        },
+        "data_quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall data quality/completeness score (0-100)"
+        }
+      }
+    },
+    "issuer_name": {
+      "type": "string",
+      "description": "Full legal name of the issuer (e.g., 'Artis Real Estate Investment Trust')"
+    },
+    "ticker": {
+      "type": "string",
+      "description": "Primary ticker symbol (e.g., 'AX-UN.TO' for TSX, 'AX.UN' for simplified). REQUIRED for Phase 3.5 enrichment."
+    },
+    "reporting_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Period end date in YYYY-MM-DD format (e.g., '2025-06-30' for Q2 2025)"
+    },
+    "reporting_period": {
+      "type": "object",
+      "description": "Structured reporting period information",
+      "required": ["period_type", "period_label"],
+      "properties": {
+        "period_type": {
+          "type": "string",
+          "enum": ["Q1", "Q2", "Q3", "Q4", "H1", "H2", "YTD", "Annual"],
+          "description": "Type of reporting period"
+        },
+        "period_label": {
+          "type": "string",
+          "description": "Human-readable label (e.g., 'Q2 2025', 'YTD Q2 2025')"
+        },
+        "fiscal_year": {
+          "type": "integer",
+          "description": "Fiscal year (e.g., 2025)"
+        },
+        "period_start_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Period start date (e.g., '2025-04-01' for Q2)"
+        },
+        "period_end_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Period end date (e.g., '2025-06-30' for Q2)"
+        },
+        "period_months": {
+          "type": "integer",
+          "description": "Number of months in period (3 for Q2, 6 for YTD, 12 for Annual)"
+        }
+      }
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency code (e.g., 'CAD', 'USD')"
+    },
+    "financial_units": {
+      "type": "string",
+      "enum": ["thousands", "millions"],
+      "description": "Units for all financial totals (balance sheet, income statement, cash flows). All amounts MUST be in this unit. Per-unit values are always in base currency (e.g., CAD, USD)."
+    },
+    "balance_sheet": {
+      "type": "object",
+      "description": "Point-in-time balance sheet data (FLAT structure). All amounts in units specified by financial_units field.",
+      "required": [
+        "balance_sheet_date",
+        "total_assets",
+        "total_debt",
+        "cash",
+        "common_units_outstanding"
+      ],
+      "properties": {
+        "balance_sheet_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Balance sheet date (should match reporting_date for most recent period)"
+        },
+        "total_assets": {
+          "type": "number",
+          "description": "REQUIRED: Total assets"
+        },
+        "investment_properties": {
+          "type": "number",
+          "description": "Investment properties at fair value"
+        },
+        "investment_properties_held_for_sale": {
+          "type": "number",
+          "description": "Investment properties classified as held for sale"
+        },
+        "equity_accounted_investments": {
+          "type": "number",
+          "description": "Investments in joint ventures and associates"
+        },
+        "cash": {
+          "type": "number",
+          "description": "REQUIRED: Cash and cash equivalents (unrestricted)"
+        },
+        "restricted_cash": {
+          "type": "number",
+          "description": "Restricted cash (cannot be used for operations)"
+        },
+        "total_liabilities": {
+          "type": "number",
+          "description": "Total liabilities"
+        },
+        "mortgages_noncurrent": {
+          "type": "number",
+          "description": "Non-current mortgages and loans payable"
+        },
+        "mortgages_current": {
+          "type": "number",
+          "description": "Current portion of mortgages and loans"
+        },
+        "credit_facilities": {
+          "type": "number",
+          "description": "Credit facility borrowings (drawn amount)"
+        },
+        "senior_unsecured_debentures": {
+          "type": "number",
+          "description": "Senior unsecured debentures"
+        },
+        "total_debt": {
+          "type": "number",
+          "description": "REQUIRED: Total debt (sum of mortgages_noncurrent + mortgages_current + credit_facilities + senior_unsecured_debentures). Single source of truth for debt."
+        },
+        "net_debt": {
+          "type": "number",
+          "description": "Net debt (total_debt - cash). Calculated field but extracted if disclosed."
+        },
+        "total_unitholders_equity": {
+          "type": "number",
+          "description": "Total unitholders'/shareholders' equity"
+        },
+        "common_units_outstanding": {
+          "type": "number",
+          "description": "REQUIRED: Number of common units/shares outstanding (basic, end of period)"
+        },
+        "diluted_units_outstanding": {
+          "type": "number",
+          "description": "Number of diluted units/shares outstanding (includes convertible securities, options, warrants)"
+        }
+      }
+    },
+    "dilution_detail": {
+      "type": "object",
+      "description": "REQUIRED: Detailed share/unit dilution breakdown. Extract from MD&A dilution tables if disclosed. If not disclosed, populate basic_units from balance sheet and set all dilutive instruments to 0.",
+      "required": ["basic_units", "diluted_units_reported"],
+      "properties": {
+        "basic_units": {
+          "type": "number",
+          "description": "Basic weighted average units (starting point for dilution calculation)"
+        },
+        "dilutive_instruments": {
+          "type": "object",
+          "description": "Breakdown of dilutive securities by type",
+          "properties": {
+            "restricted_units": {
+              "type": "number",
+              "description": "Dilutive effect of restricted share/unit awards (RSUs/PSUs)"
+            },
+            "deferred_units": {
+              "type": "number",
+              "description": "Dilutive effect of deferred share/unit awards (DSUs/DUs)"
+            },
+            "stock_options": {
+              "type": "number",
+              "description": "Dilutive effect of employee/director stock options"
+            },
+            "convertible_debentures": {
+              "type": "number",
+              "description": "Dilutive effect of convertible debt (if-converted basis)"
+            },
+            "warrants": {
+              "type": "number",
+              "description": "Dilutive effect of outstanding warrants"
+            },
+            "other": {
+              "type": "number",
+              "description": "Other dilutive securities not categorized above"
+            }
+          }
+        },
+        "diluted_units_calculated": {
+          "type": "number",
+          "description": "Sum of basic + all dilutive instruments (for reconciliation)"
+        },
+        "diluted_units_reported": {
+          "type": "number",
+          "description": "REQUIRED: Diluted units as reported by issuer (may differ from calculated if anti-dilutive instruments excluded)"
+        },
+        "dilution_percentage": {
+          "type": "number",
+          "description": "Percentage dilution: (diluted - basic) / basic × 100"
+        },
+        "reconciliation_note": {
+          "type": "string",
+          "description": "Explanation of any variance between calculated and reported diluted units"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'Q2 2025 MD&A page 21')"
+        }
+      }
+    },
+    "income_statement": {
+      "type": "object",
+      "description": "Period-based income statement data. All amounts in units specified by financial_units field.",
+      "required": ["noi", "interest_expense", "revenue"],
+      "properties": {
+        "revenue": {
+          "type": "number",
+          "description": "REQUIRED: Total revenue for the reporting period"
+        },
+        "noi": {
+          "type": "number",
+          "description": "REQUIRED: Net Operating Income for the reporting period"
+        },
+        "interest_expense": {
+          "type": "number",
+          "description": "REQUIRED: Interest expense for the reporting period (absolute value, positive number)"
+        },
+        "net_income_ifrs": {
+          "type": "number",
+          "description": "IFRS net income (starting point for FFO calculation)"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'Financial Statements page 3')"
+        }
+      }
+    },
+    "distributions": {
+      "type": "object",
+      "description": "Distribution information for the reporting period",
+      "required": ["per_unit", "total"],
+      "properties": {
+        "per_unit": {
+          "type": "number",
+          "description": "REQUIRED: Distributions per unit for the reporting period (in base currency)"
+        },
+        "total": {
+          "type": "number",
+          "description": "REQUIRED: Total distributions paid for the reporting period (in financial_units)"
+        },
+        "annualized_per_unit": {
+          "type": "number",
+          "description": "Annualized distribution per unit (e.g., quarterly × 4)"
+        },
+        "declaration_dates": {
+          "type": "array",
+          "items": {"type": "string", "format": "date"},
+          "description": "Distribution declaration dates for the period"
+        },
+        "payment_dates": {
+          "type": "array",
+          "items": {"type": "string", "format": "date"},
+          "description": "Distribution payment dates for the period"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'MD&A page 5')"
+        }
+      }
+    },
+    "reit_metrics": {
+      "type": "object",
+      "description": "REIT-specific metrics with explicit separation of issuer-reported vs REALPAC-calculated values. This is the PRIMARY location for FFO/AFFO/ACFO/AFCF metrics.",
+      "required": ["issuer_reported"],
+      "properties": {
+        "issuer_reported": {
+          "type": "object",
+          "description": "Metrics as reported by the issuer in MD&A FFO/AFFO reconciliation tables. These are EXTRACTED values, not calculated. All amounts in financial_units.",
+          "required": ["ffo", "affo", "ffo_per_unit_diluted", "affo_per_unit_diluted"],
+          "properties": {
+            "ffo": {
+              "type": "number",
+              "description": "REQUIRED: Funds From Operations as reported by issuer (total for reporting period)"
+            },
+            "affo": {
+              "type": "number",
+              "description": "REQUIRED: Adjusted Funds From Operations as reported by issuer (total for reporting period)"
+            },
+            "acfo": {
+              "type": ["number", "null"],
+              "description": "Adjusted Cash Flow from Operations as reported by issuer. Most issuers do NOT report ACFO - extract only if explicitly disclosed. Use null if not reported (will be calculated in Phase 3)."
+            },
+            "ffo_per_unit_basic": {
+              "type": "number",
+              "description": "FFO per unit - basic (in base currency)"
+            },
+            "ffo_per_unit_diluted": {
+              "type": "number",
+              "description": "REQUIRED: FFO per unit - diluted (in base currency)"
+            },
+            "affo_per_unit_basic": {
+              "type": "number",
+              "description": "AFFO per unit - basic (in base currency)"
+            },
+            "affo_per_unit_diluted": {
+              "type": "number",
+              "description": "REQUIRED: AFFO per unit - diluted (in base currency)"
+            },
+            "acfo_per_unit_diluted": {
+              "type": ["number", "null"],
+              "description": "ACFO per unit - diluted (if reported by issuer)"
+            },
+            "ffo_payout_ratio": {
+              "type": "number",
+              "description": "FFO payout ratio as reported/calculated by issuer (percentage format: 88.2 not 0.882). Formula: (distributions_per_unit / ffo_per_unit_diluted) × 100"
+            },
+            "affo_payout_ratio": {
+              "type": "number",
+              "description": "AFFO payout ratio as reported/calculated by issuer (percentage format). Formula: (distributions_per_unit / affo_per_unit_diluted) × 100"
+            },
+            "acfo_payout_ratio": {
+              "type": ["number", "null"],
+              "description": "ACFO payout ratio if reported by issuer (percentage format)"
+            },
+            "ffo_coverage_ratio": {
+              "type": "number",
+              "description": "FFO coverage ratio (inverse of payout). Formula: ffo / distributions_total. Expressed as multiple (e.g., 1.92 for 1.92x coverage)."
+            },
+            "affo_coverage_ratio": {
+              "type": "number",
+              "description": "AFFO coverage ratio (inverse of payout). Formula: affo / distributions_total. Expressed as multiple (e.g., 0.95 for 0.95x coverage)."
+            },
+            "acfo_coverage_ratio": {
+              "type": ["number", "null"],
+              "description": "ACFO coverage ratio if issuer reports ACFO. Formula: acfo / distributions_total."
+            },
+            "disclosure_source": {
+              "type": "string",
+              "description": "Source reference (e.g., 'MD&A page 18 - FFO/AFFO Reconciliation')"
+            }
+          }
+        },
+        "realpac_calculated": {
+          "type": "object",
+          "description": "Metrics calculated by Phase 3 using REALPAC methodology from components. These values may differ significantly from issuer-reported due to different adjustment methodologies. All amounts in financial_units. Written by Phase 3, not Phase 2.",
+          "properties": {
+            "ffo": {
+              "type": "number",
+              "description": "FFO calculated from REALPAC components (can be negative). Formula: net_income_ifrs + sum(REALPAC adjustments A-U)"
+            },
+            "affo": {
+              "type": "number",
+              "description": "AFFO calculated from REALPAC components (can be negative). Formula: ffo + sum(REALPAC adjustments V-Z)"
+            },
+            "acfo": {
+              "type": "number",
+              "description": "ACFO calculated from REALPAC ACFO White Paper methodology (can be negative). Formula: cfo + acfo_adjustments 1-17"
+            },
+            "afcf": {
+              "type": "number",
+              "description": "AFCF calculated (can be negative). Formula: acfo + net_cash_flow_from_investing"
+            },
+            "ffo_per_unit_diluted": {
+              "type": "number",
+              "description": "Calculated FFO per unit diluted (can be negative). Formula: ffo / diluted_units"
+            },
+            "affo_per_unit_diluted": {
+              "type": "number",
+              "description": "Calculated AFFO per unit diluted (can be negative). Formula: affo / diluted_units"
+            },
+            "acfo_per_unit_diluted": {
+              "type": "number",
+              "description": "Calculated ACFO per unit diluted (can be negative). Formula: acfo / diluted_units"
+            },
+            "afcf_per_unit": {
+              "type": "number",
+              "description": "Calculated AFCF per unit (can be negative). Formula: afcf / common_units"
+            },
+            "ffo_payout_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated FFO payout ratio (percentage format). Returns null if FFO is negative (payout ratio meaningless for losses). Formula: (distributions_per_unit / ffo_per_unit_diluted) × 100"
+            },
+            "affo_payout_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated AFFO payout ratio (percentage format). Returns null if AFFO is negative. Formula: (distributions_per_unit / affo_per_unit_diluted) × 100"
+            },
+            "acfo_payout_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated ACFO payout ratio (percentage format). Returns null if ACFO is negative. Formula: (distributions_per_unit / acfo_per_unit_diluted) × 100"
+            },
+            "afcf_payout_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated AFCF payout ratio (percentage format). Returns null if AFCF is negative. Formula: (distributions_per_unit / afcf_per_unit) × 100"
+            },
+            "ffo_coverage_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated FFO coverage ratio. Returns null if FFO is negative. Formula: ffo / distributions_total"
+            },
+            "affo_coverage_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated AFFO coverage ratio. Returns null if AFFO is negative. Formula: affo / distributions_total"
+            },
+            "acfo_coverage_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated ACFO coverage ratio. Returns null if ACFO is negative. Formula: acfo / distributions_total"
+            },
+            "afcf_coverage_ratio": {
+              "type": ["number", "null"],
+              "description": "Calculated AFCF coverage ratio. Returns null if AFCF is negative. Formula: afcf / distributions_total"
+            },
+            "calculation_timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When Phase 3 calculated these values"
+            }
+          }
+        },
+        "validation": {
+          "type": "object",
+          "description": "Validation metrics comparing issuer-reported vs REALPAC-calculated",
+          "properties": {
+            "ffo_variance_amount": {
+              "type": "number",
+              "description": "Difference: realpac_ffo - issuer_ffo (in financial_units)"
+            },
+            "ffo_variance_percent": {
+              "type": "number",
+              "description": "Percentage variance: ((realpac_ffo - issuer_ffo) / issuer_ffo) × 100. Can be very large if issuer used non-REALPAC methodology."
+            },
+            "affo_variance_amount": {
+              "type": "number",
+              "description": "Difference: realpac_affo - issuer_affo"
+            },
+            "affo_variance_percent": {
+              "type": "number",
+              "description": "Percentage variance: ((realpac_affo - issuer_affo) / issuer_affo) × 100"
+            },
+            "variance_explanation": {
+              "type": "string",
+              "description": "Human-readable explanation of why variances exist (e.g., 'Issuer excludes lease termination costs from AFFO')"
+            },
+            "material_variance_flag": {
+              "type": "boolean",
+              "description": "True if variance exceeds 10% threshold (indicates non-REALPAC methodology)"
+            }
+          }
+        }
+      }
+    },
+    "portfolio": {
+      "type": "object",
+      "description": "Portfolio metrics and property information",
+      "properties": {
+        "total_properties": {
+          "type": "number",
+          "description": "Total number of properties in portfolio"
+        },
+        "total_gla_sf": {
+          "type": ["number", "null"],
+          "description": "Total gross leasable area in square feet"
+        },
+        "occupancy_rate": {
+          "type": "number",
+          "description": "Physical occupancy rate (decimal format: 0.878 for 87.8%)"
+        },
+        "occupancy_with_commitments": {
+          "type": "number",
+          "description": "Occupancy including signed commitments (decimal format: 0.890 for 89.0%)"
+        },
+        "same_property_noi_growth_6m": {
+          "type": "number",
+          "description": "6-month same property NOI growth (decimal format: 0.023 for 2.3%)"
+        },
+        "property_type_breakdown": {
+          "type": "object",
+          "description": "Optional breakdown by property type",
+          "properties": {
+            "office": {"type": "number", "description": "Number of office properties"},
+            "industrial": {"type": "number", "description": "Number of industrial properties"},
+            "retail": {"type": "number", "description": "Number of retail properties"},
+            "residential": {"type": "number", "description": "Number of residential properties"},
+            "mixed_use": {"type": "number", "description": "Number of mixed-use properties"}
+          }
+        },
+        "geographic_breakdown": {
+          "type": "object",
+          "description": "Optional geographic breakdown",
+          "additionalProperties": {
+            "type": "number",
+            "description": "Number of properties by region (e.g., 'Ontario': 45, 'Alberta': 23)"
+          }
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'MD&A page 12 - Portfolio Summary')"
+        }
+      }
+    },
+    "ffo_affo_components": {
+      "type": "object",
+      "description": "REQUIRED: REALPAC FFO/AFFO reconciliation components (Adjustments A-Z per REALPAC Jan 2022 methodology). Extract from MD&A FFO/AFFO reconciliation tables. Use 0 for adjustments not disclosed. These are ISSUER'S disclosed adjustment amounts, which may differ from actual cash flow statement amounts.",
+      "properties": {
+        "net_income_ifrs": {
+          "type": "number",
+          "description": "IFRS net income (starting point for FFO calculation)"
+        },
+        "unrealized_fv_changes": {
+          "type": "number",
+          "description": "Adjustment A: Unrealized fair value changes in investment properties"
+        },
+        "depreciation_real_estate": {
+          "type": "number",
+          "description": "Adjustment B: Depreciation of depreciable real estate assets"
+        },
+        "amortization_tenant_allowances": {
+          "type": "number",
+          "description": "Adjustment C: Amortization of tenant allowances for fit-out"
+        },
+        "amortization_intangibles": {
+          "type": "number",
+          "description": "Adjustment D: Amortization of tenant/customer relationship intangibles"
+        },
+        "gains_losses_property_sales": {
+          "type": "number",
+          "description": "Adjustment E: Gains/losses from sales of investment properties"
+        },
+        "tax_on_disposals": {
+          "type": "number",
+          "description": "Adjustment F: Tax on gains or losses on disposals of properties"
+        },
+        "deferred_taxes": {
+          "type": "number",
+          "description": "Adjustment G: Deferred taxes"
+        },
+        "impairment_losses_reversals": {
+          "type": "number",
+          "description": "Adjustment H: Impairment losses or reversals on real estate"
+        },
+        "revaluation_gains_losses": {
+          "type": "number",
+          "description": "Adjustment I: Revaluation gains/losses on owner-occupied properties"
+        },
+        "transaction_costs_business_comb": {
+          "type": "number",
+          "description": "Adjustment J: Transaction costs from business combinations"
+        },
+        "foreign_exchange_gains_losses": {
+          "type": "number",
+          "description": "Adjustment K: Foreign exchange gains/losses (non-net investment)"
+        },
+        "sale_foreign_operations": {
+          "type": "number",
+          "description": "Adjustment L: Gain/loss on sale of foreign operations"
+        },
+        "fv_changes_hedges": {
+          "type": "number",
+          "description": "Adjustment M: Fair value changes of economically effective hedges"
+        },
+        "goodwill_impairment": {
+          "type": "number",
+          "description": "Adjustment N: Goodwill impairment or negative goodwill"
+        },
+        "puttable_instruments_effects": {
+          "type": "number",
+          "description": "Adjustment O: Effects of puttable instruments classified as liabilities"
+        },
+        "discontinued_operations": {
+          "type": "number",
+          "description": "Adjustment P: Results of discontinued operations"
+        },
+        "equity_accounted_adjustments": {
+          "type": "number",
+          "description": "Adjustment Q: Adjustments for equity accounted entities"
+        },
+        "incremental_leasing_costs": {
+          "type": "number",
+          "description": "Adjustment R: Incremental leasing costs"
+        },
+        "property_taxes_ifric21": {
+          "type": "number",
+          "description": "Adjustment S: Property taxes accounted for under IFRIC 21"
+        },
+        "rou_asset_revenue_expense": {
+          "type": "number",
+          "description": "Adjustment T: Operational revenue/expenses from Right of Use Assets"
+        },
+        "non_controlling_interests_ffo": {
+          "type": "number",
+          "description": "Adjustment U: Non-controlling interests in respect of FFO adjustments"
+        },
+        "capex_sustaining": {
+          "type": "number",
+          "description": "Adjustment V: Sustaining/maintenance capital expenditures (for AFFO). Issuer-disclosed amount from FFO/AFFO table (may be reserve-based, not actual)."
+        },
+        "capex_development": {
+          "type": "number",
+          "description": "Development CAPEX (for disclosure, excluded from AFFO)"
+        },
+        "leasing_costs": {
+          "type": "number",
+          "description": "Adjustment W: Leasing costs (internal + external, non-development). Issuer-disclosed amount (may be reserve-based)."
+        },
+        "tenant_improvements": {
+          "type": "number",
+          "description": "Adjustment X: Tenant improvements (sustaining only). Issuer-disclosed amount (may be reserve-based)."
+        },
+        "straight_line_rent": {
+          "type": "number",
+          "description": "Adjustment Y: Straight-line rent adjustment"
+        },
+        "non_controlling_interests_affo": {
+          "type": "number",
+          "description": "Adjustment Z: Non-controlling interests in respect of AFFO adjustments"
+        },
+        "other_adjustments": {
+          "type": "array",
+          "description": "Non-REALPAC adjustments reported by issuer",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "pattern": "^other_[0-9]+$"
+              },
+              "description": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "source_page": {
+                "type": "string"
+              }
+            },
+            "required": ["label", "description", "amount"]
+          }
+        },
+        "reconciliation_check": {
+          "type": "object",
+          "description": "Validation that extracted components reconcile to issuer-reported totals",
+          "properties": {
+            "ffo_from_components": {
+              "type": "number",
+              "description": "net_income_ifrs + sum(adjustments A-U). Should match reit_metrics.issuer_reported.ffo within 2%."
+            },
+            "affo_from_components": {
+              "type": "number",
+              "description": "ffo_from_components + sum(adjustments V-Z). Should match reit_metrics.issuer_reported.affo within 2%."
+            },
+            "ffo_reconciles": {
+              "type": "boolean",
+              "description": "True if ffo_from_components matches issuer FFO within 2%"
+            },
+            "affo_reconciles": {
+              "type": "boolean",
+              "description": "True if affo_from_components matches issuer AFFO within 2%"
+            },
+            "variance_explanation": {
+              "type": "string",
+              "description": "Explanation if reconciliation fails"
+            }
+          }
+        },
+        "calculation_method": {
+          "type": "string",
+          "enum": ["actual", "reserve", "hybrid"],
+          "description": "Method used for CAPEX/leasing/TI: actual amounts from cash flow statement, issuer reserve methodology, or hybrid"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'MD&A page 18 - FFO/AFFO Reconciliation Table')"
+        }
+      }
+    },
+    "acfo_components": {
+      "type": "object",
+      "description": "REQUIRED: ACFO calculation components per REALPAC ACFO White Paper (January 2023). Extract from cash flow statement and MD&A notes. Use 0 for adjustments not disclosed.",
+      "required": ["cash_flow_from_operations"],
+      "properties": {
+        "cash_flow_from_operations": {
+          "type": "number",
+          "description": "REQUIRED: IFRS Cash Flow from Operations (starting point for ACFO). Extract from Consolidated Statement of Cash Flows - Operating Activities section."
+        },
+        "change_in_working_capital": {
+          "type": "number",
+          "description": "Adjustment 1: Add back change in working capital to normalize fluctuations"
+        },
+        "interest_financing": {
+          "type": "number",
+          "description": "Adjustment 2: Interest expense paid and included in financing activities (add back to operating)"
+        },
+        "jv_distributions": {
+          "type": "number",
+          "description": "Adjustment 3: Distributions received from joint ventures (if using distribution method)"
+        },
+        "jv_acfo": {
+          "type": "number",
+          "description": "Adjustment 3 (alternative): ACFO from joint ventures calculated per REALPAC (if using ACFO method)"
+        },
+        "capex_sustaining_acfo": {
+          "type": "number",
+          "description": "Adjustment 4: Sustaining capital expenditures from cash flow statement. MUST match ffo_affo_components.capex_sustaining if issuer uses actual method. May differ if issuer uses reserve."
+        },
+        "leasing_costs_external": {
+          "type": "number",
+          "description": "Adjustment 5: External leasing costs only (internal already expensed in CFO)"
+        },
+        "tenant_improvements_acfo": {
+          "type": "number",
+          "description": "Adjustment 6: Sustaining tenant improvements from cash flow statement. MUST match ffo_affo_components.tenant_improvements if issuer uses actual method."
+        },
+        "realized_investment_gains_losses": {
+          "type": "number",
+          "description": "Adjustment 7: Realized gains/losses on marketable securities"
+        },
+        "transaction_costs_acquisitions": {
+          "type": "number",
+          "description": "Adjustment 9: Transaction costs for property acquisitions"
+        },
+        "deferred_financing_fees": {
+          "type": "number",
+          "description": "Adjustment 11: Deferred financing fees amortization"
+        },
+        "non_controlling_interests_acfo": {
+          "type": "number",
+          "description": "Adjustment 17: NCI adjustments for ACFO"
+        },
+        "calculation_method_acfo": {
+          "type": "string",
+          "enum": ["actual", "reserve", "hybrid"],
+          "description": "Method used for CAPEX/leasing costs/TI: actual from cash flow statement, reserve, or hybrid"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'Consolidated Statement of Cash Flows page 5')"
+        }
+      }
+    },
+    "cash_flow_investing": {
+      "type": "object",
+      "description": "REQUIRED: Cash flow from investing activities. Essential for AFCF calculation. Extract from Consolidated Statement of Cash Flows - Investing Activities. Use negative numbers for outflows, positive for inflows.",
+      "properties": {
+        "development_capex": {
+          "type": "number",
+          "description": "Development/growth capital expenditures (negative number)"
+        },
+        "property_acquisitions": {
+          "type": "number",
+          "description": "Cash paid for property acquisitions (negative)"
+        },
+        "property_dispositions": {
+          "type": "number",
+          "description": "Cash received from property sales (positive)"
+        },
+        "jv_capital_contributions": {
+          "type": "number",
+          "description": "Capital invested in joint ventures (negative)"
+        },
+        "jv_return_of_capital": {
+          "type": "number",
+          "description": "Return of capital from JVs (positive)"
+        },
+        "total_cfi": {
+          "type": "number",
+          "description": "Total net cash from investing activities per IFRS (for reconciliation)"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'Consolidated Statement of Cash Flows page 5')"
+        }
+      }
+    },
+    "cash_flow_financing": {
+      "type": "object",
+      "description": "REQUIRED: Cash flow from financing activities. Essential for debt service and burn rate calculations. Extract from Consolidated Statement of Cash Flows - Financing Activities. Use negative for outflows, positive for inflows.",
+      "properties": {
+        "debt_principal_repayments": {
+          "type": "number",
+          "description": "Principal repayments on all debt (negative)"
+        },
+        "new_debt_issuances": {
+          "type": "number",
+          "description": "Proceeds from new debt (positive)"
+        },
+        "distributions_common": {
+          "type": "number",
+          "description": "Distributions to common unitholders (negative)"
+        },
+        "equity_issuances": {
+          "type": "number",
+          "description": "Proceeds from equity issuances (positive)"
+        },
+        "total_cff": {
+          "type": "number",
+          "description": "Total net cash from financing activities per IFRS (for reconciliation)"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'Consolidated Statement of Cash Flows page 6')"
+        }
+      }
+    },
+    "liquidity": {
+      "type": "object",
+      "description": "REQUIRED: Liquidity and available financing capacity. Critical for burn rate and cash runway analysis.",
+      "required": ["available_cash", "undrawn_credit_facilities", "total_available_liquidity"],
+      "properties": {
+        "cash_and_equivalents": {
+          "type": "number",
+          "description": "Cash and cash equivalents (should match balance_sheet.cash)"
+        },
+        "marketable_securities": {
+          "type": "number",
+          "description": "Short-term marketable securities (0 if none)"
+        },
+        "restricted_cash": {
+          "type": "number",
+          "description": "Restricted cash that cannot be used (0 if none)"
+        },
+        "available_cash": {
+          "type": "number",
+          "description": "REQUIRED: Available cash = cash_and_equivalents + marketable_securities - restricted_cash"
+        },
+        "undrawn_credit_facilities": {
+          "type": "number",
+          "description": "REQUIRED: Available undrawn capacity on ALL credit facilities. If multiple facilities exist, sum all undrawn amounts."
+        },
+        "credit_facility_limit": {
+          "type": "number",
+          "description": "Total credit facility limit/commitment across ALL facilities"
+        },
+        "total_available_liquidity": {
+          "type": "number",
+          "description": "REQUIRED: Total liquidity = available_cash + undrawn_credit_facilities"
+        },
+        "credit_facilities_detail": {
+          "type": "array",
+          "description": "Optional detailed breakdown of multiple credit facilities",
+          "items": {
+            "type": "object",
+            "properties": {
+              "facility_name": {"type": "string"},
+              "facility_limit": {"type": "number"},
+              "amount_drawn": {"type": "number"},
+              "amount_undrawn": {"type": "number"},
+              "maturity_date": {"type": "string", "format": "date"}
+            }
+          }
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Source reference (e.g., 'Note 15 - Credit Facilities')"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "description": "Validation checks and data quality metrics",
+      "properties": {
+        "schema_version_compliance": {
+          "type": "boolean",
+          "description": "True if all required fields present and correctly formatted"
+        },
+        "balance_sheet_balanced": {
+          "type": "boolean",
+          "description": "True if assets = liabilities + equity within rounding tolerance"
+        },
+        "debt_reconciliation": {
+          "type": "boolean",
+          "description": "True if total_debt equals sum of debt components"
+        },
+        "dilution_reconciliation": {
+          "type": "boolean",
+          "description": "True if diluted_units_calculated matches diluted_units_reported within tolerance"
+        },
+        "ffo_affo_reconciliation": {
+          "type": "boolean",
+          "description": "True if FFO/AFFO from components match issuer-reported within 2%"
+        },
+        "data_completeness_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of optional fields populated (0-100)"
+        },
+        "extraction_warnings": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of warnings during extraction (e.g., 'ACFO not reported by issuer', 'Property count estimated from table rows')"
+        },
+        "extraction_errors": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of errors during extraction (e.g., 'Required field cash_flow_from_operations missing')"
+        }
+      }
+    }
+  }
+}
