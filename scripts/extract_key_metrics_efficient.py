@@ -25,6 +25,80 @@ except ImportError:
     from config_loader import load_config
 
 
+def generate_template_from_schema(schema_path=None):
+    """
+    Generate pre-filled JSON template with all required fields from schema
+
+    This function reads the authoritative Phase 2 extraction schema and creates
+    a template with correct structure and field names, using zero/empty values.
+    This ensures extractors follow the exact schema structure from the start.
+
+    Args:
+        schema_path: Path to schema JSON file (default: .claude/knowledge/phase2_extraction_schema.json)
+
+    Returns:
+        dict: Template with correct structure and field names, zero/empty values
+    """
+    if schema_path is None:
+        schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+
+    with open(schema_path) as f:
+        schema = json.load(f)
+
+    def process_field(field_spec):
+        """Recursively process a field specification to generate default value"""
+        field_type = field_spec.get('type')
+
+        # Handle array of types (e.g., ["number", "null"])
+        if isinstance(field_type, list):
+            # Use the first non-null type
+            for t in field_type:
+                if t != 'null':
+                    field_type = t
+                    break
+            else:
+                field_type = 'null'
+
+        # Generate default value based on type
+        if field_type == 'object':
+            # Recursively process nested object
+            result = {}
+            if 'properties' in field_spec:
+                for subfield, subspec in field_spec['properties'].items():
+                    result[subfield] = process_field(subspec)
+            return result
+
+        elif field_type == 'array':
+            # Return empty array (extractor will populate as needed)
+            return []
+
+        elif field_type == 'string':
+            return ""
+
+        elif field_type == 'number':
+            return 0
+
+        elif field_type == 'integer':
+            return 0
+
+        elif field_type == 'boolean':
+            return False
+
+        elif field_type == 'null':
+            return None
+
+        else:
+            # Unknown type, default to empty string
+            return ""
+
+    # Generate template from schema properties
+    template = {}
+    for field, spec in schema['properties'].items():
+        template[field] = process_field(spec)
+
+    return template
+
+
 def create_efficient_extraction_prompt(markdown_files, output_path, issuer_name):
     """
     Create EFFICIENT extraction prompt for Claude Code
@@ -45,6 +119,9 @@ def create_efficient_extraction_prompt(markdown_files, output_path, issuer_name)
     schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
     with open(schema_path, 'r') as f:
         schema_template = f.read()
+
+    # Generate pre-filled template
+    template = generate_template_from_schema(schema_path)
 
     # Create file list with paths
     file_list = "\n".join([f"- `{f}`" for f in markdown_files])
@@ -67,11 +144,22 @@ Use the Read tool to access each markdown file listed above.
 
 ### Step 2: Extract Required Data
 
-Follow this **EXACT schema** (required for Phase 3 compatibility):
+**IMPORTANT: Use this EXACT JSON structure** (fill in actual values from source documents, keep structure unchanged):
+
+This pre-filled template includes ALL required fields with correct names and structure:
 
 ```json
-{schema_template}
+{json.dumps(template, indent=2)}
 ```
+
+**Schema Rules:**
+1. **Top-level fields:** issuer_name, reporting_date, currency (NOT nested in issuer_info)
+2. **Exact field names:** Use names EXACTLY as shown above (e.g., 'cash' not 'cash_and_equivalents' in balance_sheet)
+3. **All required fields:** Every field shown above must be present
+4. **Use 0 for missing numeric values** (NOT null)
+5. **Flat structure:** No unnecessary nesting (balance_sheet is flat, not nested by period)
+
+**Full schema specification available at:** `.claude/knowledge/phase2_extraction_schema.json`
 
 ### Step 3: Data Extraction Guidelines
 
@@ -350,8 +438,9 @@ def create_pdf_direct_extraction_prompt(pdf_files, output_path, issuer_name):
 
     # Load schema from single source of truth
     schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
-    with open(schema_path, 'r') as f:
-        schema_template = f.read()
+
+    # Generate pre-filled template
+    template = generate_template_from_schema(schema_path)
 
     # Create file list with paths
     file_list = "\n".join([f"- `{f}`" for f in pdf_files])
@@ -374,11 +463,22 @@ Use the Read tool to access each PDF file listed above. Claude Code can read PDF
 
 ### Step 2: Extract Required Data
 
-Follow this **EXACT schema** (required for Phase 3 compatibility):
+**IMPORTANT: Use this EXACT JSON structure** (fill in actual values from source documents, keep structure unchanged):
+
+This pre-filled template includes ALL required fields with correct names and structure:
 
 ```json
-{schema_template}
+{json.dumps(template, indent=2)}
 ```
+
+**Schema Rules:**
+1. **Top-level fields:** issuer_name, reporting_date, currency (NOT nested in issuer_info)
+2. **Exact field names:** Use names EXACTLY as shown above (e.g., 'cash' not 'cash_and_equivalents' in balance_sheet)
+3. **All required fields:** Every field shown above must be present
+4. **Use 0 for missing numeric values** (NOT null)
+5. **Flat structure:** No unnecessary nesting (balance_sheet is flat, not nested by period)
+
+**Full schema specification available at:** `.claude/knowledge/phase2_extraction_schema.json`
 
 ### Step 3: Data Extraction Guidelines
 
