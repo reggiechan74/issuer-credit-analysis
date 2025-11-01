@@ -313,6 +313,8 @@ class Phase4DataEnricher:
         Note:
             Model v2.2 uses sustainable AFCF methodology and only requires Phase 3 fundamental features.
             Market and macro data parameters are kept for backward compatibility but not used in v2.2.
+
+            Supports both schema v1.0 (legacy) and v2.0 (issuer_reported/realpac_calculated structure).
         """
         phase3 = self.phase3_data
 
@@ -325,52 +327,80 @@ class Phase4DataEnricher:
         features['debt_to_assets_percent'] = leverage.get('debt_to_assets_percent', 0)
         features['net_debt_ratio'] = leverage.get('net_debt_ratio', 0)
 
-        # REIT metrics - reported values (4 features)
+        # REIT metrics - handle both schema v1.0 and v2.0
         reit = phase3.get('reit_metrics', {})
-        features['ffo_reported'] = reit.get('ffo', 0)
-        features['affo_reported'] = reit.get('affo', 0)
-        features['ffo_per_unit'] = reit.get('ffo_per_unit', 0)
-        features['affo_per_unit'] = reit.get('affo_per_unit', 0)
 
-        # Distribution metrics (3 features)
-        features['distributions_per_unit'] = reit.get('distributions_per_unit', 0)
-        features['ffo_payout_ratio'] = reit.get('ffo_payout_ratio', 0)
-        features['affo_payout_ratio'] = reit.get('affo_payout_ratio', 0)
+        # Check schema version
+        if 'issuer_reported' in reit:
+            # Schema v2.0 structure
+            issuer_reported = reit.get('issuer_reported', {})
+            realpac_calculated = reit.get('realpac_calculated', {})
 
-        # Calculated FFO/AFFO/ACFO from Phase 3 (6 features)
-        features['ffo_calculated'] = reit.get('ffo_calculation_detail', {}).get('ffo_calculated', 0)
-        features['affo_calculated'] = reit.get('affo_calculation_detail', {}).get('affo_calculated', 0)
-        features['acfo_calculated'] = reit.get('acfo_calculation_detail', {}).get('acfo_calculated', 0)
-        features['ffo_per_unit_calc'] = reit.get('ffo_calculation_detail', {}).get('ffo_per_unit', 0)
-        features['affo_per_unit_calc'] = reit.get('affo_calculation_detail', {}).get('affo_per_unit', 0)
-        features['acfo_per_unit_calc'] = reit.get('acfo_calculation_detail', {}).get('acfo_per_unit', 0)
+            # Reported values (4 features) - use 'or 0' to handle None values
+            features['ffo_reported'] = issuer_reported.get('ffo') or 0
+            features['affo_reported'] = issuer_reported.get('affo') or 0
+            features['ffo_per_unit'] = issuer_reported.get('ffo_per_unit_diluted') or 0
+            features['affo_per_unit'] = issuer_reported.get('affo_per_unit_diluted') or 0
+
+            # Distribution metrics (3 features) - from distributions passthrough in v2.0
+            distributions_section = phase3.get('distributions', {})
+            features['distributions_per_unit'] = distributions_section.get('per_unit') or 0
+            features['ffo_payout_ratio'] = issuer_reported.get('ffo_payout_ratio') or 0
+            features['affo_payout_ratio'] = issuer_reported.get('affo_payout_ratio') or 0
+
+            # Calculated FFO/AFFO/ACFO from Phase 3 (6 features)
+            features['ffo_calculated'] = realpac_calculated.get('ffo') or 0
+            features['affo_calculated'] = realpac_calculated.get('affo') or 0
+            features['acfo_calculated'] = realpac_calculated.get('acfo') or 0
+            features['ffo_per_unit_calc'] = realpac_calculated.get('ffo_per_unit_diluted') or 0
+            features['affo_per_unit_calc'] = realpac_calculated.get('affo_per_unit_diluted') or 0
+            features['acfo_per_unit_calc'] = realpac_calculated.get('acfo_per_unit_diluted') or 0
+        else:
+            # Schema v1.0 structure (legacy)
+            features['ffo_reported'] = reit.get('ffo', 0)
+            features['affo_reported'] = reit.get('affo', 0)
+            features['ffo_per_unit'] = reit.get('ffo_per_unit', 0)
+            features['affo_per_unit'] = reit.get('affo_per_unit', 0)
+
+            # Distribution metrics (3 features)
+            features['distributions_per_unit'] = reit.get('distributions_per_unit', 0)
+            features['ffo_payout_ratio'] = reit.get('ffo_payout_ratio', 0)
+            features['affo_payout_ratio'] = reit.get('affo_payout_ratio', 0)
+
+            # Calculated FFO/AFFO/ACFO from Phase 3 (6 features)
+            features['ffo_calculated'] = reit.get('ffo_calculation_detail', {}).get('ffo_calculated', 0)
+            features['affo_calculated'] = reit.get('affo_calculation_detail', {}).get('affo_calculated', 0)
+            features['acfo_calculated'] = reit.get('acfo_calculation_detail', {}).get('acfo_calculated', 0)
+            features['ffo_per_unit_calc'] = reit.get('ffo_calculation_detail', {}).get('ffo_per_unit', 0)
+            features['affo_per_unit_calc'] = reit.get('affo_calculation_detail', {}).get('affo_per_unit', 0)
+            features['acfo_per_unit_calc'] = reit.get('acfo_calculation_detail', {}).get('acfo_per_unit', 0)
 
         # Coverage metrics (2 features)
         coverage = phase3.get('coverage_ratios', {})
-        features['noi_interest_coverage'] = coverage.get('noi_interest_coverage', 0)
-        features['annualized_interest_expense'] = coverage.get('annualized_interest_expense', 0)
+        features['noi_interest_coverage'] = coverage.get('noi_interest_coverage') or 0
+        features['annualized_interest_expense'] = coverage.get('annualized_interest_expense') or 0
 
         # Portfolio metrics (3 features)
         portfolio = phase3.get('portfolio_metrics', {})
-        features['total_properties'] = portfolio.get('total_properties', 0)
-        features['occupancy_rate'] = portfolio.get('occupancy_rate', 0)
-        features['same_property_noi_growth'] = portfolio.get('same_property_noi_growth', 0)
+        features['total_properties'] = portfolio.get('total_properties') or 0
+        features['occupancy_rate'] = portfolio.get('occupancy_rate') or 0
+        features['same_property_noi_growth'] = portfolio.get('same_property_noi_growth') or 0
 
         # Liquidity metrics (2 features)
         liquidity = phase3.get('liquidity_position', {})
-        features['available_cash'] = liquidity.get('available_cash', 0)
-        features['total_available_liquidity'] = liquidity.get('total_available_liquidity', 0)
+        features['available_cash'] = liquidity.get('available_cash') or 0
+        features['total_available_liquidity'] = liquidity.get('total_available_liquidity') or 0
 
         # Burn rate and self-funding (2 features)
         burn_rate = phase3.get('burn_rate_analysis', {})
-        features['monthly_burn_rate'] = burn_rate.get('monthly_burn_rate', 0)
+        features['monthly_burn_rate'] = burn_rate.get('monthly_burn_rate') or 0
 
         afcf_coverage = phase3.get('afcf_coverage', {})
-        features['self_funding_ratio'] = afcf_coverage.get('afcf_self_funding_ratio', 0)
+        features['self_funding_ratio'] = afcf_coverage.get('afcf_self_funding_ratio') or 0
 
-        # Dilution (2 features)
+        # Dilution (2 features) - handle None values explicitly
         dilution = phase3.get('dilution_analysis', {})
-        features['dilution_percentage'] = dilution.get('dilution_percentage', 0)
+        features['dilution_percentage'] = dilution.get('dilution_percentage') or 0
 
         # Encode categorical feature: dilution_materiality (1 feature)
         dilution_materiality_str = dilution.get('dilution_materiality', 'low')
