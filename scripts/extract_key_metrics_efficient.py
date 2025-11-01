@@ -99,6 +99,297 @@ def generate_template_from_schema(schema_path=None):
     return template
 
 
+def format_error_guidance(errors):
+    """
+    Generate specific guidance based on validation error types
+
+    Args:
+        errors: List of validation error messages
+
+    Returns:
+        str: Formatted guidance for fixing errors
+    """
+    guidance = []
+
+    # Check for common error patterns
+    if any('issuer_name' in e for e in errors):
+        guidance.append("• Move issuer_name to TOP LEVEL (not nested in issuer_info or data_quality)")
+
+    if any('reporting_date' in e for e in errors):
+        guidance.append("• Move reporting_date to TOP LEVEL (not nested)")
+
+    if any('currency' in e for e in errors):
+        guidance.append("• Move currency to TOP LEVEL (not nested)")
+
+    if any('cash' in e and 'balance_sheet' in e for e in errors):
+        guidance.append("• Use exact field name 'cash' in balance_sheet (NOT 'cash_and_equivalents')")
+
+    if any('mortgages' in e for e in errors):
+        guidance.append("• Split debt: balance_sheet.mortgages_noncurrent, balance_sheet.mortgages_current, balance_sheet.credit_facilities")
+
+    if any('ffo_per_unit' in e for e in errors):
+        guidance.append("• Include ffo_per_unit, affo_per_unit, distributions_per_unit in ffo_affo section")
+
+    if any('noi' in e or 'interest_expense' in e or 'revenue' in e for e in errors):
+        guidance.append("• Ensure income_statement has TOP-LEVEL noi, interest_expense, and revenue fields")
+
+    if any('cash_flow_from_operations' in e for e in errors):
+        guidance.append("• CRITICAL: Extract cash_flow_from_operations from Cash Flow Statement - required for ACFO/AFCF calculations")
+
+    if any('type' in e.lower() and 'null' in e.lower() for e in errors):
+        guidance.append("• Replace null values with 0 for numeric fields (Phase 3 cannot process nulls)")
+
+    if any('nested' in e.lower() or 'dictionary' in e.lower() for e in errors):
+        guidance.append("• Flatten structure: balance_sheet should be FLAT (no nested objects by period)")
+
+    # Generic fallback if no specific patterns matched
+    if not guidance:
+        guidance.append("• Follow the template structure EXACTLY - do not modify field names or structure")
+        guidance.append("• Check schema specification: .claude/knowledge/phase2_extraction_schema.json")
+
+    return "\n".join(guidance)
+
+
+def save_failed_extraction(output_path, data, errors, attempt_number):
+    """
+    Save failed extraction with errors for debugging
+
+    Args:
+        output_path: Original output path
+        data: The extracted data that failed validation
+        errors: List of validation errors
+        attempt_number: Which attempt failed (1, 2, or 3)
+    """
+    output_path = Path(output_path)
+    failed_dir = output_path.parent / 'failed_extractions'
+    failed_dir.mkdir(exist_ok=True)
+
+    timestamp = Path(output_path).stem
+    failed_path = failed_dir / f"{timestamp}_attempt{attempt_number}_FAILED.json"
+
+    failed_data = {
+        "extraction_data": data,
+        "validation_errors": errors,
+        "attempt_number": attempt_number,
+        "original_output_path": str(output_path)
+    }
+
+    with open(failed_path, 'w') as f:
+        json.dump(failed_data, f, indent=2)
+
+    print(f"\n💾 Failed extraction saved for debugging: {failed_path}")
+    return failed_path
+
+
+def create_retry_prompt(markdown_files, output_path, issuer_name, previous_errors, previous_data, attempt_number):
+    """
+    Create extraction prompt with previous errors for retry
+
+    Args:
+        markdown_files: Source markdown files
+        output_path: Path where JSON should be saved
+        issuer_name: Name of issuer
+        previous_errors: List of validation errors from previous attempt
+        previous_data: Previously extracted data (partially correct)
+        attempt_number: Which attempt this is (2 or 3)
+
+    Returns:
+        str: Enhanced prompt with error corrections
+    """
+    # Generate template from schema
+    schema_path = Path(__file__).parent.parent / '.claude' / 'knowledge' / 'phase2_extraction_schema.json'
+    template = generate_template_from_schema(schema_path)
+
+    # Identify specific problems
+    error_list = "\n".join(f"  • {e}" for e in previous_errors[:20])  # Show first 20 errors
+    guidance = format_error_guidance(previous_errors)
+
+    # Create file list
+    file_list = "\n".join([f"- `{f}`" for f in markdown_files])
+
+    prompt = f"""# Phase 2: RETRY EXTRACTION (Attempt {attempt_number}/3) - {issuer_name}
+
+⚠️ **PREVIOUS ATTEMPT FAILED VALIDATION** - {len(previous_errors)} error(s) found
+
+**Task:** Re-extract financial data with corrections based on validation errors.
+
+**Input Files:**
+{file_list}
+
+**Output File:** `{output_path}`
+
+---
+
+## VALIDATION ERRORS FROM PREVIOUS ATTEMPT
+
+{error_list}
+
+---
+
+## CRITICAL FIXES NEEDED
+
+{guidance}
+
+---
+
+## CORRECTED EXTRACTION INSTRUCTIONS
+
+### Step 1: Read Files
+Use the Read tool to access each markdown file listed above.
+
+### Step 2: Use EXACT Template Structure
+
+**DO NOT REPEAT THE SAME ERRORS.** Follow this template structure EXACTLY:
+
+```json
+{json.dumps(template, indent=2)}
+```
+
+**CRITICAL VALIDATION RULES - CHECK BEFORE SAVING:**
+
+1. ✅ **Top-level fields:** issuer_name, reporting_date, currency MUST be at top level (NOT nested)
+2. ✅ **Exact field names:** Use 'cash' in balance_sheet (NOT 'cash_and_equivalents')
+3. ✅ **Required fields:** All balance_sheet fields must exist: cash, mortgages_noncurrent, mortgages_current, credit_facilities
+4. ✅ **No nulls:** Use 0 for missing numeric values (NOT null)
+5. ✅ **Flat structure:** balance_sheet is FLAT (no nested objects by period)
+6. ✅ **FFO/AFFO fields:** Must include ffo, affo, ffo_per_unit, affo_per_unit, distributions_per_unit
+7. ✅ **Income statement:** Must include TOP-LEVEL noi, interest_expense, revenue
+8. ✅ **ACFO required:** Must include acfo_components.cash_flow_from_operations from cash flow statement
+
+### Step 3: Extract Data
+
+Extract financial data from the markdown files following the template above.
+
+**WHERE TO FIND DATA:**
+
+**Critical Fields (often missing):**
+- **cash_flow_from_operations:** Cash Flow Statement → "Cash provided by operating activities"
+- **noi (Net Operating Income):** Income Statement → Revenue minus operating expenses
+- **interest_expense:** Income Statement → Interest/financing costs
+- **mortgages_noncurrent:** Balance Sheet or Notes → "Mortgages payable - non-current"
+- **mortgages_current:** Balance Sheet or Notes → "Current portion of mortgages"
+
+### Step 4: Self-Validate BEFORE Saving
+
+**Run through this checklist before saving:**
+
+- [ ] issuer_name is at TOP LEVEL (not nested)
+- [ ] reporting_date is at TOP LEVEL
+- [ ] currency is at TOP LEVEL
+- [ ] balance_sheet.cash exists and is numeric
+- [ ] balance_sheet.mortgages_noncurrent exists
+- [ ] balance_sheet.mortgages_current exists
+- [ ] balance_sheet.credit_facilities exists
+- [ ] income_statement.noi exists and is numeric
+- [ ] income_statement.interest_expense exists and is numeric
+- [ ] income_statement.revenue exists and is numeric
+- [ ] ffo_affo.ffo_per_unit exists
+- [ ] ffo_affo.affo_per_unit exists
+- [ ] ffo_affo.distributions_per_unit exists
+- [ ] acfo_components.cash_flow_from_operations exists
+- [ ] No null values in numeric fields (use 0 instead)
+- [ ] balance_sheet is FLAT (no nested quarterly/annual sections)
+
+**ONLY save the JSON if ALL checkboxes are checked!**
+
+### Step 5: Save JSON
+
+Save to: `{output_path}`
+
+### Step 6: Validation
+
+The script will automatically validate after saving. If this attempt also fails, you'll get one more retry with additional guidance.
+
+---
+
+## REFERENCE: PREVIOUS ATTEMPT DATA (Partially Correct)
+
+The previous extraction got some things right. Use this as reference but FIX THE ERRORS:
+
+```json
+{json.dumps(previous_data, indent=2)[:5000]}...
+```
+
+**Remember:** The structure above has errors. Use the CORRECTED template from Step 2 instead.
+
+---
+
+**Schema Reference:** `.claude/knowledge/phase2_extraction_schema.json`
+**Extraction Guide:** `.claude/knowledge/COMPREHENSIVE_EXTRACTION_GUIDE.md`
+"""
+
+    return prompt
+
+
+def check_and_validate_existing_output(output_path):
+    """
+    Check if output JSON exists and validate it
+
+    Args:
+        output_path: Path to output JSON file
+
+    Returns:
+        Tuple of (exists, is_valid, errors, data, attempt_number)
+        - exists: Boolean, whether file exists
+        - is_valid: Boolean, whether validation passed (None if doesn't exist)
+        - errors: List of validation errors (empty if valid/doesn't exist)
+        - data: The extracted data (None if doesn't exist)
+        - attempt_number: Current attempt number (1 if doesn't exist, 2-3 based on retries)
+    """
+    output_path = Path(output_path)
+
+    # Check for retry metadata file
+    metadata_path = output_path.parent / f".{output_path.stem}_retry_metadata.json"
+
+    if not output_path.exists():
+        return False, None, [], None, 1
+
+    # Load existing data
+    try:
+        with open(output_path, 'r') as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        return True, False, [f"Invalid JSON: {e}"], None, 1
+
+    # Load retry metadata if exists
+    attempt_number = 1
+    if metadata_path.exists():
+        try:
+            with open(metadata_path, 'r') as f:
+                metadata = json.load(f)
+                attempt_number = metadata.get('attempt_number', 1)
+        except:
+            pass
+
+    # Validate the data using the validation module
+    sys.path.insert(0, str(Path(__file__).parent))
+    from validate_extraction_schema import validate_schema
+
+    is_valid, errors = validate_schema(data)
+
+    return True, is_valid, errors, data, attempt_number
+
+
+def save_retry_metadata(output_path, attempt_number):
+    """
+    Save metadata about retry attempts
+
+    Args:
+        output_path: Path to output JSON file
+        attempt_number: Current attempt number
+    """
+    output_path = Path(output_path)
+    metadata_path = output_path.parent / f".{output_path.stem}_retry_metadata.json"
+
+    metadata = {
+        "attempt_number": attempt_number,
+        "last_attempt_timestamp": str(Path(output_path).stat().st_mtime) if output_path.exists() else None
+    }
+
+    with open(metadata_path, 'w') as f:
+        json.dump(metadata, f, indent=2)
+
+
 def create_efficient_extraction_prompt(markdown_files, output_path, issuer_name):
     """
     Create EFFICIENT extraction prompt for Claude Code
@@ -840,27 +1131,97 @@ def main():
     else:
         print(f"📊 Estimated tokens if embedded: ~{total_size//4:,}")
 
-    # Create extraction prompt based on mode
-    print(f"\n🚀 Creating extraction prompt...")
+    # Check if output exists and validate (for automatic retry)
+    print(f"\n🔍 Checking for existing extraction...")
+    exists, is_valid, errors, previous_data, attempt_number = check_and_validate_existing_output(args.output)
 
-    if use_pdf_mode:
-        print("   (Direct PDF→JSON extraction, skips Phase 1)")
-        prompt = create_pdf_direct_extraction_prompt(
+    MAX_ATTEMPTS = 3
+
+    if exists and is_valid:
+        # Extraction completed successfully!
+        print(f"✅ Extraction already complete and valid!")
+        print(f"   Output: {args.output}")
+        print(f"   Issuer: {previous_data.get('issuer_name', 'Unknown')}")
+        print(f"   Reporting Date: {previous_data.get('reporting_date', 'Unknown')}")
+        print("\n✅ This file is compatible with Phase 3 calculations")
+        print("\n💡 To re-extract, delete the output file and run again")
+        sys.exit(0)
+
+    elif exists and not is_valid:
+        # Validation failed - generate retry prompt
+        next_attempt = attempt_number + 1
+
+        if next_attempt > MAX_ATTEMPTS:
+            # Max retries exceeded
+            print(f"❌ Maximum retry attempts ({MAX_ATTEMPTS}) exceeded")
+            print(f"\nLast extraction had {len(errors)} validation errors:")
+            for error in errors[:10]:
+                print(f"  {error}")
+
+            # Save failed extraction
+            save_failed_extraction(args.output, previous_data, errors, attempt_number)
+
+            print(f"\n💡 Manual intervention required:")
+            print(f"   1. Review failed extraction: {args.output}")
+            print(f"   2. Check validation errors above")
+            print(f"   3. Fix manually or delete output file to start fresh")
+            print(f"\n📚 Schema reference: .claude/knowledge/phase2_extraction_schema.json")
+            sys.exit(1)
+
+        # Generate retry prompt
+        print(f"⚠️  Previous extraction (attempt {attempt_number}) failed validation")
+        print(f"   Found {len([e for e in errors if e.startswith('❌')])} errors")
+        print(f"\n🔄 Generating RETRY prompt (attempt {next_attempt}/{MAX_ATTEMPTS})...")
+
+        # Save failed attempt for debugging
+        save_failed_extraction(args.output, previous_data, errors, attempt_number)
+
+        # Update retry metadata
+        save_retry_metadata(args.output, next_attempt)
+
+        # Generate retry prompt with errors
+        prompt = create_retry_prompt(
             input_paths,
             args.output,
-            args.issuer_name
+            args.issuer_name,
+            errors,
+            previous_data,
+            next_attempt
         )
+
+        # Save retry prompt
+        output_dir = Path(args.output).parent
+        prompt_path = output_dir / f'phase2_extraction_prompt_RETRY{next_attempt}.txt'
+
     else:
-        print("   (References file paths instead of embedding content)")
-        prompt = create_efficient_extraction_prompt(
-            input_paths,
-            args.output,
-            args.issuer_name
-        )
+        # No existing extraction - generate initial prompt
+        print(f"   No existing extraction found")
+        print(f"\n🚀 Creating extraction prompt (attempt 1/{MAX_ATTEMPTS})...")
 
-    # Save prompt
-    output_dir = Path(args.output).parent
-    prompt_path = output_dir / 'phase2_extraction_prompt.txt'
+        # Initialize retry metadata
+        save_retry_metadata(args.output, 1)
+
+        # Generate initial prompt
+        if use_pdf_mode:
+            print("   (Direct PDF→JSON extraction, skips Phase 1)")
+            prompt = create_pdf_direct_extraction_prompt(
+                input_paths,
+                args.output,
+                args.issuer_name
+            )
+        else:
+            print("   (References file paths instead of embedding content)")
+            prompt = create_efficient_extraction_prompt(
+                input_paths,
+                args.output,
+                args.issuer_name
+            )
+
+        # Save initial prompt
+        output_dir = Path(args.output).parent
+        prompt_path = output_dir / 'phase2_extraction_prompt.txt'
+
+    # Save prompt (unified for both initial and retry)
     prompt_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(prompt_path, 'w') as f:
@@ -870,25 +1231,51 @@ def main():
     print(f"\n✅ Extraction prompt saved: {prompt_path}")
     print(f"   Prompt size: {prompt_size/1024:.1f} KB (~{prompt_size//4:,} tokens)")
 
-    if not use_pdf_mode:
+    if not use_pdf_mode and not (exists and not is_valid):
         print(f"   🎯 Token reduction: ~{total_size//4:,} → ~{prompt_size//4:,} tokens")
         print(f"   💰 Efficiency gain: {100*(1-prompt_size/total_size):.1f}% smaller")
 
-    # Instructions
+    # Instructions - different for retry vs initial
     print("\n" + "=" * 70)
     print("NEXT STEPS")
     print("=" * 70)
-    print("\n📋 Claude Code will now:")
-    print("   1. Read the extraction prompt")
 
-    if use_pdf_mode:
-        print("   2. Use Read tool to access PDF files directly")
+    if exists and not is_valid:
+        # Retry instructions
+        next_attempt = attempt_number + 1
+        print(f"\n🔄 RETRY EXTRACTION (Attempt {next_attempt}/{MAX_ATTEMPTS})")
+        print(f"\n📋 Previous attempt had {len([e for e in errors if e.startswith('❌')])} validation errors")
+        print(f"   Retry prompt includes:")
+        print(f"   • Specific error guidance")
+        print(f"   • Corrected template structure")
+        print(f"   • Validation checklist")
+        print(f"\n📋 Claude Code will now:")
+        print(f"   1. Read the RETRY extraction prompt")
+        if use_pdf_mode:
+            print(f"   2. Use Read tool to access PDF files")
+        else:
+            print(f"   2. Use Read tool to access markdown files")
+        print(f"   3. Re-extract financial data FIXING previous errors")
+        print(f"   4. Self-validate before saving")
+        print(f"   5. Overwrite JSON: {args.output}")
+        print(f"\n⚠️  After extraction, run this script again to validate")
+        print(f"   If validation passes: ✅ Complete!")
+        print(f"   If validation fails: 🔄 Auto-retry (up to attempt {MAX_ATTEMPTS})")
     else:
-        print("   2. Use Read tool to access markdown files")
+        # Initial extraction instructions
+        print(f"\n📋 Claude Code will now:")
+        print(f"   1. Read the extraction prompt")
+        if use_pdf_mode:
+            print(f"   2. Use Read tool to access PDF files directly")
+        else:
+            print(f"   2. Use Read tool to access markdown files")
+        print(f"   3. Extract financial data per schema")
+        print(f"   4. Validate extraction")
+        print(f"   5. Save JSON to: {args.output}")
+        print(f"\n⚠️  After extraction, run this script again to validate")
+        print(f"   If validation passes: ✅ Complete!")
+        print(f"   If validation fails: 🔄 Auto-retry with error corrections (up to {MAX_ATTEMPTS} attempts)")
 
-    print("   3. Extract financial data per schema")
-    print("   4. Validate extraction")
-    print(f"   5. Save JSON to: {args.output}")
     print("\n⏳ Ready for Claude Code extraction...")
     print("=" * 70)
 
