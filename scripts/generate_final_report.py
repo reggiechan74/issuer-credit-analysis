@@ -1916,20 +1916,20 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # ========================================
         # Section 2.2.2: REALPAC-Calculated Metrics (v1.0.12)
         # ========================================
-        # FFO Calculated
+        # FFO Calculated - Use Phase 3 per-unit values (already corrected for unit mismatch)
         'FFO_CALCULATED': f"{reit_metrics.get('ffo_calculated', ffo):,.0f}",
-        'FFO_PER_UNIT_CALCULATED': f"{calculate_per_unit(reit_metrics.get('ffo_calculated', ffo), diluted_units) or 0:.4f}",
-        'FFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(calculate_per_unit(reit_metrics.get('ffo_calculated', ffo), common_units), distributions) or 0:.1f}",
+        'FFO_PER_UNIT_CALCULATED': f"{reit_metrics.get('ffo_per_unit_diluted', 0):.4f}",  # Use Phase 3 value
+        'FFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(reit_metrics.get('ffo_per_unit_diluted'), distributions) or 0:.1f}",
 
-        # AFFO Calculated
+        # AFFO Calculated - Use Phase 3 per-unit values (already corrected for unit mismatch)
         'AFFO_CALCULATED': f"{reit_metrics.get('affo_calculated', affo):,.0f}",
-        'AFFO_PER_UNIT_CALCULATED': f"{calculate_per_unit(reit_metrics.get('affo_calculated', affo), diluted_units) or 0:.4f}",
-        'AFFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(calculate_per_unit(reit_metrics.get('affo_calculated', affo), common_units), distributions) or 0:.1f}",
+        'AFFO_PER_UNIT_CALCULATED': f"{reit_metrics.get('affo_per_unit_diluted', 0):.4f}",  # Use Phase 3 value
+        'AFFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(reit_metrics.get('affo_per_unit_diluted'), distributions) or 0:.1f}",
 
-        # ACFO Calculated
+        # ACFO Calculated - Use Phase 3 per-unit values (already corrected for unit mismatch)
         'ACFO_CALCULATED': f"{acfo_metrics.get('acfo', 0):,.0f}" if acfo_metrics.get('acfo') else 'Not available',
-        'ACFO_PER_UNIT_CALCULATED': f"{calculate_per_unit(acfo_metrics.get('acfo', 0), common_units) or 0:.4f}" if acfo_metrics.get('acfo') else 'Not available',
-        'ACFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(calculate_per_unit(acfo_metrics.get('acfo', 0), common_units), distributions) or 0:.1f}" if acfo_metrics.get('acfo') else 'Not available',
+        'ACFO_PER_UNIT_CALCULATED': f"{acfo_metrics.get('acfo_per_unit_diluted', 0):.4f}" if acfo_metrics.get('acfo_per_unit_diluted') else 'Not available',  # Use Phase 3 value
+        'ACFO_PAYOUT_CALCULATED': f"{calculate_payout_ratio(acfo_metrics.get('acfo_per_unit_diluted'), distributions) or 0:.1f}" if acfo_metrics.get('acfo_per_unit_diluted') else 'Not available',
 
         # AFCF Calculated
         'AFCF_CALCULATED': f"{afcf_metrics.get('afcf', 0):,.0f}" if afcf_metrics.get('afcf') else 'Not available',
