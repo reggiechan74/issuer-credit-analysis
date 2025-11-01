@@ -1947,7 +1947,10 @@ def calculate_all_metrics(financial_data):
         'leverage_metrics': leverage_metrics,
         'reit_metrics': reit_metrics,
         'coverage_ratios': coverage_ratios,
-        'portfolio_metrics': portfolio_metrics
+        'portfolio_metrics': portfolio_metrics,
+        # Passthrough sections needed for Phase 5 report display (Issue: distributions showing "Not available")
+        'distributions': financial_data.get('distributions', {}),
+        'income_statement': financial_data.get('income_statement', {}),
     }
 
     # Restructure reit_metrics into v2.0 format if input is v2.0
@@ -1956,6 +1959,32 @@ def calculate_all_metrics(financial_data):
 
         # Check if input has v2.0 structure (with issuer_reported/realpac_calculated)
         if 'issuer_reported' in input_reit_metrics:
+            # Calculate coverage and payout ratios for REALPAC-calculated metrics
+            # Get distributions per unit from distributions section
+            distributions_data = financial_data.get('distributions', {})
+            dist_per_unit = distributions_data.get('per_unit')
+
+            # Get per-unit metrics
+            ffo_per_unit = reit_metrics.get('ffo_calculation_detail', {}).get('ffo_per_unit_diluted')
+            affo_per_unit = reit_metrics.get('affo_calculation_detail', {}).get('affo_per_unit_diluted')
+            acfo_per_unit = reit_metrics.get('acfo_calculation_detail', {}).get('acfo_per_unit_diluted')
+
+            # Calculate payout and coverage ratios (only if both metric and distributions are positive)
+            def calc_ratios(metric_per_unit, dist_per_unit):
+                """Calculate payout and coverage ratios. Returns (payout_ratio, coverage_ratio) or (None, None)"""
+                if metric_per_unit is None or dist_per_unit is None or dist_per_unit <= 0:
+                    return None, None
+                if metric_per_unit <= 0:
+                    # Negative cash flow - can't sustain distributions
+                    return None, None
+                payout = round((dist_per_unit / metric_per_unit) * 100, 1)
+                coverage = round(metric_per_unit / dist_per_unit, 2)
+                return payout, coverage
+
+            ffo_payout, ffo_coverage = calc_ratios(ffo_per_unit, dist_per_unit)
+            affo_payout, affo_coverage = calc_ratios(affo_per_unit, dist_per_unit)
+            acfo_payout, acfo_coverage = calc_ratios(acfo_per_unit, dist_per_unit)
+
             # V2.0 input - preserve issuer_reported, update realpac_calculated with our calculations
             result['reit_metrics'] = {
                 'issuer_reported': input_reit_metrics['issuer_reported'],  # Pass through from Phase 2
@@ -1964,17 +1993,17 @@ def calculate_all_metrics(financial_data):
                     'affo': reit_metrics.get('affo_calculated'),
                     'acfo': reit_metrics.get('acfo_calculated') or reit_metrics.get('acfo'),
                     'afcf': afcf_metrics.get('afcf') if afcf_metrics else None,
-                    'ffo_per_unit_diluted': reit_metrics.get('ffo_calculation_detail', {}).get('ffo_per_unit_diluted'),
-                    'affo_per_unit_diluted': reit_metrics.get('affo_calculation_detail', {}).get('affo_per_unit_diluted'),
-                    'acfo_per_unit_diluted': reit_metrics.get('acfo_calculation_detail', {}).get('acfo_per_unit_diluted'),
+                    'ffo_per_unit_diluted': ffo_per_unit,
+                    'affo_per_unit_diluted': affo_per_unit,
+                    'acfo_per_unit_diluted': acfo_per_unit,
                     'afcf_per_unit': afcf_metrics.get('afcf_per_unit_diluted') if afcf_metrics else None,
-                    'ffo_payout_ratio': reit_metrics.get('validation', {}).get('ffo_payout_ratio_calculated'),
-                    'affo_payout_ratio': reit_metrics.get('validation', {}).get('affo_payout_ratio_calculated'),
-                    'acfo_payout_ratio': reit_metrics.get('acfo_validation', {}).get('acfo_payout_ratio_calculated'),
+                    'ffo_payout_ratio': ffo_payout,
+                    'affo_payout_ratio': affo_payout,
+                    'acfo_payout_ratio': acfo_payout,
                     'afcf_payout_ratio': afcf_coverage.get('afcf_payout_ratio') if afcf_coverage else None,
-                    'ffo_coverage_ratio': reit_metrics.get('validation', {}).get('ffo_coverage_ratio_calculated'),
-                    'affo_coverage_ratio': reit_metrics.get('validation', {}).get('affo_coverage_ratio_calculated'),
-                    'acfo_coverage_ratio': reit_metrics.get('acfo_validation', {}).get('acfo_coverage_ratio_calculated'),
+                    'ffo_coverage_ratio': ffo_coverage,
+                    'affo_coverage_ratio': affo_coverage,
+                    'acfo_coverage_ratio': acfo_coverage,
                     'afcf_coverage_ratio': afcf_coverage.get('afcf_debt_service_coverage') if afcf_coverage else None,
                     'calculation_timestamp': reit_metrics.get('ffo_calculation_detail', {}).get('calculation_timestamp', '')
                 },

@@ -1811,8 +1811,9 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     if not diluted_units:
         diluted_units = common_units
 
-    # Calculate total distributions for coverage ratios
-    distributions_total = distributions * common_units if distributions and common_units else 0
+    # NOTE: distributions_total is already read from Phase 3 at line 1363 (distributions.total)
+    # Do NOT recalculate it here as that would overwrite the correct YTD total with period × units calculation
+    # Previously this was: distributions_total = distributions * common_units (INCORRECT)
 
     # Calculate residual cash flows after distributions (Issue #31)
     # Use total_distributions from afcf_coverage (YTD total) not distributions_total (quarterly × units)
