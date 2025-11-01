@@ -1912,11 +1912,11 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # ========================================
         'FFO_REPORTED': f"{ffo:,.0f}",
         'FFO_PER_UNIT_REPORTED': f"{ffo_per_unit:.4f}",
-        'FFO_PAYOUT_REPORTED': f"{ffo_payout:.1f}" if ffo_payout else 'N/A',
+        'FFO_PAYOUT_REPORTED': f"{ffo_payout:.1f}%" if ffo_payout else 'N/A',
 
         'AFFO_REPORTED': f"{affo:,.0f}",
         'AFFO_PER_UNIT_REPORTED': f"{affo_per_unit:.4f}",
-        'AFFO_PAYOUT_REPORTED': f"{affo_payout:.1f}" if affo_payout else 'N/A',
+        'AFFO_PAYOUT_REPORTED': f"{affo_payout:.1f}%" if affo_payout else 'N/A',
 
         'ACFO_REPORTED': f"{acfo_reported:,.0f}" if acfo_reported else 'Not reported',
         'ACFO_PER_UNIT_REPORTED': 'N/A',  # Issuers rarely report ACFO per unit
@@ -1927,19 +1927,19 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # ========================================
         'FFO_CALCULATED': f"{ffo_calculated:,.0f}",
         'FFO_PER_UNIT_CALCULATED': f"{ffo_per_unit_calc:.4f}" if ffo_per_unit_calc is not None else '0.0000',
-        'FFO_PAYOUT_CALCULATED': f"{ffo_payout_calc:.1f}" if ffo_payout_calc is not None else 'N/A',
+        'FFO_PAYOUT_CALCULATED': f"{ffo_payout_calc:.1f}%" if ffo_payout_calc is not None else 'N/A',
 
         'AFFO_CALCULATED': f"{affo_calculated:,.0f}",
         'AFFO_PER_UNIT_CALCULATED': f"{affo_per_unit_calc:.4f}" if affo_per_unit_calc is not None else '0.0000',
-        'AFFO_PAYOUT_CALCULATED': f"{affo_payout_calc:.1f}" if affo_payout_calc is not None else 'N/A',
+        'AFFO_PAYOUT_CALCULATED': f"{affo_payout_calc:.1f}%" if affo_payout_calc is not None else 'N/A',
 
         'ACFO_CALCULATED': f"{acfo_calculated:,.0f}" if acfo_calculated else 'Not available',
         'ACFO_PER_UNIT_CALCULATED': f"{acfo_per_unit_calc:.4f}" if acfo_per_unit_calc else 'Not available',
-        'ACFO_PAYOUT_CALCULATED': f"{acfo_payout_calc:.1f}" if acfo_payout_calc is not None else 'N/A',
+        'ACFO_PAYOUT_CALCULATED': f"{acfo_payout_calc:.1f}%" if acfo_payout_calc is not None else 'N/A',
 
         'AFCF_CALCULATED': f"{afcf_calculated:,.0f}" if afcf_calculated else 'Not available',
         'AFCF_PER_UNIT_CALCULATED': f"{afcf_per_unit_calc:.4f}" if afcf_per_unit_calc else 'Not available',
-        'AFCF_PAYOUT_CALCULATED': f"{afcf_payout_calc:.1f}" if afcf_payout_calc is not None else 'N/A',
+        'AFCF_PAYOUT_CALCULATED': f"{afcf_payout_calc:.1f}%" if afcf_payout_calc is not None else 'N/A',
 
         # ========================================
         # Variance Placeholders (Reported vs Calculated)
@@ -2018,11 +2018,13 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         # Section 2.5.2: REALPAC-Calculated Coverage Ratios (v2.0 schema)
         # ========================================
         # Read directly from schema - handles negative values (returns None → displays N/A)
+        # NOTE: Template has hardcoded 'x' and '%' suffixes, so we provide values without suffixes
+        # This creates "N/Ax" and "N/A%" when value is None, which we'll fix in template
 
-        'FFO_COVERAGE_CALCULATED': f"{ffo_coverage_calc:.2f}" if ffo_coverage_calc else 'N/A',
-        'AFFO_COVERAGE_CALCULATED': f"{affo_coverage_calc:.2f}" if affo_coverage_calc else 'N/A',
-        'ACFO_COVERAGE_CALCULATED': f"{acfo_coverage_calc:.2f}" if acfo_coverage_calc else 'N/A',
-        'AFCF_COVERAGE': f"{afcf_coverage_calc:.2f}" if afcf_coverage_calc else 'N/A',
+        'FFO_COVERAGE_CALCULATED': f"{ffo_coverage_calc:.2f}x" if ffo_coverage_calc else 'N/A',
+        'AFFO_COVERAGE_CALCULATED': f"{affo_coverage_calc:.2f}x" if affo_coverage_calc else 'N/A',
+        'ACFO_COVERAGE_CALCULATED': f"{acfo_coverage_calc:.2f}x" if acfo_coverage_calc else 'N/A',
+        'AFCF_COVERAGE': f"{afcf_coverage_calc:.2f}x" if afcf_coverage_calc else 'N/A',
 
         # Assessment placeholders (template uses shorter names without _CALCULATED suffix)
         'FFO_COVERAGE_ASSESSMENT': assess_distribution_coverage(ffo_coverage_calc),
@@ -2232,7 +2234,7 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'TOTAL_AVAILABLE_LIQUIDITY': f"{liquidity_position.get('total_available_liquidity', 0):,.0f}" if liquidity_position.get('total_available_liquidity') else 'Not available',
 
         # Burn Rate Analysis (v1.0.7+) - Section 4.3
-        'REPORTING_PERIOD': metrics.get('reporting_period', 'Unknown'),
+        'REPORTING_PERIOD': report_period,  # Extracted period_label from reporting_period object (line 1338)
         'REPORT_DATE': datetime.now().strftime('%Y-%m-%d'),  # Today's date in YYYY-MM-DD format
         'BURN_RATE_APPLICABLE': 'Yes' if burn_rate_analysis.get('applicable') else 'No',
         'MONTHLY_BURN_RATE': f"{burn_rate_analysis.get('monthly_burn_rate', 0):,.0f}" if burn_rate_analysis.get('monthly_burn_rate') else 'N/A',

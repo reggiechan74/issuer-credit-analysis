@@ -425,10 +425,10 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 **Payout Ratios (YTD):**
 | Metric | Issuer-Reported Payout | REALPAC-Calculated Payout |
 |--------|------------------------|---------------------------|
-| **FFO Payout Ratio** | {{FFO_PAYOUT_REPORTED}}% | {{FFO_PAYOUT_CALCULATED}}% |
-| **AFFO Payout Ratio** | {{AFFO_PAYOUT_REPORTED}}% | {{AFFO_PAYOUT_CALCULATED}}% |
-| **ACFO Payout Ratio** | {{ACFO_PAYOUT_REPORTED}}% | {{ACFO_PAYOUT_CALCULATED}}% |
-| **AFCF Payout Ratio** | {{AFCF_PAYOUT_REPORTED}}% | {{AFCF_PAYOUT_CALCULATED}}% |
+| **FFO Payout Ratio** | {{FFO_PAYOUT_REPORTED}} | {{FFO_PAYOUT_CALCULATED}} |
+| **AFFO Payout Ratio** | {{AFFO_PAYOUT_REPORTED}} | {{AFFO_PAYOUT_CALCULATED}} |
+| **ACFO Payout Ratio** | {{ACFO_PAYOUT_REPORTED}} | {{ACFO_PAYOUT_CALCULATED}} |
+| **AFCF Payout Ratio** | {{AFCF_PAYOUT_REPORTED}} | {{AFCF_PAYOUT_CALCULATED}} |
 
 **Variance Flags:**
 - ✓ = Variance ≤5% (within acceptable threshold)
@@ -509,18 +509,18 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 
 | Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio | Payout Ratio | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
-| **FFO Coverage** | {{FFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_REPORTED}}x | {{FFO_PAYOUT_REPORTED}}% | {{FFO_COVERAGE_ASSESSMENT_REPORTED}} |
-| **AFFO Coverage** | {{AFFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_REPORTED}}x | {{AFFO_PAYOUT_REPORTED}}% | {{AFFO_COVERAGE_ASSESSMENT_REPORTED}} |
-| **ACFO Coverage** | {{ACFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_REPORTED}}x | {{ACFO_PAYOUT_REPORTED}}% | {{ACFO_COVERAGE_ASSESSMENT_REPORTED}} |
+| **FFO Coverage** | {{FFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_REPORTED}}x | {{FFO_PAYOUT_REPORTED}} | {{FFO_COVERAGE_ASSESSMENT_REPORTED}} |
+| **AFFO Coverage** | {{AFFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_REPORTED}}x | {{AFFO_PAYOUT_REPORTED}} | {{AFFO_COVERAGE_ASSESSMENT_REPORTED}} |
+| **ACFO Coverage** | {{ACFO_REPORTED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_REPORTED}}x | {{ACFO_PAYOUT_REPORTED}} | {{ACFO_COVERAGE_ASSESSMENT_REPORTED}} |
 
 **2.5.2 REALPAC-Calculated Coverage Ratios**
 
 | Coverage Measure | Metric YTD ({{CURRENCY}} 000s) | Distributions YTD ({{CURRENCY}} 000s) | Coverage Ratio | Payout Ratio | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
-| **FFO Coverage** | {{FFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_CALCULATED}}x | {{FFO_PAYOUT_CALCULATED}}% | {{FFO_COVERAGE_ASSESSMENT}} |
-| **AFFO Coverage** | {{AFFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_CALCULATED}}x | {{AFFO_PAYOUT_CALCULATED}}% | {{AFFO_COVERAGE_ASSESSMENT}} |
-| **ACFO Coverage** | {{ACFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_CALCULATED}}x | {{ACFO_PAYOUT_CALCULATED}}% | {{ACFO_COVERAGE_ASSESSMENT}} |
-| **AFCF Coverage** | {{AFCF_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_COVERAGE}}x | {{AFCF_PAYOUT_CALCULATED}}% | {{AFCF_COVERAGE_ASSESSMENT}} |
+| **FFO Coverage** | {{FFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{FFO_COVERAGE_CALCULATED}} | {{FFO_PAYOUT_CALCULATED}} | {{FFO_COVERAGE_ASSESSMENT}} |
+| **AFFO Coverage** | {{AFFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFFO_COVERAGE_CALCULATED}} | {{AFFO_PAYOUT_CALCULATED}} | {{AFFO_COVERAGE_ASSESSMENT}} |
+| **ACFO Coverage** | {{ACFO_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{ACFO_COVERAGE_CALCULATED}} | {{ACFO_PAYOUT_CALCULATED}} | {{ACFO_COVERAGE_ASSESSMENT}} |
+| **AFCF Coverage** | {{AFCF_CALCULATED}} | {{DISTRIBUTIONS_TOTAL}} | {{AFCF_COVERAGE}} | {{AFCF_PAYOUT_CALCULATED}} | {{AFCF_COVERAGE_ASSESSMENT}} |
 
 **Distribution Sustainability:** {{DISTRIBUTION_SUSTAINABILITY}}
 
