@@ -1357,10 +1357,13 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
     liquidity_risk = metrics.get('liquidity_risk', {})
     sustainable_burn = metrics.get('sustainable_burn', {})
 
-    # Extract distributions (v2.0: separate section)
+    # Extract distributions and income_statement (v2.0: separate sections passed through from Phase 3)
     distributions_section = metrics.get('distributions', {})
     distributions = distributions_section.get('per_unit', 0)
     distributions_total = distributions_section.get('total', 0)
+
+    income_statement_section = metrics.get('income_statement', {})
+    net_income_ifrs = income_statement_section.get('net_income_ifrs', 0)
 
     # Extract issuer-reported vs REALPAC-calculated metrics (v2.0 schema)
     issuer_reported = reit_metrics.get('issuer_reported', {})
@@ -2447,9 +2450,9 @@ def generate_final_report(metrics, analysis_sections, template, phase2_data=None
         'RESIDUAL_AFCF': f"{residual_afcf:,.0f}" if residual_afcf is not None else 'Not available',
 
         # Additional Financial Data Placeholders
-        # NET_INCOME: Priority Phase 3 (calculated) → Phase 2 (extracted) → 0
-        'NET_INCOME': f"{reit_metrics.get('ffo_calculation_detail', {}).get('net_income_ifrs') or (phase2_data.get('income_statement', {}).get('net_income') if phase2_data else None) or 0:,.0f}",
-        'NET_INCOME_PER_UNIT_CALCULATED': f"{calculate_per_unit(reit_metrics.get('ffo_calculation_detail', {}).get('net_income_ifrs') or (phase2_data.get('income_statement', {}).get('net_income') if phase2_data else 0), common_units) or 0:.4f}",
+        # NET_INCOME: Use income_statement passthrough from Phase 3 (line 1366)
+        'NET_INCOME': f"{net_income_ifrs:,.0f}" if net_income_ifrs else '0',
+        'NET_INCOME_PER_UNIT_CALCULATED': f"{calculate_per_unit(net_income_ifrs, diluted_units):.4f}" if net_income_ifrs and diluted_units else 'N/A',
         'SUSTAINING_CAPEX': f"{abs(reit_metrics.get('affo_calculation_detail', {}).get('adjustments_detail', {}).get('adjustment_V_capex_sustaining', 0)):,.0f}",
 
         # Assessment & Analysis Placeholders
