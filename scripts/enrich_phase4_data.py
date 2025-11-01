@@ -36,10 +36,9 @@ try:
     sys.path.insert(0, str(Path(__file__).parent))
     from openbb_market_monitor import MarketDataMonitor
     from openbb_macro_monitor import EnhancedMacroMonitor
-    from openbb_data_collector import OpenBBDataCollector
 except ImportError as e:
     print(f"ERROR: Cannot import OpenBB monitoring modules: {e}")
-    print("Ensure openbb_market_monitor.py, openbb_macro_monitor.py, and openbb_data_collector.py exist")
+    print("Ensure openbb_market_monitor.py and openbb_macro_monitor.py exist")
     sys.exit(1)
 
 
@@ -170,67 +169,10 @@ class Phase4DataEnricher:
         print(f"{'='*60}")
 
         try:
-            collector = OpenBBDataCollector(self.ticker)
-            # Calculate start_date for 10 years of history
-            from datetime import datetime, timedelta
-            end_date = datetime.now().strftime('%Y-%m-%d')
-            start_date = (datetime.now() - timedelta(days=365*10)).strftime('%Y-%m-%d')
-            history = collector.get_dividend_history(start_date=start_date, end_date=end_date)
-
-            if history.empty:
-                print(f"⚠️  No distribution history available for {self.ticker}")
-                return self._generate_distribution_fallback()
-
-            # Analyze distribution cuts
-            cuts_list = collector.detect_dividend_cuts(history, lookback_years=10)
-            # Convert list to DataFrame for consistency
-            import pandas as pd
-            if cuts_list:
-                cuts = pd.DataFrame(cuts_list)
-            else:
-                cuts = pd.DataFrame()
-
-            # Get current distribution
-            if not history.empty:
-                current_annual = history['amount'].iloc[-1] * 12  # Assume monthly
-                current_monthly = history['amount'].iloc[-1]
-            else:
-                current_annual = 0
-                current_monthly = 0
-
-            # Recovery analysis (if cuts exist)
-            recovery_status = "No cuts detected"
-            recovery_level_pct = 100.0
-
-            if not cuts.empty:
-                latest_cut = cuts.iloc[-1]
-                recovery_status = self._analyze_recovery(history, latest_cut)
-
-                # Calculate recovery level
-                pre_cut_amount = latest_cut.get('previous_monthly', current_monthly)
-                if pre_cut_amount > 0:
-                    recovery_level_pct = (current_monthly / pre_cut_amount) * 100
-
-            result = {
-                'ticker': self.ticker,
-                'history_years': 10,
-                'total_distributions': len(history),
-                'current_monthly': current_monthly,
-                'current_annual': current_annual,
-                'cuts_detected': len(cuts),
-                'latest_cut_date': cuts.iloc[-1]['cut_date'] if not cuts.empty else None,
-                'latest_cut_magnitude_pct': cuts.iloc[-1]['cut_percentage'] if not cuts.empty else 0,
-                'recovery_status': recovery_status,
-                'recovery_level_pct': recovery_level_pct,
-                'data_quality': 'strong' if len(history) > 50 else 'weak'
-            }
-
-            print(f"✓ Distribution history collected")
-            print(f"  Cuts detected: {len(cuts)}")
-            print(f"  Current monthly: ${current_monthly:.4f}")
-            print(f"  Recovery status: {recovery_status}")
-
-            return result
+            # NOTE: Distribution history collection removed (openbb_data_collector.py deleted)
+            # Using fallback data structure instead
+            print(f"⚠️  Distribution history collection not available - using fallback")
+            return self._generate_distribution_fallback()
 
         except Exception as e:
             print(f"⚠️  Distribution history collection error: {e}")

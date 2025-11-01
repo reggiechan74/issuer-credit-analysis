@@ -1,7 +1,7 @@
 # Credit Opinion: Allied Properties Real Estate Investment Trust
 
 **Date:** 2025-11-01
-**Reporting Period:** Q3 2025 (Three months ended September 30, 2025)
+**Reporting Period:** Nine months ended September 30, 2025
 **Currency:** CAD
 
 ---
@@ -258,7 +258,7 @@ Allied Properties could face a downgrade to B1/B2 (or accelerated multi-notch do
 
 ## Reporting Period Context
 
-**Report Date:** Q3 2025 (Three months ended September 30, 2025)
+**Report Date:** {'period_type': 'YTD', 'period_label': 'Nine months ended September 30, 2025', 'fiscal_year': 2025, 'period_start_date': '2025-01-01', 'period_end_date': '2025-09-30', 'period_months': 9}
 **Reporting Currency:** CAD
 
 **Metric Period Basis:**
@@ -325,29 +325,29 @@ Allied Properties could face a downgrade to B1/B2 (or accelerated multi-notch do
 | Metric | Value | Category Assessment |
 |--------|-------|---------------------|
 | **Leverage** | | |
-| Total Debt | 4,482,425 CAD thousands | |
+| Total Debt | 3,990,005 CAD thousands | |
 | Gross Assets | 10,378,800 CAD thousands | |
-| Debt / Gross Assets | 43.2% | Moderate leverage (Baa range) |
-| Net Debt Ratio | 42.6% | |
+| Debt / Gross Assets | 38.4% | Moderate leverage (Baa range) |
+| Net Debt Ratio | 37.8% | |
 | **Coverage** | | |
-| NOI / Interest Coverage | 2.27x | Moderate coverage (Ba range) |
-| Annualized Interest Expense | 47,317 CAD thousands | |
+| NOI / Interest Coverage | 2.71x | Moderate coverage (Ba range) |
+| Annualized Interest Expense | 131,985 CAD thousands | |
 | **REIT Metrics** | | |
-| FFO | 63,719 CAD thousands | |
-| AFFO | 59,129 CAD thousands | |
-| ACFO | 294,233 CAD thousands | calculated |
-| FFO per Unit | 0.46 CAD | |
-| AFFO per Unit | 0.42 CAD | |
-| ACFO per Unit | 0.0023 CAD | |
-| Distributions per Unit | 1.3500 CAD | |
-| FFO Payout Ratio | 98.7% | Elevated - FFO payout approaching 100% |
-| AFFO Payout Ratio | 106.4% | Unsustainable - AFFO payout exceeds cash generation |
-| ACFO Payout Ratio | 58.8% | Strong coverage |
+| FFO | 206,455 CAD thousands | |
+| AFFO | 190,084 CAD thousands | |
+| ACFO | 140,253 CAD thousands | calculated |
+| FFO per Unit | 1.48 CAD | |
+| AFFO per Unit | 1.36 CAD | |
+| ACFO per Unit | 0.0011 CAD | |
+| Distributions per Unit | Not available CAD | |
+| FFO Payout Ratio | 91.4% | Elevated - FFO payout approaching 100% |
+| AFFO Payout Ratio | 99.3% | Elevated - AFFO payout approaching 100% |
+| ACFO Payout Ratio | Not available% | Not available |
 | **Portfolio** | | |
 | Total Properties | 0 | |
 | Gross Leasable Area | 14.4 million sq ft | |
 | Occupancy Rate | 84.0% | Moderate occupancy |
-| Same Property NOI Growth | 0.2% | Modest NOI growth |
+| Same Property NOI Growth | 0.4% | Modest NOI growth |
 
 ---
 
@@ -357,37 +357,37 @@ Allied Properties could face a downgrade to B1/B2 (or accelerated multi-notch do
 
 | Metric | Value | Assessment |
 |--------|-------|------------|
-| **Current Price** | $N/A | |
-| **52-Week Range** | $N/A - $N/A | |
-| **Decline from Peak** | N/A% | N/A |
-| **Days Since Peak** | N/A days | |
+| **Current Price** | $14.78 | |
+| **52-Week Range** | $14.28 - $22.27 | |
+| **Decline from Peak** | 33.6% | MODERATE (30-40%) |
+| **Days Since Peak** | 26 days | |
 
 ### Volatility & Momentum
 
 | Metric | Value | Classification |
 |--------|-------|----------------|
-| **30-Day Volatility** | N/A% annualized | N/A |
-| **90-Day Volatility** | N/A% annualized | N/A |
-| **252-Day Volatility** | N/A% annualized | N/A |
-| **Overall Volatility** | | N/A |
-| **3-Month Return** | N/A% | |
-| **6-Month Return** | N/A% | |
-| **12-Month Return** | N/A% | N/A |
+| **30-Day Volatility** | 61.8% annualized | N/A |
+| **90-Day Volatility** | 40.2% annualized | N/A |
+| **252-Day Volatility** | 0.0% annualized | N/A |
+| **Overall Volatility** | | VERY HIGH (>40%) |
+| **3-Month Return** | -13.5% | |
+| **6-Month Return** | -4.0% | |
+| **12-Month Return** | 0.0% | NEGATIVE (-20% to -10%) |
 | **Trading Volume vs Average** | N/A | |
 
 ### Market Risk Score
 
-**Overall Risk Score:** N/A/100 (N/A)
+**Overall Risk Score:** 80/100 (VERY HIGH)
 
 **Risk Components:**
-- Price Stress (30%): N/A/30
-- Volatility (40%): N/A/40
-- Momentum (20%): N/A/20
-- Volume (10%): N/A/10
+- Price Stress (30%): 30/30
+- Volatility (40%): 30/40
+- Momentum (20%): 20/20
+- Volume (10%): 0/10
 
 ### Market Risk Assessment
 
-Market risk assessment unavailable
+⚠️ Price stress detected: 33.6% decline from 52-week high (MODERATE (30-40%)). 90-day volatility: 40.2% annualized (VERY HIGH (>40%)). Negative 3-month momentum: -13.5% (NEGATIVE (-20% to -10%)). Overall market risk: VERY HIGH (score: 80/100).
 
 ### Credit Implications
 
@@ -400,29 +400,29 @@ Credit implications analysis unavailable
 ### Interest Rate Context
 
 **Canada:**
-- **Bank of Canada Policy Rate:** N/A%
-- **12-Month Change:** N/A bps
-- **Rate Cycle:** N/A
-- **Peak Rate (12-Month):** N/A%
-- **Credit Environment:** N/A
-- **Credit Stress Score:** N/A/100
+- **Bank of Canada Policy Rate:** 2.75%
+- **12-Month Change:** -125 bps
+- **Rate Cycle:** EASING
+- **Peak Rate (12-Month):** 5.25%
+- **Credit Environment:** ACCOMMODATIVE
+- **Credit Stress Score:** 22/100
 
 **United States:**
-- **Federal Funds Rate:** N/A%
-- **12-Month Change:** N/A bps
-- **Rate Cycle:** N/A
+- **Federal Funds Rate:** 4.22%
+- **12-Month Change:** -91 bps
+- **Rate Cycle:** MILD EASING
 
 **Cross-Border Dynamics:**
-- **Canada vs US Rate Spread:** N/A bps
+- **Canada vs US Rate Spread:** -147 bps
 - **Spread Trend:** N/A
 
 ### Rate Environment Assessment
 
-Macro environment assessment unavailable
+Bank of Canada in easing cycle (2.75%, down 125 bps from 5.25% peak). Accommodative credit environment (stress score: 22/100) supports REIT refinancing and capital markets access. US Fed also in mild easing mode (4.22%, down 91 bps), creating synchronized North American rate movement. Canada maintains typical 147 bps discount to US rates.
 
 ### Credit Implications
 
-Credit implications analysis unavailable
+POSITIVE for REITs: Lower rates reduce borrowing costs and improve debt service coverage ratios. Easing environment supports property valuations and equity issuance capacity. REITs with near-term debt maturities benefit from refinancing at lower rates. Credit spreads typically tighten in accommodative conditions, improving access to capital markets. Watch for rate stabilization signals as cycle matures; plan refinancing during easing window.
 
 ---
 
@@ -434,8 +434,8 @@ Credit implications analysis unavailable
 
 | Metric | Value |
 |--------|-------|
-| **Distribution Cut Probability** | N/A% |
-| **Risk Classification** | ❓ N/A |
+| **Distribution Cut Probability** | 0.0% |
+| **Risk Classification** | ❓ Unknown |
 | **Model Confidence** | N/A |
 | **Prediction Date** | N/A |
 
@@ -460,7 +460,7 @@ Credit implications analysis unavailable
 
 Prediction narrative unavailable
 
-Based on analysis of 15 financial, market, and macroeconomic features, the trained logistic regression model predicts a **N/A** probability (N/A%) of distribution cut within the next 12 months.
+Based on analysis of 15 financial, market, and macroeconomic features, the trained logistic regression model predicts a **Unknown** probability (0.0%) of distribution cut within the next 12 months.
 
 ### Model Performance
 
@@ -477,7 +477,7 @@ Credit implications unavailable
 
 ### Important Disclaimers
 
-- **Prediction Horizon:** 12 months from Q3 2025 (Three months ended September 30, 2025)
+- **Prediction Horizon:** 12 months from {'period_type': 'YTD', 'period_label': 'Nine months ended September 30, 2025', 'fiscal_year': 2025, 'period_start_date': '2025-01-01', 'period_end_date': '2025-09-30', 'period_months': 9}
 - **Geographic Scope:** Canadian REITs only
 - **Data Basis:** Most recent financial data as of 2025-11-01
 - **External Factors Not Captured:** Management changes, M&A activity, strategic pivots, regulatory changes
@@ -717,7 +717,7 @@ Aggressive and transparent action on items 1-2 would support maintaining Ba3 rat
 
 **Reporting Date:** 2025-09-30
 
-**Report Period:** Q3 2025 (Three months ended September 30, 2025)
+**Report Period:** Nine months ended September 30, 2025
 
 ### Company Background
 
@@ -906,16 +906,16 @@ The path to this end state requires 24-36 months of disciplined execution, with 
 
 ### Financial Summary
 
-- **Total Debt:** 4,482,425 CAD thousands
+- **Total Debt:** 3,990,005 CAD thousands
 - **Gross Assets:** 10,378,800 CAD thousands
-- **Leverage Ratio:** 43.2%
-- **Interest Coverage:** 2.27x
+- **Leverage Ratio:** 38.4%
+- **Interest Coverage:** 2.71x
 
 ### Operational Metrics
 
 - **Portfolio Size:** 0 properties, 14.4 million sq ft
 - **Occupancy:** 84.0% (87.4% including commitments)
-- **Same Property NOI Growth:** 0.2%
+- **Same Property NOI Growth:** 0.4%
 
 ### Management and Governance
 
@@ -947,32 +947,32 @@ This section analyzes the issuer's recurring economic earnings (FFO/AFFO), susta
 
 | Metric | Issuer-Reported<br>(CAD 000s) | Issuer-Reported<br>Per Unit | REALPAC-Calculated<br>(CAD 000s) | REALPAC-Calculated<br>Per Unit | Variance | Flag |
 |--------|-------------------------|---------------------|--------------------------|------------------------|----------|------|
-| **IFRS Net Income** | -113,389 | N/A | -113,389 | -0.0009 | N/A | - |
-| **FFO** | 203,802 | 1.4580 | 58,304 | 0.0004 | -8.5 | ⚠️ |
-| **AFFO** | 187,431 | 1.3410 | 62,894 | 0.0004 | 6.4 | ⚠️ |
-| **IFRS CFO** | 140,253 | N/A | 140,253 | N/A | N/A | - |
-| **ACFO** | Not available | N/A | 294,233 | 0.0023 | N/A | - |
+| **IFRS Net Income** | 0 | N/A | 0 | 0.0000 | N/A | - |
+| **FFO** | 206,455 | 1.4770 | 178,591 | 1.2778 | N/A | - |
+| **AFFO** | 190,084 | 1.3600 | 187,826 | 1.3439 | N/A | - |
+| **IFRS CFO** | Not extracted | N/A | Not extracted | N/A | N/A | - |
+| **ACFO** | Not available | N/A | 140,253 | 1.0035 | N/A | - |
 | **Net CFI** | N/A | N/A | Not available | N/A | N/A | - |
-| **AFCF** | Not available | N/A | 63,704 | 0.4968 | N/A (not reported) | - |
-| **Distributions** | 172,741 | 1.3500 | 172,741 | 1.3500 | N/A | - |
+| **AFCF** | Not available | N/A | 605 | 0.0043 | N/A (not reported) | - |
+| **Distributions** | Not available | Not available | Not available | Not available | N/A | - |
 
 **Payout Ratios (YTD):**
 | Metric | Issuer-Reported Payout | REALPAC-Calculated Payout |
 |--------|------------------------|---------------------------|
-| **FFO Payout Ratio** | 92.6% | 270000.0% |
-| **AFFO Payout Ratio** | 100.7% | 270000.0% |
-| **ACFO Payout Ratio** | N/A% | 58695.7% |
-| **AFCF Payout Ratio** | N/A% | 271.7% |
+| **FFO Payout Ratio** | 91.4% | N/A% |
+| **AFFO Payout Ratio** | 99.3% | N/A% |
+| **ACFO Payout Ratio** | N/A% | N/A% |
+| **AFCF Payout Ratio** | N/A% | 31187.3% |
 
 **Variance Flags:**
 - ✓ = Variance ≤5% (within acceptable threshold)
 - ⚠️ = Variance >5% (requires investigation - see Section 2.6 for methodology differences)
 
-**Data Source:** issuer_reported
+**Data Source:** Unknown
 
 **Validation Summary:**
 - FFO: ⚠️ Exceeds threshold - review methodology
-- AFFO: ⚠️ Exceeds threshold: 6.4% variance
+- AFFO: Not available
 - ACFO: ✓ ACFO calculated successfully
 
 *For detailed reconciliation and adjustment methodology, see Sections 2.3-2.4. For variance analysis and methodology differences, see Section 2.6.*
@@ -985,38 +985,11 @@ This reconciliation demonstrates the adjustment process from IFRS Net Income to 
 
 *As disclosed in issuer's MD&A (if available)*
 
-## Issuer-Reported FFO/AFFO Reconciliation (Detailed)
+## Issuer-Reported FFO/AFFO Reconciliation
 
-**Disclosure Type:** Full reconciliation disclosed by issuer
+**Not disclosed** - Issuer does not report FFO/AFFO. All metrics calculated using REALPAC methodology (see Section 2.3.2).
 
-| Line Item | Amount (000s) |
-|-----------|---------------|
-| **IFRS Net Income (as reported by issuer)** | **-113,389** |
-| **FFO Adjustments (REALPAC A-U):** | |
-| A. Unrealized fair value changes (investment properties) | +100,265 |
-| C. Amortization of tenant allowances (fit-out) | +8,944 |
-| H. Impairment losses or reversals | +14,393 |
-| J. Transaction costs (business combinations) | +999 |
-| M. Fair value changes (economically effective hedges) | +2,565 |
-| O. Effects of puttable instruments | +42,277 |
-| R. Incremental leasing costs | +2,250 |
-| **Other Adjustments (Issuer-Specific):** | |
-| Amortization of property, plant and equipment (owner-occupied) [Q3 2025 FFO reconciliation table] | +101 |
-| Distributions on Exchangeable LP Units (puttable instruments as liabilities) [Q3 2025 FFO reconciliation table] | +5,314 |
-| **Funds From Operations (FFO) - Issuer Reported** | **63,719** |
-| **AFFO Adjustments (as reported):** | |
-| Amortization of straight-line rent | -812 |
-| Regular leasing expenditures | -1,697 |
-| Regular and recoverable maintenance capital expenditures | -506 |
-| Incremental leasing costs (related to regular leasing expenditures) | -1,575 |
-| **Adjusted Funds From Operations (AFFO) - Issuer Reported** | **59,129** |
-| | |
-| **✓ FFO Reconciliation** | **Complete** |
-| **✓ AFFO Reconciliation** | **Complete** |
-
-**Source:** MD&A FFO/AFFO reconciliation table
-
-*Note: This reconciliation reflects the issuer's disclosed methodology, which may differ from standardized REALPAC methodology. See Section 2.3.2 for REALPAC-calculated reconciliation for cross-issuer comparability.*
+*Note: This is rare for public REITs. Verify MD&A for non-standard FFO disclosures.*
 
 **2.3.2 REALPAC-Calculated FFO/AFFO Reconciliation**
 
@@ -1026,22 +999,18 @@ This reconciliation demonstrates the adjustment process from IFRS Net Income to 
 
 | Line Item | Amount (000s) |
 |-----------|---------------|
-| **IFRS Net Income (Profit or Loss)** | **-113,389** |
+| **IFRS Net Income (Profit or Loss)** | **-315,789** |
 | **FFO Adjustments (A-U):** | |
-| A. Unrealized fair value changes (investment properties) | +100,265 |
-| C. Amortization of tenant allowances (fit-out) | +8,944 |
-| H. Impairment losses/reversals | +14,393 |
-| J. Transaction costs (business combinations) | +999 |
-| M. Fair value changes (economically effective hedges) | +2,565 |
-| O. Effects of puttable instruments | +42,277 |
-| R. Incremental leasing costs | +2,250 |
-| **Funds From Operations (FFO)** | **58,304** |
+| A. Unrealized fair value changes (investment properties) | +394,098 |
+| C. Amortization of tenant allowances (fit-out) | +28,089 |
+| H. Impairment losses/reversals | +23,920 |
+| M. Fair value changes (economically effective hedges) | +5,878 |
+| O. Effects of puttable instruments | +42,395 |
+| **Funds From Operations (FFO)** | **178,591** |
 | **AFFO Adjustments (V-Z):** | |
-| V. Capital expenditures (sustaining/maintenance) | +506 |
-| W. Leasing costs | +1,697 |
-| X. Tenant improvements | +1,575 |
-| Y. Straight-line rent adjustment | +812 |
-| **Adjusted Funds From Operations (AFFO)** | **62,894** |
+| W. Leasing costs | +7,196 |
+| Y. Straight-line rent adjustment | +2,039 |
+| **Adjusted Funds From Operations (AFFO)** | **187,826** |
 
 **Data Quality:**
 - FFO: STRONG
@@ -1050,22 +1019,16 @@ This reconciliation demonstrates the adjustment process from IFRS Net Income to 
 *Source: Calculated per REALPAC White Paper on FFO & AFFO for IFRS (January 2022)*
 
 **Key Observations:**
-FFO variance: -8.5%. AFFO variance: 6.4%.
+FFO variance: N/A (not reported). AFFO variance: N/A (not reported).
 
 **FFO Validation:**
-FFO variance (-8.5%) exceeds 5% threshold. Review methodology differences. AFFO variance (6.4%) exceeds 5% threshold. Likely differences in CAPEX/leasing cost treatment.
+Issuer did not report FFO - calculated value used. Issuer did not report AFFO - calculated value used.
 
 **AFFO Validation:**
-⚠️ **AFFO Variance:** Calculated differs from reported by 3,765 (6.4%)
-  - This variance exceeds the 5% threshold and requires investigation
+**AFFO Variance:** Issuer did not report AFFO - using calculated value
 
 **Validation Notes:**
-- AFFO variance (6.4%) exceeds 5% threshold. Likely differences in CAPEX/leasing cost treatment.
-
-**REALPAC Adjustments:** 5 of 5 adjustments populated
-
-**Data Quality:** Strong
-**Calculation Method:** Actual
+- Issuer did not report AFFO - calculated value used.
 
 **Methodology Notes:**
 - Reported values: As disclosed in issuer's MD&A FFO/AFFO reconciliation tables
@@ -1095,30 +1058,28 @@ This reconciliation demonstrates the adjustment process from IFRS Cash Flow from
 | Line Item | Amount (000s) |
 |-----------|---------------|
 | **Cash Flow from Operations (IFRS)** | **140,253** |
-| **ACFO Adjustments (1-17):** | |
-| 4. Sustaining CAPEX | +2,019 |
-| 5. External leasing costs | +7,196 |
-| 6. Sustaining tenant improvements | +5,117 |
-| **Adjusted Cash Flow from Operations (ACFO)** | **294,233** |
+| **Adjusted Cash Flow from Operations (ACFO)** | **140,253** |
 
 **Data Quality:**
-- ACFO: STRONG
+- ACFO: MODERATE
 - Calculation Method: actual
-- JV Treatment: distributions
+- JV Treatment: unknown
+- Missing components: 15
 
 **Consistency Checks (vs AFFO):**
-- CAPEX (sustaining): ⚠️ Variance: 1,513
-- Tenant Improvements: ⚠️ Variance: 3,542
+- CAPEX (sustaining): ✅ Match
+- Tenant Improvements: ✅ Match
+- Reserve Methodology: Not specified
 
 *Source: Calculated per REALPAC ACFO White Paper for IFRS (January 2023)*
 
 **Key Observations:**
-ACFO calculated: 294,233
+ACFO calculated: 140,253
 
 **ACFO Validation:**
 **ACFO Variance:** Issuer did not report ACFO - using calculated value
 
-**Data Quality:** Strong
+**Data Quality:** Unknown
 
 **Consistency Checks:**
 Performed - see reconciliation section
@@ -1134,20 +1095,20 @@ Performed - see reconciliation section
 
 | Coverage Measure | Metric YTD (CAD 000s) | Distributions YTD (CAD 000s) | Coverage Ratio | Payout Ratio | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
-| **FFO Coverage** | 203,802 | 172,741 | 1.08x | 92.6% | Tight coverage |
-| **AFFO Coverage** | 187,431 | 172,741 | 0.99x | 100.7% | Insufficient coverage |
-| **ACFO Coverage** | Not available | 172,741 | N/Ax | N/A% | Not reported |
+| **FFO Coverage** | 206,455 | Not available | 1.09x | 91.4% | Tight coverage |
+| **AFFO Coverage** | 190,084 | Not available | 1.01x | 99.3% | Tight coverage |
+| **ACFO Coverage** | Not available | Not available | N/Ax | N/A% | Not reported |
 
 **2.5.2 REALPAC-Calculated Coverage Ratios**
 
 | Coverage Measure | Metric YTD (CAD 000s) | Distributions YTD (CAD 000s) | Coverage Ratio | Payout Ratio | Assessment |
 |------------------|---------------------------|---------------|----------------|--------------|------------|
-| **FFO Coverage** | 58,304 | 172,741 | 0.34x | 270000.0% | Tight coverage |
-| **AFFO Coverage** | 62,894 | 172,741 | 0.36x | 270000.0% | Unsustainable |
-| **ACFO Coverage** | 294,233 | 172,741 | 1.70x | 58695.7% | Strong coverage |
-| **AFCF Coverage** | 63,704 | 172,741 | 0.37x | 271.7% | Insufficient coverage |
+| **FFO Coverage** | 178,591 | Not available | N/Ax | N/A% | Tight coverage |
+| **AFFO Coverage** | 187,826 | Not available | N/Ax | N/A% | Adequate |
+| **ACFO Coverage** | 140,253 | Not available | N/Ax | N/A% | Not available |
+| **AFCF Coverage** | 605 | Not available | 0.01x | 31187.3% | Insufficient coverage |
 
-**Distribution Sustainability:** Unsustainable
+**Distribution Sustainability:** Sustainable
 
 *For detailed calculation methodology, per-unit analysis, and credit implications, see Section 4.4 (Liquidity and Distribution Coverage Assessment).*
 
@@ -1157,30 +1118,30 @@ Performed - see reconciliation section
 
 | Metric | Issuer-Reported | REALPAC-Calculated |
 |--------|-----------------|-------------------|
-| **FFO** | 203,802 | 58,304 |
-| **FFO to AFFO Reduction** | 16,371 | -4,590 |
-| **Reduction %** | 8.0% | -7.9% |
-| **AFFO** | 187,431 | 62,894 |
+| **FFO** | 206,455 | 178,591 |
+| **FFO to AFFO Reduction** | 16,371 | -9,235 |
+| **Reduction %** | 7.9% | -5.2% |
+| **AFFO** | 190,084 | 187,826 |
 
 **2.6.2 CFO to ACFO Bridge**
 
 | Metric | Issuer-Reported | REALPAC-Calculated |
 |--------|-----------------|-------------------|
-| **CFO** | 140,253 | 140,253 |
-| **CFO to ACFO Reduction** | N/A - issuer does not report ACFO | 231,339 |
-| **Reduction %** | N/A% | 367.8% |
-| **ACFO** | Not available | 294,233 |
+| **CFO** | Not extracted | Not extracted |
+| **CFO to ACFO Reduction** | N/A - issuer does not report ACFO | -47,573 |
+| **Reduction %** | N/A% | -25.3% |
+| **ACFO** | Not available | 140,253 |
 
 **2.6.3 AFFO vs ACFO Gap**
 
 | Comparison | Reported | Calculated | Variance |
 |------------|----------|------------|----------|
-| **AFFO** | 187,431 | 62,894 | 3,765 (+6.4%) |
-| **ACFO** | Not available | 294,233 | N/A (issuer did not report ACFO) |
-| **Gap (AFFO - ACFO)** | N/A | 231,339 | Not available |
-| **Gap %** | N/A% | 367.8% | - |
+| **AFFO** | 190,084 | 187,826 | N/A |
+| **ACFO** | Not available | 140,253 | N/A (issuer did not report ACFO) |
+| **Gap (AFFO - ACFO)** | N/A | -47,573 | Not available |
+| **Gap %** | N/A% | -25.3% | - |
 
-**Interpretation:** ACFO ($294,233k calculated) exceeds AFFO ($62,894k calculated) by $231,339k (367.8%). This indicates stronger cash generation when accounting for working capital changes and actual capital expenditures.
+**Interpretation:** ACFO ($140,253k calculated) is below AFFO ($187,826k calculated) by $47,573k (25.3%). This indicates that ACFO provides a more conservative measure of sustainable cash flow after accounting for working capital changes and actual capital expenditures.
 
 *For detailed FFO/AFFO adjustment breakdown and reconciliation methodology, see Sections 2.3-2.4.*
 
@@ -1194,20 +1155,20 @@ AFCF measures cash available for financing obligations after ALL investing activ
 
 | Component | Amount (CAD 000s) | Per Unit |
 |-----------|---------------------------|----------|
-| **ACFO (REALPAC-Calculated)** | 294,233 | 0.0023 |
+| **ACFO (REALPAC-Calculated)** | 140,253 | 1.0035 |
 | **Net Cash Flow from Investing** | Not available | N/A |
-| **AFCF (Calculated)** | 63,704 | 0.4968 |
+| **AFCF (Calculated)** | 605 | 0.0043 |
 
 **2.7.2 AFCF Coverage Ratios**
 
 | Coverage Metric | Amount YTD (CAD 000s) | Coverage Ratio | Assessment |
 |-----------------|---------------------------|----------------|------------|
-| **AFCF** | 63,704 | - | - |
-| **Total Debt Service (Annualized)** | 846,903 | 0.08x | Critical - Heavy reliance on external financing |
-| **Total Distributions** | 172,741 | 0.37x | Insufficient coverage |
-| **Total Obligations** | 1,019,644 | 0.06xx | Critical reliance on external financing |
+| **AFCF** | 605 | - | - |
+| **Total Debt Service (Annualized)** | 98,989 | 0.01x | Critical - Heavy reliance on external financing |
+| **Total Distributions** | Not available | Not availablex | Not available |
+| **Total Obligations** | 287,672 | Not availablex | Not available |
 
-**Self-Funding Capacity:** (955,940) (Surplus/(Shortfall))
+**Self-Funding Capacity:** (287,067) (Surplus/(Shortfall))
 
 *For detailed investing activities breakdown, reconciliation, and credit implications, see Section 4.4.*
 
@@ -1217,18 +1178,18 @@ AFCF measures cash available for financing obligations after ALL investing activ
 
 This section analyzes equity dilution from convertible securities, options, and warrants, assessing materiality and impact on per-unit metrics and credit quality.
 
-🚨 HIGH dilution - material equity overhang, review impact on debt capacity and unit holder value dilution
+✓ Low dilution risk - minimal equity overhang, positive for creditworthiness
 
 | Dilution Metric | Value | Assessment |
 |-----------------|-------|------------|
 | Basic Units Outstanding | 139,765,128 | - |
 | Diluted Units Outstanding | 139,765,128 | - |
-| Dilution Percentage | 8.98% | HIGH |
-| Material Instruments | other | - |
+| Dilution Percentage | Not available% | MINIMAL |
+| Material Instruments | stock_options | - |
 | Convertible Debt Risk | NONE | - |
 | Governance Score | Enhanced | Enhanced disclosure = better transparency |
 
-**Credit Assessment:** 🚨 HIGH dilution - material equity overhang, review impact on debt capacity and unit holder value dilution
+**Credit Assessment:** ✓ Low dilution risk - minimal equity overhang, positive for creditworthiness
 
 **Key Considerations:**
 - Dilution < 3%: Low impact on per-unit metrics
@@ -1253,7 +1214,7 @@ Peer comparison not available in this analysis
 #### 2.11 Recommendations for Credit Committee
 
 **Rating Implications:**
-AFFO payout ratio of 106.4% negative for credit rating
+AFFO payout ratio of 99.3% neutral for credit rating
 
 **Monitoring Requirements:**
 Monitor AFFO payout ratio and distribution sustainability quarterly
@@ -1263,14 +1224,14 @@ Covenant compliance analysis requires detailed debt documentation
 
 ### 3. Leverage and Coverage Analysis
 
-The issuer demonstrates moderate leverage with Debt/Gross Assets of 43.2%, positioning within the Baa rating category (threshold: 35-45%).
+The issuer demonstrates moderate leverage with Debt/Gross Assets of 38.4%, positioning within the Baa rating category (threshold: 35-45%).
 
-Interest coverage metrics show NOI/Interest of 2.27x, indicating moderate debt service capacity within the Ba range (threshold: 2.0-3.0x).
+Interest coverage metrics show NOI/Interest of 2.71x, indicating moderate debt service capacity within the Ba range (threshold: 2.0-3.0x).
 
 **Net Debt Analysis:**
-- Total Debt: 4,482,425 CAD thousands
-- Cash Position: Incorporated in net debt ratio of 42.6%
-- Net Debt: 4,419,217 CAD thousands
+- Total Debt: 3,990,005 CAD thousands
+- Cash Position: Incorporated in net debt ratio of 37.8%
+- Net Debt: 3,926,797 CAD thousands
 
 Not available
 
@@ -1286,29 +1247,29 @@ Not available
 
 | Source | Amount (CAD 000s) | Notes |
 |--------|---------------------------|-------|
-| **Cash and Equivalents** | 63,208 | Balance sheet cash $63,208k + Note 11(c) unsecured revolving operating facility: limit $800,000k, drawings $51,000k, letters of credit $9,283k, available $739,717k. Total liquidity: $802,925k. Includes $100,000k accordion feature for potential total of $902,925k. |
+| **Cash and Equivalents** | 63,208 | Not available |
 | **Marketable Securities** | 0 | Short-term investments |
 | **Less: Restricted Cash** | (0) | Unavailable for operations |
 | **Available Cash** | 63,208 | Cash + Securities - Restricted |
-| **Undrawn Credit Facilities** | 739,717 | 800,000 limit |
-| **Total Available Liquidity** | 802,925 | Available + Undrawn |
+| **Undrawn Credit Facilities** | 0 | 0 limit |
+| **Total Available Liquidity** | 63,208 | Available + Undrawn |
 
-**Data Source:** Balance sheet cash $63,208k + Note 11(c) unsecured revolving operating facility: limit $800,000k, drawings $51,000k, letters of credit $9,283k, available $739,717k. Total liquidity: $802,925k. Includes $100,000k accordion feature for potential total of $902,925k.
+**Data Source:** Not available
 
 #### 4.2 Sources and Uses
 
 **Sources:**
 - Cash on hand: 63,208 CAD thousands
 - Operating cash flow: Based on NOI of Not provided separately (incorporated in coverage metrics) CAD thousands (quarterly)
-- ACFO (sustainable cash flow): 294,233 CAD thousands (Q3 2025 (Three months ended September 30, 2025))
-- AFCF (free cash flow): 63,704 CAD thousands (Q3 2025 (Three months ended September 30, 2025))
-- Available credit facilities: 739,717 CAD thousands
+- ACFO (sustainable cash flow): 140,253 CAD thousands (Nine months ended September 30, 2025)
+- AFCF (free cash flow): 605 CAD thousands (Nine months ended September 30, 2025)
+- Available credit facilities: 0 CAD thousands
 
 **Uses:**
 - Interest expense: 0 CAD thousands (quarterly)
-- Principal repayments: 811,415 CAD thousands (Nine Months Q3)
-- Distributions: 1.3500 CAD per unit × Not provided units
-- Sustaining capital expenditures: 506 CAD thousands (per ACFO calculation)
+- Principal repayments: 0 CAD thousands (Nine Months)
+- Distributions: Not available CAD per unit × Not provided units
+- Sustaining capital expenditures: 0 CAD thousands (per ACFO calculation)
 - Debt maturities: Debt maturity schedule not extracted
 
 #### 4.3 Burn Rate and Cash Runway Analysis
@@ -1331,18 +1292,18 @@ Monthly Burn Rate = Period Deficit / Number of Months in Period
 
 | Metric | Amount (CAD 000s) | Reporting Period | Assessment |
 |--------|---------------------------|------------------|------------|
-| **AFCF (Period)** | 63,704 | Q3 2025 (Three months ended September 30, 2025) | Free cash flow |
+| **AFCF (Period)** | 605 | {'period_type': 'YTD', 'period_label': 'Nine months ended September 30, 2025', 'fiscal_year': 2025, 'period_start_date': '2025-01-01', 'period_end_date': '2025-09-30', 'period_months': 9} | Free cash flow |
 | **Mandatory Obligations:** | | | |
-| - Total Debt Service | 846,903 | Q3 2025 (Three months ended September 30, 2025) | Interest + Principal |
-| - Total Distributions | 172,741 | Q3 2025 (Three months ended September 30, 2025) | Common + Preferred |
-| **Total Obligations** | 1,019,644 | Q3 2025 (Three months ended September 30, 2025) | - |
-| **Period Deficit/(Surplus)** | -955,940 | Q3 2025 (Three months ended September 30, 2025) | AFCF - Obligations |
-| **Monthly Burn Rate** | -106,216 | Per month | 9-month period |
+| - Total Debt Service | 98,989 | {'period_type': 'YTD', 'period_label': 'Nine months ended September 30, 2025', 'fiscal_year': 2025, 'period_start_date': '2025-01-01', 'period_end_date': '2025-09-30', 'period_months': 9} | Interest + Principal |
+| - Total Distributions | Not available | {'period_type': 'YTD', 'period_label': 'Nine months ended September 30, 2025', 'fiscal_year': 2025, 'period_start_date': '2025-01-01', 'period_end_date': '2025-09-30', 'period_months': 9} | Common + Preferred |
+| **Total Obligations** | 287,672 | {'period_type': 'YTD', 'period_label': 'Nine months ended September 30, 2025', 'fiscal_year': 2025, 'period_start_date': '2025-01-01', 'period_end_date': '2025-09-30', 'period_months': 9} | - |
+| **Period Deficit/(Surplus)** | -287,067 | {'period_type': 'YTD', 'period_label': 'Nine months ended September 30, 2025', 'fiscal_year': 2025, 'period_start_date': '2025-01-01', 'period_end_date': '2025-09-30', 'period_months': 9} | AFCF - Obligations |
+| **Monthly Burn Rate** | -31,896 | Per month | 9-month period |
 
 **Self-Funding Analysis:**
-- **Self-Funding Ratio:** 0.06x (AFCF / Mandatory Obligations)
-- **Interpretation:** High capital markets reliance
-- **Capital Markets Reliance:** Requires $955,940 external financing (94% of obligations)
+- **Self-Funding Ratio:** Not availablex (AFCF / Mandatory Obligations)
+- **Interpretation:** Not calculated without AFCF
+- **Capital Markets Reliance:** Unable to assess without AFCF self-funding ratio
 
 **Liquidity Position:**
 
@@ -1352,19 +1313,19 @@ Monthly Burn Rate = Period Deficit / Number of Months in Period
 | **Marketable Securities** | 0 | Liquid investments |
 | **Less: Restricted Cash** | (0) | Not available for operations |
 | **Available Cash** | 63,208 | Immediately available |
-| **Undrawn Credit Facilities** | 739,717 | Remaining capacity |
-| **Total Available Liquidity** | 802,925 | Cash + facilities |
+| **Undrawn Credit Facilities** | Not available | Remaining capacity |
+| **Total Available Liquidity** | 63,208 | Cash + facilities |
 
 **Cash Runway Analysis:**
 
 | Scenario | Liquidity Base | Runway (Months) | Runway (Years) | Depletion Date | Risk Level |
 |----------|----------------|-----------------|----------------|----------------|------------|
-| **Cash Only** | 63,208 | 0.6 | N/A | 2025-10-17 | CRITICAL |
-| **Extended** (w/ facilities) | 802,925 | 7.6 | 0.6 | 2026-05-16 | CRITICAL |
+| **Cash Only** | 63,208 | 2.0 | 0.2 | 2025-11-28 | CRITICAL |
+| **Extended** (w/ facilities) | 63,208 | 2.0 | 0.2 | 2025-11-29 | CRITICAL |
 
 **Runway Calculation:**
-- **Cash Only:** Available Cash (63,208) ÷ Monthly Burn (106,216) = 0.6 months
-- **Extended:** Total Liquidity (802,925) ÷ Monthly Burn (106,216) = 7.6 months
+- **Cash Only:** Available Cash (63,208) ÷ Monthly Burn (31,896) = 2.0 months
+- **Extended:** Total Liquidity (63,208) ÷ Monthly Burn (31,896) = 2.0 months
 
 **Liquidity Risk Assessment:**
 
@@ -1394,35 +1355,35 @@ None identified
 |--------|---------------------------|------------|
 | **Target Runway** | 24 months | Management target |
 | **Sustainable Monthly Burn** | 2,634 | Maximum sustainable burn rate |
-| **Actual Monthly Burn** | -106,216 | Current burn rate |
-| **Excess/(Deficit) Burn** | 103,582 | Above sustainable - Overspending by $103,582/month |
+| **Actual Monthly Burn** | -31,896 | Current burn rate |
+| **Excess/(Deficit) Burn** | 29,263 | Above sustainable - Overspending by $29,263/month |
 
 **Burn Rate Interpretation:**
-AFCF of $63,704 covers 6% of mandatory obligations ($1,019,644). Monthly cash deficit of $106,216 must be funded through capital markets or asset sales.
+AFCF of $605 covers 0% of mandatory obligations ($287,672). Monthly cash deficit of $31,896 must be funded through capital markets or asset sales.
 
 **Credit Implications:**
-🚨 Critical - High dependence on capital markets and undrawn credit facilities
+Not assessed without AFCF data
 
 #### 4.4 Liquidity and Distribution Coverage Assessment (Detailed Analysis)
 
 *This section expands on the summary coverage metrics presented in Section 2.5 (Distribution Coverage Ratios) and Section 2.7 (AFCF Analysis) with detailed calculation methodology, per-unit analysis, and credit implications.*
 
-Based on available metrics, the issuer demonstrates moderate liquidity with 2.27x interest coverage. Detailed liquidity analysis requires review of debt maturity schedule and available credit facilities.
+Based on available metrics, the issuer demonstrates moderate liquidity with 2.71x interest coverage. Detailed liquidity analysis requires review of debt maturity schedule and available credit facilities.
 
 **Historical Distribution Pattern:**
 
 This section provides context on distribution history, cuts, and recovery patterns to assess long-term sustainability.
 
 *Current Distribution:*
-- **Monthly distribution per unit:** N/A CAD
-- **Annual distribution per unit:** N/A CAD
+- **Monthly distribution per unit:** 0.0000 CAD
+- **Annual distribution per unit:** 0.0000 CAD
 - **Current yield:** N/A%
 
 *Distribution Cut History:*
-- **Total cuts detected (10-year history):** N/A
+- **Total cuts detected (10-year history):** 0
 - **Most recent cut date:** N/A
 - **Most recent cut magnitude:** N/A%
-- **Recovery status:** N/A
+- **Recovery status:** Unknown
 - **Current distribution vs pre-cut level:** N/A%
 
 *Recovery Analysis:*
@@ -1430,9 +1391,9 @@ This section provides context on distribution history, cuts, and recovery patter
 Recovery analysis unavailable
 
 **Credit Implications:**
-- **Distribution stability:** History of N/A cut(s) indicates N/A
-- **Management credibility:** N/A
-- **Sustainability outlook:** N/A
+- **Distribution stability:** History of 0 cut(s) indicates Stable
+- **Management credibility:** Consistent distribution policy
+- **Sustainability outlook:** Positive
 
 **Detailed Coverage Analysis:**
 
@@ -1440,46 +1401,46 @@ Recovery analysis unavailable
 
 The per-unit coverage analysis shows how many times distributions are covered by operating and free cash flow on a per-unit basis:
 
-- **ACFO per unit:** 2.2945 / **Distributions per unit:** 1.3500 = **1.70x coverage**
-  - Interpretation: Every dollar of distributions is covered 1.70x times by sustainable operating cash flow
-  - Credit Implication: Strong coverage
-
-- **AFCF per unit:** 0.4968 / **Distributions per unit:** 1.3500 = **0.37x coverage**
-  - Interpretation: Every dollar of distributions is covered 0.37 times by free cash flow after all investments
+- **ACFO per unit:** 1.0035 / **Distributions per unit:** Not available = **Not available coverage**
+  - Interpretation: Every dollar of distributions is covered Not available times by sustainable operating cash flow
   - Credit Implication: Insufficient coverage
+
+- **AFCF per unit:** 0.0043 / **Distributions per unit:** Not available = **0.01x coverage**
+  - Interpretation: Every dollar of distributions is covered 0.01 times by free cash flow after all investments
+  - Credit Implication: Not available
 
 *Total-Level Coverage - YTD Metrics vs. Annualized Obligations:*
 
 This analysis measures the REIT's ability to service all financing obligations from available cash flow:
 
 - **Distribution Coverage (YTD):**
-  - ACFO: 294,233 thousands / Total distributions: 172,741 thousands = **1.70x** (Strong coverage)
-  - AFCF: 63,704 thousands / Total distributions: 172,741 thousands = **0.37x** (Insufficient coverage)
+  - ACFO: 140,253 thousands / Total distributions: 188,683 thousands = **0.74x** (Insufficient coverage)
+  - AFCF: 605 thousands / Total distributions: 188,683 thousands = **Not available** (Not available)
 
 - **Debt Service Coverage (AFCF vs. Annualized):**
-  - AFCF YTD: 63,704 thousands / Annualized debt service: 846,903 thousands = **0.08x**
+  - AFCF YTD: 605 thousands / Annualized debt service: 98,989 thousands = **0.01x**
   - Benchmark: >1.0x = Self-funding debt service from free cash flow
-  - Assessment: Coverage of 0.08x indicates REIT's ability to service debt from operating cash flow
+  - Assessment: Coverage of 0.01x indicates REIT's ability to service debt from operating cash flow
 
 - **Self-Funding Capacity:**
-  - Self-funding ratio: **0.06x** (AFCF / Total obligations)
-  - Financing gap: **-955,940** CAD thousands
+  - Self-funding ratio: **Not available** (AFCF / Total obligations)
+  - Financing gap: **-287,067** CAD thousands
   - Assessment: Ratio indicates degree of capital markets reliance (>1.0x = self-funding, 0.5-1.0x = moderate reliance, <0.5x = high reliance)
 
 *Residual Cash Flows After Distributions:*
 
-- ACFO residual: **121,492** CAD thousands (operating cash flow remaining after distributions)
-- AFCF residual: **-109,037** CAD thousands (free cash flow remaining after distributions and investments)
+- ACFO residual: **-48,430** CAD thousands (operating cash flow remaining after distributions)
+- AFCF residual: **-188,078** CAD thousands (free cash flow remaining after distributions and investments)
 
 *Interest Coverage:*
-- NOI/Interest coverage of 2.27x is at or above typical REIT minimum (2.0x)
+- NOI/Interest coverage of 2.71x is at or above typical REIT minimum (2.0x)
 - Benchmark: >2.0x = Strong, 1.5-2.0x = Adequate, 1.2-1.5x = Tight, <1.2x = Insufficient
 
 **Credit Impact Summary:**
 
-1. **Distribution Sustainability:** Unsustainable
-2. **Financing Flexibility:** Self-funding ratio of 0.06x indicates degree of capital markets reliance
-3. **Growth Capacity:** Residual AFCF of -109,037 thousands shows internal capital availability for growth investments
+1. **Distribution Sustainability:** Sustainable
+2. **Financing Flexibility:** Self-funding ratio of Not available indicates degree of capital markets reliance
+3. **Growth Capacity:** Residual AFCF of -188,078 thousands shows internal capital availability for growth investments
 
 *For summary coverage ratios, see Section 2.5. For AFCF calculation methodology, see Section 2.7.*
 
@@ -1495,7 +1456,7 @@ Not available
 - Assessment: Moderate occupancy
 
 **Growth Metrics:**
-- Same Property NOI Growth: 0.2%
+- Same Property NOI Growth: 0.4%
 - Assessment: Modest NOI growth
 
 Not available
@@ -1547,7 +1508,7 @@ Not available
 ### Debt Structure
 
 **Debt Profile:**
-- Total debt: $4.5B
+- Total debt: $4.0B
 
 ### Security and Collateral
 
@@ -1614,7 +1575,7 @@ This credit analysis applies a 5-factor scorecard methodology consistent with Mo
 
 ### Key Limitations
 
-1. **Single Point-in-Time Analysis:** Based on Q3 2025 (Three months ended September 30, 2025) data only
+1. **Single Point-in-Time Analysis:** Based on Nine months ended September 30, 2025 data only
 2. **Limited Historical Data:** Trend analysis requires multi-period data
 3. **No Management Guidance:** Forward-looking assumptions not validated by management
 4. **Incomplete Debt Schedule:** Maturity profile and covenant details not reviewed
@@ -2024,7 +1985,7 @@ Payout Ratio Quality (inverse of coverage):
 
 ---
 
-**Report Generated:** 2025-11-01 00:34:05
+**Report Generated:** 2025-11-01 02:14:59
 
 **Analysis Tool:** Multi-Phase Credit Analysis Pipeline (Phases 1-5)
 
