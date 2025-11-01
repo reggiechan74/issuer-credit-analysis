@@ -248,7 +248,7 @@ You should invoke the agent directly rather than running a bash script for this 
 
 Generate comprehensive final credit opinion report with ET timestamp.
 
-**IMPORTANT:** Use enriched data file if available (from Phase 3.5), otherwise fall back to standard metrics.
+**CRITICAL:** MUST use enriched data file if available (from Phase 3.5) to populate market/macro sections.
 
 ```bash
 echo ""
@@ -256,19 +256,24 @@ echo "=========================================="
 echo "PHASE 5: REPORT GENERATION (0 TOKENS)"
 echo "=========================================="
 
-# Determine which metrics file to use (enriched takes precedence)
+# CRITICAL: Check for enriched data file FIRST (enriched data includes market/macro/prediction)
+# This file is created by Phase 3.5 if ticker was found and enrichment succeeded
 ENRICHED_PATH="Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase4_enriched_data.json"
 STANDARD_PATH="Issuer_Reports/{ISSUER_NAME_SAFE}/temp/phase3_calculated_metrics.json"
 
 if [ -f "$ENRICHED_PATH" ]; then
   METRICS_FILE="$ENRICHED_PATH"
   echo "✅ Using enriched data (includes market/macro/prediction sections)"
+  echo "   → File: phase4_enriched_data.json"
 else
   METRICS_FILE="$STANDARD_PATH"
   echo "⚠️  Using standard metrics only (Phase 3.5 was skipped or failed)"
+  echo "   → File: phase3_calculated_metrics.json"
+  echo "   → Market Risk, Macro Environment, and Distribution Cut Prediction sections will show N/A"
 fi
 
 # Generate final credit opinion report (auto-saves to reports/ folder with timestamp)
+# IMPORTANT: Pass the determined METRICS_FILE (enriched or standard) to the report generator
 python scripts/generate_final_report.py \
   --template credit_opinion_template.md \
   "$METRICS_FILE" \

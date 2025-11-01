@@ -111,23 +111,29 @@ Execute the full 5-phase credit analysis pipeline using **Docling** for PDF conv
 
 7. **Phase 5: Generate final report**
    ```bash
-   # Use enriched data if available (from Phase 3.5), otherwise fall back to standard metrics
+   # CRITICAL: Check for enriched data file FIRST (enriched data includes market/macro/prediction)
+   # This file is created by Phase 3.5 if ticker was found and enrichment succeeded
    ENRICHED_PATH="Issuer_Reports/{Issuer_Name}/temp/phase4_enriched_data.json"
    STANDARD_PATH="Issuer_Reports/{Issuer_Name}/temp/phase3_calculated_metrics.json"
 
    if [ -f "$ENRICHED_PATH" ]; then
      METRICS_FILE="$ENRICHED_PATH"
      echo "✅ Using enriched data (includes market/macro/prediction sections)"
+     echo "   → File: phase4_enriched_data.json"
    else
      METRICS_FILE="$STANDARD_PATH"
-     echo "⚠️  Using standard metrics only"
+     echo "⚠️  Using standard metrics only (Phase 3.5 was skipped or failed)"
+     echo "   → File: phase3_calculated_metrics.json"
+     echo "   → Market Risk, Macro Environment, and Distribution Cut Prediction sections will show N/A"
    fi
 
+   # IMPORTANT: Pass the determined METRICS_FILE (enriched or standard) to the report generator
    python scripts/generate_final_report.py \
      --template credit_opinion_template.md \
      "$METRICS_FILE" \
      Issuer_Reports/{Issuer_Name}/temp/phase4_credit_analysis.md
    ```
+   - **CRITICAL:** MUST use enriched data file if available (from Phase 3.5) to populate market/macro sections
    - Creates timestamped report in `Issuer_Reports/{Issuer_Name}/reports/`
    - **Automatically uses enriched data** if Phase 3.5 succeeded (includes market/macro/prediction sections)
    - **New in v1.0.13:** Structural Considerations section now auto-populated from Phase 4 content
