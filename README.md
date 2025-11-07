@@ -6,6 +6,24 @@
 [![Version](https://img.shields.io/badge/version-1.0.15-blue.svg)](CHANGELOG.md)
 [![Model](https://img.shields.io/badge/model-v2.2-green.svg)](models/README.md)
 
+---
+
+## Why This Exists
+
+**Credit analysts shouldn't be human copy machines.**
+
+If you've ever spent 6 hours copying numbers from PDFs, fighting with Excel, hunting for footnotes on page 63—only to be too exhausted to think clearly about the actual credit decision—this tool is for you.
+
+This isn't about making credit analysis faster. **It's about getting your brain back.**
+
+The tool runs automatically. You hit go, get coffee, and come back 30 minutes later to a complete professional credit opinion. Not a draft. Not a summary. Complete.
+
+**Because life's too short to copy numbers from PDFs.**
+
+Read the full story: **[Why I Built This](why_I_built_this.md)**
+
+---
+
 ## What's New in v1.0.15 🎉
 
 ### Distribution Cut Prediction Model v2.2 Deployed (October 29, 2025)
